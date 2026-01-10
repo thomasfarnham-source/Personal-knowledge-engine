@@ -1,52 +1,110 @@
-from typing import List, Any, Dict, Optional
-
+from typing import List, Dict, Optional, Protocol, TypedDict, Any
 
 # -------------------------
 # Embedding provider stub
 # -------------------------
-# compute_embedding is a deterministic, local-only stub used for testing.
-# It returns a fixed-length vector (1536) so you can validate vector flows
-# without calling an external embedding API.
+
 def compute_embedding(text: str) -> List[float]:
     """
     Deterministic embedding stub for local testing.
-    Returns a 1536-length float vector; same input => same output.
-    Replace with a real provider before production.
+
+    This function simulates a real embedding model by returning a fixed-length vector (1536 floats).
+    It ensures that the same input string always produces the same output vector, which is useful
+    for testing vector pipelines without relying on external APIs.
+
+    Args:
+        text: The input string to embed.
+
+    Returns:
+        A normalized 1536-dimensional float vector.
     """
     dim = 1536
     vec = [0.0] * dim
 
-    # Return zero vector for empty input to keep behavior predictable.
+    # Return a zero vector for empty input to avoid divide-by-zero and keep behavior predictable.
     if not text:
         return vec
 
-    # Convert text to bytes and fold byte values into the vector positions.
-    # Using modulo 97 keeps values small and deterministic across runs.
+    # Encode text to bytes and fold byte values into vector positions using modulo arithmetic.
     for i, ch in enumerate(text.encode("utf-8")):
         vec[i % dim] += (ch % 97) / 97.0
 
-    # Normalize the vector to unit length to mimic typical embedding outputs.
+    # Normalize the vector to unit length to mimic real embedding output.
     norm = sum(x * x for x in vec) ** 0.5 or 1.0
     return [x / norm for x in vec]
 
 
 # -------------------------
-# Minimal Supabase client wrapper for tests
+# Type definitions for safety and clarity
 # -------------------------
-# This class is intentionally small: it expects an injected `client` object
-# that implements the minimal chain used in tests:
-#   client.table(table_name).upsert(record).execute()
-#
-# In production you would replace this wrapper with one that uses the real
-# Supabase client and handles auth, errors, and other behaviors.
+
+class NoteRecord(TypedDict, total=False):
+    """
+    TypedDict representing a note record to be upserted into Supabase.
+    All fields are optional to support partial updates.
+    """
+    id: str
+    title: str
+    body: str
+    metadata: Dict[str, Any]
+    embedding: List[float]
+
+
+class SupabaseExecuteResponse(Protocol):
+    """
+    Protocol for the response object returned by .execute().
+    Must expose .data and .error attributes.
+    """
+    data: Any
+    error: Optional[str]
+
+
+class SupabaseClientInterface(Protocol):
+    """
+    Protocol for the injected Supabase client.
+    Must support .table(name) → TableQuery.
+    """
+    def table(self, name: str) -> "TableQuery": ...
+
+
+class TableQuery(Protocol):
+    """
+    Protocol for the object returned by .table().
+    Must support .upsert(record) → Executable.
+    """
+    def upsert(self, record: NoteRecord) -> "Executable": ...
+
+
+class Executable(Protocol):
+    """
+    Protocol for the object returned by .upsert().
+    Must support .execute() → SupabaseExecuteResponse.
+    """
+    def execute(self) -> SupabaseExecuteResponse: ...
+
+
+# -------------------------
+# Minimal Supabase client wrapper for local testing
+# -------------------------
+
 class SupabaseClient:
     """
-    Minimal wrapper used for local testing. Expects an injected `client`
-    that implements table(name).upsert(record).execute().
+    A minimal wrapper around an injected Supabase-like client.
+
+    This class is designed for local testing and testability. It expects a client that implements
+    the method chain: .table(name).upsert(record).execute(), and provides a single method to
+    upsert a note with an embedding.
+
+    In production, this wrapper can be extended to include authentication, retries, logging, etc.
     """
 
-    def __init__(self, client: Optional[Any] = None):
-        # Store the injected client (DummyClient in tests or real client in prod)
+    def __init__(self, client: Optional[SupabaseClientInterface] = None):
+        """
+        Initialize the SupabaseClient with an optional injected client.
+
+        Args:
+            client: An object that implements the SupabaseClientInterface.
+        """
         self.client = client
 
     def upsert_note_with_embedding(
@@ -58,41 +116,57 @@ class SupabaseClient:
         table: str = "notes",
     ) -> Any:
         """
-        Compute an embedding for `body`, build a record, and upsert it into
-        the provided table via the injected client.
+        Compute an embedding for the note body and upsert the note into the specified Supabase table.
 
-        Returns the .data attribute from the client's execute() response.
-        Raises RuntimeError if no client is provided or if the client returns an error.
+        Args:
+            title: The note title.
+            body: The note body (required for embedding).
+            metadata: Optional metadata dictionary.
+            id: Optional note ID (used to enforce upsert behavior).
+            table: The Supabase table name (default: "notes").
+
+        Returns:
+            The .data attribute from the Supabase response.
+
+        Raises:
+            ValueError: If body is empty.
+            RuntimeError: If no client is provided or if the Supabase response contains an error.
         """
-        # Basic validation to avoid computing embeddings for empty content.
         if not body:
             raise ValueError("body must be provided")
 
-        # Compute embedding using the deterministic stub.
+        # Generate a deterministic embedding for the note body.
         emb = compute_embedding(body)
 
-        # Construct the record payload. Keep metadata default to an empty dict.
-        record = {
+        # Construct the record to be upserted.
+        record: NoteRecord = {
             "title": title,
             "body": body,
             "metadata": metadata or {},
             "embedding": emb,
         }
 
-        # Optionally include an id if provided.
         if id:
             record["id"] = id
 
-        # Ensure a client was injected; tests inject a DummyClient.
         if not self.client:
             raise RuntimeError("No client provided to SupabaseClient")
 
-        # Call the client's upsert path and execute the request.
+        # Perform the upsert operation via the injected client.
         resp = self.client.table(table).upsert(record).execute()
 
-        # If the client returned an error attribute, raise an exception.
+        # Raise an error if the response contains an error field.
         if getattr(resp, "error", None):
             raise RuntimeError(f"Upsert error: {resp.error}")
 
-        # Return the data payload (expected to be a list of records).
         return resp.data
+
+
+# -------------------------
+# Optional: Export a default SupabaseClient instance
+# -------------------------
+
+# This allows other modules to do:
+#   from supabase_client import supabase
+# and use it directly, assuming a real client is injected here in production.
+supabase: Optional[SupabaseClient] = None
