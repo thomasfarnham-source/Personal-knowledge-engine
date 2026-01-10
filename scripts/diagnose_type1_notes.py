@@ -2,6 +2,7 @@ from pathlib import Path
 
 SYNC_DIR = Path(r"C:\Users\thoma\OneDrive\Apps\Joplin")
 
+
 def scan_type1_candidates():
     type1_files = []
     for md_file in SYNC_DIR.rglob("*.md"):
@@ -15,6 +16,7 @@ def scan_type1_candidates():
         except Exception as e:
             print(f"⚠️ Error reading {md_file}: {e}")
     return type1_files
+
 
 if __name__ == "__main__":
     candidates = scan_type1_candidates()

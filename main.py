@@ -1,15 +1,18 @@
 from fastapi import FastAPI
-from supabase_client import supabase # Import Supabase client
+from supabase_client import supabase  # Import Supabase client
 
 app = FastAPI()
+
 
 @app.get("/")
 def read_root():
     return {"message": "Hello, FastAPI is live!"}
 
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
 
 # Route to test Supabase connectivity
 @app.get("/db-test")

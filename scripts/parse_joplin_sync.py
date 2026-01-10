@@ -11,6 +11,7 @@ from pathlib import Path
 SYNC_DIR = Path(r"C:\Users\thoma\OneDrive\Apps\Joplin")
 RESOURCE_DIR = SYNC_DIR / ".resource"
 
+
 # === MEMORY MONITORING ===
 def print_memory_usage(label=""):
     """
@@ -21,16 +22,19 @@ def print_memory_usage(label=""):
     mem_mb = process.memory_info().rss / (1024 * 1024)
     print(f"🧠 Memory usage {label}: {mem_mb:.2f} MB")
 
+
 # === FILE LOADERS ===
 def load_json(path):
     """Load a JSON file and return its contents as a Python dictionary."""
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
+
 def load_markdown(path):
     """Load a Markdown (.md) file and return its full text as a string."""
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
+
 
 # === NOTE CLASSIFICATION ===
 def is_note_like_type_1(md_text):
@@ -38,7 +42,12 @@ def is_note_like_type_1(md_text):
     Heuristic to detect Evernote-imported notes (type_: 1) that lack front matter.
     These notes typically contain 'id:', 'created_time:', and 'source: evernote'.
     """
-    return "id: " in md_text and "created_time: " in md_text and "source: evernote" in md_text
+    return (
+        "id: " in md_text
+        and "created_time: " in md_text
+        and "source: evernote" in md_text
+    )
+
 
 # === EXTENSION RESOLUTION ===
 def resolve_extension(mime_type):
@@ -47,6 +56,7 @@ def resolve_extension(mime_type):
     """
     ext = mimetypes.guess_extension(mime_type)
     return ext if ext else ""
+
 
 # === RESOURCE METADATA LOADER ===
 def load_resource_metadata(sync_dir):
@@ -63,11 +73,12 @@ def load_resource_metadata(sync_dir):
             if rid and mime:
                 resource_meta[rid] = {
                     "mime": mime,
-                    "extension": resolve_extension(mime)
+                    "extension": resolve_extension(mime),
                 }
         except Exception as e:
             print(f"⚠️ Failed to parse {meta_file.name}: {e}")
     return resource_meta
+
 
 # === RESOURCE LINK EXTRACTOR ===
 def extract_resource_links(markdown_body):
@@ -75,7 +86,8 @@ def extract_resource_links(markdown_body):
     Extract resource IDs from Markdown links like ![](:/resource_id).
     Returns a list of 32-character hex strings.
     """
-    return re.findall(r'\(:/([a-f0-9]{32})\)', markdown_body)
+    return re.findall(r"\(:/([a-f0-9]{32})\)", markdown_body)
+
 
 # === TYPE 2 NOTE PARSER ===
 def parse_front_matter(md_text):
@@ -96,6 +108,7 @@ def parse_front_matter(md_text):
             body_lines.append(line)
     meta["body"] = "\n".join(body_lines).strip()
     return meta
+
 
 # === TYPE 1 EVERNOTE NOTE PARSER ===
 def parse_evernote_note(md_text):
@@ -135,6 +148,7 @@ def parse_evernote_note(md_text):
     meta["body"] = body
     return meta
 
+
 # === NOTE INGESTION ===
 def ingest_notes(sync_dir, resource_info):
     """
@@ -167,7 +181,7 @@ def ingest_notes(sync_dir, resource_info):
             {
                 "id": rid,
                 "extension": resource_info.get(rid, {}).get("extension", ""),
-                "mime": resource_info.get(rid, {}).get("mime", "")
+                "mime": resource_info.get(rid, {}).get("mime", ""),
             }
             for rid in meta["resource_links"]
         ]
@@ -178,6 +192,7 @@ def ingest_notes(sync_dir, resource_info):
     print(f"📗 Parsed {type1_count} Evernote notes")
     print(f"🚫 Skipped {skipped} files")
     return notes
+
 
 # === MAIN EXECUTION ===
 if __name__ == "__main__":

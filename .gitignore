@@ -48,5 +48,5 @@ build/
 # -------------------------
 # Optional: examples and templates
 # -------------------------
-# Keep an example env file (without secrets) in the repo to document required vars.
-.env.example
+# Keep an example env file (without secrets) in the repo to document required vars. - commented for 1/10 Git test 
+# .env.example

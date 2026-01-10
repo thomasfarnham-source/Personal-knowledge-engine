@@ -1,17 +1,18 @@
 import os
 
+
 # Function to classify all .md files in the Joplin sync folder by their type_
 def classify_joplin_files(sync_dir):
     # Initialize counters for each known Joplin type and special cases
     counts = {
-        "type_1_folder": 0,            # Standard folders (notebooks)
-        "type_2_note": 0,              # True notes
-        "type_4_resource": 0,          # Resource metadata (PDFs, images, etc.)
-        "type_5_tag": 0,               # Tag definitions
-        "type_6_note_tag": 0,          # Note–tag relationships
-        "type_13_note_resource": 0,    # Note–resource relationships
-        "unknown": 0,                  # Files with no recognizable type_
-        "note_like_type_1": 0,         # Legacy Evernote notes misclassified as folders
+        "type_1_folder": 0,  # Standard folders (notebooks)
+        "type_2_note": 0,  # True notes
+        "type_4_resource": 0,  # Resource metadata (PDFs, images, etc.)
+        "type_5_tag": 0,  # Tag definitions
+        "type_6_note_tag": 0,  # Note–tag relationships
+        "type_13_note_resource": 0,  # Note–resource relationships
+        "unknown": 0,  # Files with no recognizable type_
+        "note_like_type_1": 0,  # Legacy Evernote notes misclassified as folders
     }
 
     # Loop through all .md files in the sync folder
@@ -29,7 +30,16 @@ def classify_joplin_files(sync_dir):
                     counts["type_2_note"] += 1
                 elif "type_: 1" in content:
                     # Heuristic: treat as note if it has Evernote-like metadata or URLs
-                    if any(k in content.lower() for k in ["source: evernote", "source_application: net.cozic.joplin", "source_url:", "http://", "https://"]):
+                    if any(
+                        k in content.lower()
+                        for k in [
+                            "source: evernote",
+                            "source_application: net.cozic.joplin",
+                            "source_url:",
+                            "http://",
+                            "https://",
+                        ]
+                    ):
                         counts["note_like_type_1"] += 1
                     else:
                         counts["type_1_folder"] += 1
@@ -51,6 +61,7 @@ def classify_joplin_files(sync_dir):
     for k, v in counts.items():
         print(f"{k:22}: {v}")
 
+
 # Function to summarize the contents of the .resource folder (attachments)
 def summarize_resource_folder(resource_dir):
     total = 0
@@ -66,6 +77,7 @@ def summarize_resource_folder(resource_dir):
     print(f"Total files: {total}")
     for ext, count in sorted(by_ext.items()):
         print(f"{ext or '[no extension]':10}: {count}")
+
 
 # 🔧 Update these paths to match your local setup
 sync_folder = r"C:\Users\thoma\OneDrive\Apps\Joplin"
