@@ -211,6 +211,6 @@ if __name__ == "__main__":
     # -------------------------------
     if not (args.list or args.preview or args.upsert or args.search):
         print(
-    "ℹ️ No action specified. Use --list, --preview, --upsert, or "
-    "--search to operate on notes."
-)
+            "ℹ️ No action specified. Use --list, --preview, --upsert, or "
+            "--search to operate on notes."
+        )

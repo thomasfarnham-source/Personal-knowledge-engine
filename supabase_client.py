@@ -158,9 +158,7 @@ class SupabaseClient:
             record["id"] = id
 
         if not self.client:
-            raise RuntimeError(
-                "No client provided to SupabaseClient"
-            )
+            raise RuntimeError("No client provided to SupabaseClient")
 
         # Perform the upsert operation via the injected client.
         resp = self.client.table(table).upsert(record).execute()
