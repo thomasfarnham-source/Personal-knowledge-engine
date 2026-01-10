@@ -5,7 +5,7 @@
 # Usage (from project root):
 #   PYTHONPATH=. python test_supabase_client_stub.py
 #
-# The script imports SupabaseClient and compute_embedding from supabase_client
+# The script imports SupabaseClient from supabase_client
 # (so ensure supabase_client.py is in the project root).
 
 import sys
@@ -15,7 +15,7 @@ from typing import Any
 # Ensure project root is on sys.path so `from supabase_client import ...` works
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 
-from supabase_client import SupabaseClient, compute_embedding
+from supabase_client import SupabaseClient
 
 
 class DummyClient:

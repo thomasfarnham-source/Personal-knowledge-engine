@@ -6,7 +6,6 @@ import psutil
 from pathlib import Path
 from typing import Any
 
-
 # === CONFIGURATION ===
 # Define the path to your Joplin sync directory.
 # This is where all your .md note files and .resource files live.
@@ -223,4 +222,5 @@ if __name__ == "__main__":
 
     # Step 4: Export all parsed notes to JSON
     # This will overwrite 'parsed_notes.json' on each run
-    output
+    with open("parsed_notes.json", "w", encoding="utf-8") as f:
+        json.dump(notes, f, indent=2, ensure_ascii=False)

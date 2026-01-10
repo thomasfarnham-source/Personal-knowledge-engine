@@ -6,7 +6,6 @@
 
 import sys
 import pathlib
-import pytest
 
 # Ensure the project root is on sys.path so we can import modules directly
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
@@ -18,7 +17,6 @@ from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 # -------------------------
 # Test: Upsert behavior
 # -------------------------
-
 
 def test_upsert_note_with_embedding_returns_record_and_embedding_length():
     """
@@ -57,7 +55,6 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length():
 # -------------------------
 # Test: Embedding determinism
 # -------------------------
-
 
 def test_compute_embedding_is_deterministic():
     """
