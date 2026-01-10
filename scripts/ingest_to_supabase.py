@@ -14,6 +14,7 @@ import json
 import argparse
 from pathlib import Path
 from datetime import datetime
+from typing import Any
 from supabase_client import supabase  # Assumes you have a configured Supabase client
 
 # -------------------------
@@ -51,6 +52,9 @@ if args.reset:
         print("❌ Reset cancelled. No data was deleted.")
         exit(0)
 
+    if supabase is None:
+        raise RuntimeError("Supabase client is not configured")
+
     # Delete all rows where id is not empty; adjust predicate if your PK differs
     print("🧹 Clearing existing notes from Supabase...")
     supabase.table("notes").delete().neq("id", "").execute()
@@ -66,7 +70,7 @@ if not parsed_path.exists():
     )
 
 with open(parsed_path, "r", encoding="utf-8") as f:
-    notes = json.load(f)
+    notes: list[dict[str, Any]] = json.load(f)
 
 # Apply the --limit flag if provided so we only process the first N notes.
 if args.limit:
@@ -81,7 +85,7 @@ else:
 # Ingest loop
 # -------------------------
 success_count = 0  # Number of successful upserts (only incremented on real writes)
-failures = []  # Collect (note_id, error_message) tuples for debugging
+failures: list[dict[str, str]] = []  # Collect (note_id, error_message) for debugging
 start_time = datetime.utcnow().isoformat() + "Z"  # ISO timestamp for run metadata
 
 for note in notes:
@@ -113,13 +117,15 @@ for note in notes:
                 f"🧪 [Dry Run] Would upsert note: {payload['id']} — {payload['title']}"
             )
         else:
+            if supabase is None:
+                raise RuntimeError("Supabase client is not configured")
             # Perform the upsert into Supabase. This will insert or update based on primary key.
             supabase.table("notes").upsert(payload).execute()
             success_count += 1
 
     except Exception as e:
         # Catch exceptions so one bad note doesn't stop the entire run.
-        failures.append({"id": note.get("id"), "error": str(e)})
+        failures.append({"id": note.get("id", "unknown"), "error": str(e)})
 
 # -------------------------
 # Summary and reporting

@@ -37,6 +37,7 @@ class DummyExecuteResponse:
         data: The simulated response payload (typically a list of records).
         error: Optional error message to simulate failure cases.
     """
+
     def __init__(self, data: Any = None, error: Optional[str] = None):
         self.data = data
         self.error = error
@@ -49,6 +50,7 @@ class DummyExecutable(Executable):
     This class is returned by DummyTableQuery.upsert() and holds the record
     to be "upserted". When .execute() is called, it returns a DummyExecuteResponse.
     """
+
     def __init__(self, record: NoteRecord):
         self.record = record
 
@@ -64,6 +66,7 @@ class DummyTableQuery(TableQuery):
     This class is returned by DummyClient.table(name) and stores the last
     upserted record for inspection in tests.
     """
+
     def __init__(self, table_name: str):
         self.table_name = table_name
         self.last_upserted: Optional[NoteRecord] = None
@@ -83,6 +86,7 @@ class DummyClient(SupabaseClientInterface):
     This class is injected into SupabaseClient during tests to avoid real
     network calls and enable deterministic behavior.
     """
+
     def __init__(self):
         # Store table-specific mocks for inspection or reuse
         self.tables: Dict[str, DummyTableQuery] = {}

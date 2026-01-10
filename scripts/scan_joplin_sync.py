@@ -1,10 +1,11 @@
 import os
+from typing import Dict
 
 
 # Function to classify all .md files in the Joplin sync folder by their type_
-def classify_joplin_files(sync_dir):
+def classify_joplin_files(sync_dir: str) -> None:
     # Initialize counters for each known Joplin type and special cases
-    counts = {
+    counts: Dict[str, int] = {
         "type_1_folder": 0,  # Standard folders (notebooks)
         "type_2_note": 0,  # True notes
         "type_4_resource": 0,  # Resource metadata (PDFs, images, etc.)
@@ -63,9 +64,9 @@ def classify_joplin_files(sync_dir):
 
 
 # Function to summarize the contents of the .resource folder (attachments)
-def summarize_resource_folder(resource_dir):
+def summarize_resource_folder(resource_dir: str) -> None:
     total = 0
-    by_ext = {}  # Count by file extension
+    by_ext: Dict[str, int] = {}  # Count by file extension
 
     for filename in os.listdir(resource_dir):
         total += 1

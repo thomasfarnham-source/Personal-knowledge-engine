@@ -4,6 +4,8 @@ import re
 import mimetypes
 import psutil
 from pathlib import Path
+from typing import Any
+
 
 # === CONFIGURATION ===
 # Define the path to your Joplin sync directory.
@@ -13,7 +15,7 @@ RESOURCE_DIR = SYNC_DIR / ".resource"
 
 
 # === MEMORY MONITORING ===
-def print_memory_usage(label=""):
+def print_memory_usage(label: str = "") -> None:
     """
     Print current memory usage in MB with a label.
     Useful for tracking memory growth during ingestion.
@@ -24,20 +26,20 @@ def print_memory_usage(label=""):
 
 
 # === FILE LOADERS ===
-def load_json(path):
+def load_json(path: Path) -> dict[str, Any]:
     """Load a JSON file and return its contents as a Python dictionary."""
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def load_markdown(path):
+def load_markdown(path: Path) -> str:
     """Load a Markdown (.md) file and return its full text as a string."""
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
 
 # === NOTE CLASSIFICATION ===
-def is_note_like_type_1(md_text):
+def is_note_like_type_1(md_text: str) -> bool:
     """
     Heuristic to detect Evernote-imported notes (type_: 1) that lack front matter.
     These notes typically contain 'id:', 'created_time:', and 'source: evernote'.
@@ -50,7 +52,7 @@ def is_note_like_type_1(md_text):
 
 
 # === EXTENSION RESOLUTION ===
-def resolve_extension(mime_type):
+def resolve_extension(mime_type: str) -> str:
     """
     Given a MIME type (e.g., 'image/png'), return the corresponding file extension (e.g., '.png').
     """
@@ -59,12 +61,12 @@ def resolve_extension(mime_type):
 
 
 # === RESOURCE METADATA LOADER ===
-def load_resource_metadata(sync_dir):
+def load_resource_metadata(sync_dir: Path) -> dict[str, dict[str, str]]:
     """
     Load all .resource-*.md metadata files and return a dictionary:
     { resource_id: { 'mime': ..., 'extension': ... } }
     """
-    resource_meta = {}
+    resource_meta: dict[str, dict[str, str]] = {}
     for meta_file in sync_dir.glob(".resource-*.md"):
         try:
             meta = load_json(meta_file)
@@ -81,7 +83,7 @@ def load_resource_metadata(sync_dir):
 
 
 # === RESOURCE LINK EXTRACTOR ===
-def extract_resource_links(markdown_body):
+def extract_resource_links(markdown_body: str) -> list[str]:
     """
     Extract resource IDs from Markdown links like ![](:/resource_id).
     Returns a list of 32-character hex strings.
@@ -90,13 +92,13 @@ def extract_resource_links(markdown_body):
 
 
 # === TYPE 2 NOTE PARSER ===
-def parse_front_matter(md_text):
+def parse_front_matter(md_text: str) -> dict[str, Any]:
     """
     Parse YAML-style front matter from type_: 2 notes.
     Returns a dictionary with metadata and a 'body' field.
     """
     lines = md_text.splitlines()
-    meta = {}
+    meta: dict[str, Any] = {}
     body_lines = []
     in_meta = True
     for line in lines:
@@ -111,7 +113,7 @@ def parse_front_matter(md_text):
 
 
 # === TYPE 1 EVERNOTE NOTE PARSER ===
-def parse_evernote_note(md_text):
+def parse_evernote_note(md_text: str) -> dict[str, Any]:
     """
     Parse Evernote-imported type_: 1 notes.
     - Title = first non-empty line
@@ -119,7 +121,7 @@ def parse_evernote_note(md_text):
     - Metadata = lines starting with 'id:'
     """
     lines = md_text.splitlines()
-    meta = {}
+    meta: dict[str, Any] = {}
     content_lines = []
     metadata_lines = []
 
@@ -150,14 +152,16 @@ def parse_evernote_note(md_text):
 
 
 # === NOTE INGESTION ===
-def ingest_notes(sync_dir, resource_info):
+def ingest_notes(
+    sync_dir: Path, resource_info: dict[str, dict[str, str]]
+) -> list[dict[str, Any]]:
     """
     Scan all .md files in the sync folder and subfolders.
     - Parse type_: 2 notes with front matter
     - Parse type_: 1 Evernote notes with inferred structure
     - Extract resource links and enrich with MIME/extension
     """
-    notes = []
+    notes: list[dict[str, Any]] = []
     type1_count = 0
     type2_count = 0
     skipped = 0
@@ -219,7 +223,4 @@ if __name__ == "__main__":
 
     # Step 4: Export all parsed notes to JSON
     # This will overwrite 'parsed_notes.json' on each run
-    output_path = Path("parsed_notes.json")
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(notes, f, indent=2, ensure_ascii=False)
-    print(f"\n💾 Exported all notes to {output_path.resolve()}")
+    output
