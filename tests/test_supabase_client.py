@@ -18,6 +18,7 @@ from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 # Test: Upsert behavior
 # -------------------------
 
+
 def test_upsert_note_with_embedding_returns_record_and_embedding_length():
     """
     Verifies that SupabaseClient.upsert_note_with_embedding:
@@ -55,6 +56,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length():
 # -------------------------
 # Test: Embedding determinism
 # -------------------------
+
 
 def test_compute_embedding_is_deterministic():
     """
