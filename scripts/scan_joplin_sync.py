@@ -73,7 +73,7 @@ def summarize_resource_folder(resource_dir):
         by_ext[ext] = by_ext.get(ext, 0) + 1
 
     # Print summary of resource file types
-    print(f"\n📎 .resource Folder Summary:")
+    print("\n📎 .resource Folder Summary:")
     print(f"Total files: {total}")
     for ext, count in sorted(by_ext.items()):
         print(f"{ext or '[no extension]':10}: {count}")
