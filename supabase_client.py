@@ -124,7 +124,8 @@ class SupabaseClient:
         table: str = "notes",
     ) -> Any:
         """
-        Compute an embedding for the note body and upsert the note into the specified Supabase table.
+        Compute an embedding for the note body and upsert
+        the note into the specified Supabase table.
 
         Args:
             title: The note title.
@@ -157,8 +158,10 @@ class SupabaseClient:
         if id:
             record["id"] = id
 
-        if not self.client:
-            raise RuntimeError("No client provided to SupabaseClient")
+        raise RuntimeError(
+            "No client provided to SupabaseClient. "
+            "Please pass a valid client instance or use the default."
+        )
 
         # Perform the upsert operation via the injected client.
         resp = self.client.table(table).upsert(record).execute()

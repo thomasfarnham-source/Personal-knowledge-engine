@@ -1,0 +1,12 @@
+# pyproject.toml
+# This file configures Python tools like Black, isort, mypy, etc.
+# It should be placed at the root of your project.
+
+[tool.black]
+# Set the maximum allowed line length for code formatting.
+# This ensures compatibility with flake8's default line-length limit of 100 characters.
+line-length = 100
+
+# Optional: You can also add these if you want Black to skip string normalization or trailing commas
+# skip-string-normalization = true
+# skip-magic-trailing-comma = true

@@ -83,9 +83,7 @@ def upsert_note(note: dict[str, Any]) -> None:
         note: A dictionary representing a parsed note.
     """
     if supabase is None:
-        raise RuntimeError(
-            "Supabase client is not configured. Check supabase_client.py."
-        )
+        raise RuntimeError("Supabase client is not configured. Check supabase_client.py.")
 
     payload = {
         "id": note["id"],
@@ -101,9 +99,7 @@ def upsert_note(note: dict[str, Any]) -> None:
     print("✅ Upsert complete")
 
 
-def search_notes(
-    notes: list[dict[str, Any]], keyword: str
-) -> list[tuple[int, dict[str, Any]]]:
+def search_notes(notes: list[dict[str, Any]], keyword: str) -> list[tuple[int, dict[str, Any]]]:
     """
     Search for notes containing the keyword in the title or body.
 
@@ -130,26 +126,20 @@ if __name__ == "__main__":
     # -------------------------------
     # CLI Argument Parsing
     # -------------------------------
-    parser = argparse.ArgumentParser(
-        description="Preview, list, search, or upsert parsed notes"
-    )
+    parser = argparse.ArgumentParser(description="Preview, list, search, or upsert parsed notes")
 
     parser.add_argument(
         "--list", action="store_true", help="List all parsed note titles with indexes"
     )
     parser.add_argument("--preview", action="store_true", help="Preview a parsed note")
-    parser.add_argument(
-        "--upsert", action="store_true", help="Upsert a parsed note to Supabase"
-    )
+    parser.add_argument("--upsert", action="store_true", help="Upsert a parsed note to Supabase")
     parser.add_argument(
         "--note",
         type=int,
         default=0,
         help="Index of note to preview or upsert (default: 0)",
     )
-    parser.add_argument(
-        "--search", type=str, help="Search notes by keyword in title or body"
-    )
+    parser.add_argument("--search", type=str, help="Search notes by keyword in title or body")
 
     args = parser.parse_args()
 
@@ -185,9 +175,7 @@ if __name__ == "__main__":
     # Validate note index
     # -------------------------------
     if args.note >= len(notes):
-        print(
-            f"⚠️ Note index {args.note} is out of range. Only {len(notes)} notes available."
-        )
+        print(f"⚠️ Note index {args.note} is out of range. Only {len(notes)} notes available.")
         exit(1)
 
     selected_note = notes[args.note]

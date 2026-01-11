@@ -19,7 +19,7 @@ Usage in tests:
     result = client.upsert_note_with_embedding(title="Test", body="Hello world!")
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from supabase_client import (
     SupabaseClientInterface,
     TableQuery,

@@ -43,11 +43,7 @@ def is_note_like_type_1(md_text: str) -> bool:
     Heuristic to detect Evernote-imported notes (type_: 1) that lack front matter.
     These notes typically contain 'id:', 'created_time:', and 'source: evernote'.
     """
-    return (
-        "id: " in md_text
-        and "created_time: " in md_text
-        and "source: evernote" in md_text
-    )
+    return "id: " in md_text and "created_time: " in md_text and "source: evernote" in md_text
 
 
 # === EXTENSION RESOLUTION ===
@@ -151,9 +147,7 @@ def parse_evernote_note(md_text: str) -> dict[str, Any]:
 
 
 # === NOTE INGESTION ===
-def ingest_notes(
-    sync_dir: Path, resource_info: dict[str, dict[str, str]]
-) -> list[dict[str, Any]]:
+def ingest_notes(sync_dir: Path, resource_info: dict[str, dict[str, str]]) -> list[dict[str, Any]]:
     """
     Scan all .md files in the sync folder and subfolders.
     - Parse type_: 2 notes with front matter
