@@ -4,12 +4,6 @@
 # Run from project root:
 #   pytest -q
 
-import sys
-import pathlib
-
-# Ensure the project root is on sys.path so we can import modules directly
-sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent))
-
 from supabase_client import SupabaseClient, compute_embedding
 from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 
