@@ -1,5 +1,7 @@
 # pyproject.toml — Centralized configuration for Python tooling
 
+# Trigger CI: no-op comment to force GitHub Actions run
+
 # -------------------------------
 # Project metadata and dependencies
 # Enables editable installs (pip install -e .) and proper import resolution
@@ -82,4 +84,16 @@ exclude = [
     ".pytest_cache",
     "build",
     "dist"
+]
+# -------------------------------
+# Optional dependencies for development and CI
+# Install with: pip install -e .[dev]
+# -------------------------------
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8",
+    "mypy",
 ]
