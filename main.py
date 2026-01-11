@@ -5,18 +5,18 @@ app = FastAPI()
 
 
 @app.get("/")
-def read_root():
+def read_root() -> None:
     return {"message": "Hello, FastAPI is live!"}
 
 
 @app.get("/health")
-def health_check():
+def health_check() -> None:
     return {"status": "ok"}
 
 
 # Route to test Supabase connectivity
 @app.get("/db-test")
-async def db_test():
+async def db_test() -> None:
     try:
         # Attempt to fetch one row from the 'documents' table
         response = supabase.table("documents").select("*").limit(1).execute()

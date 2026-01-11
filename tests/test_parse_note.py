@@ -2,7 +2,7 @@ from ingestion.parse_note import parse_note
 import os
 
 
-def test_basic():
+def test_basic() -> None:
     filepath = os.path.join(os.path.dirname(__file__), "fixtures", "real_note_1.md")
     result = parse_note(filepath)
     print("✅ Parsed real Joplin note")

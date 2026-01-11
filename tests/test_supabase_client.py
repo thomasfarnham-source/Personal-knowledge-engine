@@ -13,7 +13,7 @@ from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 # -------------------------
 
 
-def test_upsert_note_with_embedding_returns_record_and_embedding_length():
+def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> None:
     """
     Verifies that SupabaseClient.upsert_note_with_embedding:
       - returns a list with one record,
@@ -52,7 +52,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length():
 # -------------------------
 
 
-def test_compute_embedding_is_deterministic():
+def test_compute_embedding_is_deterministic() -> None:
     """
     Ensures the local embedding stub is deterministic:
       - same input => identical vectors

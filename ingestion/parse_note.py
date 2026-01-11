@@ -44,7 +44,7 @@ def parse_note(filepath: str) -> dict:
     }
 
 
-def _parse_timestamp(ts):
+def _parse_timestamp(ts) -> None:
     if ts is None:
         return None
     try:

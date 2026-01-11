@@ -87,7 +87,7 @@ class DummyClient(SupabaseClientInterface):
     network calls and enable deterministic behavior.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Store table-specific mocks for inspection or reuse
         self.tables: Dict[str, DummyTableQuery] = {}
 

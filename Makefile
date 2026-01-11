@@ -1,7 +1,12 @@
 # Makefile — Automates local development tasks like formatting, linting, type checking, and testing
 
 # Declare these targets as phony (not actual files)
-.PHONY: check lint format test type
+.PHONY: check lint format test type fix
+
+# Auto-fix formatting issues using black and isort
+fix:
+	black .
+	isort .
 
 # Run all checks in sequence: format, lint, type check, and tests
 check: format lint type test
