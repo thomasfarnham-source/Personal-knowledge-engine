@@ -4,14 +4,15 @@
 # Run from project root:
 #   pytest -q
 
-from supabase_client import SupabaseClient, compute_embedding
+from typing import List
+import pytest
+from supabase_client import SupabaseClient, compute_embedding, NoteRecord
 from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 
 
 # -------------------------
-# Test: Upsert behavior
+# Test: Successful upsert
 # -------------------------
-
 
 def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> None:
     """
@@ -20,37 +21,31 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
       - preserves title, body, and metadata fields,
       - attaches a 1536-dimensional embedding vector.
     """
-    # Inject the dummy client to avoid real network calls
     client = SupabaseClient(client=DummyClient())
 
-    # Define test input
     title = "Unit Test"
     body = "unit test body"
     metadata = {"test": True}
 
-    # Call the method under test
-    res = client.upsert_note_with_embedding(title=title, body=body, metadata=metadata)
+    res: List[NoteRecord] = client.upsert_note_with_embedding(title=title, body=body, metadata=metadata)
 
-    # Validate response structure
-    assert isinstance(res, list), "response should be a list"
-    assert len(res) == 1, "response should contain exactly one record"
+    assert isinstance(res, list)
+    assert len(res) == 1
 
     rec = res[0]
     assert rec["title"] == title
     assert rec["body"] == body
     assert rec["metadata"] == metadata
 
-    # Validate embedding
     emb = rec.get("embedding")
-    assert emb is not None, "embedding must be present in the record"
-    assert isinstance(emb, list), "embedding must be a list"
-    assert len(emb) == 1536, "embedding must be 1536-dimensional"
+    assert emb is not None
+    assert isinstance(emb, list)
+    assert len(emb) == 1536
 
 
 # -------------------------
 # Test: Embedding determinism
 # -------------------------
-
 
 def test_compute_embedding_is_deterministic() -> None:
     """
@@ -64,3 +59,27 @@ def test_compute_embedding_is_deterministic() -> None:
 
     assert a == b, "compute_embedding should be deterministic for identical input"
     assert a != c, "different inputs should produce different embeddings"
+
+
+# -------------------------
+# Test: Error handling
+# -------------------------
+
+def test_upsert_note_with_embedding_raises_on_empty_body() -> None:
+    """
+    Ensures that calling upsert_note_with_embedding with an empty body raises ValueError.
+    """
+    client = SupabaseClient(client=DummyClient())
+
+    with pytest.raises(ValueError, match="body must be provided"):
+        client.upsert_note_with_embedding(title="Missing Body", body="")
+
+
+def test_upsert_note_with_embedding_raises_if_client_is_none() -> None:
+    """
+    Ensures that calling upsert_note_with_embedding without a client raises RuntimeError.
+    """
+    client = SupabaseClient(client=None)
+
+    with pytest.raises(RuntimeError, match="No client provided to SupabaseClient"):
+        client.upsert_note_with_embedding(title="No Client", body="test body")

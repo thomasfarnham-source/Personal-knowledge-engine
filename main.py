@@ -1,26 +1,22 @@
 from fastapi import FastAPI
-from supabase_client import supabase  # Import Supabase client
+from supabase_client import supabase
 
 app = FastAPI()
 
-
 @app.get("/")
-def read_root() -> None:
+def read_root() -> dict:
     return {"message": "Hello, FastAPI is live!"}
 
-
 @app.get("/health")
-def health_check() -> None:
+def health_check() -> dict:
     return {"status": "ok"}
 
-
-# Route to test Supabase connectivity
 @app.get("/db-test")
-async def db_test() -> None:
+async def db_test() -> dict:
+    if supabase is None:
+        return {"status": "error", "message": "Supabase client not initialized"}
     try:
-        # Attempt to fetch one row from the 'documents' table
         response = supabase.table("documents").select("*").limit(1).execute()
         return {"status": "success", "data": response.data}
     except Exception as e:
-        # Return the error message if something goes wrong
         return {"status": "error", "message": str(e)}

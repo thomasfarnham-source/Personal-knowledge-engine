@@ -1,17 +1,20 @@
-
-
-# Contributing
+Contributing
 
 Thank you for contributing. This document explains the minimal workflow and checks we expect before opening a pull request.
 
-## Branching
-- **Create a feature branch** per change: `git checkout -b feat/short-description`.
-- Keep commits small and focused.
+Branching
 
-## Local checks before commit
-1. **Run unit tests for changed area** (fast, targeted):
-   ```bash
-   PYTHONPATH=. python -m pytest -q tests/test_supabase_client.py
+Create a feature branch per change:
+
+git checkout -b feat/short-description
+
+Keep commits small and focused.
+
+Local checks before commit
+
+Run unit tests for changed area (fast, targeted):
+
+PYTHONPATH=. python -m pytest -q tests/test_supabase_client.py
 
 Run full test suite before pushing:
 
@@ -35,9 +38,9 @@ git diff --staged
 
 Commit message style
 
-Title: imperative, short (50 chars or less).
+Title: imperative, short (50 chars or less)
 
-Body: explain why, not what; reference issue IDs if any.
+Body: explain why, not what; reference issue IDs if any
 
 Example:
 
@@ -68,16 +71,36 @@ Add unit tests for new behavior and edge cases.
 
 Keep tests deterministic and avoid network calls by using stubs or mocks.
 
+🛠 Local development workflow
+
+This project uses a Makefile to streamline formatting, linting, type checking, and testing. Once you’ve cloned the repo and set up your environment, you can use the following commands:
+
+🔧 Formatting & Linting
+
+make format — Format all Python files using black
+
+make lint — Lint code using flake8 to catch style issues and simple bugs
+
+make fix — Auto-fix formatting issues using black and isort
+
+🧪 Testing & Type Checking
+
+make test — Run all unit tests using pytest
+
+make type — Run static type checks using mypy
+
+✅ Full Pre-Commit Check
+
+make check — Run all of the above in sequence: format, lint, type check, and tests
+
+💡 Tip: Run make or make help to see available targets.
+
 Contact
 
 For questions about workflow or CI, open an issue or ping the repo maintainers.
 
+COMMIT_CHECKLIST.md
 
----
-
-### COMMIT_CHECKLIST.md
-
-```markdown
 # Commit Checklist
 
 Use this checklist before committing and pushing.
@@ -93,5 +116,3 @@ Use this checklist before committing and pushing.
 - [ ] Commit message follows style guidelines
 - [ ] PR opened with description and testing notes
 - [ ] CI passing on PR before merge
-
-I can add a ready-to-use GitHub Actions workflow that runs tests and linters on push and PRs.

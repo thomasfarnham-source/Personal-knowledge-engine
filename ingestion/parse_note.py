@@ -2,9 +2,10 @@ import os
 import re
 import frontmatter
 from datetime import datetime
+from typing import Optional, Any, Dict
 
 
-def parse_note(filepath: str) -> dict:
+def parse_note(filepath: str) -> Dict[str, Any]:
     """
     Parses a Joplin-exported .md file and returns a structured dictionary.
     """
@@ -12,17 +13,17 @@ def parse_note(filepath: str) -> dict:
     note_id = os.path.splitext(os.path.basename(filepath))[0]
 
     # Extract metadata
-    title = post.get("title", "")
-    body = post.content
+    title: str = post.get("title", "")
+    body: str = post.content
     created_at = _parse_timestamp(post.get("created_time"))
     updated_at = _parse_timestamp(post.get("updated_time"))
     deleted_time = _parse_timestamp(post.get("deleted_time"))
     user_created_time = _parse_timestamp(post.get("user_created_time"))
     user_updated_time = _parse_timestamp(post.get("user_updated_time"))
-    is_conflict = post.get("is_conflict", 0) == 1
-    source = post.get("source")
-    source_application = post.get("source_application")
-    markup_language = post.get("markup_language", 1)
+    is_conflict: bool = post.get("is_conflict", 0) == 1
+    source: Optional[str] = post.get("source")
+    source_application: Optional[str] = post.get("source_application")
+    markup_language: int = post.get("markup_language", 1)
 
     # Extract resource IDs from body
     resource_ids = re.findall(r":/([a-f0-9]{32})", body)
@@ -44,7 +45,11 @@ def parse_note(filepath: str) -> dict:
     }
 
 
-def _parse_timestamp(ts) -> None:
+def _parse_timestamp(ts: Any) -> Optional[datetime]:
+    """
+    Converts a Joplin timestamp (milliseconds since epoch) to a datetime object.
+    Returns None if the input is None or invalid.
+    """
     if ts is None:
         return None
     try:

@@ -1,7 +1,7 @@
 """
-DummyClient for local testing of SupabaseClient.
+DummyClient and FailingClient for local testing of SupabaseClient.
 
-This module defines a fully typed, in-memory mock of the Supabase client chain:
+This module defines fully typed, in-memory mocks of the Supabase client chain:
     client.table(name).upsert(record).execute()
 
 It is used in conjunction with `supabase_client.py` to test the behavior of
@@ -13,7 +13,7 @@ Place this file in:
 
 Usage in tests:
     from supabase_client import SupabaseClient
-    from tests.dummy_supabase import DummyClient
+    from tests.dummy_supabase import DummyClient, FailingClient
 
     client = SupabaseClient(client=DummyClient())
     result = client.upsert_note_with_embedding(title="Test", body="Hello world!")
@@ -28,6 +28,10 @@ from supabase_client import (
     SupabaseExecuteResponse,
 )
 
+
+# -------------------------
+# DummyClient: Simulates successful upserts
+# -------------------------
 
 class DummyExecuteResponse:
     """
@@ -55,7 +59,6 @@ class DummyExecutable(Executable):
         self.record = record
 
     def execute(self) -> SupabaseExecuteResponse:
-        # Simulate a successful upsert by returning the record in a list
         return DummyExecuteResponse(data=[self.record])
 
 
@@ -72,7 +75,7 @@ class DummyTableQuery(TableQuery):
         self.last_upserted: Optional[NoteRecord] = None
 
     def upsert(self, record: NoteRecord) -> Executable:
-        self.last_upserted = record  # Store for test assertions
+        self.last_upserted = record
         return DummyExecutable(record)
 
 
@@ -88,11 +91,31 @@ class DummyClient(SupabaseClientInterface):
     """
 
     def __init__(self) -> None:
-        # Store table-specific mocks for inspection or reuse
         self.tables: Dict[str, DummyTableQuery] = {}
 
     def table(self, name: str) -> TableQuery:
-        # Return a reusable DummyTableQuery for the given table name
         if name not in self.tables:
             self.tables[name] = DummyTableQuery(name)
         return self.tables[name]
+
+
+# -------------------------
+# FailingClient: Simulates Supabase error response
+# -------------------------
+
+class FailingClient(SupabaseClientInterface):
+    """
+    A test double that simulates a Supabase client returning an error on .execute().
+    Used to test error propagation in SupabaseClient.
+    """
+
+    class FailingTable(TableQuery):
+        def upsert(self, record: NoteRecord) -> "FailingClient.FailingExecutable":
+            return FailingClient.FailingExecutable()
+
+    class FailingExecutable(Executable):
+        def execute(self) -> SupabaseExecuteResponse:
+            return type("FailingResponse", (), {"data": None, "error": "Simulated failure"})()
+
+    def table(self, name: str) -> TableQuery:
+        return FailingClient.FailingTable()
