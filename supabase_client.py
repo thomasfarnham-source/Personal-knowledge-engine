@@ -1,3 +1,18 @@
+"""
+supabase_client.py — Minimal Supabase client wrapper for local testing
+and upserting notes with embeddings.
+"""
+
+from typing import Any, Dict, Optional
+
+# Ensure this exists or adjust the import path
+from .embedding import compute_embedding
+from .types import (
+    NoteRecord,
+    SupabaseClientInterface
+)  # Adjust if these are defined elsewhere
+
+
 class SupabaseClient:
     """
     A minimal wrapper around an injected Supabase-like client.
@@ -53,8 +68,10 @@ class SupabaseClient:
                 "Please pass a valid client instance or use the default."
             )
 
+        # Generate a deterministic embedding for the note body
         emb = compute_embedding(body)
 
+        # Construct the record to be upserted
         record: NoteRecord = {
             "title": title,
             "body": body,
@@ -65,6 +82,7 @@ class SupabaseClient:
         if id:
             record["id"] = id
 
+        # Execute the upsert operation
         resp = self.client.table(table).upsert(record).execute()
 
         if getattr(resp, "error", None):

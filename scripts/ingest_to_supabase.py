@@ -10,11 +10,12 @@ Features:
 - Uses upsert so repeated runs do not create duplicates
 """
 
-import json
 import argparse
-from pathlib import Path
 from datetime import datetime
+import json
+from pathlib import Path
 from typing import Any, TextIO
+
 from supabase_client import supabase  # Assumes you have a configured Supabase client
 
 # -------------------------
@@ -109,10 +110,7 @@ for note in notes:
             success_count += 1
 
     except Exception as e:
-        failures.append({
-            "id": str(note.get("id", "unknown")),
-            "error": str(e)
-        })
+        failures.append({"id": str(note.get("id", "unknown")), "error": str(e)})
 
 # -------------------------
 # Summary and reporting
@@ -147,7 +145,8 @@ if args.log_to:
     }
 
     try:
-        with open(args.log_to, "a", encoding="utf-8") as log_file:  # type: TextIO
+        with open(args.log_to, "a", encoding="utf-8") as log_file:
+            log_file: TextIO
             log_file.write(json.dumps(run_summary, ensure_ascii=False) + "\n")
         print(f"📝 Run summary appended to {args.log_to}")
     except Exception as e:
