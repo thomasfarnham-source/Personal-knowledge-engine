@@ -14,7 +14,7 @@ import argparse
 from datetime import datetime
 import json
 from pathlib import Path
-from typing import Any, TextIO
+from typing import Any
 
 from supabase_client import supabase  # Assumes you have a configured Supabase client
 
@@ -53,7 +53,7 @@ if args.reset:
         raise RuntimeError("Supabase client is not configured")
 
     print("🧹 Clearing existing notes from Supabase...")
-    supabase.table("notes").delete().neq("id", "").execute()  # type: ignore[attr-defined]
+    supabase.table("notes").delete().neq("id", "").execute()
     print("✅ Notes table cleared")
 
 # -------------------------
@@ -63,8 +63,8 @@ parsed_path = Path("parsed_notes.json")
 if not parsed_path.exists():
     raise FileNotFoundError("parsed_notes.json not found. Run parse_joplin_sync.py first.")
 
-with open(parsed_path, "r", encoding="utf-8") as f:
-    notes: list[dict[str, Any]] = json.load(f)
+with open(parsed_path, "r", encoding="utf-8") as parsed_file:
+    notes: list[dict[str, Any]] = json.load(parsed_file)
 
 if args.limit:
     notes = notes[: args.limit]
@@ -106,7 +106,7 @@ for note in notes:
         else:
             if supabase is None:
                 raise RuntimeError("Supabase client is not configured")
-            supabase.table("notes").upsert(payload).execute()  # type: ignore[attr-defined]
+            supabase.table("notes").upsert(payload).execute()
             success_count += 1
 
     except Exception as e:
@@ -123,8 +123,8 @@ else:
 
 if failures:
     print(f"❌ {len(failures)} notes failed to ingest:")
-    for f in failures[:5]:
-        print(f"  - {f['id']}: {f['error']}")
+    for failure in failures[:5]:
+        print(f"  - {failure['id']}: {failure['error']}")
     if len(failures) > 5:
         print(f"  ...and {len(failures) - 5} more")
 
@@ -146,7 +146,6 @@ if args.log_to:
 
     try:
         with open(args.log_to, "a", encoding="utf-8") as log_file:
-            log_file: TextIO
             log_file.write(json.dumps(run_summary, ensure_ascii=False) + "\n")
         print(f"📝 Run summary appended to {args.log_to}")
     except Exception as e:
