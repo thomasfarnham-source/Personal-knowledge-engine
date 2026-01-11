@@ -1,24 +1,28 @@
-# pyproject.toml
-# Central configuration for Python tooling: Black, isort, mypy, and flake8
+# pyproject.toml — Centralized configuration for Python tooling
 
+# -------------------------------
+# Black: Code formatter
+# -------------------------------
 [tool.black]
-# Enforce consistent code formatting
-line-length = 100
+line-length = 100  # Match flake8 and isort for consistency
 # Optional: Uncomment to preserve original quote style or trailing commas
 # skip-string-normalization = true
 # skip-magic-trailing-comma = true
 
+# -------------------------------
+# isort: Import sorter
+# -------------------------------
 [tool.isort]
-# Align import sorting with Black's style to avoid conflicts
-profile = "black"
+profile = "black"  # Align with Black's style
 line_length = 100
-# Optional: Customize import grouping
-known_first_party = ["your_package_name"]  # Replace with your actual module name
+known_first_party = ["your_package_name"]  # Replace with your actual top-level module name
 combine_as_imports = true
 force_sort_within_sections = true
 
+# -------------------------------
+# mypy: Static type checker
+# -------------------------------
 [tool.mypy]
-# Enforce strict type checking with explicit flags
 python_version = "3.14"
 show_error_codes = true
 disallow_untyped_defs = true
@@ -26,14 +30,26 @@ disallow_incomplete_defs = true
 warn_unused_ignores = true
 ignore_missing_imports = true
 exclude = '(^\.venv|^venv|^\.mypy_cache|^\.pytest_cache|^build|^dist)'
-line_length = 100
 
+# Per-module overrides for third-party or local modules without type hints
+[[tool.mypy.overrides]]
+module = "fastapi"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "psutil"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "supabase_client"
+ignore_missing_imports = true
+
+# -------------------------------
+# flake8: Linter
+# -------------------------------
 [tool.flake8]
-# Match line length with Black and mypy
-max-line-length = 100
-# Ignore specific rules if needed (e.g., E203 conflicts with Black)
-extend-ignore = ["E203", "W503"]
-# Exclude common non-source folders
+max-line-length = 100  # Match Black and isort
+extend-ignore = ["E203", "W503"]  # Avoid conflicts with Black
 exclude = [
     ".venv",
     "venv",
