@@ -1,5 +1,6 @@
-from ingestion.parse_note import parse_note
 import os
+
+from ingestion.parse_note import parse_note
 
 
 def test_basic() -> None:

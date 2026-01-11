@@ -5,14 +5,16 @@
 #   pytest -q
 
 from typing import List
-import pytest
-from supabase_client import SupabaseClient, compute_embedding, NoteRecord
-from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 
+import pytest
+
+from supabase_client import NoteRecord, SupabaseClient, compute_embedding
+from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 
 # -------------------------
 # Test: Successful upsert
 # -------------------------
+
 
 def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> None:
     """
@@ -27,7 +29,9 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
     body = "unit test body"
     metadata = {"test": True}
 
-    res: List[NoteRecord] = client.upsert_note_with_embedding(title=title, body=body, metadata=metadata)
+    res: List[NoteRecord] = client.upsert_note_with_embedding(
+        title=title, body=body, metadata=metadata
+    )
 
     assert isinstance(res, list)
     assert len(res) == 1
@@ -47,6 +51,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
 # Test: Embedding determinism
 # -------------------------
 
+
 def test_compute_embedding_is_deterministic() -> None:
     """
     Ensures the local embedding stub is deterministic:
@@ -64,6 +69,7 @@ def test_compute_embedding_is_deterministic() -> None:
 # -------------------------
 # Test: Error handling
 # -------------------------
+
 
 def test_upsert_note_with_embedding_raises_on_empty_body() -> None:
     """

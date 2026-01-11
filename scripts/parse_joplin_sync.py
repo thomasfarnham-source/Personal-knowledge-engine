@@ -1,10 +1,11 @@
-import os
 import json
-import re
 import mimetypes
-import psutil
+import os
 from pathlib import Path
+import re
 from typing import Any
+
+import psutil
 
 # === CONFIGURATION ===
 # Define the path to your Joplin sync directory.

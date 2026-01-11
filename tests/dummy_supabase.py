@@ -20,18 +20,19 @@ Usage in tests:
 """
 
 from typing import Any, Dict, Optional
+
 from supabase_client import (
-    SupabaseClientInterface,
-    TableQuery,
     Executable,
     NoteRecord,
+    SupabaseClientInterface,
     SupabaseExecuteResponse,
+    TableQuery,
 )
-
 
 # -------------------------
 # DummyClient: Simulates successful upserts
 # -------------------------
+
 
 class DummyExecuteResponse:
     """
@@ -102,6 +103,7 @@ class DummyClient(SupabaseClientInterface):
 # -------------------------
 # FailingClient: Simulates Supabase error response
 # -------------------------
+
 
 class FailingClient(SupabaseClientInterface):
     """

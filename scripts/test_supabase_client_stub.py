@@ -9,6 +9,7 @@
 # (so ensure supabase_client.py is in the project root).
 
 from typing import Any
+
 from supabase_client import SupabaseClient
 
 

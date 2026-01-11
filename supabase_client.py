@@ -7,10 +7,7 @@ from typing import Any, Dict, Optional
 
 # Ensure this exists or adjust the import path
 from .embedding import compute_embedding
-from .types import (
-    NoteRecord,
-    SupabaseClientInterface
-)  # Adjust if these are defined elsewhere
+from .types import NoteRecord, SupabaseClientInterface  # Adjust if these are defined elsewhere
 
 
 class SupabaseClient:
