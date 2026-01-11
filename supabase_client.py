@@ -1,13 +1,17 @@
-"""
-supabase_client.py — Minimal Supabase client wrapper for local testing
-and upserting notes with embeddings.
-"""
+"""Minimal Supabase client wrapper for local testing and upserting notes with embeddings."""
 
+import os
 from typing import Any, Dict, Optional
 
-# Ensure this exists or adjust the import path
-from .embedding import compute_embedding
-from .types import NoteRecord, SupabaseClientInterface  # Adjust if these are defined elsewhere
+from supabase import Client, create_client  # Third-party
+from .embedding import compute_embedding  # Local
+from .types import (  # Local
+    NoteRecord,
+    SupabaseClientInterface,
+    Executable,
+    SupabaseExecuteResponse,
+    TableQuery,
+)
 
 
 class SupabaseClient:
@@ -30,6 +34,20 @@ class SupabaseClient:
         """
         self.client = client
 
+    def table(self, name: str) -> Any:
+        """
+        Proxy access to the underlying client's .table(name) method.
+
+        Args:
+            name: The name of the Supabase table.
+
+        Returns:
+            A query builder object from the underlying client.
+        """
+        if not self.client:
+            raise RuntimeError("Supabase client is not configured")
+        return self.client.table(name)
+
     def upsert_note_with_embedding(
         self,
         title: str,
@@ -39,8 +57,8 @@ class SupabaseClient:
         table: str = "notes",
     ) -> Any:
         """
-        Compute an embedding for the note body and upsert
-        the note into the specified Supabase table.
+        Compute an embedding for the note body and upsert the note
+        into the specified Supabase table.
 
         Args:
             title: The note title.
@@ -65,10 +83,8 @@ class SupabaseClient:
                 "Please pass a valid client instance or use the default."
             )
 
-        # Generate a deterministic embedding for the note body
         emb = compute_embedding(body)
 
-        # Construct the record to be upserted
         record: NoteRecord = {
             "title": title,
             "body": body,
@@ -79,10 +95,27 @@ class SupabaseClient:
         if id:
             record["id"] = id
 
-        # Execute the upsert operation
         resp = self.client.table(table).upsert(record).execute()
 
         if getattr(resp, "error", None):
             raise RuntimeError(f"Upsert error: {resp.error}")
 
         return resp.data
+
+
+# === Shared instance for application use ===
+
+SUPABASE_URL = os.environ["SUPABASE_URL"]
+SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+
+real_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: SupabaseClient = SupabaseClient(real_client)
+
+# Explicit exports for clarity and tooling
+__all__ = [
+    "SupabaseClient",
+    "supabase",
+    "Executable",
+    "SupabaseExecuteResponse",
+    "TableQuery",
+]
