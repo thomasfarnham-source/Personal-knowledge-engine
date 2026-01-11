@@ -1,8 +1,9 @@
+from datetime import datetime
 import os
 import re
+from typing import Any, Dict, Optional
+
 import frontmatter
-from datetime import datetime
-from typing import Optional, Any, Dict
 
 
 def parse_note(filepath: str) -> Dict[str, Any]:

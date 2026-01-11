@@ -12,3 +12,8 @@ exclude = venv, .git, __pycache__, build, dist
 # Allow lines up to 100 characters long (default is 79).
 # This gives more flexibility while still encouraging readable code.
 max-line-length = 100
+
+# Ignore rules that Black intentionally violates
+# E203: whitespace before ':'
+# W503: line break before binary operator
+extend-ignore = E203, W503

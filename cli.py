@@ -20,8 +20,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from parse_joplin_sync import ingest_notes, load_resource_metadata
+
 from supabase_client import supabase
-from parse_joplin_sync import load_resource_metadata, ingest_notes
 
 
 def load_notes() -> list[dict[str, Any]]:

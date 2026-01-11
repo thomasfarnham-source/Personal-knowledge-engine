@@ -1,15 +1,19 @@
 from fastapi import FastAPI
+
 from supabase_client import supabase
 
 app = FastAPI()
+
 
 @app.get("/")
 def read_root() -> dict:
     return {"message": "Hello, FastAPI is live!"}
 
+
 @app.get("/health")
 def health_check() -> dict:
     return {"status": "ok"}
+
 
 @app.get("/db-test")
 async def db_test() -> dict:
