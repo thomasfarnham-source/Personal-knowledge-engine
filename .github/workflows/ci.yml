@@ -87,6 +87,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      - name: Add project root to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Run pytest
         # Use importlib mode to support relative imports like `from .embedding`
         # This avoids "attempted relative import with no known parent package" errors
