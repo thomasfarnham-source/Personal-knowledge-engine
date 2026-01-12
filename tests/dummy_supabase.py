@@ -21,7 +21,7 @@ Usage in tests:
 
 from typing import Any, Dict, Optional
 
-from supabase_client import (
+from pke.supabase_client import (
     Executable,
     NoteRecord,
     SupabaseClientInterface,
@@ -63,7 +63,7 @@ class DummyExecutable(Executable):
         return DummyExecuteResponse(data=[self.record])
 
 
-class DummyTableQuery(TableQuery):
+class DummyTableQuery:
     """
     Simulates the .upsert() call on a Supabase table.
 
