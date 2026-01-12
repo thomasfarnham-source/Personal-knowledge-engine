@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 
 from supabase import Client, create_client  # Third-party
 from pke.embedding import compute_embedding  # Local
-from .types import (  # Local
+from pke.types import (  # Local
     NoteRecord,
     SupabaseClientInterface,
     Executable,
@@ -105,8 +105,9 @@ class SupabaseClient:
 
 # === Shared instance for application use ===
 
-SUPABASE_URL = os.environ["SUPABASE_URL"]
-SUPABASE_KEY = os.environ["SUPABASE_KEY"]
+SUPABASE_URL = os.getenv("SUPABASE_URL", "http://localhost:54321")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "test-key")
+
 
 real_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 supabase: SupabaseClient = SupabaseClient(real_client)
