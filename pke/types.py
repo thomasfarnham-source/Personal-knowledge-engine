@@ -1,13 +1,17 @@
 # pke/types.py
 
-from typing import Any, Callable, Dict, List, Protocol, TypedDict
+from typing import Any, Dict, List, Protocol, TypedDict
 
 
-# Represents a single note record stored in Supabase.
-# This is the core data structure passed into upsert and returned from list queries.
+# Represents a single note stored in Supabase, including its content, metadata, and embedding.
+# This structure is used for both inserting and retrieving notes from the database.
 class NoteRecord(TypedDict):
-    id: str  # Unique identifier for the note
-    content: str  # Raw text content of the note
+    id: str  # Unique identifier for the note (UUID or similar)
+    content: str  # Full raw text content of the note (used for search/display)
+    title: str  # Human-readable title of the note (e.g., from Evernote or email subject)
+    body: str  # Cleaned or formatted body content (e.g., HTML-stripped or markdown)
+    metadata: Dict[str, str]  # Arbitrary metadata (e.g., source, tags, timestamps, author)
+    embedding: List[float]  # 1536-dimensional vector representation for semantic search
 
 
 # Represents the response returned from a Supabase operation (e.g., upsert).
@@ -33,5 +37,6 @@ class Executable(Protocol):
 # Defines the expected interface for a Supabase client implementation.
 # This allows you to swap in mocks or stubs for testing.
 class SupabaseClientInterface(Protocol):
+    def table(self, name: str) -> Any: ...
     def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse: ...
     def list(self, query: TableQuery) -> List[NoteRecord]: ...
