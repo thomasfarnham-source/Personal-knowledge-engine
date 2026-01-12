@@ -2,6 +2,7 @@
 
 from typing import List
 
+
 def compute_embedding(text: str) -> List[float]:
     """
     Deterministic embedding stub for local testing.
