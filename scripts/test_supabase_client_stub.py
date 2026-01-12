@@ -10,7 +10,7 @@
 
 from typing import Any
 
-from supabase_client import SupabaseClient
+from pke.supabase_client import SupabaseClient
 
 
 class DummyClient:

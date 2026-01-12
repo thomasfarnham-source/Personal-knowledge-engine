@@ -8,7 +8,7 @@ from typing import List
 
 import pytest
 
-from supabase_client import NoteRecord, SupabaseClient, compute_embedding
+from pke.supabase_client import NoteRecord, SupabaseClient, compute_embedding
 from tests.dummy_supabase import DummyClient  # Typed, reusable test double
 
 # -------------------------
