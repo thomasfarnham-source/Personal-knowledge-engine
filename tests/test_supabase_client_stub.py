@@ -1,3 +1,4 @@
+# pytest: skip-file
 """
 Quick local test for SupabaseClient using the fully typed DummyClient.
 
@@ -11,7 +12,9 @@ SupabaseClientInterface and is fully mypy-compliant.
 """
 
 from pke.supabase_client import SupabaseClient
-from tests.dummy_supabase import DummyClient  # ✅ use the real typed dummy
+from .dummy_supabase import DummyClient
+
+# ✅ use the real typed dummy
 
 
 def main() -> None:
