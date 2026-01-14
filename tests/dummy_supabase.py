@@ -26,6 +26,7 @@ from pke.types import (
 # DummyClient — Simulates successful Supabase behavior
 # =====================================================================
 
+
 class DummyClient(SupabaseClientInterface):
     """
     A fully typed, deterministic mock Supabase client.
@@ -86,6 +87,7 @@ class DummyClient(SupabaseClientInterface):
 # DummyTableQuery — Returned by DummyClient.table(name)
 # =====================================================================
 
+
 class DummyTableQuery:
     """
     Simulates the object returned by `.table(name)` in the real client.
@@ -109,6 +111,7 @@ class DummyTableQuery:
 # =====================================================================
 # DummyExecutable — Returned by DummyTableQuery.upsert(record)
 # =====================================================================
+
 
 class DummyExecutable:
     """
@@ -144,6 +147,7 @@ class DummyExecutable:
 # =====================================================================
 # FailingClient — Simulates Supabase errors
 # =====================================================================
+
 
 class FailingClient(SupabaseClientInterface):
     """
@@ -181,6 +185,7 @@ class FailingClient(SupabaseClientInterface):
 # FailingTable — Returned by FailingClient.table(name)
 # =====================================================================
 
+
 class FailingTable:
     """
     Returned by FailingClient.table(name).
@@ -195,6 +200,7 @@ class FailingTable:
 # =====================================================================
 # FailingExecutable — Returned by FailingTable.upsert(record)
 # =====================================================================
+
 
 class FailingExecutable:
     """

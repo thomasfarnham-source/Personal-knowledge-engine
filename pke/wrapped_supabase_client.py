@@ -69,12 +69,7 @@ class WrappedSupabaseClient(SupabaseClientInterface):
         attribute errors we treat the SDK response as Any and read attributes
         dynamically.
         """
-        response = (
-            self._client
-            .table("notes")
-            .upsert(notes)                     # type: ignore[arg-type]
-            .execute()
-        )
+        response = self._client.table("notes").upsert(notes).execute()  # type: ignore[arg-type]
 
         # Treat the SDK response as dynamic to avoid attribute errors from mypy.
         response_any: Any = response
@@ -108,7 +103,7 @@ class WrappedSupabaseClient(SupabaseClientInterface):
 
         # Apply each filter dynamically
         for key, value in query["filters"].items():
-            table = table.eq(key, value)       # type: ignore[attr-defined]
+            table = table.eq(key, value)  # type: ignore[attr-defined]
 
         # Execute the SELECT query
         response = table.select("*").execute()

@@ -23,6 +23,7 @@ from tests.dummy_supabase import DummyClient  # Fully typed, reusable test doubl
 # Test: Successful upsert
 # =====================================================================
 
+
 def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> None:
     """
     Verifies that SupabaseClient.upsert_note_with_embedding:
@@ -63,6 +64,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
 # Test: Embedding determinism
 # =====================================================================
 
+
 def test_compute_embedding_is_deterministic() -> None:
     """
     Ensures the local embedding stub is deterministic:
@@ -80,6 +82,7 @@ def test_compute_embedding_is_deterministic() -> None:
 # =====================================================================
 # Test: Error handling
 # =====================================================================
+
 
 def test_upsert_note_with_embedding_raises_on_empty_body() -> None:
     """

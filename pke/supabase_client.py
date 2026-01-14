@@ -119,12 +119,12 @@ class SupabaseClient:
         # Construct a fully populated NoteRecord.
         # All fields are required by the TypedDict definition.
         record: NoteRecord = {
-            "id": id or "",              # Use provided ID or fallback to empty string
-            "content": body,             # Full raw text content for search/display
-            "title": title,              # Human-readable title
-            "body": body,                # Cleaned or formatted body content
+            "id": id or "",  # Use provided ID or fallback to empty string
+            "content": body,  # Full raw text content for search/display
+            "title": title,  # Human-readable title
+            "body": body,  # Cleaned or formatted body content
             "metadata": metadata or {},  # Optional metadata
-            "embedding": emb,            # 1536-dimensional embedding vector
+            "embedding": emb,  # 1536-dimensional embedding vector
         }
 
         # Perform the upsert via the injected client.
