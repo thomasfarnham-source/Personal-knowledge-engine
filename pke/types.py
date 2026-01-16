@@ -1,37 +1,112 @@
 # pke/types.py
 
-from typing import Any, Callable, Dict, List, Protocol, TypedDict
+"""
+Typed structures and protocol interfaces used throughout the Personal Knowledge Engine.
+
+This module defines the core data contracts shared between:
+    • the ingestion pipeline
+    • the embedding generator
+    • the CLI
+    • the Supabase client (dummy + real)
+    • the test suite
+
+These types ensure that all components speak the same language and that
+contributors can rely on stable, well‑documented structures when extending
+the system.
+
+The goal is to keep the data model explicit, predictable, and easy to mock.
+"""
+
+from typing import Any, Dict, List, Protocol, TypedDict
 
 
-# Represents a single note record stored in Supabase.
-# This is the core data structure passed into upsert and returned from list queries.
+# ---------------------------------------------------------------------------
+# NoteRecord — canonical DB representation
+# ---------------------------------------------------------------------------
+
+
 class NoteRecord(TypedDict):
-    id: str  # Unique identifier for the note
-    content: str  # Raw text content of the note
+    """
+    A single note stored in (or retrieved from) Supabase.
+
+    This is the canonical representation of a note as it exists in the database.
+    It is intentionally minimal at this stage of the project.
+    """
+
+    id: str
+    content: str
 
 
-# Represents the response returned from a Supabase operation (e.g., upsert).
-# Includes status code and optional data payload.
+# ---------------------------------------------------------------------------
+# UpsertNoteRecord — write‑time payload for Supabase
+# ---------------------------------------------------------------------------
+
+
+class UpsertNoteRecord(TypedDict, total=False):
+    """
+    Payload used when *writing* notes to Supabase.
+
+    This schema intentionally differs from NoteRecord:
+        • NoteRecord represents the *database* shape (id, content)
+        • UpsertNoteRecord represents the *write‑time* shape (title, body, metadata, embedding)
+
+    The ingestion pipeline constructs this structure before calling:
+        client.table("notes").upsert(record).execute()
+    """
+
+    id: str
+    title: str
+    body: str
+    metadata: Dict[str, Any]
+    embedding: List[float]
+
+
+# ---------------------------------------------------------------------------
+# SupabaseExecuteResponse
+# ---------------------------------------------------------------------------
+
+
 class SupabaseExecuteResponse(TypedDict):
-    status: int  # HTTP-like status code (e.g., 200 for success)
-    data: Any  # Optional response data (e.g., inserted rows)
+    status: int
+    data: Any
 
 
-# Represents a query against a Supabase table.
-# Used to filter and retrieve notes based on table name and filter criteria.
+# ---------------------------------------------------------------------------
+# TableQuery
+# ---------------------------------------------------------------------------
+
+
 class TableQuery(TypedDict):
-    table: str  # Name of the Supabase table (e.g., "notes")
-    filters: Dict[str, Any]  # Key-value filters to apply (e.g., {"user_id": "abc123"})
+    table: str
+    filters: Dict[str, Any]
 
 
-# A generic callable interface for any executable function.
-# Used to type-check injected functions or command handlers.
+# ---------------------------------------------------------------------------
+# Executable
+# ---------------------------------------------------------------------------
+
+
 class Executable(Protocol):
     def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
 
 
-# Defines the expected interface for a Supabase client implementation.
-# This allows you to swap in mocks or stubs for testing.
+# ---------------------------------------------------------------------------
+# SupabaseClientInterface
+# ---------------------------------------------------------------------------
+
+
 class SupabaseClientInterface(Protocol):
+    """
+    Protocol defining the expected behavior of any Supabase client.
+
+    The return type of `.table()` is intentionally Any because:
+        • the real Supabase client returns a SyncRequestBuilder
+        • DummyClient returns a fake builder
+        • the wrapper does not depend on the concrete type
+    """
+
+    def table(self, name: str) -> Any: ...
+
     def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse: ...
+
     def list(self, query: TableQuery) -> List[NoteRecord]: ...

@@ -1,123 +1,182 @@
 """
 DummyClient and FailingClient for local testing of SupabaseClient.
 
-This module defines fully typed, in-memory mocks of the Supabase client chain:
+These classes simulate the Supabase client method chain:
+
     client.table(name).upsert(record).execute()
 
-It is used in conjunction with `supabase_client.py` to test the behavior of
-SupabaseClient without making real network calls. It supports deterministic
-testing of upsert logic, embedding flow, and error handling.
-
-Place this file in:
-    tests/dummy_supabase.py
-
-Usage in tests:
-    from supabase_client import SupabaseClient
-    from tests.dummy_supabase import DummyClient, FailingClient
-
-    client = SupabaseClient(client=DummyClient())
-    result = client.upsert_note_with_embedding(title="Test", body="Hello world!")
+They allow the ingestion pipeline and SupabaseClient wrapper to be tested
+without making real network calls. The goal is deterministic, fully typed,
+in‑memory behavior that mirrors the real client’s shape closely enough for
+unit tests.
 """
-
 from typing import Any, Dict, Optional
 
-from pke.supabase_client import (
-    Executable,
-    NoteRecord,
-    SupabaseClientInterface,
+from pke.types import (
+    UpsertNoteRecord,
     SupabaseExecuteResponse,
-    TableQuery,
 )
+from pke.supabase_client import Executable
 
-# -------------------------
-# DummyClient: Simulates successful upserts
-# -------------------------
 
+# ---------------------------------------------------------------------------
+# DummyExecuteResponse — simple stand‑in for SupabaseExecuteResponse
+# ---------------------------------------------------------------------------
 
 class DummyExecuteResponse:
     """
-    Simulates the response object returned by Supabase .execute().
+    Minimal stand‑in for the response object returned by Supabase `.execute()`.
 
-    Attributes:
-        data: The simulated response payload (typically a list of records).
-        error: Optional error message to simulate failure cases.
+    This mirrors the shape of SupabaseExecuteResponse:
+        • data: payload returned by the operation
+        • error: optional error message
     """
 
-    def __init__(self, data: Any = None, error: Optional[str] = None):
+    def __init__(self, data: Any = None, error: Optional[str] = None) -> None:
         self.data = data
         self.error = error
 
 
+# ---------------------------------------------------------------------------
+# DummyExecutable — returned by DummyTableQuery.upsert()
+# ---------------------------------------------------------------------------
+
 class DummyExecutable(Executable):
     """
-    Simulates the final .execute() call in the Supabase chain.
+    Represents the final `.execute()` call in the Supabase chain.
 
-    This class is returned by DummyTableQuery.upsert() and holds the record
-    to be "upserted". When .execute() is called, it returns a DummyExecuteResponse.
+    DummyTableQuery.upsert() returns an instance of this class. When `.execute()`
+    is called, it returns a DummyExecuteResponse containing the upserted record.
     """
 
-    def __init__(self, record: NoteRecord):
+    def __init__(self, record: UpsertNoteRecord) -> None:
         self.record = record
 
-    def execute(self) -> SupabaseExecuteResponse:
-        return DummyExecuteResponse(data=[self.record])
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Required to satisfy the Executable Protocol.
+        The real Supabase request builder is callable; our dummy simply no‑ops.
+        """
+        return None
 
+    def execute(self) -> SupabaseExecuteResponse:
+        """
+        Execute the request and return a SupabaseExecuteResponse‑compatible object.
+
+        Notes
+        -----
+        SupabaseExecuteResponse is a strict TypedDict with only:
+            • status : int
+            • data   : Any
+
+        The real Supabase Python client attaches errors as *attributes* on the
+        response object (e.g., response.error), not as dictionary keys.
+
+        To accurately simulate that behavior while keeping mypy satisfied, we:
+            1. Construct a valid SupabaseExecuteResponse dictionary.
+            2. Dynamically attach an `.error` attribute to the dict instance.
+               This is allowed because TypedDicts can carry extra attributes,
+               just not extra *keys*.
+
+        This preserves type safety while matching real‑world behavior.
+        """
+        # Step 1: Construct a valid SupabaseExecuteResponse dictionary.
+        resp: SupabaseExecuteResponse = {"status": 200, "data": [self.record]}
+
+        # Step 2: Attach an error attribute dynamically (none for success).
+        setattr(resp, "error", None)
+
+        return resp
+
+
+# ---------------------------------------------------------------------------
+# DummyTableQuery — returned by DummyClient.table()
+# ---------------------------------------------------------------------------
 
 class DummyTableQuery:
     """
-    Simulates the .upsert() call on a Supabase table.
+    Simulates the `.upsert()` call on a Supabase table.
 
-    This class is returned by DummyClient.table(name) and stores the last
-    upserted record for inspection in tests.
+    Stores the last upserted record so tests can assert on it.
     """
 
-    def __init__(self, table_name: str):
+    def __init__(self, table_name: str) -> None:
         self.table_name = table_name
-        self.last_upserted: Optional[NoteRecord] = None
+        self.last_upserted: Optional[UpsertNoteRecord] = None
 
-    def upsert(self, record: NoteRecord) -> Executable:
+    def upsert(self, record: UpsertNoteRecord) -> DummyExecutable:
+        """
+        Store the record and return a DummyExecutable that will produce
+        a deterministic response when `.execute()` is called.
+        """
         self.last_upserted = record
         return DummyExecutable(record)
 
 
-class DummyClient(SupabaseClientInterface):
+# ---------------------------------------------------------------------------
+# DummyClient — successful Supabase‑like client
+# ---------------------------------------------------------------------------
+
+class DummyClient:
     """
-    Simulates the Supabase client for local testing.
+    Simulates a Supabase client that always succeeds.
 
-    Implements the full method chain:
-        .table(name) → .upsert(record) → .execute()
-
-    This class is injected into SupabaseClient during tests to avoid real
-    network calls and enable deterministic behavior.
+    Implements the method chain:
+        .table(name) → DummyTableQuery → DummyExecutable → DummyExecuteResponse
     """
 
     def __init__(self) -> None:
         self.tables: Dict[str, DummyTableQuery] = {}
 
-    def table(self, name: str) -> TableQuery:
+    def table(self, name: str) -> DummyTableQuery:
+        """
+        Return a DummyTableQuery for the given table name.
+        """
         if name not in self.tables:
             self.tables[name] = DummyTableQuery(name)
         return self.tables[name]
 
 
-# -------------------------
-# FailingClient: Simulates Supabase error response
-# -------------------------
+# ---------------------------------------------------------------------------
+# FailingClient — always returns an error on execute()
+# ---------------------------------------------------------------------------
 
-
-class FailingClient(SupabaseClientInterface):
+class FailingClient:
     """
-    A test double that simulates a Supabase client returning an error on .execute().
-    Used to test error propagation in SupabaseClient.
-    """
+    A test double that simulates a Supabase client returning an error.
 
-    class FailingTable(TableQuery):
-        def upsert(self, record: NoteRecord) -> "FailingClient.FailingExecutable":
-            return FailingClient.FailingExecutable()
+    Useful for verifying that SupabaseClient correctly propagates errors.
+    """
 
     class FailingExecutable(Executable):
-        def execute(self) -> SupabaseExecuteResponse:
-            return type("FailingResponse", (), {"data": None, "error": "Simulated failure"})()
+        def __call__(self, *args: Any, **kwargs: Any) -> None:
+            return None
 
-    def table(self, name: str) -> TableQuery:
+        def execute(self) -> SupabaseExecuteResponse:
+            """
+            Always return an error response.
+
+            This mirrors the real Supabase client, which attaches `.error`
+            as an attribute rather than including it in the dictionary keys.
+            """
+            # Construct a valid SupabaseExecuteResponse dictionary.
+            resp: SupabaseExecuteResponse = {"status": 500, "data": None}
+
+            # Attach the error attribute dynamically.
+            setattr(resp, "error", "Simulated failure")
+
+            return resp
+
+    class FailingTable:
+        """
+        Minimal table object that returns a failing executable.
+        """
+
+        def upsert(self, record: UpsertNoteRecord) -> "FailingClient.FailingExecutable":
+            return FailingClient.FailingExecutable()
+
+    def table(self, name: str) -> "FailingClient.FailingTable":
+        """
+        Return a table object whose `.upsert()` always fails.
+        """
         return FailingClient.FailingTable()
