@@ -1,0 +1,34 @@
+# ---------------------------------------------------------------------
+# Pre‑commit hooks for maintaining code quality and contributor clarity.
+#
+# These checks enforce the project's core principles:
+#   • black   — consistent formatting before every commit
+#   • flake8  — linting and style guardrails
+#   • mypy    — static type checking for reliability and safety
+#
+# Running these automatically ensures:
+#   • clean, readable diffs
+#   • fewer CI failures
+#   • deterministic behavior across contributors
+#   • no “fix lint” or “fix type” churn in commit history
+#
+# This aligns with the project's philosophy: explicit, reproducible,
+# low‑friction workflows that keep the ingestion pipeline stable.
+# ---------------------------------------------------------------------
+
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: []

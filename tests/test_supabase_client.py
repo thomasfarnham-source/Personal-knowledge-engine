@@ -1,8 +1,15 @@
-# tests/test_supabase_client.py
-# Unit tests for SupabaseClient using a deterministic embedding stub.
-#
-# Run from project root:
-#   pytest -q
+"""
+Unit tests for SupabaseClient using the deterministic DummyClient.
+
+These tests verify:
+    - correct construction of UpsertNoteRecord,
+    - embedding generation,
+    - deterministic embedding behavior,
+    - and proper error handling.
+
+Run from project root:
+    pytest -q
+"""
 
 from typing import List
 
@@ -10,12 +17,12 @@ import pytest
 
 from pke.supabase_client import SupabaseClient, compute_embedding
 from pke.types import UpsertNoteRecord
-from tests.dummy_supabase import DummyClient
+from tests.dummy_supabase import DummyClient  # Fully typed, reusable test double
 
 
-# ---------------------------------------------------------------------------
+# =====================================================================
 # Test: Successful upsert
-# ---------------------------------------------------------------------------
+# =====================================================================
 
 
 def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> None:
@@ -41,6 +48,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
         metadata=metadata,
     )
 
+    # Validate structure
     assert isinstance(res, list)
     assert len(res) == 1
 
@@ -58,9 +66,9 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
     assert len(emb) == 1536
 
 
-# ---------------------------------------------------------------------------
+# =====================================================================
 # Test: Embedding determinism
-# ---------------------------------------------------------------------------
+# =====================================================================
 
 
 def test_compute_embedding_is_deterministic() -> None:
@@ -78,9 +86,9 @@ def test_compute_embedding_is_deterministic() -> None:
     assert a != c, "different inputs should produce different embeddings"
 
 
-# ---------------------------------------------------------------------------
+# =====================================================================
 # Test: Error handling
-# ---------------------------------------------------------------------------
+# =====================================================================
 
 
 def test_upsert_note_with_embedding_raises_on_empty_body() -> None:

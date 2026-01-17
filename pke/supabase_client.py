@@ -19,15 +19,16 @@ client under the target-state structure (pke/supabase/real_client.py).
 import os
 from typing import Any, Dict, Optional
 
-from supabase import Client, create_client  # Third‑party SDK
+from supabase import Client, create_client  # Third-party SDK
 from pke.embedding import compute_embedding  # Local embedding stub
 from pke.types import (
-    NoteRecord,  # ✅ re-exported for tests
-    UpsertNoteRecord,  # ✅ correct write‑time payload type
+    NoteRecord,  # ✅ Re-exported for tests
+    UpsertNoteRecord,  # ✅ Correct write-time payload type
     Executable,
     SupabaseExecuteResponse,
     TableQuery,
 )
+from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in production
 
 # ✅ IMPORTANT DESIGN DECISION
 # We intentionally do NOT type the injected client as SupabaseClientInterface.
@@ -39,7 +40,7 @@ from pke.types import (
 
 class SupabaseClient:
     """
-    A minimal wrapper around an injected Supabase-like client.
+    A minimal, dependency-injected wrapper around a Supabase-like client.
 
     This class does not directly communicate with Supabase. Instead, it expects
     an injected client that implements the method chain:
@@ -75,12 +76,17 @@ class SupabaseClient:
 
     def table(self, name: str) -> Any:
         """
-        Proxy access to the underlying client's .table(name) method.
+        Proxy access to the underlying client's `.table(name)` method.
 
         The return type is intentionally Any because:
             • the real Supabase client returns a SyncRequestBuilder
             • DummyClient returns a fake builder
             • the wrapper does not depend on the concrete type
+
+        Raises
+        ------
+        RuntimeError
+            If no client has been injected.
         """
         if not self.client:
             raise RuntimeError("Supabase client is not configured")
@@ -101,6 +107,31 @@ class SupabaseClient:
         the write-time schema (title, body, metadata, embedding, id).
         This is intentionally different from NoteRecord, which represents
         the database schema (id, content).
+
+        Parameters
+        ----------
+        title : str
+            Human-readable title for the note.
+        body : str
+            The main text content. Required for embedding.
+        metadata : dict, optional
+            Optional metadata dictionary. Defaults to {}.
+        id : str, optional
+            Optional note ID. If provided, ensures deterministic upsert behavior.
+        table : str
+            Supabase table name. Defaults to "notes".
+
+        Returns
+        -------
+        Any
+            The `.data` field from the SupabaseExecuteResponse.
+
+        Raises
+        ------
+        ValueError
+            If `body` is empty.
+        RuntimeError
+            If no client is configured or if the Supabase response indicates an error.
         """
         if not body:
             raise ValueError("body must be provided")
@@ -129,26 +160,32 @@ class SupabaseClient:
         resp = self.client.table(table).upsert(record).execute()
 
         # Normalize error handling.
-        if getattr(resp, "error", None):
+        if isinstance(resp, dict) and resp.get("status", 200) >= 400:
+            raise RuntimeError(f"Upsert error: {resp}")
+        if not isinstance(resp, dict) and getattr(resp, "error", None):
             raise RuntimeError(f"Upsert error: {resp.error}")
 
-        return resp.data
+        # Normalize return value: always return the data payload.
+        return resp["data"] if isinstance(resp, dict) else resp.data
 
 
 # ---------------------------------------------------------------------------
 # Shared instance for application use
 # ---------------------------------------------------------------------------
 
+# Load Supabase credentials from environment variables.
+# Defaults allow local development without requiring real credentials.
 SUPABASE_URL = os.getenv("SUPABASE_URL", "http://localhost:54321")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "test-key")
 
-# Create the real Supabase client using the official SDK.
+# Create the raw Supabase client using the official SDK.
 real_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Wrap the real client in our abstraction layer.
-supabase: SupabaseClient = SupabaseClient(real_client)
+# Wrap the raw client in a type-safe adapter that conforms to SupabaseClientInterface.
+# This ensures mypy validation and consistent behavior across environments.
+supabase: SupabaseClient = SupabaseClient(WrappedSupabaseClient(real_client))
 
-# ✅ Re-export types that tests expect to import from this module.
+# Explicit exports for clarity and tooling.
 __all__ = [
     "SupabaseClient",
     "supabase",
