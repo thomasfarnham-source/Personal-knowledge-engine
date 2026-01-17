@@ -1,25 +1,104 @@
 """
 DummyClient and FailingClient for local testing of SupabaseClient.
 
-These mocks implement SupabaseClientInterface exactly, ensuring:
-    - deterministic behavior in tests,
-    - strict mypy compliance,
-    - and compatibility with the real WrappedSupabaseClient.
+These mocks provide deterministic, fully typed, in‑memory behavior that mirrors
+the real Supabase client’s method chain:
 
-They simulate the method chain:
     client.table(name).upsert(record).execute()
 
-and the `.list()` method used by SupabaseClient.
+They allow the ingestion pipeline and SupabaseClient wrapper to be tested
+without making real network calls, while implementing SupabaseClientInterface
+closely enough to satisfy strict mypy checking and maintain compatibility with
+the real WrappedSupabaseClient.
+
+Both clients also implement the `.list()` method used by SupabaseClient,
+ensuring end‑to‑end test coverage for read and write operations.
 """
 
 from typing import Any, Dict, List, Optional
 
 from pke.types import (
+    UpsertNoteRecord,
     NoteRecord,
     SupabaseClientInterface,
     SupabaseExecuteResponse,
     TableQuery,
 )
+from pke.supabase_client import Executable
+
+
+# =====================================================================
+# DummyExecuteResponse — simple stand‑in for SupabaseExecuteResponse
+# =====================================================================
+
+
+class DummyExecuteResponse:
+    """
+    Minimal stand‑in for the response object returned by Supabase `.execute()`.
+
+    Mirrors the shape of SupabaseExecuteResponse:
+        • data  — payload returned by the operation
+        • error — optional error message
+    """
+
+    def __init__(self, data: Any = None, error: Optional[str] = None) -> None:
+        self.data = data
+        self.error = error
+
+
+# =====================================================================
+# DummyExecutable — returned by DummyTableQuery.upsert()
+# =====================================================================
+
+
+class DummyExecutable(Executable):
+    """
+    Represents the final `.execute()` call in the Supabase chain.
+
+    DummyTableQuery.upsert() returns an instance of this class. When `.execute()`
+    is called, it returns a DummyExecuteResponse containing the upserted record.
+    """
+
+    def __init__(self, record: UpsertNoteRecord) -> None:
+        self.record = record
+
+    def __call__(self, *args: Any, **kwargs: Any) -> None:
+        """Required to satisfy the Executable Protocol."""
+        return None
+
+    def execute(self) -> SupabaseExecuteResponse:
+        """
+        Execute the request and return a SupabaseExecuteResponse‑compatible object.
+
+        SupabaseExecuteResponse is a strict TypedDict with only:
+            • status : int
+            • data   : Any
+
+        The real Supabase Python client attaches errors as attributes, not keys.
+        """
+        resp: SupabaseExecuteResponse = {"status": 200, "data": [self.record]}
+        return resp
+
+
+# =====================================================================
+# DummyTableQuery — returned by DummyClient.table(name)
+# =====================================================================
+
+
+class DummyTableQuery:
+    """
+    Simulates the `.upsert()` call on a Supabase table.
+
+    Stores the last upserted record for inspection in tests.
+    """
+
+    def __init__(self, table_name: str) -> None:
+        self.table_name = table_name
+        self.last_upserted: Optional[UpsertNoteRecord] = None
+
+    def upsert(self, record: UpsertNoteRecord) -> DummyExecutable:
+        self.last_upserted = record
+        return DummyExecutable(record)
 
 
 # =====================================================================
@@ -29,48 +108,28 @@ from pke.types import (
 
 class DummyClient(SupabaseClientInterface):
     """
-    A fully typed, deterministic mock Supabase client.
+    Fully typed, deterministic in‑memory mock of SupabaseClientInterface.
 
-    Implements the entire SupabaseClientInterface:
-        - table(name)
-        - upsert(notes)
-        - list(query)
+    Implements:
+        • table(name)
+        • upsert(notes)
+        • list(query)
 
     Used to test SupabaseClient without making network calls.
     """
 
     def __init__(self) -> None:
-        # Store table objects so tests can inspect what was upserted
         self.tables: Dict[str, DummyTableQuery] = {}
 
-    def table(self, name: str) -> "DummyTableQuery":
-        """
-        Return a DummyTableQuery for the given table name.
-        """
+    def table(self, name: str) -> DummyTableQuery:
         if name not in self.tables:
             self.tables[name] = DummyTableQuery(name)
         return self.tables[name]
 
     def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
-        """
-        Simulate a successful upsert.
-
-        The real wrapped client returns:
-            {"status": int, "data": Any}
-
-        So we return the same structure.
-        """
-        return {
-            "status": 200,
-            "data": notes,
-        }
+        return {"status": 200, "data": notes}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
-        """
-        Simulate a successful list query.
-
-        Returns a deterministic dummy NoteRecord so tests can rely on it.
-        """
         return [
             {
                 "id": "dummy-id",
@@ -81,67 +140,6 @@ class DummyClient(SupabaseClientInterface):
                 "embedding": [0.0] * 1536,
             }
         ]
-
-
-# =====================================================================
-# DummyTableQuery — Returned by DummyClient.table(name)
-# =====================================================================
-
-
-class DummyTableQuery:
-    """
-    Simulates the object returned by `.table(name)` in the real client.
-
-    Supports:
-        - .upsert(record) → DummyExecutable
-    """
-
-    def __init__(self, table_name: str):
-        self.table_name = table_name
-        self.last_upserted: Optional[NoteRecord] = None
-
-    def upsert(self, record: NoteRecord) -> "DummyExecutable":
-        """
-        Store the record for inspection and return an executable object.
-        """
-        self.last_upserted = record
-        return DummyExecutable(record)
-
-
-# =====================================================================
-# DummyExecutable — Returned by DummyTableQuery.upsert(record)
-# =====================================================================
-
-
-class DummyExecutable:
-    """
-    Simulates the final `.execute()` call in the Supabase chain.
-
-    The real wrapped client returns:
-        {"status": int, "data": Any}
-
-    So this mock returns the same structure.
-    """
-
-    def __init__(self, record: NoteRecord):
-        self.record = record
-
-    def execute(self) -> SupabaseExecuteResponse:
-        """
-        Return a successful SupabaseExecuteResponse containing the record.
-        """
-        return {
-            "status": 200,
-            "data": [self.record],
-        }
-
-    def __call__(self) -> Any:
-        """
-        Executable protocol requires __call__ to exist.
-
-        Returning self is harmless and satisfies the protocol.
-        """
-        return self
 
 
 # =====================================================================
@@ -157,27 +155,12 @@ class FailingClient(SupabaseClientInterface):
     """
 
     def table(self, name: str) -> "FailingTable":
-        """
-        Always return a failing table object.
-        """
         return FailingTable()
 
     def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
-        """
-        Simulate a failing upsert.
-
-        Note: SupabaseExecuteResponse TypedDict only includes "status" and "data".
-        We return a 500 status and None data to indicate failure.
-        """
-        return {
-            "status": 500,
-            "data": None,
-        }
+        return {"status": 500, "data": None}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
-        """
-        Simulate a failing list operation.
-        """
         raise RuntimeError("Simulated failure")
 
 
@@ -210,11 +193,7 @@ class FailingExecutable:
     """
 
     def execute(self) -> SupabaseExecuteResponse:
-        # Return the minimal SupabaseExecuteResponse shape for failure.
-        return {
-            "status": 500,
-            "data": None,
-        }
+        return {"status": 500, "data": None}
 
     def __call__(self) -> Any:
         return self

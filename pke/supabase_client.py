@@ -1,54 +1,76 @@
+# pke/supabase_client.py
+
 """
 Minimal Supabase client wrapper for local testing and upserting notes with embeddings.
 
-This module provides a thin, typed wrapper around an injected Supabase-like client.
-It ensures:
-    - deterministic behavior in tests,
-    - strict mypy compliance,
-    - a stable interface for contributors,
-    - and a single place where embedding + upsert logic is coordinated.
+This module provides a thin abstraction layer around a Supabase-like client.
+It is intentionally minimal at this stage of the project and serves two goals:
 
-The wrapper does NOT depend on the real Supabase SDK directly. Instead, it expects
-an injected client that implements SupabaseClientInterface, allowing both the real
-WrappedSupabaseClient and DummyClient to be used interchangeably.
+    1. Allow the ingestion pipeline to upsert notes with embeddings.
+    2. Provide a stable interface for swapping in:
+         • DummyClient (local testing)
+         • Real Supabase client (production)
+         • Test stubs (unit tests)
+
+As the project matures, this wrapper will evolve into the production-ready
+client under the target-state structure (pke/supabase/real_client.py).
 """
-
-from pke.wrapped_supabase_client import WrappedSupabaseClient
 
 import os
 from typing import Any, Dict, Optional
 
 from supabase import Client, create_client  # Third-party SDK
-from pke.embedding import compute_embedding  # Local embedding function
-from pke.types import (  # Local typed interfaces
-    NoteRecord,
-    SupabaseClientInterface,
+from pke.embedding import compute_embedding  # Local embedding stub
+from pke.types import (
+    NoteRecord,  # ✅ Re-exported for tests
+    UpsertNoteRecord,  # ✅ Correct write-time payload type
     Executable,
     SupabaseExecuteResponse,
     TableQuery,
 )
+from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in production
+
+# ✅ IMPORTANT DESIGN DECISION
+# We intentionally do NOT type the injected client as SupabaseClientInterface.
+# The real Supabase SDK client does NOT implement our Protocol (it lacks .list, .upsert),
+# and mypy will reject it. Instead, we accept Any and rely on duck typing.
+#
+# The Protocol still exists in pke.types for tests, stubs, and future real-client wrappers.
 
 
 class SupabaseClient:
     """
     A minimal, dependency-injected wrapper around a Supabase-like client.
 
-    This class does not know or care whether the underlying client is:
-        - the real Supabase Python SDK (wrapped),
-        - a dummy in-memory client for tests,
-        - or any other implementation.
+    This class does not directly communicate with Supabase. Instead, it expects
+    an injected client that implements the method chain:
 
-    All that matters is that the injected client implements SupabaseClientInterface.
+        .table(name).upsert(record).execute()
+
+    This design allows:
+        • dependency injection
+        • easy mocking in tests
+        • swapping between DummyClient and real Supabase client
+        • clean separation between business logic and network logic
     """
 
-    def __init__(self, client: Optional[SupabaseClientInterface] = None):
+    def __init__(self, client: Any = None) -> None:
         """
-        Store the injected client.
+        Initialize the SupabaseClient with an optional injected client.
 
-        Args:
-            client:
-                An object implementing SupabaseClientInterface. This allows the
-                wrapper to remain fully testable and mypy-compliant.
+        Parameters
+        ----------
+        client : Any
+            Any object that implements the Supabase-like method chain.
+            This may be:
+                • a real Supabase client (via supabase-py)
+                • a DummyClient for local testing
+                • a test stub for unit tests
+
+        Notes
+        -----
+        We intentionally accept Any here because the real Supabase SDK does not
+        satisfy our Protocol. This keeps the wrapper flexible and mypy-clean.
         """
         self.client = client
 
@@ -56,11 +78,15 @@ class SupabaseClient:
         """
         Proxy access to the underlying client's `.table(name)` method.
 
-        This is rarely used directly, but is provided for completeness and
-        parity with the real Supabase client.
+        The return type is intentionally Any because:
+            • the real Supabase client returns a SyncRequestBuilder
+            • DummyClient returns a fake builder
+            • the wrapper does not depend on the concrete type
 
-        Raises:
-            RuntimeError: If no client has been injected.
+        Raises
+        ------
+        RuntimeError
+            If no client has been injected.
         """
         if not self.client:
             raise RuntimeError("Supabase client is not configured")
@@ -75,34 +101,37 @@ class SupabaseClient:
         table: str = "notes",
     ) -> Any:
         """
-        Compute an embedding for the note body and upsert the resulting record
-        into the specified Supabase table.
+        Compute an embedding for the note body and upsert the note.
 
-        This method centralizes:
-            - embedding computation,
-            - NoteRecord construction,
-            - and the upsert call.
+        The payload shape used here is UpsertNoteRecord, which represents
+        the write-time schema (title, body, metadata, embedding, id).
+        This is intentionally different from NoteRecord, which represents
+        the database schema (id, content).
 
-        Args:
-            title:
-                Human-readable title for the note.
-            body:
-                The main text content. Required for embedding.
-            metadata:
-                Optional metadata dictionary. Defaults to {}.
-            id:
-                Optional note ID. If provided, ensures deterministic upsert behavior.
-            table:
-                Supabase table name. Defaults to "notes".
+        Parameters
+        ----------
+        title : str
+            Human-readable title for the note.
+        body : str
+            The main text content. Required for embedding.
+        metadata : dict, optional
+            Optional metadata dictionary. Defaults to {}.
+        id : str, optional
+            Optional note ID. If provided, ensures deterministic upsert behavior.
+        table : str
+            Supabase table name. Defaults to "notes".
 
-        Returns:
+        Returns
+        -------
+        Any
             The `.data` field from the SupabaseExecuteResponse.
 
-        Raises:
-            ValueError:
-                If `body` is empty.
-            RuntimeError:
-                If no client is configured or if the Supabase response indicates an error.
+        Raises
+        ------
+        ValueError
+            If `body` is empty.
+        RuntimeError
+            If no client is configured or if the Supabase response indicates an error.
         """
         if not body:
             raise ValueError("body must be provided")
@@ -113,29 +142,26 @@ class SupabaseClient:
                 "Please pass a valid client instance or use the default."
             )
 
-        # Compute the embedding vector for the note body.
+        # Compute deterministic embedding using the local stub.
         emb = compute_embedding(body)
 
-        # Construct a fully populated NoteRecord.
-        # All fields are required by the TypedDict definition.
-        record: NoteRecord = {
-            "id": id or "",  # Use provided ID or fallback to empty string
-            "content": body,  # Full raw text content for search/display
-            "title": title,  # Human-readable title
-            "body": body,  # Cleaned or formatted body content
-            "metadata": metadata or {},  # Optional metadata
-            "embedding": emb,  # 1536-dimensional embedding vector
+        # ✅ Correct payload type: UpsertNoteRecord, not NoteRecord.
+        record: UpsertNoteRecord = {
+            "title": title,
+            "body": body,
+            "metadata": metadata or {},
+            "embedding": emb,
         }
 
-        # Perform the upsert via the injected client.
-        # The wrapped real client returns a dict; DummyClient returns a dict as well.
+        if id:
+            record["id"] = id
+
+        # Perform the upsert operation.
         resp = self.client.table(table).upsert(record).execute()
 
-        # Handle wrapped-client error format: {"status": int, "data": ..., "error": ...}
+        # Normalize error handling.
         if isinstance(resp, dict) and resp.get("status", 200) >= 400:
             raise RuntimeError(f"Upsert error: {resp}")
-
-        # Handle DummyClient-style object responses (with .data)
         if not isinstance(resp, dict) and getattr(resp, "error", None):
             raise RuntimeError(f"Upsert error: {resp.error}")
 
@@ -143,7 +169,9 @@ class SupabaseClient:
         return resp["data"] if isinstance(resp, dict) else resp.data
 
 
-# === Shared instance for application use ===
+# ---------------------------------------------------------------------------
+# Shared instance for application use
+# ---------------------------------------------------------------------------
 
 # Load Supabase credentials from environment variables.
 # Defaults allow local development without requiring real credentials.
@@ -164,4 +192,6 @@ __all__ = [
     "Executable",
     "SupabaseExecuteResponse",
     "TableQuery",
+    "NoteRecord",  # ✅ required for tests
+    "UpsertNoteRecord",  # ✅ optional but helpful
 ]
