@@ -10,6 +10,7 @@ without making real network calls. The goal is deterministic, fully typed,
 in‑memory behavior that mirrors the real client’s shape closely enough for
 unit tests.
 """
+
 from typing import Any, Dict, Optional
 
 from pke.types import (
@@ -22,6 +23,7 @@ from pke.supabase_client import Executable
 # ---------------------------------------------------------------------------
 # DummyExecuteResponse — simple stand‑in for SupabaseExecuteResponse
 # ---------------------------------------------------------------------------
+
 
 class DummyExecuteResponse:
     """
@@ -40,6 +42,7 @@ class DummyExecuteResponse:
 # ---------------------------------------------------------------------------
 # DummyExecutable — returned by DummyTableQuery.upsert()
 # ---------------------------------------------------------------------------
+
 
 class DummyExecutable(Executable):
     """
@@ -93,6 +96,7 @@ class DummyExecutable(Executable):
 # DummyTableQuery — returned by DummyClient.table()
 # ---------------------------------------------------------------------------
 
+
 class DummyTableQuery:
     """
     Simulates the `.upsert()` call on a Supabase table.
@@ -117,6 +121,7 @@ class DummyTableQuery:
 # DummyClient — successful Supabase‑like client
 # ---------------------------------------------------------------------------
 
+
 class DummyClient:
     """
     Simulates a Supabase client that always succeeds.
@@ -140,6 +145,7 @@ class DummyClient:
 # ---------------------------------------------------------------------------
 # FailingClient — always returns an error on execute()
 # ---------------------------------------------------------------------------
+
 
 class FailingClient:
     """
