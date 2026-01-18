@@ -45,8 +45,12 @@ dist/
 build/
 *.egg-info/
 
+# Local utility scripts (not part of the project)
+count_empty_notes.py
+supabase_client.py
+
 # -------------------------
 # Optional: examples and templates
 # -------------------------
-# Keep an example env file (without secrets) in the repo to document required vars. - commented for 1/10 Git test 
+# Keep an example env file (without secrets) in the repo to document required vars. - commented for 1/10 Git test
 # .env.example
