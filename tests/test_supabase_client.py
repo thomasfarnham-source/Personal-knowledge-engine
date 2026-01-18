@@ -19,7 +19,6 @@ from pke.supabase_client import SupabaseClient, compute_embedding
 from pke.types import UpsertNoteRecord
 from tests.dummy_supabase import DummyClient  # Fully typed, reusable test double
 
-
 # =====================================================================
 # Test: Successful upsert
 # =====================================================================
@@ -41,7 +40,7 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
     body = "unit test body"
     metadata = {"test": True}
 
-    # ✅ Correct type: UpsertNoteRecord, not NoteRecord
+    # Correct type: UpsertNoteRecord, not NoteRecord
     res: List[UpsertNoteRecord] = client.upsert_note_with_embedding(
         title=title,
         body=body,
@@ -54,12 +53,12 @@ def test_upsert_note_with_embedding_returns_record_and_embedding_length() -> Non
 
     rec = res[0]
 
-    # ✅ UpsertNoteRecord fields
+    # UpsertNoteRecord fields
     assert rec["title"] == title
     assert rec["body"] == body
     assert rec["metadata"] == metadata
 
-    # ✅ Embedding must exist and be 1536‑dimensional
+    # Embedding must exist and be 1536‑dimensional
     emb = rec.get("embedding")
     assert emb is not None
     assert isinstance(emb, list)
