@@ -283,11 +283,11 @@ class SupabaseClient:
         record: UpsertNoteRecord = cast(
             UpsertNoteRecord,
             {
-            "title": title,
-            "body": body,
-            "metadata": metadata or {},
-            "embedding": emb,
-            }
+                "title": title,
+                "body": body,
+                "metadata": metadata or {},
+                "embedding": emb,
+            },
         )
 
         if id:
@@ -305,6 +305,8 @@ class SupabaseClient:
 
         data = _extract_data(resp)
         return data
+
+
 __all__ = [
     "SupabaseClient",
     "Executable",

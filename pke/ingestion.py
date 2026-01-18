@@ -16,6 +16,7 @@ Design philosophy:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -125,8 +126,6 @@ def ingest_note(
 # ---------------------------------------------------------------------------
 # ingest_all_notes
 # ---------------------------------------------------------------------------
-import json
-
 
 def ingest_all_notes(
     parsed_notes_path: Path,

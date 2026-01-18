@@ -140,9 +140,7 @@ class DummyClient(SupabaseClientInterface):
         This path is used less often in tests, but we still cast to ensure
         strict mypy correctness.
         """
-        typed: List[UpsertNoteRecord] = [
-            cast(UpsertNoteRecord, note) for note in notes
-        ]
+        typed: List[UpsertNoteRecord] = [cast(UpsertNoteRecord, note) for note in notes]
         return {"status": 200, "data": typed}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
