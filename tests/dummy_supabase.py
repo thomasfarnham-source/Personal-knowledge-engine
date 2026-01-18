@@ -26,7 +26,6 @@ from pke.types import (
 )
 from pke.supabase_client import Executable
 
-
 # =====================================================================
 # DummyExecuteResponse — simple stand‑in for SupabaseExecuteResponse
 # =====================================================================

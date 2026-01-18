@@ -19,7 +19,6 @@ The goal is to keep the data model explicit, predictable, and easy to mock.
 
 from typing import Any, Dict, List, Protocol, TypedDict, Optional
 
-
 # ---------------------------------------------------------------------------
 # NoteRecord — canonical DB representation
 # ---------------------------------------------------------------------------

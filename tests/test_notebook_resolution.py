@@ -15,7 +15,6 @@ This keeps tests deterministic and avoids network calls.
 from typing import Any, Dict, List
 from pke.supabase_client import SupabaseClient
 
-
 # ---------------------------------------------------------------------------
 # Fake Supabase client for testing
 # ---------------------------------------------------------------------------

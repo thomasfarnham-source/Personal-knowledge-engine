@@ -19,7 +19,6 @@ from pke.supabase_client import SupabaseClient, compute_embedding
 from pke.types import UpsertNoteRecord
 from tests.dummy_supabase import DummyClient  # Fully typed, reusable test double
 
-
 # =====================================================================
 # Test: Successful upsert
 # =====================================================================

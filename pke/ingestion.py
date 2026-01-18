@@ -24,7 +24,6 @@ from typing import Any, Dict, List, Optional
 # This keeps ingestion decoupled from the underlying storage implementation.
 from pke.supabase_client import SupabaseClient
 
-
 # ---------------------------------------------------------------------------
 # Canonical notebook assignment
 # ---------------------------------------------------------------------------
