@@ -127,6 +127,7 @@ def ingest_note(
 # ingest_all_notes
 # ---------------------------------------------------------------------------
 
+
 def ingest_all_notes(
     parsed_notes_path: Path,
     supabase: SupabaseClient,
