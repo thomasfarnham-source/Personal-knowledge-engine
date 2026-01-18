@@ -1,3 +1,5 @@
+# pke/supabase_client.py = Part 1 =
+
 """
 Minimal Supabase client wrapper for local testing and upserting notes with embeddings.
 
@@ -19,15 +21,22 @@ import os
 from typing import Any, Dict, List, Optional
 
 from supabase import Client, create_client  # Third-party SDK
-
 from pke.embedding import compute_embedding  # Local embedding stub
 from pke.types import (
-    UpsertNoteRecord,
+    NoteRecord,  # ✅ Re-exported for tests
+    UpsertNoteRecord,  # ✅ Correct write-time payload type
     Executable,
     SupabaseExecuteResponse,
     TableQuery,
 )
-from pke.wrapped_supabase_client import WrappedSupabaseClient
+from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in production
+
+# ✅ IMPORTANT DESIGN DECISION
+# We intentionally do NOT type the injected client as SupabaseClientInterface.
+# The real Supabase SDK client does NOT implement our Protocol (it lacks .list, .upsert),
+# and mypy will reject it. Instead, we accept Any and rely on duck typing.
+#
+# The Protocol still exists in pke.types for tests, stubs, and future real-client wrappers.
 
 
 # ---------------------------------------------------------------------------
@@ -70,6 +79,12 @@ class SupabaseClient:
     - It does not know about environment variables directly (except via from_env()).
     - It delegates low-level operations to an underlying client (real or dummy).
     - It exposes higher-level helpers for ingestion and entity resolution.
+
+    Notes
+    -----
+    We intentionally accept Any for the injected client because the real Supabase
+    SDK does not satisfy our Protocol. This keeps the wrapper flexible and mypy-clean
+    while still allowing DummyClient and test stubs to conform to the Protocol.
     """
 
     def __init__(self, client: Any) -> None:
@@ -79,6 +94,12 @@ class SupabaseClient:
         The client is expected to behave like WrappedSupabaseClient:
         - .table(name) -> TableQuery-like object
         - query builders support .select(), .eq(), .insert(), .upsert(), .execute()
+
+        This design allows:
+            • dependency injection
+            • easy mocking in tests
+            • swapping between DummyClient and real Supabase client
+            • clean separation between business logic and network logic
         """
         self.client = client
 
@@ -121,13 +142,26 @@ class SupabaseClient:
 
         This is a thin pass-through to the underlying client, but typed
         to make mypy and contributors happier.
+
+        Notes
+        -----
+        The return type is intentionally Any because:
+            • the real Supabase client returns a SyncRequestBuilder
+            • DummyClient returns a fake builder
+            • the wrapper does not depend on the concrete type
+
+        Raises
+        ------
+        RuntimeError
+            If no client has been injected.
         """
         if not self.client:
             raise RuntimeError("Supabase client is not configured")
+
         return self.client.table(name)
 
     # -----------------------------------------------------------------------
-    # Notebook resolution
+    # Notebook resolution ==== Part 2 ====
     # -----------------------------------------------------------------------
 
     def resolve_notebook_id(self, notebook_title: Optional[str]) -> Optional[str]:
@@ -258,7 +292,6 @@ class SupabaseClient:
 
         if id:
             record["id"] = id
-
         if notebook_id:
             record["notebook_id"] = notebook_id
 
@@ -269,14 +302,20 @@ class SupabaseClient:
             .execute()
         )
 
+        # Normalize error handling.
+        if isinstance(resp, dict) and resp.get("status", 200) >= 400:
+            raise RuntimeError(f"Upsert error: {resp}")
+        if not isinstance(resp, dict) and getattr(resp, "error", None):
+            raise RuntimeError(f"Upsert error: {resp.error}")
+
         data = _extract_data(resp)
         return data
-
 
 __all__ = [
     "SupabaseClient",
     "Executable",
     "SupabaseExecuteResponse",
     "TableQuery",
-    "UpsertNoteRecord",
+    "NoteRecord",  # ✅ required for tests
+    "UpsertNoteRecord",  # ✅ optional but helpful
 ]
