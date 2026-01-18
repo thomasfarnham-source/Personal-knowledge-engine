@@ -11,10 +11,8 @@ Purpose:
 This separation makes the system easier to test, maintain, and extend.
 """
 
-from dotenv import load_dotenv
-load_dotenv()
-
 from pathlib import Path
+from dotenv import load_dotenv
 
 # SupabaseClient handles:
 # - connecting to Supabase
@@ -26,6 +24,10 @@ from pke.supabase_client import SupabaseClient
 # ingest_all_notes performs the actual ingestion work.
 # It lives in pke/ingestion.py to keep logic modular and testable.
 from pke.ingestion import ingest_all_notes
+
+# Load environment variables *after* imports to satisfy flake8 E402.
+# This call has no side effects on import order or module structure.
+load_dotenv()
 
 
 def main() -> None:

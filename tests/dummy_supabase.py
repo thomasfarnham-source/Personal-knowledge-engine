@@ -15,7 +15,7 @@ Both clients also implement the `.list()` method used by SupabaseClient,
 ensuring end‑to‑end test coverage for read and write operations.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from pke.types import (
     UpsertNoteRecord,
@@ -56,7 +56,7 @@ class DummyExecutable(Executable):
     Represents the final `.execute()` call in the Supabase chain.
 
     DummyTableQuery.upsert() returns an instance of this class. When `.execute()`
-    is called, it returns a DummyExecuteResponse containing the upserted record.
+    is called, it returns a SupabaseExecuteResponse containing the upserted record.
     """
 
     def __init__(self, record: UpsertNoteRecord) -> None:
@@ -70,13 +70,20 @@ class DummyExecutable(Executable):
         """
         Execute the request and return a SupabaseExecuteResponse‑compatible object.
 
-        SupabaseExecuteResponse is a strict TypedDict with only:
-            • status : int
-            • data   : Any
+        IMPORTANT FOR MYPY:
+        --------------------
+        Even though `self.record` is structurally identical to UpsertNoteRecord,
+        mypy treats it as a plain dict unless we explicitly cast it.
 
-        The real Supabase Python client attaches errors as attributes, not keys.
+        Without this cast, mypy sees:
+            list[dict[str, Any]]
+        instead of:
+            list[UpsertNoteRecord]
+
+        This is the source of the remaining mypy error in test_supabase_client.py.
         """
-        resp: SupabaseExecuteResponse = {"status": 200, "data": [self.record]}
+        typed = cast(UpsertNoteRecord, self.record)
+        resp: SupabaseExecuteResponse = {"status": 200, "data": [typed]}
         return resp
 
 
@@ -127,9 +134,19 @@ class DummyClient(SupabaseClientInterface):
         return self.tables[name]
 
     def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
-        return {"status": 200, "data": notes}
+        """
+        Top‑level upsert path.
+
+        This path is used less often in tests, but we still cast to ensure
+        strict mypy correctness.
+        """
+        typed: List[UpsertNoteRecord] = [
+            cast(UpsertNoteRecord, note) for note in notes
+        ]
+        return {"status": 200, "data": typed}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
+        # Return a deterministic NoteRecord
         return [
             {
                 "id": "dummy-id",

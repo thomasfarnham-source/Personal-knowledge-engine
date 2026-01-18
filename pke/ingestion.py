@@ -17,7 +17,7 @@ Design philosophy:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 # Import the Supabase client used for upserting notes and resolving notebook IDs.
 # This keeps ingestion decoupled from the underlying storage implementation.
@@ -92,7 +92,8 @@ def ingest_note(
     title: str = note.get("title", "").strip()
     body: str = note.get("body", "").strip()
 
-    # Skip notes with empty or whitespace-only bodies
+    # Skip notes with empty or whitespace-only bodies.
+    # Title-only notes are allowed, but body-only notes are the semantic core.
     if not body:
         print(f"Skipping empty-body note: {title}")
         return
@@ -166,8 +167,15 @@ def ingest_all_notes(
         notes: List[Dict[str, Any]] = json.load(f)
 
     # Resolve the canonical notebook ID once.
-    # This avoids repeated lookups and ensures consistent assignment.
-    notebook_id: str = supabase.resolve_notebook_id(DEFAULT_NOTEBOOK_TITLE)
+    # resolve_notebook_id() returns Optional[str], so we validate explicitly.
+    nid: Optional[str] = supabase.resolve_notebook_id(DEFAULT_NOTEBOOK_TITLE)
+
+    if nid is None:
+        # This should never happen because DEFAULT_NOTEBOOK_TITLE is always provided.
+        # We fail loudly to avoid silently ingesting notes without a notebook context.
+        raise RuntimeError(f"Failed to resolve canonical notebook: {DEFAULT_NOTEBOOK_TITLE!r}")
+
+    notebook_id: str = nid
 
     # Ingest each note individually.
     for note in notes:

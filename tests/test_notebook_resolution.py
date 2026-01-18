@@ -20,6 +20,7 @@ from pke.supabase_client import SupabaseClient
 # Fake Supabase client for testing
 # ---------------------------------------------------------------------------
 
+
 class FakeTable:
     """
     Simulates the `.table(name)` builder returned by Supabase.
@@ -31,14 +32,24 @@ class FakeTable:
         • .execute()
 
     The FakeClient stores rows in-memory in a dict keyed by table name.
+
+    Type notes:
+    - _select_fields: str | None
+        Tracks which fields were requested in `.select()`.
+    - _filters: Dict[str, Any]
+        Stores equality filters applied via `.eq()`.
+    - _insert_payload: Dict[str, Any] | None
+        Holds the payload passed to `.insert()`, or None if not inserting.
     """
 
     def __init__(self, table_name: str, store: Dict[str, List[Dict[str, Any]]]):
         self.table_name = table_name
         self.store = store
-        self._select_fields = None
-        self._filters = {}
-        self._insert_payload = None
+
+        # Explicit type annotations ensure mypy does not infer incorrect types.
+        self._select_fields: str | None = None
+        self._filters: Dict[str, Any] = {}
+        self._insert_payload: Dict[str, Any] | None = None
 
     # --- Query builder methods ------------------------------------------------
 
@@ -89,7 +100,7 @@ class FakeClient:
         { "notebooks": [ {id, title}, ... ] }
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.store: Dict[str, List[Dict[str, Any]]] = {}
 
     def table(self, name: str) -> FakeTable:
@@ -99,6 +110,7 @@ class FakeClient:
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 def test_resolve_notebook_id_returns_none_for_missing_title() -> None:
     """
@@ -132,9 +144,7 @@ def test_resolve_notebook_id_returns_existing_notebook() -> None:
     and should NOT insert a duplicate.
     """
     fake = FakeClient()
-    fake.store["notebooks"] = [
-        {"id": "uuid-1", "title": "Personal"}
-    ]
+    fake.store["notebooks"] = [{"id": "uuid-1", "title": "Personal"}]
 
     client = SupabaseClient(fake)
 

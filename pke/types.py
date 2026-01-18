@@ -17,7 +17,7 @@ the system.
 The goal is to keep the data model explicit, predictable, and easy to mock.
 """
 
-from typing import Any, Dict, List, Protocol, TypedDict
+from typing import Any, Dict, List, Protocol, TypedDict, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -71,6 +71,12 @@ class UpsertNoteRecord(TypedDict, total=False):
 
     The ingestion pipeline constructs this structure before calling:
         client.table("notes").upsert(record).execute()
+
+    Notes
+    -----
+    total=False means:
+        • all fields are optional
+        • callers may provide only the fields relevant to the upsert
     """
 
     id: str
@@ -78,6 +84,10 @@ class UpsertNoteRecord(TypedDict, total=False):
     body: str
     metadata: Dict[str, Any]
     embedding: List[float]
+
+    # Optional foreign key to the notebooks table.
+    # Added explicitly because upsert_note_with_embedding() sets this field.
+    notebook_id: Optional[str]
 
 
 # ---------------------------------------------------------------------------
@@ -122,6 +132,11 @@ class TableQuery(TypedDict):
         Name of the table to query (e.g., "notes").
     filters : Dict[str, Any]
         Key‑value filters to apply (e.g., {"id": "abc123"}).
+
+    Notes
+    -----
+    TypedDict fields must NOT have default values.
+    The caller is responsible for supplying an explicit filters dict.
     """
 
     table: str

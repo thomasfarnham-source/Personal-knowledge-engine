@@ -16,6 +16,7 @@ Key responsibilities:
     • resolving notebook IDs by title (resolve_notebook_id)
     • upserting notes with embeddings (upsert_note_with_embedding)
 """
+from typing import cast
 
 import os
 from typing import Any, Dict, List, Optional
@@ -43,7 +44,8 @@ from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in pro
 # Helper: normalize Supabase responses
 # ---------------------------------------------------------------------------
 
-def _extract_data(resp: Any) -> List[Dict[str, Any]]:
+
+def _extract_data(resp: Any) -> List[UpsertNoteRecord]:
     """
     Normalize Supabase responses across:
         • real SDK objects
@@ -58,18 +60,19 @@ def _extract_data(resp: Any) -> List[Dict[str, Any]]:
     if isinstance(resp, dict):
         if resp.get("status", 200) >= 400:
             raise RuntimeError(f"Supabase error: {resp}")
-        return resp.get("data", [])
+        return cast(List[UpsertNoteRecord], resp.get("data", []))
 
     # Case 2: Real Supabase SDK object (or wrapped equivalent)
     if getattr(resp, "error", None):
         raise RuntimeError(f"Supabase error: {resp.error}")
 
-    return getattr(resp, "data", None) or []
+    return cast(List[UpsertNoteRecord], getattr(resp, "data", None) or [])
 
 
 # ---------------------------------------------------------------------------
 # Main wrapper class
 # ---------------------------------------------------------------------------
+
 
 class SupabaseClient:
     """
@@ -123,9 +126,7 @@ class SupabaseClient:
         key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
         if not url or not key:
-            raise RuntimeError(
-                "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment."
-            )
+            raise RuntimeError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment.")
 
         # Create the real Supabase client via the official SDK.
         real_client: Client = create_client(url, key)
@@ -198,11 +199,7 @@ class SupabaseClient:
 
         # 1. Lookup existing notebook
         select_resp: SupabaseExecuteResponse = (
-            self.client
-            .table("notebooks")
-            .select("id")
-            .eq("title", notebook_title)
-            .execute()
+            self.client.table("notebooks").select("id").eq("title", notebook_title).execute()
         )
 
         rows = _extract_data(select_resp)
@@ -214,17 +211,12 @@ class SupabaseClient:
         insert_payload: Dict[str, Any] = {"title": notebook_title}
 
         insert_resp: SupabaseExecuteResponse = (
-            self.client
-            .table("notebooks")
-            .insert(insert_payload)
-            .execute()
+            self.client.table("notebooks").insert(insert_payload).execute()
         )
 
         inserted = _extract_data(insert_resp)
         if not inserted:
-            raise RuntimeError(
-                f"Notebook insert returned no rows for title={notebook_title!r}"
-            )
+            raise RuntimeError(f"Notebook insert returned no rows for title={notebook_title!r}")
 
         return inserted[0]["id"]
 
@@ -240,7 +232,7 @@ class SupabaseClient:
         id: Optional[str] = None,
         notebook_id: Optional[str] = None,
         table: str = "notes",
-    ) -> List[Dict[str, Any]]:
+    ) -> List[UpsertNoteRecord]:
         """
         Upsert a note into the given table, computing an embedding for the body.
 
@@ -261,8 +253,10 @@ class SupabaseClient:
 
         Returns
         -------
-        list[dict]
-            The rows returned by Supabase after the upsert.
+        list[UpsertNoteRecord]
+            The rows returned by Supabase after the upsert, each conforming to
+            the UpsertNoteRecord TypedDict.
+
 
         Raises
         ------
@@ -283,24 +277,25 @@ class SupabaseClient:
         # Compute embedding for the note body.
         emb = compute_embedding(body)
 
-        record: UpsertNoteRecord = {
+        from typing import cast
+        from pke.types import UpsertNoteRecord
+
+        record: UpsertNoteRecord = cast(
+            UpsertNoteRecord,
+            {
             "title": title,
             "body": body,
             "metadata": metadata or {},
             "embedding": emb,
-        }
+            }
+        )
 
         if id:
             record["id"] = id
         if notebook_id:
             record["notebook_id"] = notebook_id
 
-        resp: SupabaseExecuteResponse = (
-            self.client
-            .table(table)
-            .upsert(record)
-            .execute()
-        )
+        resp: SupabaseExecuteResponse = self.client.table(table).upsert(record).execute()
 
         # Normalize error handling.
         if isinstance(resp, dict) and resp.get("status", 200) >= 400:
@@ -310,7 +305,6 @@ class SupabaseClient:
 
         data = _extract_data(resp)
         return data
-
 __all__ = [
     "SupabaseClient",
     "Executable",
