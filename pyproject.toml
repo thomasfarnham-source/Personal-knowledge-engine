@@ -1,6 +1,25 @@
 # pyproject.toml — Centralized configuration for Python tooling
 
 # Trigger CI: no-op comment to force GitHub Actions run
+# ---------------------------------------------------------------------
+# Centralized configuration for Python tooling and project metadata.
+#
+# This file serves as the single source of truth for:
+#   • packaging and installation metadata
+#   • formatting rules (black)
+#   • import sorting (isort)
+#   • linting guardrails (flake8)
+#   • static type checking (mypy)
+#
+# Consolidating these settings ensures:
+#   • consistent behavior across local development and CI
+#   • reproducible, low‑friction workflows for contributors
+#   • clear expectations for code quality and style
+#   • minimal configuration drift as the project evolves
+#
+# Any new tooling or project‑wide settings should be added here to
+# maintain a unified, contributor‑friendly configuration surface.
+# ---------------------------------------------------------------------
 
 # -------------------------------
 # Project metadata and dependencies
@@ -75,6 +94,7 @@ exclude = '''
 
 # -------------------------------
 # isort: Import sorter
+# Keeps imports organized and aligned with Black's style.
 # -------------------------------
 [tool.isort]
 profile = "black"  # Align with Black's style
@@ -88,6 +108,7 @@ skip = ["legacy"]
 
 # -------------------------------
 # mypy: Static type checker
+# Enforces type safety and catches subtle bugs early.
 # -------------------------------
 [tool.mypy]
 python_version = "3.14"
@@ -113,6 +134,7 @@ ignore_missing_imports = true
 
 # -------------------------------
 # flake8: Linter
+# Provides style guardrails and catches common mistakes.
 # -------------------------------
 [tool.flake8]
 max-line-length = 100

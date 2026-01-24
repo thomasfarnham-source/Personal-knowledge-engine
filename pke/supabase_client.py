@@ -17,7 +17,7 @@ which ensures that injected clients (real or mock) expose the minimal surface:
 """
 
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from supabase import Client, create_client  # Third‑party SDK
 from pke.embedding import compute_embedding  # Local embedding helper
@@ -28,6 +28,48 @@ from pke.types import (
     SupabaseExecuteResponse,
     TableQuery,
 )
+from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in production
+
+# ✅ IMPORTANT DESIGN DECISION
+# We intentionally do NOT type the injected client as SupabaseClientInterface.
+# The real Supabase SDK client does NOT implement our Protocol (it lacks .list, .upsert),
+# and mypy will reject it. Instead, we accept Any and rely on duck typing.
+#
+# The Protocol still exists in pke.types for tests, stubs, and future real-client wrappers.
+
+
+# ---------------------------------------------------------------------------
+# Helper: normalize Supabase responses
+# ---------------------------------------------------------------------------
+
+
+def _extract_data(resp: Any) -> List[UpsertNoteRecord]:
+    """
+    Normalize Supabase responses across:
+        • real SDK objects
+        • DummyClient-style dicts
+        • test stubs
+
+    Always returns a list of row dictionaries.
+
+    Raises RuntimeError on any Supabase error.
+    """
+    # Case 1: DummyClient-style dict
+    if isinstance(resp, dict):
+        if resp.get("status", 200) >= 400:
+            raise RuntimeError(f"Supabase error: {resp}")
+        return cast(List[UpsertNoteRecord], resp.get("data", []))
+
+    # Case 2: Real Supabase SDK object (or wrapped equivalent)
+    if getattr(resp, "error", None):
+        raise RuntimeError(f"Supabase error: {resp.error}")
+
+    return cast(List[UpsertNoteRecord], getattr(resp, "data", None) or [])
+
+
+# ---------------------------------------------------------------------------
+# Main wrapper class
+# ---------------------------------------------------------------------------
 
 
 class SupabaseClient:
@@ -85,9 +127,10 @@ class SupabaseClient:
 
         self.client = create_client(url, key)
 
-    def table(self, name: str) -> Any:
+    @classmethod
+    def from_env(cls) -> "SupabaseClient":
         """
-        Proxy access to the underlying client's .table(name) method.
+        Factory constructor that initializes SupabaseClient using environment variables.
 
         Returns:
             A query builder object that supports:
@@ -99,6 +142,69 @@ class SupabaseClient:
             raise RuntimeError("Supabase client is not configured (dry‑run mode).")
         return self.client.table(name)
 
+    # -----------------------------------------------------------------------
+    # Notebook resolution ==== Part 2 ====
+    # -----------------------------------------------------------------------
+
+    def resolve_notebook_id(self, notebook_title: Optional[str]) -> Optional[str]:
+        """
+        Resolve the UUID of a notebook by title.
+
+        Steps:
+            1. If no title provided → return None (caller decides how to handle).
+            2. SELECT id FROM notebooks WHERE title = <title>.
+            3. If exists → return id.
+            4. If not → INSERT {title} and return new id.
+
+        This method is intentionally conservative:
+            • No assumptions about schema beyond "id" and "title".
+            • No caching (yet) — correctness > performance.
+            • Fully normalized error handling via _extract_data().
+
+        Parameters
+        ----------
+        notebook_title : str | None
+            The human-readable notebook title extracted from parsed notes.
+
+        Returns
+        -------
+        str | None
+            The resolved notebook UUID, or None if no title was provided.
+        """
+        if not notebook_title:
+            # Notes without notebooks are allowed; caller handles fallback.
+            return None
+
+        if not self.client:
+            raise RuntimeError("Supabase client is not configured")
+
+        # 1. Lookup existing notebook
+        select_resp: SupabaseExecuteResponse = (
+            self.client.table("notebooks").select("id").eq("title", notebook_title).execute()
+        )
+
+        rows = _extract_data(select_resp)
+        if rows:
+            # Notebook already exists — return its UUID.
+            return rows[0]["id"]
+
+        # 2. Insert new notebook
+        insert_payload: Dict[str, Any] = {"title": notebook_title}
+
+        insert_resp: SupabaseExecuteResponse = (
+            self.client.table("notebooks").insert(insert_payload).execute()
+        )
+
+        inserted = _extract_data(insert_resp)
+        if not inserted:
+            raise RuntimeError(f"Notebook insert returned no rows for title={notebook_title!r}")
+
+        return inserted[0]["id"]
+
+    # -----------------------------------------------------------------------
+    # Note upsert with embedding
+    # -----------------------------------------------------------------------
+
     def upsert_note_with_embedding(
         self,
         title: str,
@@ -107,8 +213,9 @@ class SupabaseClient:
         id: Optional[str] = None,
         notebook_id: Optional[str] = None,
         table: str = "notes",
-    ) -> Any:
+    ) -> List[UpsertNoteRecord]:
         """
+<<<<<<< HEAD
         Compute an embedding for the note body and upsert the note into Supabase.
 
         Args:
@@ -126,6 +233,38 @@ class SupabaseClient:
         Raises:
             ValueError: If body is empty.
             RuntimeError: If no client is provided in real mode.
+=======
+        Upsert a note into the given table, computing an embedding for the body.
+
+        Parameters
+        ----------
+        title : str
+            Human-readable note title.
+        body : str
+            Note body content. Must be non-empty.
+        metadata : dict | None
+            Arbitrary metadata to store alongside the note.
+        id : str | None
+            Optional explicit note ID for deterministic upserts.
+        notebook_id : str | None
+            Optional foreign key to the notebooks table.
+        table : str
+            Target table name. Defaults to "notes".
+
+        Returns
+        -------
+        list[UpsertNoteRecord]
+            The rows returned by Supabase after the upsert, each conforming to
+            the UpsertNoteRecord TypedDict.
+
+
+        Raises
+        ------
+        ValueError
+            If body is empty.
+        RuntimeError
+            If the underlying client is not configured or Supabase returns an error.
+>>>>>>> 52378a571b04bcda4139de5c582793cca9edf92c
         """
         if not body:
             raise ValueError("body must be provided")
@@ -154,9 +293,10 @@ class SupabaseClient:
         if not self.client:
             raise RuntimeError(
                 "No client provided to SupabaseClient. "
-                "Please pass a valid client instance or use the default."
+                "Please construct via SupabaseClient.from_env() or inject a valid client."
             )
 
+        # Compute embedding for the note body.
         emb = compute_embedding(body)
 
         record: NoteRecord = {
@@ -169,6 +309,8 @@ class SupabaseClient:
 
         if id:
             record["id"] = id
+        if notebook_id:
+            record["notebook_id"] = notebook_id
 
         # Upsert the note
         resp: SupabaseExecuteResponse = (
@@ -322,7 +464,6 @@ supabase: SupabaseClient = SupabaseClient(real_client)
 
 __all__ = [
     "SupabaseClient",
-    "supabase",
     "Executable",
     "SupabaseExecuteResponse",
     "TableQuery",

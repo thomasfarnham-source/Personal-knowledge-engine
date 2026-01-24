@@ -39,7 +39,6 @@ class NoteRecord(TypedDict, total=False):
     embedding: List[float]
     notebook_id: Optional[str]
 
-
 # ---------------------------------------------------------------------------
 # SupabaseExecuteResponse
 # ---------------------------------------------------------------------------
