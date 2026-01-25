@@ -15,15 +15,14 @@ Design goals:
         Given the same parsed input, the orchestrator produces the same final state.
 
     • Idempotent:
-        It is safe to run ingestion multiple times without creating duplicates
-        or corrupting relationships.
+        Safe to run multiple times without creating duplicates or corrupting relationships.
 
     • Ordered:
-        Entities are ingested in a sequence that respects dependencies
-        (e.g., notebooks before notes, tags before relationships).
+        Entities are ingested in a dependency-respecting sequence
+        (e.g., notebooks → notes → tags → relationships).
 
     • Testable:
-        Each stage is isolated enough to be unit‑tested independently.
+        Each stage is isolated enough to be unit-tested independently.
 """
 
 from typing import Any, Dict, List
@@ -82,6 +81,7 @@ def ingest_notes(
             - failures (list of {id, error})
     """
 
+    # Initialize a structured summary for reporting and testing.
     summary: Dict[str, Any] = {
         "notes_processed": len(parsed_notes),
         "notes_inserted": 0,
@@ -94,6 +94,7 @@ def ingest_notes(
     # ------------------------------------------------------------
     # 1. Resolve notebooks
     # ------------------------------------------------------------
+    # Build a mapping of notebook names → metadata extracted from notes.
     notebook_map = resolve_notebook_ids(parsed_notes)
 
     # Persist notebooks first so notes can reference canonical notebook IDs.
@@ -104,16 +105,18 @@ def ingest_notes(
     # ------------------------------------------------------------
     for note in parsed_notes:
         try:
+            # Skip empty-body notes (e.g., deleted or malformed).
             if not note.get("body"):
                 summary["notes_skipped"] += 1
                 continue
 
-            # Resolve notebook_id for this note (if any)
+            # Resolve notebook_id for this note (if any).
             notebook_id = None
             if "notebook" in note:
                 notebook_name = note["notebook"]
                 notebook_id = notebook_id_map.get(notebook_name)
 
+            # Delegate persistence + embedding generation to the client.
             client.upsert_note_with_embedding(
                 title=note.get("title", ""),
                 body=note["body"],
@@ -125,6 +128,7 @@ def ingest_notes(
             summary["notes_inserted"] += 1
 
         except Exception as e:
+            # Capture failures without halting ingestion.
             summary["failures"].append(
                 {
                     "id": note.get("id"),
@@ -135,15 +139,20 @@ def ingest_notes(
     # ------------------------------------------------------------
     # 3. Extract and upsert tags
     # ------------------------------------------------------------
+    # Collect all unique tags across all notes.
     all_tags = extract_all_tags(parsed_notes)
+
+    # Upsert tags and receive a mapping of tag_name → tag_id.
     tag_id_map = client.upsert_tags(all_tags)
     summary["tags_inserted"] = len(tag_id_map)
 
     # ------------------------------------------------------------
     # 4. Create note‑tag relationships
     # ------------------------------------------------------------
+    # Build a mapping of note_id → [tag_ids].
     note_tag_map = map_note_tags_to_ids(parsed_notes, tag_id_map)
 
+    # Persist relationships in the join table.
     for note_id, tag_ids in note_tag_map.items():
         client.upsert_note_tag_relationships(note_id, tag_ids)
         summary["relationships_created"] += len(tag_ids)
