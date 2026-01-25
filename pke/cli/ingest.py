@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import click
 
@@ -27,7 +27,7 @@ from pke.supabase_client import SupabaseClient
     default=None,
     help="Limit the number of notes ingested.",
 )
-def ingest(parsed_path: str, dry_run: bool, limit: Optional[int]):
+def ingest(parsed_path: str, dry_run: bool, limit: Optional[int]) -> None:
     """
     Ingest parsed notes into Supabase using the orchestrator.
 
@@ -41,7 +41,7 @@ def run_ingest(
     parsed_path: str = "parsed_notes.json",
     dry_run: bool = False,
     limit: Optional[int] = None,
-):
+) -> Dict[str, Any]:
     """
     CLI entrypoint for ingestion. Thin wrapper around the orchestrator.
 

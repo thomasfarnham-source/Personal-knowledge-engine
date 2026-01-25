@@ -18,7 +18,7 @@ from .ingest import ingest
 # by importing them and registering them below.
 # ---------------------------------------------------------------------------
 @click.group()
-def cli():
+def cli() -> None:
     """Personal Knowledge Engine command-line interface."""
     # No logic here — this function serves as a namespace for subcommands.
     pass

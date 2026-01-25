@@ -15,16 +15,15 @@ Both clients also implement the `.list()` method used by SupabaseClient,
 ensuring end‑to‑end test coverage for read and write operations.
 """
 
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 from pke.types import (
-    UpsertNoteRecord,
     NoteRecord,
     SupabaseClientInterface,
     SupabaseExecuteResponse,
     TableQuery,
 )
-from pke.supabase_client import Executable
+from pke.types import Executable
 
 # =====================================================================
 # DummyExecuteResponse — simple stand‑in for SupabaseExecuteResponse
@@ -58,7 +57,7 @@ class DummyExecutable(Executable):
     is called, it returns a SupabaseExecuteResponse containing the upserted record.
     """
 
-    def __init__(self, record: UpsertNoteRecord) -> None:
+    def __init__(self, record: Dict[str, Any]) -> None:
         self.record = record
 
     def __call__(self, *args: Any, **kwargs: Any) -> None:
@@ -69,19 +68,10 @@ class DummyExecutable(Executable):
         """
         Execute the request and return a SupabaseExecuteResponse‑compatible object.
 
-        IMPORTANT FOR MYPY:
-        --------------------
-        Even though `self.record` is structurally identical to UpsertNoteRecord,
-        mypy treats it as a plain dict unless we explicitly cast it.
-
-        Without this cast, mypy sees:
-            list[dict[str, Any]]
-        instead of:
-            list[UpsertNoteRecord]
-
-        This is the source of the remaining mypy error in test_supabase_client.py.
+        The record is returned inside a list to match the real Supabase client's
+        behavior for multi‑row upserts.
         """
-        typed = cast(UpsertNoteRecord, self.record)
+        typed = cast(Dict[str, Any], self.record)
         resp: SupabaseExecuteResponse = {"status": 200, "data": [typed]}
         return resp
 
@@ -100,11 +90,21 @@ class DummyTableQuery:
 
     def __init__(self, table_name: str) -> None:
         self.table_name = table_name
-        self.last_upserted: Optional[UpsertNoteRecord] = None
+        self.last_upserted: Optional[Dict[str, Any]] = None
 
-    def upsert(self, record: UpsertNoteRecord) -> DummyExecutable:
-        self.last_upserted = record
-        return DummyExecutable(record)
+    def upsert(self, record: Union[Dict[str, Any], List[Dict[str, Any]]]) -> DummyExecutable:
+        """
+        Accept either a single record or a list of records.
+
+        The real Supabase client accepts both forms, so the dummy client mirrors
+        that behavior for test realism.
+        """
+        if isinstance(record, list):
+            self.last_upserted = record[0]
+            return DummyExecutable(record[0])
+        else:
+            self.last_upserted = record
+            return DummyExecutable(record)
 
 
 # =====================================================================
@@ -118,10 +118,12 @@ class DummyClient(SupabaseClientInterface):
 
     Implements:
         • table(name)
-        • upsert(notes)
+        • upsert(record)
         • list(query)
+        • select(...)
+        • execute()
 
-    Used to test SupabaseClient without making network calls.
+    The last two are required by the Protocol but are no‑ops here.
     """
 
     def __init__(self) -> None:
@@ -132,28 +134,57 @@ class DummyClient(SupabaseClientInterface):
             self.tables[name] = DummyTableQuery(name)
         return self.tables[name]
 
-    def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
+    def upsert(
+        self,
+        record: Union[Dict[str, Any], List[Dict[str, Any]]],
+        on_conflict: Optional[str] = None,
+    ) -> SupabaseExecuteResponse:
         """
         Top‑level upsert path.
 
-        This path is used less often in tests, but we still cast to ensure
-        strict mypy correctness.
+        Mirrors the Protocol signature and supports both single‑record and
+        multi‑record upserts.
         """
-        typed: List[UpsertNoteRecord] = [cast(UpsertNoteRecord, note) for note in notes]
-        return {"status": 200, "data": typed}
+        payload = record if isinstance(record, list) else [record]
+        return {"status": 200, "data": payload}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
-        # Return a deterministic NoteRecord
+        """
+        Return a deterministic NoteRecord.
+
+        This ensures predictable behavior in tests without depending on the
+        real Supabase backend.
+        """
         return [
             {
                 "id": "dummy-id",
-                "content": "dummy content",
                 "title": "dummy title",
                 "body": "dummy body",
                 "metadata": {},
                 "embedding": [0.0] * 1536,
             }
         ]
+
+    # ------------------------------------------------------------------
+    # Required by SupabaseClientInterface but unused in DummyClient
+    # ------------------------------------------------------------------
+
+    def select(self, *columns: str) -> Any:
+        """
+        No‑op select method.
+
+        Real Supabase clients return a query builder, so we return self to
+        preserve method‑chaining semantics.
+        """
+        return self
+
+    def execute(self) -> SupabaseExecuteResponse:
+        """
+        No‑op execute method.
+
+        Required by the Protocol. Returns an empty successful response.
+        """
+        return {"status": 200, "data": []}
 
 
 # =====================================================================
@@ -171,11 +202,22 @@ class FailingClient(SupabaseClientInterface):
     def table(self, name: str) -> "FailingTable":
         return FailingTable()
 
-    def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
+    def upsert(
+        self,
+        record: Union[Dict[str, Any], List[Dict[str, Any]]],
+        on_conflict: Optional[str] = None,
+    ) -> SupabaseExecuteResponse:
         return {"status": 500, "data": None}
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
         raise RuntimeError("Simulated failure")
+
+    # Required by Protocol
+    def select(self, *columns: str) -> Any:
+        return self
+
+    def execute(self) -> SupabaseExecuteResponse:
+        return {"status": 500, "data": None}
 
 
 # =====================================================================
@@ -190,7 +232,7 @@ class FailingTable:
     Its `.upsert()` returns a FailingExecutable.
     """
 
-    def upsert(self, record: NoteRecord) -> "FailingExecutable":
+    def upsert(self, record: Dict[str, Any]) -> "FailingExecutable":
         return FailingExecutable()
 
 

@@ -39,20 +39,50 @@ class NoteRecord(TypedDict, total=False):
     embedding: List[float]
     notebook_id: Optional[str]
 
+
+# ---------------------------------------------------------------------------
+# IngestionSummary
+# ---------------------------------------------------------------------------
+# Represents the structured summary returned by the ingestion orchestrator.
+#
+# This TypedDict provides a stable, explicit schema for the ingestion summary
+# consumed by:
+#   • run_ingest() in the CLI layer
+#   • unit tests validating ingestion behavior
+#   • higher‑level automation that inspects ingestion results
+#
+# The orchestrator always returns these fields, making this a reliable
+# contract for both human‑readable CLI output and programmatic callers.
+# ---------------------------------------------------------------------------
+
+
+class IngestionSummary(TypedDict):
+    notes_processed: int
+    notes_inserted: int
+    notes_skipped: int
+    tags_inserted: int
+    relationships_created: int
+    failures: List[str]
+
+
 # ---------------------------------------------------------------------------
 # SupabaseExecuteResponse
 # ---------------------------------------------------------------------------
-# Represents the response returned from Supabase `.execute()`.
+# Represents the normalized response returned from Supabase `.execute()`.
 #
-# The real Supabase client returns an object with:
+# The real Supabase client returns a dynamic object with:
 #   • .status
 #   • .data
 #   • .error (optional)
 #
-# Bucket‑4 hardening:
-#   • Added optional "error" field to reflect real Supabase behavior.
-#   • This prevents mypy from complaining when client code checks for errors.
+# The wrapper (WrappedSupabaseClient) and all test doubles return dictionaries
+# with the same fields. This TypedDict captures that shape so mypy can enforce
+# correctness across the entire codebase.
+#
+# total=False allows partial responses (e.g., error-only).
 # ---------------------------------------------------------------------------
+
+
 class SupabaseExecuteResponse(TypedDict, total=False):
     status: int
     data: Any
@@ -82,8 +112,7 @@ class TableQuery(TypedDict):
 # This is intentionally broad — any callable is acceptable.
 # ---------------------------------------------------------------------------
 class Executable(Protocol):
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        ...
+    def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
 
 
 # ---------------------------------------------------------------------------
@@ -106,10 +135,11 @@ class Executable(Protocol):
 #   • select(...) -> Any
 #   • execute() -> SupabaseExecuteResponse
 #
-# Bucket‑4 hardening:
-#   • Added explicit return type for execute()
-#   • Ensured upsert() and select() signatures match real usage
-#   • This keeps mocks and stubs aligned with the hardened client wrapper
+# IMPORTANT:
+#   This Protocol is intentionally *structural*, not nominal. Any object that
+#   implements these methods with compatible signatures is accepted — including
+#   the real Supabase SDK, WrappedSupabaseClient, DummyClient, FakeClient, and
+#   FailingClient.
 # ---------------------------------------------------------------------------
 class SupabaseClientInterface(Protocol):
     def table(self, name: str) -> Any:
@@ -133,7 +163,7 @@ class SupabaseClientInterface(Protocol):
     def select(self, *columns: str) -> Any:
         """
         Select specific columns from the table.
-        The return value is a query builder that must support .execute().
+        The return value must support .execute().
         """
         ...
 

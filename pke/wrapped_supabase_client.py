@@ -18,7 +18,7 @@ This ensures:
     - and consistent behavior across production and tests.
 """
 
-from typing import Any, List
+from typing import Any, Dict, List, Optional, Union
 from supabase import Client
 
 from pke.types import (
@@ -56,22 +56,56 @@ class WrappedSupabaseClient(SupabaseClientInterface):
         """
         return self._client.table(name)
 
-    def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse:
+    def upsert(
+        self,
+        record: Union[Dict[str, Any], List[Dict[str, Any]]],
+        on_conflict: Optional[str] = None,
+    ) -> SupabaseExecuteResponse:
         """
         Perform an upsert into the "notes" table.
 
-        The Supabase Python client expects JSON-serializable data, but mypy
-        cannot verify that NoteRecord is JSON-compatible. We silence the false
-        positive with a targeted type ignore when calling the SDK.
+        This method intentionally matches the SupabaseClientInterface signature:
 
-        We also normalize the SDK response into the SupabaseExecuteResponse
-        TypedDict. The SDK's response object shape can vary; to avoid mypy
-        attribute errors we treat the SDK response as Any and read attributes
-        dynamically.
+            def upsert(self, record: Dict[str, Any], on_conflict: Optional[str]) -> Any
+
+        but is extended to also accept a list of records. This keeps the method
+        Protocol‑compatible (it still accepts a single Dict[str, Any]) while allowing
+        callers to batch‑upsert multiple rows.
+
+        The underlying Supabase Python client accepts either a single dictionary or
+        a list of dictionaries for upsert operations. To keep behavior predictable
+        and mypy‑friendly, we normalize both cases into a list before calling the SDK.
+
+        Args:
+            record:
+                Either a single NoteRecord dictionary or a list of NoteRecord
+                dictionaries. Both forms are normalized into a list internally.
+            on_conflict:
+                Optional column name used by Supabase to determine the conflict
+                target for the upsert. Passed directly to the underlying SDK.
+
+        Returns:
+            A SupabaseExecuteResponse TypedDict containing normalized "status" and
+            "data" fields extracted from the underlying SDK response. The Supabase
+            client exposes dynamic attributes (e.g., .status, .status_code, .data),
+            so we treat the response as Any and read attributes defensively.
         """
-        response = self._client.table("notes").upsert(notes).execute()  # type: ignore[arg-type]
 
-        # Treat the SDK response as dynamic to avoid attribute errors from mypy.
+        # Normalize input to a list so the SDK always receives a consistent payload.
+        if isinstance(record, list):
+            payload = record
+        else:
+            payload = [record]
+
+        # Perform the upsert. The Supabase SDK is dynamically typed, so we silence
+        # the arg-type warning when passing our JSON-serializable payload.
+        response = (
+            self._client.table("notes")
+            .upsert(payload, on_conflict=on_conflict)  # type: ignore[arg-type]
+            .execute()
+        )
+
+        # Treat the SDK response as dynamic to avoid mypy attribute errors.
         response_any: Any = response
 
         # Normalize status: some SDK versions expose `status`, others `status_code`.
