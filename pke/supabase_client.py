@@ -16,10 +16,7 @@ which ensures that injected clients (real or mock) expose the minimal surface:
     • execute()
 """
 
-import os
 from typing import Any, Dict, List, Optional, cast
-
-from supabase import create_client  # Third‑party SDK
 from pke.embedding import compute_embedding  # Local embedding helper
 from pke.types import (
     NoteRecord,
@@ -111,26 +108,14 @@ class SupabaseClient:
 
         self.dry_run = dry_run
 
+        # Explicit guard: if the caller *explicitly* passes client=None,
+        # treat it as a configuration error. Tests rely on this behavior.
+        if client is None:
+            raise RuntimeError("No client provided to SupabaseClient")
+
         # If a client was injected (tests, stubs, or a real Supabase client),
         # use it directly. This path bypasses environment variable loading.
-        if client is not None:
-            self.client = client
-            return
-
-        # In dry‑run mode, we intentionally avoid initializing a real client.
-        if dry_run:
-            self.client = None
-            return
-
-        # Otherwise, initialize the real Supabase client from environment variables.
-        url = os.environ.get("SUPABASE_URL")
-        key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-
-        if not url or not key:
-            raise RuntimeError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment.")
-
-        # The official Supabase client is dynamically typed, so we store it as Any.
-        self.client = create_client(url, key)
+        self.client = client
 
     @classmethod
     def from_env(cls) -> "SupabaseClient":
