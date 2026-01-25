@@ -100,9 +100,7 @@ class WrappedSupabaseClient(SupabaseClientInterface):
         # Perform the upsert. The Supabase SDK is dynamically typed, so we silence
         # the arg-type warning when passing our JSON-serializable payload.
         response = (
-            self._client.table("notes")
-            .upsert(payload, on_conflict=on_conflict)  # type: ignore[arg-type]
-            .execute()
+            self._client.table("notes").upsert(payload, on_conflict=on_conflict or "").execute()
         )
 
         # Treat the SDK response as dynamic to avoid mypy attribute errors.
@@ -121,27 +119,49 @@ class WrappedSupabaseClient(SupabaseClientInterface):
 
     def list(self, query: TableQuery) -> List[NoteRecord]:
         """
-        Execute a filtered SELECT query.
+        Execute a filtered SELECT query against a Supabase table.
 
-        TableQuery is a TypedDict with:
+        TableQuery (TypedDict) structure:
             - "table": str
+                Name of the Supabase table to query.
             - "filters": Dict[str, Any]
+                Key/value pairs representing equality filters to apply.
+                Example: {"notebook_id": "abc123", "archived": False}
 
-        Supabase's query builder exposes dynamic filter methods like `.eq()`,
-        which mypy cannot see. We silence the attribute error on `.eq()`.
+        This wrapper normalizes Supabase's dynamic query builder into a
+        predictable, typed interface for the rest of the application.
 
-        Returns:
-            A list of NoteRecord dictionaries.
+        Supabase's Python client exposes filter methods like `.eq()`, `.neq()`,
+        `.like()`, etc., but these methods only exist *after* a SELECT call.
+        Calling `.eq()` on the initial table builder triggers a mypy error because
+        the type returned by `.table()` does not expose filter methods.
+
+        To satisfy both runtime behavior and static typing, we:
+            1. Begin with `.select("*")` to obtain a filter-capable builder.
+            2. Apply each filter dynamically.
+            3. Execute the query and normalize the response.
         """
-        table = self._client.table(query["table"])
 
-        # Apply each filter dynamically
+        # Step 1: Begin with a SELECT query.
+        # This returns a PostgrestFilterRequestBuilder, which *does* expose `.eq()`.
+        table = self._client.table(query["table"]).select("*")
+
+        # Step 2: Apply each filter dynamically.
+        # Supabase's filter methods mutate the builder and return a new one,
+        # so we reassign `table` on each iteration.
         for key, value in query["filters"].items():
-            table = table.eq(key, value)  # type: ignore[attr-defined]
+            table = table.eq(key, value)
 
-        # Execute the SELECT query
-        response = table.select("*").execute()
+        # Step 3: Execute the fully constructed SELECT query.
+        # `.execute()` performs the HTTP request and returns a response object
+        # whose structure varies slightly across SDK versions.
+        response = table.execute()
 
-        # The Supabase client returns untyped JSON data; treat as Any and return .data
+        # Step 4: Treat the response as dynamic.
+        # The SDK typically exposes `.data`, but we avoid strict typing here
+        # because the client is not fully typed.
         response_any: Any = response
+
+        # Step 5: Return the raw `.data` payload.
+        # This is a list of dictionaries representing rows from the table.
         return response_any.data
