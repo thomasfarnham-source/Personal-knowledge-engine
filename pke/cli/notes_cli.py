@@ -37,7 +37,6 @@ import typer
 # Importing it here keeps all dependencies visible at the top of the module.
 from pke.embedding_client import EmbeddingClient
 
-
 # ---------------------------------------------------------------------------
 # Sub‑application definition
 # ---------------------------------------------------------------------------
@@ -117,9 +116,11 @@ def validate_note_metadata(note: dict) -> dict:
         raise ValueError(f"Missing required fields: {', '.join(missing)}")
 
     return note
-#==============================
+
+
+# ==============================
 # Section 2 - For Review purposes
-#===============================
+# ===============================
 # ---------------------------------------------------------------------------
 # Step 3 Helper: Generate embeddings for note content
 # ---------------------------------------------------------------------------
