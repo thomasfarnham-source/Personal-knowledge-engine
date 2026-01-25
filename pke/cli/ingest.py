@@ -1,37 +1,76 @@
+"""
+Ingestion command‑line interface for the Personal Knowledge Engine.
+
+This module defines the `ingest` command group for the Typer‑based CLI.
+
+Milestone 8 goal:
+    • Migrate from Click to Typer for consistency with the new `notes` CLI.
+    • Keep ingestion logic thin and delegated to the orchestrator.
+    • Provide a clear, contributor‑friendly interface for running ingestion.
+
+Public surface:
+
+    • `ingest_app`  → mounted in pke/cli/main.py as:
+
+          pke ingest run --parsed-path parsed_notes.json --dry-run --limit 10
+"""
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import click
+import typer
 
 from pke.ingestion.orchestrator import ingest_notes
 from pke.supabase_client import SupabaseClient
 
+# ---------------------------------------------------------------------------
+# Sub‑application definition
+# ---------------------------------------------------------------------------
+# This Typer app is mounted under the name "ingest" in pke/cli/main.py:
+#
+#       app.add_typer(ingest_app, name="ingest")
+#
+# which yields commands like:
+#
+#       pke ingest run ...
+# ---------------------------------------------------------------------------
+ingest_app = typer.Typer(
+    help="Commands for ingesting parsed notes into Supabase.",
+)
 
-@click.command()
-@click.option(
-    "--parsed-path",
-    default="parsed_notes.json",
-    help="Path to the parsed notes JSON file.",
-)
-@click.option(
-    "--dry-run",
-    is_flag=True,
-    help="Run ingestion without writing to Supabase.",
-)
-@click.option(
-    "--limit",
-    type=int,
-    default=None,
-    help="Limit the number of notes ingested.",
-)
-def ingest(parsed_path: str, dry_run: bool, limit: Optional[int]) -> None:
+
+# ---------------------------------------------------------------------------
+# Command: pke ingest run
+# ---------------------------------------------------------------------------
+# This replaces the old Click @click.command() entrypoint. The behavior
+# is intentionally thin: parse flags, then delegate to `run_ingest()`.
+# ---------------------------------------------------------------------------
+@ingest_app.command("run")
+def ingest_command(
+    parsed_path: str = typer.Option(
+        "parsed_notes.json",
+        "--parsed-path",
+        help="Path to the parsed notes JSON file.",
+        show_default=True,
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Run ingestion without writing to Supabase.",
+    ),
+    limit: Optional[int] = typer.Option(
+        None,
+        "--limit",
+        help="Limit the number of notes ingested.",
+    ),
+) -> None:
     """
     Ingest parsed notes into Supabase using the orchestrator.
 
-    This is the Click-facing command. It parses CLI flags and delegates
+    This is the Typer-facing command. It parses CLI flags and delegates
     the actual ingestion work to `run_ingest()`.
     """
     run_ingest(parsed_path=parsed_path, dry_run=dry_run, limit=limit)
@@ -45,21 +84,20 @@ def run_ingest(
     """
     CLI entrypoint for ingestion. Thin wrapper around the orchestrator.
 
-    This function is intentionally narrow in scope:
+    Responsibilities:
 
-        • It does NOT implement ingestion logic itself.
-        • It does NOT talk directly to Supabase tables.
-        • It does NOT know about notebooks, tags, or relationships.
+        1. Locate and load the parsed notes file.
+        2. Apply an optional limit for faster, controlled runs.
+        3. Instantiate a SupabaseClient (real or dry-run).
+        4. Delegate ingestion to the orchestrator.
+        5. Print a human-readable summary for CLI users.
 
-    Instead, it is responsible for:
+    This function deliberately does NOT:
 
-        1. Locating and loading the parsed notes file.
-        2. Applying an optional limit for faster, controlled runs.
-        3. Instantiating a SupabaseClient (real or dry-run).
-        4. Delegating the actual ingestion to the orchestrator.
-        5. Printing a human-readable summary for CLI users.
+        • implement ingestion logic itself
+        • talk directly to Supabase tables
+        • know about notebooks, tags, or relationships
     """
-
     path = Path(parsed_path)
 
     if not path.exists():
