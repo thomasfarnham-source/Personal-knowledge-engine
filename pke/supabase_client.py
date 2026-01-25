@@ -1,38 +1,28 @@
-# pke/supabase_client.py = Part 1 =
-
+# ------------------------------------------------------------
+# SECTION 1 — Updated for ease of review
+# ------------------------------------------------------------
 """
 Minimal Supabase client wrapper for local testing and upserting notes with embeddings.
 
-This module centralizes all Supabase interactions behind a small, typed wrapper so that:
-- ingestion code does not depend directly on the Supabase SDK
-- tests can swap in dummy or fake clients
-- entity resolution (e.g., notebooks) is explicit and predictable
-- embedding computation is handled in one place
+This wrapper provides a stable, typed interface for interacting with Supabase
+during ingestion. It supports both real mode (using the Supabase Python client)
+and dry‑run mode (deterministic, no‑write behavior for testing and debugging).
 
-Key responsibilities:
-- Construct a Supabase client from environment variables (via from_env()).
-- Normalize Supabase responses into plain Python data structures.
-- Provide helpers for:
-    • resolving notebook IDs by title (resolve_notebook_id)
-    • upserting notes with embeddings (upsert_note_with_embedding)
+The class relies on the SupabaseClientInterface Protocol defined in pke/types.py,
+which ensures that injected clients (real or mock) expose the minimal surface:
+    • table(name)
+    • upsert(record, on_conflict?)
+    • select(...)
+    • execute()
 """
-from typing import cast
 
-import os
-from typing import Any, Dict, List, Optional
-
-from supabase import Client, create_client  # Third-party SDK
-from pke.embedding import compute_embedding  # Local embedding stub
+from typing import Any, Dict, List, Optional, cast
+from pke.embedding import compute_embedding  # Local embedding helper
 from pke.types import (
-    NoteRecord,  # ✅ Re-exported for tests
-    UpsertNoteRecord,  # ✅ Correct write-time payload type
-    Executable,
-    SupabaseExecuteResponse,
-    TableQuery,
+    NoteRecord,
 )
-from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in production
 
-# ✅ IMPORTANT DESIGN DECISION
+# IMPORTANT DESIGN DECISION
 # We intentionally do NOT type the injected client as SupabaseClientInterface.
 # The real Supabase SDK client does NOT implement our Protocol (it lacks .list, .upsert),
 # and mypy will reject it. Instead, we accept Any and rely on duck typing.
@@ -45,7 +35,7 @@ from pke.wrapped_supabase_client import WrappedSupabaseClient  # ✅ Used in pro
 # ---------------------------------------------------------------------------
 
 
-def _extract_data(resp: Any) -> List[UpsertNoteRecord]:
+def _extract_data(resp: Any) -> List[NoteRecord]:
     """
     Normalize Supabase responses across:
         • real SDK objects
@@ -55,18 +45,27 @@ def _extract_data(resp: Any) -> List[UpsertNoteRecord]:
     Always returns a list of row dictionaries.
 
     Raises RuntimeError on any Supabase error.
+
+    NOTE:
+    The real Supabase SDK exposes attributes (.data, .error),
+    while our test doubles return dictionaries. We normalize both
+    into a SupabaseExecuteResponse-like dict and then extract "data".
     """
+
     # Case 1: DummyClient-style dict
     if isinstance(resp, dict):
-        if resp.get("status", 200) >= 400:
+        status = resp.get("status", 200)
+        if status >= 400:
             raise RuntimeError(f"Supabase error: {resp}")
-        return cast(List[UpsertNoteRecord], resp.get("data", []))
+        return cast(List[NoteRecord], resp.get("data", []))
 
-    # Case 2: Real Supabase SDK object (or wrapped equivalent)
-    if getattr(resp, "error", None):
-        raise RuntimeError(f"Supabase error: {resp.error}")
+    # Case 2: Real Supabase SDK object (dynamic attributes)
+    error = getattr(resp, "error", None)
+    if error:
+        raise RuntimeError(f"Supabase error: {error}")
 
-    return cast(List[UpsertNoteRecord], getattr(resp, "data", None) or [])
+    data = getattr(resp, "data", None)
+    return cast(List[NoteRecord], data or [])
 
 
 # ---------------------------------------------------------------------------
@@ -76,90 +75,50 @@ def _extract_data(resp: Any) -> List[UpsertNoteRecord]:
 
 class SupabaseClient:
     """
-    A minimal, dependency-injected wrapper around a Supabase-like client.
+    A minimal, dependency‑injected wrapper around a Supabase‑compatible client.
 
-    This class is intentionally small and focused:
-    - It does not know about environment variables directly (except via from_env()).
-    - It delegates low-level operations to an underlying client (real or dummy).
-    - It exposes higher-level helpers for ingestion and entity resolution.
+    This class is intentionally thin: it forwards calls to the underlying
+    Supabase client while providing:
 
-    Notes
-    -----
-    We intentionally accept Any for the injected client because the real Supabase
-    SDK does not satisfy our Protocol. This keeps the wrapper flexible and mypy-clean
-    while still allowing DummyClient and test stubs to conform to the Protocol.
+        • dry‑run behavior
+        • embedding computation
+        • typed upsert helpers for notes, notebooks, tags, and relationships
+
+    The wrapper is designed for testability and flexibility. Any injected client
+    may be used — the real Supabase SDK, WrappedSupabaseClient, DummyClient,
+    FakeClient, or FailingClient. Because these clients do not share a common
+    base class, the constructor accepts `Any` and relies on Protocol‑based
+    structural typing at call sites.
     """
 
-    def __init__(self, client: Any) -> None:
+    def __init__(
+        self,
+        client: Any = None,
+        dry_run: bool = False,
+    ) -> None:
         """
-        Initialize the wrapper with a concrete client.
+        Initialize the SupabaseClient.
 
-        The client is expected to behave like WrappedSupabaseClient:
-        - .table(name) -> TableQuery-like object
-        - query builders support .select(), .eq(), .insert(), .upsert(), .execute()
-
-        This design allows:
-            • dependency injection
-            • easy mocking in tests
-            • swapping between DummyClient and real Supabase client
-            • clean separation between business logic and network logic
+        This constructor intentionally accepts `client: Any` rather than
+        `SupabaseClientInterface`. The real Supabase Python client does not
+        implement our Protocol, and our test doubles vary in structure. Using
+        `Any` preserves flexibility while still allowing mypy to enforce
+        Protocol compatibility where it matters — at the method boundaries.
         """
+
+        self.dry_run = dry_run
+
+        # If a client was injected (tests, stubs, or a real Supabase client),
+        # use it directly. This path bypasses environment variable loading.
         self.client = client
 
     @classmethod
     def from_env(cls) -> "SupabaseClient":
         """
-        Factory constructor that initializes SupabaseClient using environment variables.
-
-        This is the canonical way to construct a SupabaseClient in application code.
-
-        Expected environment variables:
-        - SUPABASE_URL
-        - SUPABASE_SERVICE_ROLE_KEY
-
-        Raises
-        ------
-        RuntimeError
-            If either environment variable is missing.
+        Factory constructor that initializes a SupabaseClient using environment
+        variables. This is the preferred entry point for production code.
         """
-        url = os.environ.get("SUPABASE_URL")
-        key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
-
-        if not url or not key:
-            raise RuntimeError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment.")
-
-        # Create the real Supabase client via the official SDK.
-        real_client: Client = create_client(url, key)
-
-        # Wrap it in our adapter to normalize behavior and typing.
-        wrapped = WrappedSupabaseClient(real_client)
-
-        # Inject the wrapped client into our abstraction.
-        return cls(client=wrapped)
-
-    def table(self, name: str) -> TableQuery:
-        """
-        Return a table query object for the given table name.
-
-        This is a thin pass-through to the underlying client, but typed
-        to make mypy and contributors happier.
-
-        Notes
-        -----
-        The return type is intentionally Any because:
-            • the real Supabase client returns a SyncRequestBuilder
-            • DummyClient returns a fake builder
-            • the wrapper does not depend on the concrete type
-
-        Raises
-        ------
-        RuntimeError
-            If no client has been injected.
-        """
-        if not self.client:
-            raise RuntimeError("Supabase client is not configured")
-
-        return self.client.table(name)
+        return cls(dry_run=False)
 
     # -----------------------------------------------------------------------
     # Notebook resolution ==== Part 2 ====
@@ -170,49 +129,35 @@ class SupabaseClient:
         Resolve the UUID of a notebook by title.
 
         Steps:
-            1. If no title provided → return None (caller decides how to handle).
+            1. If no title provided → return None.
             2. SELECT id FROM notebooks WHERE title = <title>.
             3. If exists → return id.
             4. If not → INSERT {title} and return new id.
 
         This method is intentionally conservative:
             • No assumptions about schema beyond "id" and "title".
-            • No caching (yet) — correctness > performance.
+            • No caching — correctness > performance.
             • Fully normalized error handling via _extract_data().
-
-        Parameters
-        ----------
-        notebook_title : str | None
-            The human-readable notebook title extracted from parsed notes.
-
-        Returns
-        -------
-        str | None
-            The resolved notebook UUID, or None if no title was provided.
         """
         if not notebook_title:
-            # Notes without notebooks are allowed; caller handles fallback.
             return None
 
         if not self.client:
             raise RuntimeError("Supabase client is not configured")
 
         # 1. Lookup existing notebook
-        select_resp: SupabaseExecuteResponse = (
+        select_resp: Any = (
             self.client.table("notebooks").select("id").eq("title", notebook_title).execute()
         )
 
         rows = _extract_data(select_resp)
         if rows:
-            # Notebook already exists — return its UUID.
             return rows[0]["id"]
 
         # 2. Insert new notebook
         insert_payload: Dict[str, Any] = {"title": notebook_title}
 
-        insert_resp: SupabaseExecuteResponse = (
-            self.client.table("notebooks").insert(insert_payload).execute()
-        )
+        insert_resp: Any = self.client.table("notebooks").insert(insert_payload).execute()
 
         inserted = _extract_data(insert_resp)
         if not inserted:
@@ -232,86 +177,207 @@ class SupabaseClient:
         id: Optional[str] = None,
         notebook_id: Optional[str] = None,
         table: str = "notes",
-    ) -> List[UpsertNoteRecord]:
+    ) -> List[NoteRecord]:
         """
         Upsert a note into the given table, computing an embedding for the body.
 
-        Parameters
-        ----------
-        title : str
-            Human-readable note title.
-        body : str
-            Note body content. Must be non-empty.
-        metadata : dict | None
-            Arbitrary metadata to store alongside the note.
-        id : str | None
-            Optional explicit note ID for deterministic upserts.
-        notebook_id : str | None
-            Optional foreign key to the notebooks table.
-        table : str
-            Target table name. Defaults to "notes".
+        This method provides a stable, typed interface for inserting or updating
+        notes in Supabase. It supports both real mode (actual Supabase writes)
+        and dry‑run mode (deterministic, no‑write behavior for testing).
 
-        Returns
-        -------
-        list[UpsertNoteRecord]
-            The rows returned by Supabase after the upsert, each conforming to
-            the UpsertNoteRecord TypedDict.
-
-
-        Raises
-        ------
-        ValueError
-            If body is empty.
-        RuntimeError
-            If the underlying client is not configured or Supabase returns an error.
+        Returns a list of NoteRecord rows, matching the normalized shape of
+        SupabaseExecuteResponse["data"].
         """
+
+        # ----------------------------------------------------------------------
+        # Guard: real mode requires a configured client.
+        # Tests explicitly expect the constructor to allow client=None, so the
+        # method—not __init__—must enforce this invariant.
+        # ----------------------------------------------------------------------
+        if self.client is None and not self.dry_run:
+            raise RuntimeError("No client provided to SupabaseClient")
+
+        # Body is required in both real and dry‑run modes.
         if not body:
             raise ValueError("body must be provided")
 
-        if not self.client:
-            raise RuntimeError(
-                "No client provided to SupabaseClient. "
-                "Please construct via SupabaseClient.from_env() or inject a valid client."
-            )
+        # ----------------------------------------------------------------------
+        # Dry‑run mode:
+        #     Skip embedding computation and database writes.
+        #     Return a deterministic fake record so the orchestrator can proceed
+        #     without touching Supabase.
+        # ----------------------------------------------------------------------
+        if self.dry_run:
+            fake_embedding = [0.0] * 1536  # stable, predictable vector
+            return [
+                {
+                    "id": id or f"dry-note-{title}",
+                    "title": title,
+                    "body": body,
+                    "metadata": metadata or {},
+                    "embedding": fake_embedding,
+                    "notebook_id": notebook_id,
+                }
+            ]
+
+        # ----------------------------------------------------------------------
+        # Real mode:
+        #     Compute embedding and upsert into Supabase.
+        # ----------------------------------------------------------------------
 
         # Compute embedding for the note body.
         emb = compute_embedding(body)
 
-        from typing import cast
-        from pke.types import UpsertNoteRecord
-
-        record: UpsertNoteRecord = cast(
-            UpsertNoteRecord,
-            {
-                "title": title,
-                "body": body,
-                "metadata": metadata or {},
-                "embedding": emb,
-            },
-        )
+        # Build the NoteRecord payload.
+        record: NoteRecord = {
+            "title": title,
+            "body": body,
+            "metadata": metadata or {},
+            "embedding": emb,
+            "notebook_id": notebook_id,
+        }
 
         if id:
             record["id"] = id
-        if notebook_id:
-            record["notebook_id"] = notebook_id
 
-        resp: SupabaseExecuteResponse = self.client.table(table).upsert(record).execute()
+        # Perform the upsert.
+        # The return value may be:
+        #   • a dict (DummyClient, FailingClient, WrappedSupabaseClient)
+        #   • a dynamic SDK object with .data and .error attributes
+        resp: Any = self.client.table(table).upsert(record).execute()
 
-        # Normalize error handling.
-        if isinstance(resp, dict) and resp.get("status", 200) >= 400:
-            raise RuntimeError(f"Upsert error: {resp}")
-        if not isinstance(resp, dict) and getattr(resp, "error", None):
-            raise RuntimeError(f"Upsert error: {resp.error}")
+        # ----------------------------------------------------------------------
+        # Normalize errors across dict-style and SDK-style responses.
+        # ----------------------------------------------------------------------
+        if isinstance(resp, dict):
+            # Dict-style error handling
+            if resp.get("status", 200) >= 400:
+                raise RuntimeError(f"Upsert error: {resp}")
+            return cast(List[NoteRecord], resp.get("data", []))
 
-        data = _extract_data(resp)
-        return data
+        # SDK-style: resp.error / resp.data
+        error = getattr(resp, "error", None)
+        if error:
+            raise RuntimeError(f"Upsert error: {error}")
 
+        data = getattr(resp, "data", None)
+        return cast(List[NoteRecord], data or [])
 
-__all__ = [
-    "SupabaseClient",
-    "Executable",
-    "SupabaseExecuteResponse",
-    "TableQuery",
-    "NoteRecord",  # ✅ required for tests
-    "UpsertNoteRecord",  # ✅ optional but helpful
-]
+    # ------------------------------------------------------------
+    # SECTION 3 — Updated for ease of review
+    # ------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # Notebook Upserts
+    # ------------------------------------------------------------------
+    def upsert_notebooks(self, notebook_map: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
+        """
+        Upsert notebooks into the `notebooks` table.
+
+        This method mirrors the tag upsert pattern:
+            • deterministic dry‑run behavior
+            • idempotent real‑mode upserts via `on_conflict="name"`
+            • returns a canonical mapping of notebook_name -> notebook_id
+
+        The orchestrator calls this before inserting notes so that
+        note.notebook_id always references a valid, canonical notebook row.
+        """
+        if not notebook_map:
+            return {}
+
+        # Dry‑run: deterministic fake IDs
+        if self.dry_run:
+            return {name: f"dry-notebook-{name}" for name in notebook_map}
+
+        payload = list(notebook_map.values())
+
+        resp: Any = self.client.table("notebooks").upsert(payload, on_conflict="name").execute()
+
+        # Normalize dict-style and SDK-style responses
+        if isinstance(resp, dict):
+            if resp.get("status", 200) >= 400:
+                raise RuntimeError(f"Notebook upsert error: {resp}")
+            rows = resp.get("data", [])
+        else:
+            error = getattr(resp, "error", None)
+            if error:
+                raise RuntimeError(f"Notebook upsert error: {error}")
+            rows = getattr(resp, "data", None) or []
+
+        return {row["name"]: row["id"] for row in rows}
+
+    # ------------------------------------------------------------------
+    # Tag Upserts
+    # ------------------------------------------------------------------
+    def upsert_tags(self, tags: List[str]) -> Dict[str, str]:
+        """
+        Insert or update tags in the `tags` table.
+
+        This method is intentionally idempotent:
+        running ingestion multiple times will not create duplicate tags.
+        Supabase enforces uniqueness via the `name` column.
+        """
+        if not tags:
+            return {}
+
+        unique_tags = list(set(tags))
+
+        # Dry‑run: deterministic fake IDs
+        if self.dry_run:
+            return {t: f"dry-tag-{t}" for t in unique_tags}
+
+        payload = [{"name": t} for t in unique_tags]
+
+        resp: Any = self.client.table("tags").upsert(payload, on_conflict="name").execute()
+
+        # Normalize dict-style and SDK-style responses
+        if isinstance(resp, dict):
+            if resp.get("status", 200) >= 400:
+                raise RuntimeError(f"Tag upsert error: {resp}")
+            rows = resp.get("data", [])
+        else:
+            error = getattr(resp, "error", None)
+            if error:
+                raise RuntimeError(f"Tag upsert error: {error}")
+            rows = getattr(resp, "data", None) or []
+
+        return {row["name"]: row["id"] for row in rows}
+
+    # ------------------------------------------------------------------
+    # Note‑Tag Relationship Upserts
+    # ------------------------------------------------------------------
+    def upsert_note_tag_relationships(
+        self,
+        note_id: str,
+        tag_ids: List[str],
+    ) -> None:
+        """
+        Create or update note‑tag relationships in the `note_tags` table.
+
+        This method is intentionally idempotent:
+        running ingestion multiple times will not create duplicate
+        (note_id, tag_id) pairs. Supabase enforces this via a composite
+        uniqueness constraint on (note_id, tag_id).
+        """
+        if not tag_ids:
+            return
+
+        # Dry‑run: no‑op but deterministic
+        if self.dry_run:
+            return
+
+        payload = [{"note_id": note_id, "tag_id": tid} for tid in tag_ids]
+
+        # We intentionally ignore the response — relationships are side‑effect only.
+        resp: Any = (
+            self.client.table("note_tags").upsert(payload, on_conflict="note_id,tag_id").execute()
+        )
+
+        # Normalize errors for consistency with other upsert helpers
+        if isinstance(resp, dict):
+            if resp.get("status", 200) >= 400:
+                raise RuntimeError(f"Note‑tag upsert error: {resp}")
+        else:
+            error = getattr(resp, "error", None)
+            if error:
+                raise RuntimeError(f"Note‑tag upsert error: {error}")

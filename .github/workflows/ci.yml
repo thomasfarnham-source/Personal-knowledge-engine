@@ -1,52 +1,87 @@
-# CI workflow for formatting, linting, type checking, and tests.
-# Mirrors local ci_quick_check.ps1 and is intentionally simple for a single-developer prototype.
+# .github/workflows/ci.yml
+# Continuous Integration pipeline for this project.
+# This workflow enforces formatting, linting, type checking, and testing
+# using Python 3.14. It runs automatically on pushes to main and on
+# feature branches following our naming conventions (feat/, fix/, chore/).
+# It also runs on pull requests targeting main.
 
 name: CI
 
 # Trigger on pushes to main and on pull requests targeting main.
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      # Primary branch — always validate changes pushed directly to main
+      - main
 
-# Prevent duplicate runs for the same ref; cancel older runs when a new push happens.
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+      # Feature branches — run CI early to catch issues before PRs
+      - 'feat/**'
+      - 'fix/**'
+      - 'chore/**'
+
+  pull_request:
+    branches:
+      # PRs targeting main must pass CI before merging
+      - main
 
 jobs:
-  # Single job that runs all checks sequentially.
-  # This keeps the workflow simple and reuses the same environment and cache.
-  checks:
+
+  ###########################################################################
+  # FORMAT CHECK (BLACK)
+  # Ensures all Python code adheres to Black's formatting rules.
+  # This job does not modify files — it only checks for compliance.
+  ###########################################################################
+  format:
+    name: Format check (black)
     runs-on: ubuntu-latest
 
-    # Stop the job if it runs longer than this (protects against hung jobs).
-    timeout-minutes: 30
-
-    # Show all failures in one run so you can see the full picture.
-    strategy:
-      fail-fast: false
-
-    # Set CI environment variables so tools behave consistently in CI.
-    env:
-      CI: "true"
-
     steps:
-      # 1) Checkout repository so we can run tests and linters against the code.
-      - name: Checkout
+      # Pull the repository contents into the runner
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Set up the Python runtime.
-      # Using setup-python@v5 and Python 3.14 to match your current config.
-      # Change python-version if you want to test other interpreters.
-      - name: Set up Python
+      # Install Python 3.14 (our project standard)
+      - name: Set up Python 3.14
         uses: actions/setup-python@v5
         with:
           python-version: '3.14'
 
-      # 3) Cache pip downloads to speed subsequent runs.
-      # The cache key uses pyproject.toml and requirements files so it updates when deps change.
+      # Install Black
+      - name: Install Black
+        run: |
+          python -m pip install --upgrade pip
+          pip install black
+
+      # Run Black in "check" mode — fails if formatting is incorrect
+      - name: Run Black
+        run: black --check .
+
+    ###########################################################################
+  # LINTING (FLAKE8)
+  # Enforces style rules and catches common Python issues.
+  ###########################################################################
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------
+      # 1) Checkout repository
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------
+      # 2) Set up Python 3.14
+      # ------------------------------------------------------------
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      # ------------------------------------------------------------
+      # 3) Cache pip to speed up dependency installs
+      # ------------------------------------------------------------
       - name: Cache pip
         uses: actions/cache@v4
         with:
@@ -55,27 +90,74 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # 4) Install project and development dependencies once.
-      # Using editable install with dev extras ensures black, flake8, mypy, pytest are available.
-      - name: Install dev dependencies
+      # ------------------------------------------------------------
+      # 4) Install flake8
+      # ------------------------------------------------------------
+      - name: Install flake8
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      # ------------------------------------------------------------
+      # 5) Run flake8 against the codebase
+      # ------------------------------------------------------------
+      - name: Run flake8
+        run: flake8
+
+  ###########################################################################
+  # TYPE CHECKING (MYPY)
+  # Ensures static type correctness across the project.
+  ###########################################################################
+  typecheck:
+    name: Type check (mypy)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      # Install mypy and run type checks
+      - name: Install mypy
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
+
+      - name: Run mypy
+        run: mypy .
+
+  ###########################################################################
+  # TESTING (PYTEST)
+  # Runs the full test suite using pytest.
+  # Uses importlib mode to support relative imports inside the project.
+  ###########################################################################
+  test:
+    name: Run tests (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      # Install the project in editable mode along with dev dependencies
+      - name: Install project and test dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
-      # 5) Run tests first (fast unit tests). Use importlib mode to avoid relative-import issues.
+      # Ensure the project root is discoverable by Python during tests
+      - name: Add project root to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      # Run pytest quietly, using importlib mode to avoid relative import issues
       - name: Run pytest
         run: pytest -q --import-mode=importlib
-
-      # 6) Run static type checks with mypy.
-      # --no-incremental forces a full check; remove if you prefer cached runs.
-      - name: Run mypy
-        run: mypy . --no-incremental
-
-      # 7) Run flake8 linter for style and simple quality checks.
-      - name: Run flake8
-        run: flake8 .
-
-      # 8) Run black in check mode to ensure formatting is consistent.
-      # black --check returns non-zero if files would be reformatted.
-      - name: Run black check
-        run: black --check .

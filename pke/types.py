@@ -1,189 +1,174 @@
-# pke/types.py
-
 """
-Typed structures and protocol interfaces used throughout the Personal Knowledge Engine.
+pke/types.py
 
-This module defines the core data contracts shared between:
-    • the ingestion pipeline
-    • the embedding generator
-    • the CLI
-    • the Supabase client (dummy + real)
-    • the test suite
+Centralized type definitions for the Personal Knowledge Engine.
 
-These types ensure that all components speak the same language and that
-contributors can rely on stable, well‑documented structures when extending
-the system.
+This module defines the core TypedDicts and Protocols used throughout the
+ingestion pipeline, Supabase client wrapper, and test stubs. Keeping these
+types in one place ensures:
 
-The goal is to keep the data model explicit, predictable, and easy to mock.
+    • A single source of truth for note and metadata schemas
+    • Clear contracts between the CLI, ingestion pipeline, and Supabase layer
+    • Easy mocking and dependency injection in tests
+    • Strong mypy guarantees across the entire project
+
+These types evolve as the data model evolves. When the schema changes in
+Supabase or the ingestion pipeline, this file should be updated first.
 """
 
-from typing import Any, Dict, List, Protocol, TypedDict, Optional
-
-# ---------------------------------------------------------------------------
-# NoteRecord — canonical DB representation
-# ---------------------------------------------------------------------------
-
-
-class NoteRecord(TypedDict):
-    """
-    A single note stored in (or retrieved from) Supabase.
-
-    This is the canonical representation of a note as it exists in the database.
-    It includes both raw content and structured fields used for semantic search.
-
-    Fields
-    ------
-    id : str
-        Unique identifier for the note (e.g., UUID or source-derived ID).
-    content : str
-        Raw or normalized text content of the note.
-    title : str
-        Human-readable title (e.g., from Evernote or email subject).
-    body : str
-        Cleaned or formatted body content (e.g., markdown or plain text).
-    metadata : Dict[str, str]
-        Arbitrary metadata such as source, tags, timestamps, or author.
-    embedding : List[float]
-        1536-dimensional vector used for semantic search and similarity.
-    """
-
-    id: str
-    content: str
-    title: str
-    body: str
-    metadata: Dict[str, str]
-    embedding: List[float]
+from typing import Any, Dict, List, Optional, Protocol, TypedDict
 
 
 # ---------------------------------------------------------------------------
-# UpsertNoteRecord — write‑time payload for Supabase
+# NoteRecord
 # ---------------------------------------------------------------------------
-
-
-class UpsertNoteRecord(TypedDict, total=False):
-    """
-    Payload used when *writing* notes to Supabase.
-
-    This schema intentionally differs from NoteRecord:
-        • NoteRecord represents the *database* shape (fully populated)
-        • UpsertNoteRecord represents the *write‑time* shape (partial, optional)
-
-    The ingestion pipeline constructs this structure before calling:
-        client.table("notes").upsert(record).execute()
-
-    Notes
-    -----
-    total=False means:
-        • all fields are optional
-        • callers may provide only the fields relevant to the upsert
-    """
-
+# Represents a single note row stored in Supabase.
+#
+# This TypedDict mirrors the *actual* schema used by your ingestion pipeline:
+#   • title, body, metadata, embedding, notebook_id
+#   • id is optional because new notes may not have an ID until Supabase
+#     generates one during upsert.
+#
+# total=False allows partial construction (e.g., before adding "id").
+# ---------------------------------------------------------------------------
+class NoteRecord(TypedDict, total=False):
     id: str
     title: str
     body: str
     metadata: Dict[str, Any]
     embedding: List[float]
-
-    # Optional foreign key to the notebooks table.
-    # Added explicitly because upsert_note_with_embedding() sets this field.
     notebook_id: Optional[str]
 
 
 # ---------------------------------------------------------------------------
-# SupabaseExecuteResponse — result of a write operation
+# IngestionSummary
+# ---------------------------------------------------------------------------
+# Represents the structured summary returned by the ingestion orchestrator.
+#
+# This TypedDict provides a stable, explicit schema for the ingestion summary
+# consumed by:
+#   • run_ingest() in the CLI layer
+#   • unit tests validating ingestion behavior
+#   • higher‑level automation that inspects ingestion results
+#
+# The orchestrator always returns these fields, making this a reliable
+# contract for both human‑readable CLI output and programmatic callers.
 # ---------------------------------------------------------------------------
 
 
-class SupabaseExecuteResponse(TypedDict):
-    """
-    Standardized response structure for Supabase write operations.
+class IngestionSummary(TypedDict):
+    notes_processed: int
+    notes_inserted: int
+    notes_skipped: int
+    tags_inserted: int
+    relationships_created: int
+    failures: List[str]
 
-    This mirrors the shape of responses returned by the Supabase Python client,
-    but is simplified for local testing and type‑checking.
 
-    Fields
-    ------
-    status : int
-        HTTP-like status code (e.g., 200 for success).
-    data : Any
-        Optional payload returned by the operation (e.g., inserted rows).
-    """
+# ---------------------------------------------------------------------------
+# SupabaseExecuteResponse
+# ---------------------------------------------------------------------------
+# Represents the normalized response returned from Supabase `.execute()`.
+#
+# The real Supabase client returns a dynamic object with:
+#   • .status
+#   • .data
+#   • .error (optional)
+#
+# The wrapper (WrappedSupabaseClient) and all test doubles return dictionaries
+# with the same fields. This TypedDict captures that shape so mypy can enforce
+# correctness across the entire codebase.
+#
+# total=False allows partial responses (e.g., error-only).
+# ---------------------------------------------------------------------------
 
+
+class SupabaseExecuteResponse(TypedDict, total=False):
     status: int
     data: Any
+    error: Optional[Any]
 
 
 # ---------------------------------------------------------------------------
-# TableQuery — structured query for SupabaseClient.list()
+# TableQuery
 # ---------------------------------------------------------------------------
-
-
+# Represents a simple query against a Supabase table.
+#
+# This is used by test stubs and potential future list/query operations.
+# It is intentionally minimal — the ingestion pipeline does not yet require
+# complex filtering or pagination.
+# ---------------------------------------------------------------------------
 class TableQuery(TypedDict):
-    """
-    Represents a structured query against a Supabase table.
-
-    This type is used by the Supabase client interface to support list/retrieval
-    operations. It keeps the query shape explicit and testable.
-
-    Fields
-    ------
-    table : str
-        Name of the table to query (e.g., "notes").
-    filters : Dict[str, Any]
-        Key‑value filters to apply (e.g., {"id": "abc123"}).
-
-    Notes
-    -----
-    TypedDict fields must NOT have default values.
-    The caller is responsible for supplying an explicit filters dict.
-    """
-
     table: str
     filters: Dict[str, Any]
 
 
 # ---------------------------------------------------------------------------
-# Executable — generic callable interface
+# Executable
 # ---------------------------------------------------------------------------
-
-
+# A generic callable interface.
+#
+# Used for typing injected functions, callbacks, or command handlers.
+# This is intentionally broad — any callable is acceptable.
+# ---------------------------------------------------------------------------
 class Executable(Protocol):
-    """
-    Generic callable interface used for type‑checking injected functions.
-
-    This is useful when:
-        • wiring CLI commands to handler functions
-        • injecting mock behaviors during tests
-        • building modular pipelines with pluggable steps
-
-    Any function matching this signature can be treated as an Executable.
-    """
-
     def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
 
 
 # ---------------------------------------------------------------------------
-# SupabaseClientInterface — protocol for injected Supabase clients
+# SupabaseClientInterface
 # ---------------------------------------------------------------------------
-
-
+# Protocol describing the subset of the Supabase Python client used by
+# SupabaseClient (pke/supabase_client.py).
+#
+# This interface allows:
+#   • clean dependency injection
+#   • mock clients for tests
+#   • mypy to enforce correct method chaining
+#
+# The real Supabase client supports:
+#   client.table("notes").upsert({...}).execute()
+#
+# Therefore the Protocol must define:
+#   • table(name) -> Any
+#   • upsert(record, on_conflict?) -> Any
+#   • select(...) -> Any
+#   • execute() -> SupabaseExecuteResponse
+#
+# IMPORTANT:
+#   This Protocol is intentionally *structural*, not nominal. Any object that
+#   implements these methods with compatible signatures is accepted — including
+#   the real Supabase SDK, WrappedSupabaseClient, DummyClient, FakeClient, and
+#   FailingClient.
+# ---------------------------------------------------------------------------
 class SupabaseClientInterface(Protocol):
-    """
-    Protocol defining the expected behavior of any Supabase client.
+    def table(self, name: str) -> Any:
+        """
+        Return a query builder for the given table.
+        The returned object must support .upsert(), .select(), and .execute().
+        """
+        ...
 
-    This abstraction allows the system to swap between:
-        • DummyClient (local testing, no network)
-        • Real Supabase client (production)
-        • Test stubs (unit tests)
+    def upsert(
+        self,
+        record: Dict[str, Any],
+        on_conflict: Optional[str] = None,
+    ) -> Any:
+        """
+        Insert or update a row in the table.
+        The return value is a query builder that must support .execute().
+        """
+        ...
 
-    Notes
-    -----
-    The return type of `.table()` is intentionally `Any` because:
-        • the real Supabase client returns a SyncRequestBuilder
-        • DummyClient returns a fake builder
-        • the wrapper does not depend on the concrete type
-    """
+    def select(self, *columns: str) -> Any:
+        """
+        Select specific columns from the table.
+        The return value must support .execute().
+        """
+        ...
 
-    def table(self, name: str) -> Any: ...
-    def upsert(self, notes: List[NoteRecord]) -> SupabaseExecuteResponse: ...
-    def list(self, query: TableQuery) -> List[NoteRecord]: ...
+    def execute(self) -> SupabaseExecuteResponse:
+        """
+        Execute the built query and return a structured response.
+        """
+        ...
