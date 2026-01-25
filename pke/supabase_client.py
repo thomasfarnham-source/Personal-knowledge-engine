@@ -108,11 +108,6 @@ class SupabaseClient:
 
         self.dry_run = dry_run
 
-        # Explicit guard: if the caller *explicitly* passes client=None,
-        # treat it as a configuration error. Tests rely on this behavior.
-        if client is None:
-            raise RuntimeError("No client provided to SupabaseClient")
-
         # If a client was injected (tests, stubs, or a real Supabase client),
         # use it directly. This path bypasses environment variable loading.
         self.client = client
@@ -194,15 +189,24 @@ class SupabaseClient:
         SupabaseExecuteResponse["data"].
         """
 
+        # ----------------------------------------------------------------------
+        # Guard: real mode requires a configured client.
+        # Tests explicitly expect the constructor to allow client=None, so the
+        # method—not __init__—must enforce this invariant.
+        # ----------------------------------------------------------------------
+        if self.client is None and not self.dry_run:
+            raise RuntimeError("No client provided to SupabaseClient")
+
+        # Body is required in both real and dry‑run modes.
         if not body:
             raise ValueError("body must be provided")
 
-        # ------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # Dry‑run mode:
         #     Skip embedding computation and database writes.
-        #     Return a deterministic fake record so the orchestrator
-        #     can proceed without touching Supabase.
-        # ------------------------------------------------------------
+        #     Return a deterministic fake record so the orchestrator can proceed
+        #     without touching Supabase.
+        # ----------------------------------------------------------------------
         if self.dry_run:
             fake_embedding = [0.0] * 1536  # stable, predictable vector
             return [
@@ -216,15 +220,10 @@ class SupabaseClient:
                 }
             ]
 
-        # ------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # Real mode:
         #     Compute embedding and upsert into Supabase.
-        # ------------------------------------------------------------
-        if not self.client:
-            raise RuntimeError(
-                "No client provided to SupabaseClient. "
-                "Construct via SupabaseClient.from_env() or inject a valid client."
-            )
+        # ----------------------------------------------------------------------
 
         # Compute embedding for the note body.
         emb = compute_embedding(body)
@@ -247,10 +246,11 @@ class SupabaseClient:
         #   • a dynamic SDK object with .data and .error attributes
         resp: Any = self.client.table(table).upsert(record).execute()
 
-        # ------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # Normalize errors across dict-style and SDK-style responses.
-        # ------------------------------------------------------------
+        # ----------------------------------------------------------------------
         if isinstance(resp, dict):
+            # Dict-style error handling
             if resp.get("status", 200) >= 400:
                 raise RuntimeError(f"Upsert error: {resp}")
             return cast(List[NoteRecord], resp.get("data", []))
