@@ -35,7 +35,12 @@ import typer
 
 # EmbeddingClient is introduced in Milestone 8 Step 3.
 # Importing it here keeps all dependencies visible at the top of the module.
-from pke.embedding_client import EmbeddingClient
+from pke.embedding import EmbeddingClient
+
+# Supabase client is introduced in Milestone 8 Step 5.
+# This import is intentionally placed here so all external dependencies
+# remain visible and discoverable at the top of the module.
+from pke.supabase_client import SupabaseClient
 
 # ---------------------------------------------------------------------------
 # Sub‑application definition
@@ -121,6 +126,8 @@ def validate_note_metadata(note: dict) -> dict:
 # ==============================
 # Section 2 - For Review purposes
 # ===============================
+
+
 # ---------------------------------------------------------------------------
 # Step 3 Helper: Generate embeddings for note content
 # ---------------------------------------------------------------------------
@@ -144,16 +151,23 @@ def generate_embedding(text: str) -> list[float]:
           - swap providers in the future
           - centralize error handling if needed
     """
-    # Instantiate the embedding client. This object manages connection details,
-    # model selection, batching, and any provider‑specific configuration.
-    client = EmbeddingClient()
+
+    # Instantiate the embedding client.
+    # IMPORTANT:
+    # We name this `embedding_client` to avoid colliding with the Supabase client
+    # used later in the upsert pipeline. Previously this was named `client`,
+    # which caused an undefined-name error when the upsert step attempted to call
+    # `client.upsert_note(...)`. Using a distinct variable name prevents that.
+    embedding_client = EmbeddingClient()
 
     # Generate and return the embedding vector for the provided text.
-    # The client ensures deterministic behavior for identical inputs
-    # when using the local stub, and semantic embeddings in production.
-    return client.embed(text)
+    # The deterministic provider ensures reproducible behavior during development.
+    return embedding_client.embed(text)
 
 
+# ===============================
+# Section 2 - for review purposes
+# ===============================
 # ---------------------------------------------------------------------------
 # Step 4 Helper: Build Supabase payload
 # ---------------------------------------------------------------------------
@@ -193,30 +207,45 @@ def build_supabase_payload(note: dict) -> dict:
 # ---------------------------------------------------------------------------
 # Command: notes upsert <path>
 # ---------------------------------------------------------------------------
-# This is the Milestone 8 entrypoint. It replaces the old argparse‑based
-# `upsert <note_id>` command with a file‑based workflow:
+# Milestone 8 end‑to‑end ingestion entrypoint.
+#
+# This replaces the old argparse‑based `upsert <note_id>` command with a
+# file‑driven workflow:
 #
 #       pke notes upsert path/to/note.json
 #
 # The command accepts:
-#   • path      — required positional argument
-#   • --dry-run — parse + embed + build payload, but do NOT write to Supabase
-#   • --verbose — show high‑level progress logs
-#   • --debug   — show full payloads, responses, and timing information
+#   • path      — required positional argument (JSON note file)
+#   • --dry-run — run full pipeline (parse → embed → payload) but skip DB write
+#   • --verbose — show high‑level progress logs for each pipeline stage
+#   • --debug   — show full objects, payloads, and Supabase responses
 #
-# Step 2 adds:
-#   • file loading
-#   • metadata validation
+# Milestone 8 is implemented incrementally:
 #
-# Step 3 adds:
-#   • embedding generation
+#   Step 2 — Load + validate note metadata
+#       • read JSON file from disk
+#       • validate required metadata fields
+#       • emit verbose/debug output
 #
-# Step 4 adds:
-#   • payload construction
+#   Step 3 — Embedding generation
+#       • compute embedding vector from note["content"]
+#       • attach embedding to note object
+#       • emit verbose/debug output
 #
-# Later milestones will add:
-#   • Supabase upsert
-#   • idempotency logic
+#   Step 4 — Payload construction
+#       • build schema‑aligned Supabase payload
+#       • emit verbose/debug output
+#
+#   Step 5 — Supabase upsert (new in this milestone)
+#       • skip if --dry-run is set
+#       • call SupabaseClient.upsert_note(payload)
+#       • emit verbose/debug output
+#
+# Later milestones (6–10) will add:
+#       • idempotency logic
+#       • tag relationship upserts
+#       • notebook resolution
+#       • full debug tracing
 # ---------------------------------------------------------------------------
 @notes_app.command("upsert")
 def upsert_note(
@@ -241,11 +270,9 @@ def upsert_note(
     ),
 ) -> None:
     """
-    Upsert a note into Supabase, generating embeddings and ensuring idempotency.
-
-    This command is implemented incrementally across Milestone 8. Each step
-    adds a new layer of the ingestion pipeline while keeping the CLI stable
-    and testable.
+    Upsert a note into Supabase, generating embeddings and constructing a
+    schema‑aligned payload. This command is built incrementally across
+    Milestone 8, with each step adding a new stage of the ingestion pipeline.
 
     Step 2 responsibilities:
         • load the note file from disk
@@ -258,13 +285,20 @@ def upsert_note(
     Step 4 responsibilities:
         • construct the Supabase payload
 
-    Steps 5–10 will progressively add:
-        • Supabase upsert
+    Step 5 responsibilities:
+        • perform the Supabase upsert (unless --dry-run is set)
+        • surface Supabase response via verbose/debug output
+
+    Future steps (6–10):
         • idempotency logic
-        • dry‑run behavior
+        • tag relationship upserts
+        • notebook resolution
         • full debug tracing
     """
-    # Convert the raw string path into a Path object for safer filesystem work.
+    # Instantiate clients at the top of the function body
+    supabase = SupabaseClient()
+
+    # Convert raw string path into a Path object for safer filesystem work.
     path_obj = Path(path)
 
     # -----------------------------
@@ -309,10 +343,20 @@ def upsert_note(
         typer.echo("Payload object:")
         typer.echo(json.dumps(payload, indent=2))
 
-    # -----------------------------------------------------------------------
-    # Placeholder for upcoming steps (Supabase upsert, idempotency logic).
-    # This ensures the CLI remains functional and testable even as the
-    # pipeline is built incrementally.
-    # -----------------------------------------------------------------------
-    typer.echo("[placeholder] Payload constructed. Ready for Supabase upsert.")
-    typer.echo(f"  dry_run={dry_run}, verbose={verbose}, debug={debug}")
+    # -----------------------------
+    # Step 5: Supabase upsert
+    # -----------------------------
+    if dry_run:
+        # Dry‑run mode: pipeline runs fully but does NOT write to Supabase.
+        typer.echo("[dry-run] Skipping Supabase upsert.")
+        return
+
+    # Perform the actual upsert.
+    result = supabase.upsert_note(payload)
+
+    if verbose:
+        typer.echo("Supabase upsert completed.")
+
+    if debug:
+        typer.echo("Returned row from Supabase:")
+        typer.echo(json.dumps(result, indent=2))
