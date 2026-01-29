@@ -21,7 +21,7 @@ import typer
 # Import sub‑applications
 # ---------------------------------------------------------------------------
 # Each sub‑application is a Typer app defined in its own module. They are
-# mounted under the root `app` to form a cohesive CLI:
+# mounted under the root `cli` to form a cohesive CLI:
 #
 #     pke notes  <command>
 #     pke ingest <command>
@@ -45,10 +45,9 @@ from .ingest import ingest_app
 #     pke ingest --help
 #     pke --help
 # ---------------------------------------------------------------------------
-app = typer.Typer(
+cli = typer.Typer(
     help="Personal Knowledge Engine command-line interface.",
 )
-
 
 # ---------------------------------------------------------------------------
 # Register sub‑applications
@@ -62,11 +61,10 @@ app = typer.Typer(
 # Adding a new command group is as simple as:
 #
 #     from .<module> import <sub_app>
-#     app.add_typer(<sub_app>, name="<group-name>")
+#     cli.add_typer(<sub_app>, name="<group-name>")
 # ---------------------------------------------------------------------------
-app.add_typer(notes_app, name="notes")
-app.add_typer(ingest_app, name="ingest")
-
+cli.add_typer(notes_app, name="notes")
+cli.add_typer(ingest_app, name="ingest")
 
 # ---------------------------------------------------------------------------
 # Entry point for `python -m pke.cli.main`
@@ -74,8 +72,7 @@ app.add_typer(ingest_app, name="ingest")
 # This block allows the module to be executed directly, which is useful
 # during development or when invoking the CLI via `python -m`.
 #
-# In production, you may also have a console_script entry point in
-# pyproject.toml or setup.cfg that points to `pke.cli.main:app`.
+# The console_script entry point (pke.exe) imports `cli` from this module.
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    app()
+    cli()
