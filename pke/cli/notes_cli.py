@@ -1,4 +1,7 @@
 # ==============================
+# File EDIT BREAK POINT 1
+# ==============================
+# ==============================
 # Notes CLI — Milestone 8
 # ==============================
 """
@@ -56,6 +59,7 @@ import typer
 
 # EmbeddingClient is introduced in Milestone 8 Step 3.
 from pke.embedding.embedding_client import EmbeddingClient
+from pke.logging_utils import log_verbose
 
 # ---------------------------------------------------------------------------
 # Sub‑application definition (Milestone 8 Step 1)
@@ -141,6 +145,9 @@ def validate_note_metadata(note: dict) -> dict:
     return note
 
 
+# ==============================
+# File EDIT BREAK POINT 2
+# ==============================
 # ==============================
 # Section 2 — Milestone 8 (Steps 3–6)
 # ==============================
@@ -272,7 +279,7 @@ def upsert_note(
     # Debug mode prints additional exception details without exposing a full
     # stack trace. This keeps the CLI friendly for contributors while still
     # providing deep visibility when needed.
-
+    log_verbose("[INFO] Loading note...", verbose)
     path_obj = Path(path)
 
     try:
@@ -287,8 +294,7 @@ def upsert_note(
 
         raise typer.Exit(code=1)
 
-    if verbose:
-        typer.echo("[INFO] Loaded and validated note.")
+    log_verbose("[INFO] Loaded and validated note.", verbose)
 
     if debug:
         typer.echo("[DEBUG] Note object after parsing/validation:")
@@ -297,12 +303,33 @@ def upsert_note(
     # ============================================================
     # Step 3: Generate embedding
     # ============================================================
-    embedding = generate_embedding(note["content"])
-    note["embedding"] = embedding
+    # This step transforms the note's content into a numerical vector
+    # representation using the project's EmbeddingClient abstraction.
+    # The embedding is later stored in Supabase and used for semantic search.
+    log_verbose("[INFO] Generating embedding...", verbose)
 
-    if verbose:
-        typer.echo("[INFO] Generated embedding vector.")
+    try:
+        # Generate the embedding from the note's content.
+        embedding = generate_embedding(note["content"])
 
+        # Attach the embedding to the note object so downstream steps
+        # (payload construction, Supabase write) can access it.
+        note["embedding"] = embedding
+
+    except Exception as e:
+        # Fatal error: embedding generation failed.
+        typer.echo(f"[ERROR] Failed to generate embedding: {e}")
+
+        if debug:
+            typer.echo("[DEBUG] Full exception details:")
+            typer.echo(f"{type(e).__name__}: {e}")
+
+        raise typer.Exit(code=1)
+
+    # High‑level confirmation for contributors.
+    log_verbose("[INFO] Embedding generated.", verbose)
+
+    # Developer‑focused debug output.
     if debug:
         typer.echo(f"[DEBUG] Embedding length: {len(embedding)}")
         typer.echo(f"[DEBUG] Embedding preview: {embedding[:8]} ...")
@@ -312,39 +339,37 @@ def upsert_note(
     # ============================================================
     payload = build_supabase_payload(note)
 
-    if verbose:
-        typer.echo("[INFO] Constructed Supabase payload.")
+    log_verbose("[INFO] Constructed Supabase payload.", verbose)
 
     if debug:
         typer.echo("[DEBUG] Payload object:")
         typer.echo(json.dumps(payload, indent=2, sort_keys=True))
 
     # ============================================================
-    # Step 6: Dry‑run execution path (Milestones 8.6.2–8.6.4)
+    # Step 6: Dry‑run execution path (Milestones 8.6.x + 8.7.2 logging)
     # ============================================================
     # Dry‑run mode executes the full ingestion pipeline (Steps 2–4) but
     # intentionally stops before performing any Supabase write. This allows
     # contributors to inspect the final payload safely, without mutating the
     # database or requiring network access.
     #
-    # Formatting Notes (8.6.3)
-    # ------------------------
+    # Formatting Notes
+    # ----------------
     # • The header/footer markers make the payload visually distinct.
     # • json.dumps(..., sort_keys=True) ensures deterministic ordering.
     #
-    # Verbose/Debug Integration (8.6.4)
-    # ---------------------------------
+    # Verbose/Debug Integration
+    # -------------------------
     # • Verbose mode prints a high‑level message indicating the write was skipped.
     # • Debug mode prints internal state *before* this block, not inside it.
     #
     # Future Milestones
     # -----------------
-    # Step 7 will introduce the real Supabase upsert logic, which will run
+    # Step 5 will introduce the real Supabase upsert logic, which will run
     # only when dry_run=False.
     # ============================================================
     if dry_run:
-        if verbose:
-            typer.echo("[DRY RUN] Skipping Supabase write.")
+        log_verbose("[DRY RUN] Skipping Supabase write.", verbose)
 
         typer.echo("\n=== DRY RUN: Final Supabase Payload ===")
         typer.echo(json.dumps(payload, indent=2, sort_keys=True))
