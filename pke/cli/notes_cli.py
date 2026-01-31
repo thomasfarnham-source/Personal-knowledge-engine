@@ -55,14 +55,17 @@ Design Goals
 
 from pathlib import Path
 import json
+
 # Used only for high‑precision timing in debug mode (8.7.3).
 # perf_counter() provides a monotonic, sub‑millisecond clock ideal for measuring
 # how long each pipeline step takes without being affected by system clock changes.
 import time
 import typer
+
 # EmbeddingClient is introduced in Milestone 8 Step 3.
 from pke.embedding.embedding_client import EmbeddingClient
 from pke.logging_utils import log_verbose
+
 
 # ==============================
 # Debug Helpers — Milestone 8.7.3
