@@ -34,9 +34,23 @@ requires-python = ">=3.10"  # Minimum Python version required
 dependencies = [  # Runtime dependencies installed with your package
     "supabase",
     "python-frontmatter",
+     "typer[all]",
     # Add any other runtime dependencies here
 ]
 
+# ============================================================
+# Console Script Entry Points
+# ============================================================
+# These entries expose our Typer applications as shell commands
+# inside the virtual environment. After running `pip install -e .`,
+# the following commands become available:
+#
+#   • pke    → root CLI (pke/cli/main.py:cli)
+#   • notes  → notes-specific CLI (pke/cli/notes_cli.py:notes_app)
+#
+# Contributors can run `pke --help` or `notes --help` to explore
+# available commands. These entry points are essential for making
+# the CLI discoverable and runnable from the command line.
 [project.scripts]
 pke = "pke.cli.main:cli"
 

@@ -55,11 +55,55 @@ Design Goals
 
 from pathlib import Path
 import json
+
+# Used only for high‑precision timing in debug mode (8.7.3).
+# perf_counter() provides a monotonic, sub‑millisecond clock ideal for measuring
+# how long each pipeline step takes without being affected by system clock changes.
+import time
 import typer
 
 # EmbeddingClient is introduced in Milestone 8 Step 3.
 from pke.embedding.embedding_client import EmbeddingClient
 from pke.logging_utils import log_verbose
+
+
+# ==============================
+# Debug Helpers — Milestone 8.7.3
+# ==============================
+# Debug timing and structure helpers introduced in Milestone 8.7.3.
+# These provide:
+#   • high‑precision timing for each pipeline step when --debug is enabled
+#   • lightweight, structured debug section markers
+# They are intentionally minimal and only used for developer introspection.
+def debug_start(label: str) -> float:
+    print(f"[DEBUG] {label} started")
+    return time.perf_counter()
+
+
+def debug_end(label: str, start_time: float) -> None:
+    elapsed = (time.perf_counter() - start_time) * 1000
+    print(f"[DEBUG] {label} completed in {elapsed:.2f}ms")
+
+
+def debug_block(title: str) -> None:
+    """Print a simple, structured debug section header."""
+    print(f"[DEBUG] --- {title} ---")
+
+
+# Singleton embedding client for this CLI module.
+_embedding_client = EmbeddingClient()
+
+
+def generate_embedding(content: str) -> list[float]:
+    """
+    Generate an embedding for the given note content using the project's
+    EmbeddingClient abstraction (Milestone 8 Step 3).
+
+    This wrapper keeps the CLI decoupled from the concrete embedding
+    provider while giving contributors a clear, testable seam.
+    """
+    return _embedding_client.generate(content)
+
 
 # ---------------------------------------------------------------------------
 # Sub‑application definition (Milestone 8 Step 1)
@@ -145,48 +189,6 @@ def validate_note_metadata(note: dict) -> dict:
     return note
 
 
-# ==============================
-# File EDIT BREAK POINT 2
-# ==============================
-# ==============================
-# Section 2 — Milestone 8 (Steps 3–6)
-# ==============================
-# This section contains:
-#   • Step 3 — Embedding generation
-#   • Step 4 — Payload construction
-#   • Step 6 — Dry‑run execution path
-#
-# Step 5 (Supabase upsert) will be added in a later milestone.
-# ==============================
-
-
-# ---------------------------------------------------------------------------
-# Step 3 Helper: Generate embeddings for note content
-# ---------------------------------------------------------------------------
-def generate_embedding(text: str) -> list[float]:
-    """
-    Generate an embedding vector for the note content.
-
-    This helper isolates embedding logic so the `upsert` command remains
-    focused on orchestration rather than model details.
-
-    Design Notes
-    ------------
-    • EmbeddingClient abstracts the underlying provider (OpenAI, local model, etc.),
-      keeping the CLI decoupled from any specific embedding backend.
-
-    • The function accepts raw text and returns a list[float] representing
-      the embedding vector. Dimensionality is determined by the client.
-
-    • Keeping this as a standalone helper makes it easy to:
-          - mock during tests
-          - swap providers in future milestones
-          - centralize error handling if needed
-    """
-    client = EmbeddingClient()
-    return client.embed(text)
-
-
 # ===============================
 # Section 2 - for review purposes
 # ===============================
@@ -221,6 +223,9 @@ def build_supabase_payload(note: dict) -> dict:
     }
 
 
+# ==============================
+# File EDIT BREAK POINT 2
+# ==============================
 # ---------------------------------------------------------------------------
 # Command: notes upsert <path>
 # ---------------------------------------------------------------------------
@@ -269,6 +274,19 @@ def upsert_note(
     dry‑run execution path that performs all ingestion stages except the
     Supabase write.
     """
+    # ==============================
+    # Debug Header — Milestone 8.7.3
+    # ==============================
+    # If the user enables --debug, we announce debug mode immediately.
+    # This provides a clear visual boundary at the start of the pipeline
+    # and ensures all subsequent debug instrumentation appears in a
+    # structured, predictable order for contributors.
+    if debug:
+        typer.echo("[DEBUG] --- Debug mode enabled ---")
+
+    # Normalize and validate the input path early so all subsequent steps
+    # operate on a Path object rather than a raw string.
+    path_obj = Path(path)
 
     # ============================================================
     # Step 2: Load + validate note
@@ -279,8 +297,8 @@ def upsert_note(
     # Debug mode prints additional exception details without exposing a full
     # stack trace. This keeps the CLI friendly for contributors while still
     # providing deep visibility when needed.
-    log_verbose("[INFO] Loading note...", verbose)
-    path_obj = Path(path)
+    if debug:
+        t_step2 = debug_start("Step 2: Load + validate note")
 
     try:
         note = load_note_file(path_obj)
@@ -293,11 +311,14 @@ def upsert_note(
             typer.echo(f"{type(e).__name__}: {e}")
 
         raise typer.Exit(code=1)
+    finally:
+        if debug:
+            debug_end("Step 2: Load + validate note", t_step2)
 
     log_verbose("[INFO] Loaded and validated note.", verbose)
 
     if debug:
-        typer.echo("[DEBUG] Note object after parsing/validation:")
+        debug_block("Step 2: Note after load/validate")
         typer.echo(json.dumps(note, indent=2, sort_keys=True))
 
     # ============================================================
@@ -308,12 +329,19 @@ def upsert_note(
     # The embedding is later stored in Supabase and used for semantic search.
     log_verbose("[INFO] Generating embedding...", verbose)
 
-    try:
-        # Generate the embedding from the note's content.
-        embedding = generate_embedding(note["content"])
+    # Debug Timing — Step 3 (Milestone 8.7.3)
+    # ---------------------------------------
+    # When --debug is enabled, this block wraps the embedding generation
+    # step with high‑precision timing. It gives contributors clear insight
+    # into how long the embedding provider takes without affecting normal
+    # or verbose output. The timer is started immediately before the call
+    # and stopped in a `finally` block to ensure elapsed time is always
+    # reported, even if an exception is raised.
+    if debug:
+        t_embed = debug_start("Step 3: Embedding generation")
 
-        # Attach the embedding to the note object so downstream steps
-        # (payload construction, Supabase write) can access it.
+    try:
+        embedding = generate_embedding(note["content"])
         note["embedding"] = embedding
 
     except Exception as e:
@@ -326,27 +354,70 @@ def upsert_note(
 
         raise typer.Exit(code=1)
 
+    finally:
+        if debug:
+            debug_end("Step 3: Embedding generation", t_embed)
+
     # High‑level confirmation for contributors.
     log_verbose("[INFO] Embedding generated.", verbose)
 
     # Developer‑focused debug output.
     if debug:
+        debug_block("Step 3: Embedding details")
         typer.echo(f"[DEBUG] Embedding length: {len(embedding)}")
         typer.echo(f"[DEBUG] Embedding preview: {embedding[:8]} ...")
 
+    # ==============================
+    # File EDIT BREAK POINT 3
+    # ==============================
     # ============================================================
     # Step 4: Build Supabase payload
     # ============================================================
-    payload = build_supabase_payload(note)
+    # This step converts the validated note (including its embedding)
+    # into the canonical payload format expected by Supabase. The
+    # payload is deterministic and sorted to ensure idempotency and
+    # predictable diffs for contributors.
+    log_verbose("[INFO] Constructing Supabase payload...", verbose)
 
+    # Debug Timing — Step 4 (Milestone 8.7.3)
+    # ---------------------------------------
+    # When --debug is enabled, we wrap the payload construction step
+    # with high‑precision timing. This helps contributors understand
+    # how long the payload builder takes, especially as the schema or
+    # metadata evolves. The timer is stopped in a `finally` block to
+    # guarantee elapsed‑time reporting even if an exception occurs.
+    if debug:
+        t_payload = debug_start("Step 4: Payload construction")
+
+    try:
+        payload = build_supabase_payload(note)
+
+    except Exception as e:
+        typer.echo(f"[ERROR] Failed to build Supabase payload: {e}")
+
+        if debug:
+            typer.echo("[DEBUG] Full exception details:")
+            typer.echo(f"{type(e).__name__}: {e}")
+
+        raise typer.Exit(code=1)
+
+    finally:
+        if debug:
+            debug_end("Step 4: Payload construction", t_payload)
+
+    # High‑level confirmation for contributors.
     log_verbose("[INFO] Constructed Supabase payload.", verbose)
 
-    if debug:
-        typer.echo("[DEBUG] Payload object:")
+    # Developer‑focused debug output.
+    # To avoid duplicating the dry‑run payload, we only emit the full
+    # JSON payload here when *not* in dry‑run mode. In dry‑run mode,
+    # the payload is printed exactly once in the dedicated dry‑run block.
+    if debug and not dry_run:
+        debug_block("Step 4: Supabase payload")
         typer.echo(json.dumps(payload, indent=2, sort_keys=True))
 
     # ============================================================
-    # Step 6: Dry‑run execution path (Milestones 8.6.x + 8.7.2 logging)
+    # Step 6: Dry‑run execution path (Milestones 8.6.x + 8.7.2 + 8.7.3)
     # ============================================================
     # Dry‑run mode executes the full ingestion pipeline (Steps 2–4) but
     # intentionally stops before performing any Supabase write. This allows
@@ -361,7 +432,9 @@ def upsert_note(
     # Verbose/Debug Integration
     # -------------------------
     # • Verbose mode prints a high‑level message indicating the write was skipped.
-    # • Debug mode prints internal state *before* this block, not inside it.
+    # • Debug mode prints internal state in structured blocks before and after
+    #   each step, with an additional timing wrapper around the dry‑run payload
+    #   rendering itself.
     #
     # Future Milestones
     # -----------------
@@ -369,11 +442,28 @@ def upsert_note(
     # only when dry_run=False.
     # ============================================================
     if dry_run:
+        # High‑level confirmation that no write will occur.
         log_verbose("[DRY RUN] Skipping Supabase write.", verbose)
 
-        typer.echo("\n=== DRY RUN: Final Supabase Payload ===")
-        typer.echo(json.dumps(payload, indent=2, sort_keys=True))
-        typer.echo("=== END DRY RUN PAYLOAD ===\n")
+        # Debug Timing — Step 6 (Milestone 8.7.3)
+        # ---------------------------------------
+        # When --debug is enabled, we measure how long it takes to render and
+        # print the final Supabase payload. This is primarily useful when the
+        # payload grows large or when contributors are tuning formatting and
+        # logging behavior. The timer is stopped in a `finally` block to ensure
+        # elapsed‑time reporting even if an unexpected error occurs while
+        # serializing or writing to stdout.
+        if debug:
+            t_dry = debug_start("Step 6: Dry-run payload printing")
+
+        try:
+            typer.echo("\n=== DRY RUN: Final Supabase Payload ===")
+            typer.echo(json.dumps(payload, indent=2, sort_keys=True))
+            typer.echo("=== END DRY RUN PAYLOAD ===\n")
+
+        finally:
+            if debug:
+                debug_end("Step 6: Dry-run payload printing", t_dry)
 
         typer.echo("[DRY RUN] No changes were sent to Supabase.")
         return
@@ -382,3 +472,15 @@ def upsert_note(
     # Step 5 (future): Supabase upsert + idempotency logic
     # ============================================================
     typer.echo("[placeholder] Ready for Supabase upsert (Milestone 8.7+).")
+
+    # ==============================
+    # Debug Footer — Milestone 8.7.3
+    # ==============================
+    # When --debug is enabled, we print a final marker indicating that the
+    # ingestion pipeline completed successfully. This provides a clean,
+    # deterministic end‑of‑pipeline boundary for contributors reviewing
+    # debug output.
+    if debug:
+        typer.echo("[DEBUG] Pipeline completed successfully.")
+
+    # end of upsert_note
