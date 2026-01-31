@@ -49,6 +49,8 @@ build/
 count_empty_notes.py
 supabase_client.py
 
+# Test files
+test_note.json
 # -------------------------
 # Optional: examples and templates
 # -------------------------
