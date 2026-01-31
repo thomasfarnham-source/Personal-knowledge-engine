@@ -180,6 +180,9 @@ def generate_embedding(text: str) -> list[float]:
     return client.embed(text)
 
 
+# ===============================
+# Section 2 - for review purposes
+# ===============================
 # ---------------------------------------------------------------------------
 # Step 4 Helper: Build Supabase payload
 # ---------------------------------------------------------------------------

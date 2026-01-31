@@ -1,5 +1,3 @@
-# pke/embedding.py
-
 """
 Deterministic embedding stub used during local development and testing.
 
@@ -14,7 +12,7 @@ upsert pipelines to run end‑to‑end without requiring:
 The goal is to simulate the *shape* and *behavior* of a real embedding vector:
     • fixed dimensionality (1536)
     • deterministic output for identical inputs
-    • different outputs for different inputs
+    • input‑sensitive variation for different inputs
     • normalized to unit length
 
 This enables:
@@ -23,8 +21,9 @@ This enables:
     • predictable behavior in local pipelines
     • validation of vector storage and retrieval logic
 
-When deploying to production, this module should be replaced with a real
-embedding provider that generates semantically meaningful vectors.
+This stub is intentionally simple and dependency‑free. It is not intended to
+approximate semantic similarity — that will be introduced when real providers
+(OpenAI, HuggingFace, Cohere) are integrated in later milestones.
 """
 
 from typing import List
@@ -66,15 +65,35 @@ def compute_embedding(text: str) -> List[float]:
     It is *not* intended to approximate semantic similarity. That will come
     when the real embedding provider is integrated.
     """
+
+    # Fixed dimensionality chosen to match OpenAI's text-embedding-3-large.
     dim = 1536
+
+    # Initialize the vector with zeros.
     vec = [0.0] * dim
 
-    # Encode the input text as bytes and distribute values across the vector.
+    # ----------------------------------------------------------------------
+    # Distribute byte values across the vector.
+    #
     # Each byte contributes a small normalized value to a position determined
-    # by its index modulo the embedding dimension.
+    # by its index modulo the embedding dimension. This ensures:
+    #
+    #   • deterministic behavior
+    #   • stable distribution
+    #   • meaningful variation with input
+    #
+    # The modulo 97 normalization keeps values in [0, 1).
+    # ----------------------------------------------------------------------
     for i, ch in enumerate(text.encode("utf-8")):
-        vec[i % dim] += (ch % 97) / 97.0  # Normalize byte value into [0, 1)
+        vec[i % dim] += (ch % 97) / 97.0
 
-    # Normalize the vector to unit length to simulate real embedding behavior.
+    # ----------------------------------------------------------------------
+    # Normalize the vector to unit length.
+    #
+    # This simulates the behavior of real embedding models, which typically
+    # output normalized vectors to improve cosine similarity behavior.
+    #
+    # The `or 1.0` guard prevents division by zero for empty input.
+    # ----------------------------------------------------------------------
     norm = sum(x * x for x in vec) ** 0.5 or 1.0
     return [x / norm for x in vec]

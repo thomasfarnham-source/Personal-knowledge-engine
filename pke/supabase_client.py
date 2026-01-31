@@ -381,3 +381,70 @@ class SupabaseClient:
             error = getattr(resp, "error", None)
             if error:
                 raise RuntimeError(f"Note‑tag upsert error: {error}")
+
+    def upsert_note(self, payload: dict) -> dict:
+        """
+        Upsert a single note row into the Supabase `notes` table.
+
+        This method is the final step of the Milestone 8 pipeline:
+            raw note → validated note → embedded note → payload → persisted row.
+
+        Parameters
+        ----------
+        payload : dict
+            A schema-aligned dictionary produced by build_supabase_payload().
+            This must include all required fields for the `notes` table, including:
+                - id (optional; Supabase will generate if omitted)
+                - title
+                - content
+                - embedding (vector)
+                - metadata (optional)
+                - notebook_id (optional)
+
+        Returns
+        -------
+        dict
+            The inserted or updated row returned by Supabase. The SDK returns a
+            list of rows; we normalize this to a single dict for convenience.
+
+        Notes
+        -----
+        • We request `returning="representation"` so Supabase returns the full row.
+        • We treat the SDK response as dynamic because different versions expose
+        `.error`, `.data`, and `.status_code` inconsistently.
+        • Any Supabase error is escalated as a RuntimeError so the CLI can surface
+        a clean failure message.
+        """
+
+        # ------------------------------------------------------------
+        # Perform the upsert into the `notes` table.
+        # `returning="representation"` ensures Supabase returns the full row.
+        # ------------------------------------------------------------
+        response = self.client.table("notes").upsert(payload, returning="representation").execute()
+
+        # ------------------------------------------------------------
+        # Normalize error handling.
+        # Some SDK versions expose `.error`, others `.errors`.
+        # If any error-like attribute exists, escalate immediately.
+        # ------------------------------------------------------------
+        error = getattr(response, "error", None) or getattr(response, "errors", None)
+        if error:
+            raise RuntimeError(f"Supabase upsert failed: {error}")
+
+        # ------------------------------------------------------------
+        # Normalize returned data.
+        # Supabase returns a list of rows; we expect exactly one.
+        # If no rows are returned, escalate — this indicates a schema or SDK issue.
+        # ------------------------------------------------------------
+        data = getattr(response, "data", None)
+        if not data:
+            raise RuntimeError("Supabase upsert returned no data.")
+
+        if not isinstance(data, list) or len(data) == 0:
+            raise RuntimeError("Supabase upsert returned an unexpected data format.")
+
+        # ------------------------------------------------------------
+        # Return the first (and only) row.
+        # This keeps the CLI and ingestion pipeline simple and predictable.
+        # ------------------------------------------------------------
+        return data[0]
