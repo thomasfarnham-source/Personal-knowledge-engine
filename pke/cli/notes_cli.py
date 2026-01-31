@@ -57,7 +57,6 @@ import typer
 # EmbeddingClient is introduced in Milestone 8 Step 3.
 from pke.embedding_client import EmbeddingClient
 
-
 # ---------------------------------------------------------------------------
 # Sub‑application definition (Milestone 8 Step 1)
 # ---------------------------------------------------------------------------
@@ -77,6 +76,7 @@ notes_app = typer.Typer(
 #     “Load + validate note file”
 # They are separated for clarity, testability, and contributor onboarding.
 # ==============================
+
 
 # ---------------------------------------------------------------------------
 # Step 2 Helper: Load a note file from disk
@@ -151,6 +151,7 @@ def validate_note_metadata(note: dict) -> dict:
 #
 # Step 5 (Supabase upsert) will be added in a later milestone.
 # ==============================
+
 
 # ---------------------------------------------------------------------------
 # Step 3 Helper: Generate embeddings for note content
