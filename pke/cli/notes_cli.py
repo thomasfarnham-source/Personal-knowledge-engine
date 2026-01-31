@@ -55,7 +55,7 @@ import json
 import typer
 
 # EmbeddingClient is introduced in Milestone 8 Step 3.
-from pke.embedding_client import EmbeddingClient
+from pke.embedding.embedding_client import EmbeddingClient
 
 # ---------------------------------------------------------------------------
 # Sub‑application definition (Milestone 8 Step 1)
