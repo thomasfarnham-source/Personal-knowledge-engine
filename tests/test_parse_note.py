@@ -1,6 +1,6 @@
 import os
 
-from pke.ingestion.parse_note import parse_note
+from pke.parsers.joplin_markdown import parse_note
 
 
 def test_basic() -> None:
