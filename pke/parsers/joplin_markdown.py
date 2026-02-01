@@ -19,7 +19,6 @@ from typing import Any, Dict, Optional
 
 import frontmatter
 
-
 # General resource pattern used by Joplin: :/<hex-string>
 # Tests expect *any* hex length, not only 32 chars.
 RESOURCE_RE = re.compile(r":/([a-fA-F0-9]+)")
