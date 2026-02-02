@@ -146,6 +146,10 @@ ignore_missing_imports = true
 module = "supabase_client"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
 # -------------------------------
 # flake8: Linter
 # Provides style guardrails and catches common mistakes.

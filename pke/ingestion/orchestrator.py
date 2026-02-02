@@ -56,32 +56,11 @@ def ingest_notes(
         5. Create note‑tag relationships in the `note_tags` join table.
         6. (future) Resolve and upload resources, then link them to notes.
 
-    Args:
-        parsed_notes:
-            A list of parsed note dictionaries, typically loaded from
-            parsed_notes.json. Each dict is expected to contain fields like:
-                - id
-                - title
-                - body
-                - metadata
-                - tags (optional)
-                - notebook metadata (for resolution)
-
-        client:
-            A SupabaseClient instance (real or DummyClient) that implements
-            the persistence operations used here (upserts, relationships, etc.).
-
     Returns:
-        A summary dictionary capturing ingestion behavior, including:
-            - notes_processed
-            - notes_inserted
-            - notes_skipped
-            - tags_inserted
-            - relationships_created
-            - failures (list of {id, error})
+        A summary dictionary capturing ingestion behavior.
     """
 
-    # Initialize a structured summary for reporting and testing.
+    # Structured summary for reporting and test assertions.
     summary: Dict[str, Any] = {
         "notes_processed": len(parsed_notes),
         "notes_inserted": 0,
@@ -94,10 +73,11 @@ def ingest_notes(
     # ------------------------------------------------------------
     # 1. Resolve notebooks
     # ------------------------------------------------------------
-    # Build a mapping of notebook names → metadata extracted from notes.
+    # Build a mapping of notebook_name → notebook_metadata.
+    # This allows us to upsert notebooks once and reuse canonical IDs.
     notebook_map = resolve_notebook_ids(parsed_notes)
 
-    # Persist notebooks first so notes can reference canonical notebook IDs.
+    # Persist notebooks and receive a mapping of notebook_name → notebook_id.
     notebook_id_map = client.upsert_notebooks(notebook_map)
 
     # ------------------------------------------------------------
@@ -105,23 +85,38 @@ def ingest_notes(
     # ------------------------------------------------------------
     for note in parsed_notes:
         try:
-            # Skip empty-body notes (e.g., deleted or malformed).
+            # Skip notes with no body (deleted, malformed, or empty).
             if not note.get("body"):
                 summary["notes_skipped"] += 1
                 continue
 
-            # Resolve notebook_id for this note (if any).
+            # Resolve notebook_id for this note (if present).
             notebook_id = None
-            if "notebook" in note:
-                notebook_name = note["notebook"]
+            notebook_name = note.get("notebook")
+            if notebook_name:
                 notebook_id = notebook_id_map.get(notebook_name)
 
-            # Delegate persistence + embedding generation to the client.
+            # Build the metadata payload expected by SupabaseClient.
+            # This keeps the orchestrator decoupled from storage schema.
+            metadata = {
+                "created_time": note.get("created_time"),
+                "updated_time": note.get("updated_time"),
+                "deleted_time": note.get("deleted_time"),
+                "user_created_time": note.get("user_created_time"),
+                "user_updated_time": note.get("user_updated_time"),
+                "is_conflict": note.get("is_conflict"),
+                "source": note.get("source"),
+                "source_application": note.get("source_application"),
+                "markup_language": note.get("markup_language"),
+                "resources": note.get("resources", []),
+            }
+
+            # Delegate persistence + embedding generation.
             client.upsert_note_with_embedding(
+                id=note["id"],
                 title=note.get("title", ""),
                 body=note["body"],
-                metadata=note.get("metadata", {}),
-                id=note.get("id"),
+                metadata=metadata,
                 notebook_id=notebook_id,
             )
 
@@ -161,8 +156,8 @@ def ingest_notes(
     # 5. (future) Resource ingestion
     # ------------------------------------------------------------
     # Placeholder for future resource ingestion:
-    #   • extract resource IDs
     #   • upsert resources
     #   • create note‑resource relationships
+    #   • handle attachments, images, PDFs, etc.
 
     return summary
