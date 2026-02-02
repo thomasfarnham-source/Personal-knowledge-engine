@@ -24,20 +24,34 @@ from typing import Any, Dict, List, Optional, Protocol, TypedDict
 # ---------------------------------------------------------------------------
 # Represents a single note row stored in Supabase.
 #
-# This TypedDict mirrors the *actual* schema used by your ingestion pipeline:
-#   • title, body, metadata, embedding, notebook_id
-#   • id is optional because new notes may not have an ID until Supabase
-#     generates one during upsert.
+# Milestone 8.8.2.2:
+#   • metadata is now fully explicit (no nested metadata dict)
+#   • resources is a first-class list field
+#   • notebook_id is stored directly on the note row
 #
-# total=False allows partial construction (e.g., before adding "id").
+# total=False allows partial construction (e.g., before Supabase assigns "id").
 # ---------------------------------------------------------------------------
 class NoteRecord(TypedDict, total=False):
-    id: str
+    id: str | None
     title: str
     body: str
-    metadata: Dict[str, Any]
     embedding: List[float]
     notebook_id: Optional[str]
+    metadata: Dict[str, Any]
+
+    # Explicit metadata fields
+    created_time: Optional[str]
+    updated_time: Optional[str]
+    deleted_time: Optional[str]
+    user_created_time: Optional[str]
+    user_updated_time: Optional[str]
+    is_conflict: Optional[bool]
+    source: Optional[str]
+    source_application: Optional[str]
+    markup_language: Optional[str]
+
+    # Resource list (e.g., attachments)
+    resources: List[Dict[str, Any]]
 
 
 # ---------------------------------------------------------------------------
