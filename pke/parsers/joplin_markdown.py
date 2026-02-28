@@ -15,13 +15,18 @@ calling SupabaseClient.upsert_note_with_embedding().
 from datetime import datetime
 import os
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 import frontmatter
 
 # General resource pattern used by Joplin: :/<hex-string>
 # Tests expect *any* hex length, not only 32 chars.
 RESOURCE_RE = re.compile(r":/([a-fA-F0-9]+)")
+
+
+# ============================================================================
+# 1 — PARSE A SINGLE NOTE
+# ============================================================================
 
 
 def parse_note(filepath: str) -> Dict[str, Any]:
@@ -41,25 +46,19 @@ def parse_note(filepath: str) -> Dict[str, Any]:
     """
 
     # Load YAML frontmatter + Markdown body using python-frontmatter.
-    # `post.metadata` contains the YAML dict; `post.content` is the body.
     post = frontmatter.load(filepath)
 
     # Prefer explicit Joplin-exported IDs from YAML frontmatter.
-    # Fall back to the filename stem only when no `id` is provided.
     note_id = post.metadata.get("id") or os.path.splitext(os.path.basename(filepath))[0]
 
     # ------------------------------------------------------------
     # Core fields
     # ------------------------------------------------------------
-    # Use metadata.get(...) instead of post.get(...) because `Post`
-    # stores YAML keys in `metadata`, not on the object itself.
     title: str = post.metadata.get("title", "")
     body: str = post.content
 
     # ------------------------------------------------------------
-    # Timestamps (Joplin stores milliseconds since epoch)
-    # Tests expect raw millisecond integers, not datetime objects.
-    # We therefore *do not* convert them — we return the raw values.
+    # Timestamps (raw ms integers — no conversion)
     # ------------------------------------------------------------
     created_time = post.metadata.get("created_time")
     updated_time = post.metadata.get("updated_time")
@@ -76,14 +75,16 @@ def parse_note(filepath: str) -> Dict[str, Any]:
     markup_language: int = post.metadata.get("markup_language", 1)
 
     # ------------------------------------------------------------
-    # Notebook + tags (if present in frontmatter)
+    # Notebook + tags (if present)
+    # NOTE:
+    #   Joplin Markdown exports *do not* include notebook names.
+    #   This will usually be None, which is correct.
     # ------------------------------------------------------------
     notebook: Optional[str] = post.metadata.get("notebook")
     tags = post.metadata.get("tags", [])
 
     # ------------------------------------------------------------
     # Resource references inside the body
-    # Tests expect a list of hex IDs extracted from :/<id> patterns.
     # ------------------------------------------------------------
     resources = RESOURCE_RE.findall(body)
 
@@ -107,6 +108,45 @@ def parse_note(filepath: str) -> Dict[str, Any]:
         "markup_language": markup_language,
         "resources": resources,
     }
+
+
+# ============================================================================
+# 2 — PARSE AN ENTIRE JOPLIN EXPORT FOLDER
+# ============================================================================
+
+
+def parse_joplin_export(folder_path: str) -> List[Dict[str, Any]]:
+    """
+    Parse all Joplin-exported Markdown notes in a folder.
+
+    This function:
+        • walks the folder
+        • finds all .md files
+        • parses each using parse_note()
+        • returns a list of parsed note dictionaries
+
+    It does NOT:
+        • modify existing parse_note() behavior
+        • assume anything about notebook structure
+        • touch the _resources/ folder (handled later by orchestrator)
+
+    Returns:
+        A list of parsed note dictionaries.
+    """
+
+    notes: List[Dict[str, Any]] = []
+
+    for filename in os.listdir(folder_path):
+        if filename.lower().endswith(".md"):
+            full_path = os.path.join(folder_path, filename)
+            notes.append(parse_note(full_path))
+
+    return notes
+
+
+# ============================================================================
+# 3 — LEGACY TIMESTAMP HELPER (unused by parse_note)
+# ============================================================================
 
 
 def _parse_timestamp(ts: Any) -> Optional[datetime]:

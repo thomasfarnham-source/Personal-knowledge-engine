@@ -2,10 +2,10 @@
 Shared pytest configuration for the Milestone 8.8 test suite.
 
 This file centralizes all reusable testing utilities so that:
-    • CLI tests receive a fresh, isolated Typer CliRunner
-    • Unit and integration tests can load deterministic fixtures
-    • Mock embedding and Supabase clients behave predictably
-    • Tests remain contributor‑friendly, explicit, and easy to extend
+    • Integration tests use deterministic mock clients
+    • Parsed note fixtures load consistently
+    • Embedding + Supabase mocks behave predictably
+    • Tests remain contributor‑friendly and easy to extend
 
 All helpers here are intentionally simple and deterministic to ensure
 stable test behavior across environments and future refactors.
@@ -20,10 +20,6 @@ from typer.testing import CliRunner
 # ============================================================================
 # FIXTURE DIRECTORY
 # ============================================================================
-# All test fixtures live under tests/fixtures/. Using a fixed, explicit path
-# ensures deterministic loading and avoids ambiguity about where test data
-# should be placed.
-# ============================================================================
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 
@@ -32,36 +28,16 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures"
 # ============================================================================
 
 
-# ---------------------------------------------------------------------------
-# Fixture: cli_runner
-#
-# Provides a fresh Typer CliRunner instance for each test. This simulates
-# command‑line execution in an isolated environment without spawning a real
-# subprocess. Tests can invoke the CLI exactly as a user would:
-#
-#     result = cli_runner.invoke(app, ["notes", "upsert", "file.json"])
-#
-# Each test receives a clean runner to prevent shared state or output
-# contamination between tests.
-# ---------------------------------------------------------------------------
 @pytest.fixture
 def cli_runner() -> CliRunner:
+    """Provides a fresh Typer CliRunner instance for CLI tests."""
     return CliRunner()
 
 
-# ---------------------------------------------------------------------------
-# Fixture: load_json_fixture
-#
-# Loads a JSON fixture from tests/fixtures/ and returns it as a Python dict.
-#
-# Usage:
-#     note = load_json_fixture("note_simple.json")
-#
-# This keeps fixture loading consistent and avoids repeating boilerplate
-# path logic across multiple test files.
-# ---------------------------------------------------------------------------
 @pytest.fixture
 def load_json_fixture():
+    """Load a JSON fixture from tests/fixtures/ as a Python dict."""
+
     def _loader(name: str) -> dict:
         path = FIXTURES_DIR / name
         text = path.read_text(encoding="utf-8")
@@ -70,17 +46,10 @@ def load_json_fixture():
     return _loader
 
 
-# ---------------------------------------------------------------------------
-# Fixture: load_text_fixture
-#
-# Some tests (especially CLI tests) may need to load raw text files rather
-# than JSON. This helper mirrors load_json_fixture but returns plain text.
-#
-# Usage:
-#     content = load_text_fixture("example.md")
-# ---------------------------------------------------------------------------
 @pytest.fixture
 def load_text_fixture():
+    """Load a raw text fixture from tests/fixtures/."""
+
     def _loader(name: str) -> str:
         path = FIXTURES_DIR / name
         return path.read_text(encoding="utf-8")
@@ -95,19 +64,23 @@ def load_text_fixture():
 
 # ---------------------------------------------------------------------------
 # Fixture: mock_embedding_client
-#
-# Provides a deterministic embedding client for integration tests.
-# This avoids calling the real embedding provider and ensures stable,
-# reproducible embeddings for every test run.
-#
-# The returned object exposes a .generate(text) method that mimics the
-# real client but always returns the same predictable vector.
 # ---------------------------------------------------------------------------
 @pytest.fixture
 def mock_embedding_client():
+    """
+    Deterministic embedding client for integration tests.
+
+    Exposes:
+        • .generate(text) → [1.0, 2.0, 3.0]
+        • .calls → number of times generate() was invoked
+    """
+
     class MockEmbeddingClient:
+        def __init__(self):
+            self.calls = 0
+
         def generate(self, text: str):
-            # Deterministic fake embedding (length 3 for simplicity)
+            self.calls += 1
             return [1.0, 2.0, 3.0]
 
     return MockEmbeddingClient()
@@ -115,37 +88,166 @@ def mock_embedding_client():
 
 # ---------------------------------------------------------------------------
 # Fixture: mock_supabase_client
-#
-# Provides a deterministic Supabase client mock for integration tests.
-# It records all upsert calls so tests can assert:
-#     • number of writes
-#     • payload structure
-#     • idempotency behavior
-#
-# The real Supabase client returns structured responses; this mock returns
-# a minimal, predictable dict suitable for assertions.
 # ---------------------------------------------------------------------------
 @pytest.fixture
-def mock_supabase_client():
+def mock_supabase_client(mock_embedding_client):
+    """
+    Deterministic Supabase client mock for integration tests.
+
+    Mirrors the real SupabaseClient interface:
+
+        • upsert_note_with_embedding(...)
+        • upsert_notebooks(...)
+        • upsert_tags(...)
+        • upsert_note_tag_relationships(...)
+
+    IMPORTANT:
+        This mock is intentionally *append‑only*. Real Supabase upserts
+        are idempotent, but this mock records every call so integration
+        tests can assert that the orchestrator produces identical writes
+        across multiple runs.
+
+    Tracks all upserts separately so integration tests can assert:
+        • correct payload structure
+        • correct number of writes
+        • idempotency behavior
+    """
+
     class MockSupabaseClient:
         def __init__(self):
-            self.upserts = []
+            # Track all upsert types
+            self.note_upserts = []
+            self.notebook_upserts = []
+            self.tag_upserts = []
+            self.relationship_upserts = []
 
-        def upsert(self, payload: dict):
-            self.upserts.append(payload)
-            return {"status": "ok", "count": len(self.upserts)}
+            # Embedding client injected for deterministic behavior
+            self.embedding_client = mock_embedding_client
+
+        # --------------------------------------------------------------
+        # 1.2.1 — NOTE UPSERTS (WITH EMBEDDINGS)
+        # --------------------------------------------------------------
+        def upsert_note_with_embedding(
+            self,
+            *,
+            id,
+            title,
+            body,
+            metadata,
+            notebook_id,
+            embedding,  # ← ADDED: orchestrator always passes this
+        ):
+            """
+            Mirrors the real SupabaseClient API.
+
+            The orchestrator ALWAYS calls this method using keyword
+            arguments, so the mock must accept keyword parameters.
+
+            The mock:
+                • accepts the precomputed embedding from the orchestrator
+                • builds a payload identical to the real client
+                • stores it for test assertions
+            """
+
+            payload = {
+                "id": id,
+                "title": title,
+                "body": body,
+                "metadata": metadata,
+                "notebook_id": notebook_id,
+                "embedding": embedding,  # ← store the embedding exactly as passed
+            }
+
+            self.note_upserts.append(payload)
+
+            # Integration tests expect Option B1 semantics ("inserted" / "updated").
+            # For deterministic behavior, treat all writes as "inserted".
+            return "inserted"
+
+        # --------------------------------------------------------------
+        # NOTEBOOK UPSERT (plural)
+        # --------------------------------------------------------------
+        def upsert_notebooks(self, notebook_map: dict):
+            """
+            The orchestrator expects a mapping:
+                { notebook_name: notebook_id }
+
+            The mock returns a deterministic mapping and stores each
+            notebook upsert for assertions.
+            """
+            result = {}
+
+            for name, metadata in notebook_map.items():
+                notebook_id = f"notebook-{name.lower().replace(' ', '-')}"
+                result[name] = notebook_id
+
+                self.notebook_upserts.append(
+                    {
+                        "name": name,
+                        "metadata": metadata,
+                        "id": notebook_id,
+                    }
+                )
+
+            return result
+
+        # --------------------------------------------------------------
+        # TAG UPSERT (plural)
+        # --------------------------------------------------------------
+        def upsert_tags(self, tag_map: dict):
+            """
+            The orchestrator expects a mapping:
+                { tag_name: tag_id }
+
+            The mock:
+                • generates deterministic tag IDs
+                • stores each tag upsert as a dict
+                • returns the same mapping structure as the real client
+            """
+            result = {}
+
+            for tag_name in tag_map:
+                tag_id = f"tag-{tag_name.lower().replace(' ', '-')}"
+                result[tag_name] = tag_id
+
+                self.tag_upserts.append(
+                    {
+                        "name": tag_name,
+                        "id": tag_id,
+                    }
+                )
+
+            return result
+
+        # --------------------------------------------------------------
+        # NOTE–TAG RELATIONSHIP UPSERTS
+        # --------------------------------------------------------------
+        def upsert_note_tag_relationships(self, note_id, tag_ids):
+            """
+            Mirrors the real SupabaseClient API:
+
+                upsert_note_tag_relationships(note_id, tag_ids)
+
+            The mock:
+                • creates one relationship per tag
+                • stores each relationship deterministically
+            """
+            for tag_id in tag_ids:
+                rel = {
+                    "note_id": note_id,
+                    "tag_id": tag_id,
+                }
+                self.relationship_upserts.append(rel)
+
+            return {"status": "ok"}
 
     return MockSupabaseClient()
 
 
 # ---------------------------------------------------------------------------
 # Fixture: temp_work_dir
-#
-# Provides a temporary working directory for tests that need to write files.
-# This keeps the real project directory clean and ensures isolation.
-#
-# pytest's built‑in tmp_path fixture supplies a unique directory per test.
 # ---------------------------------------------------------------------------
 @pytest.fixture
 def temp_work_dir(tmp_path):
+    """Provides a temporary working directory for tests."""
     return tmp_path

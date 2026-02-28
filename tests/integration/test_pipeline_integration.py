@@ -1,0 +1,261 @@
+# ------------------------------------------------------------
+# File break point 1
+# ------------------------------------------------------------
+"""
+Integration Test Suite — Milestone 8.8.3
+
+This suite validates the *behavior* of the ingestion orchestrator when
+parsed notes are ingested end‑to‑end using deterministic mock clients.
+
+These tests do NOT mock internal functions. Instead, they rely on the
+deterministic mock clients defined in conftest.py to ensure:
+
+    • The embedding client is called exactly once per note
+    • SupabaseClient.upsert_note_with_embedding is called exactly once
+    • The final payload structure is stable and deterministic
+    • The orchestrator returns a correct summary object
+
+This ensures the ingestion pipeline behaves as a coherent system,
+not just a collection of isolated units.
+"""
+
+# The orchestrator entrypoint for batch ingestion of parsed notes
+from pke.ingestion.orchestrator import ingest_notes
+
+
+# ======================================================================
+# Integration Test 3.1 — Embedding + Supabase Behavior
+# ======================================================================
+def test_ingest_notes_calls_embedding_and_supabase_once(
+    mock_embedding_client,
+    mock_supabase_client,
+    load_json_fixture,
+):
+    """
+    Purpose:
+        Validate that ingest_notes() correctly orchestrates:
+            • embedding generation
+            • note upsert
+            • summary reporting
+
+    Expected Behavior:
+        • mock_embedding_client.calls == 1
+        • mock_supabase_client.upsert_note_with_embedding called once
+        • Summary reflects 1 inserted note, 0 skipped, 0 failures
+    """
+
+    # ------------------------------------------------------------------
+    # Arrange — Load a deterministic parsed note fixture
+    # ------------------------------------------------------------------
+    parsed_note = load_json_fixture("parsed_note_simple.json")
+    parsed_notes = [parsed_note]
+
+    # ------------------------------------------------------------------
+    # Act — Execute the ingestion pipeline with deterministic mocks
+    # ------------------------------------------------------------------
+    summary = ingest_notes(
+        parsed_notes=parsed_notes,
+        client=mock_supabase_client,
+    )
+
+    # ------------------------------------------------------------------
+    # Assert — Embedding client was called exactly once
+    # ------------------------------------------------------------------
+    assert (
+        mock_embedding_client.calls == 1
+    ), "Embedding client must be called exactly once for a single note."
+
+    # ------------------------------------------------------------------
+    # Assert — SupabaseClient.upsert_note_with_embedding called once
+    # ------------------------------------------------------------------
+    assert (
+        len(mock_supabase_client.note_upserts) == 1
+    ), "SupabaseClient must receive exactly one note upsert."
+
+    upsert_payload = mock_supabase_client.note_upserts[0]
+
+    # ------------------------------------------------------------------
+    # Assert — Embedding vector is present and deterministic
+    # ------------------------------------------------------------------
+    assert upsert_payload["embedding"] == [
+        1.0,
+        2.0,
+        3.0,
+    ], "Embedding vector must match deterministic mock embedding."
+
+    # ------------------------------------------------------------------
+    # Assert — Metadata and body are preserved (nested metadata contract)
+    # ------------------------------------------------------------------
+    assert (
+        upsert_payload["metadata"] == parsed_note["metadata"]
+    ), "Metadata must be passed through unchanged."
+    assert (
+        upsert_payload["body"] == parsed_note["body"]
+    ), "Note body must be passed through unchanged."
+
+    # ------------------------------------------------------------------
+    # Assert — Summary object is correct
+    # ------------------------------------------------------------------
+    assert summary["notes_processed"] == 1
+    assert summary["notes_inserted"] == 1
+    assert summary["notes_skipped"] == 0
+    assert summary["failures"] == []
+
+
+# ======================================================================
+# Integration Test 3.2 — Supabase Payload Structure
+# ======================================================================
+def test_ingest_notes_supabase_payload_structure(
+    mock_embedding_client,
+    mock_supabase_client,
+    load_json_fixture,
+):
+    """
+    Purpose:
+        Validate that ingest_notes() produces a stable, deterministic
+        payload structure when upserting notes into Supabase.
+
+    Expected Behavior:
+        • Payload contains required fields:
+            id, title, body, metadata, notebook_id, embedding
+        • Embedding is deterministic
+        • Metadata matches parsed note fixture
+        • Notebook ID matches the deterministic ID generated by the mock
+    """
+
+    # ------------------------------------------------------------------
+    # Arrange — Load parsed note fixture
+    # ------------------------------------------------------------------
+    parsed_note = load_json_fixture("parsed_note_simple.json")
+    parsed_notes = [parsed_note]
+
+    # ------------------------------------------------------------------
+    # Act — Execute ingestion
+    # ------------------------------------------------------------------
+    ingest_notes(parsed_notes, mock_supabase_client)
+
+    # ------------------------------------------------------------------
+    # Assert — Exactly one note upsert occurred
+    # ------------------------------------------------------------------
+    assert len(mock_supabase_client.note_upserts) == 1
+
+    payload = mock_supabase_client.note_upserts[0]
+
+    # ------------------------------------------------------------------
+    # Assert — Required fields exist (nested metadata contract)
+    # ------------------------------------------------------------------
+    required_fields = [
+        "id",
+        "title",
+        "body",
+        "metadata",
+        "notebook_id",
+        "embedding",
+    ]
+
+    for field in required_fields:
+        assert field in payload, f"Payload missing required field: {field}"
+
+    # ------------------------------------------------------------
+    # File break point 2
+    # ------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # Assert — Field values are correct
+    # ------------------------------------------------------------------
+    assert payload["id"] == parsed_note["id"]
+    assert payload["title"] == parsed_note["title"]
+    assert payload["body"] == parsed_note["body"]
+
+    # Metadata must match exactly
+    assert payload["metadata"] == parsed_note["metadata"]
+
+    # Notebook ID must match the deterministic ID generated by the mock client
+    notebook_ids = [nb["id"] for nb in mock_supabase_client.notebook_upserts]
+    assert payload["notebook_id"] in notebook_ids
+
+    # Deterministic embedding
+    assert payload["embedding"] == [1.0, 2.0, 3.0]
+
+
+# ======================================================================
+# Integration Test 3.3 — Idempotency Behavior
+# ======================================================================
+def test_ingest_notes_idempotency(
+    mock_embedding_client,
+    mock_supabase_client,
+    load_json_fixture,
+):
+    """
+    Purpose:
+        Validate that ingest_notes() is safe to run multiple times
+        without changing the *semantic* outcome of ingestion.
+
+    Because the mock Supabase client records every upsert call in lists,
+    we treat idempotency as:
+
+        • The second run produces the *same* writes as the first run
+        • No new or divergent payloads appear on the second run
+        • Embedding is called once per run
+        • Summary remains consistent across runs
+    """
+
+    # ------------------------------------------------------------------
+    # Arrange — Load parsed note fixture
+    # ------------------------------------------------------------------
+    parsed_note = load_json_fixture("parsed_note_simple.json")
+    parsed_notes = [parsed_note]
+
+    # ------------------------------------------------------------------
+    # Act — First ingestion run
+    # ------------------------------------------------------------------
+    summary_1 = ingest_notes(parsed_notes, mock_supabase_client)
+
+    # Capture counts and snapshots after first run
+    first_note_upserts = len(mock_supabase_client.note_upserts)
+    first_notebook_upserts = len(mock_supabase_client.notebook_upserts)
+    first_tag_upserts = len(mock_supabase_client.tag_upserts)
+    first_relationship_upserts = len(mock_supabase_client.relationship_upserts)
+    first_embedding_calls = mock_embedding_client.calls
+
+    note_upserts_snapshot = list(mock_supabase_client.note_upserts)
+    notebook_upserts_snapshot = list(mock_supabase_client.notebook_upserts)
+    tag_upserts_snapshot = list(mock_supabase_client.tag_upserts)
+    relationship_upserts_snapshot = list(mock_supabase_client.relationship_upserts)
+
+    # ------------------------------------------------------------------
+    # Act — Second ingestion run (idempotency test)
+    # ------------------------------------------------------------------
+    summary_2 = ingest_notes(parsed_notes, mock_supabase_client)
+
+    # ------------------------------------------------------------------
+    # Assert — Second run produces the same writes as the first run
+    # ------------------------------------------------------------------
+    assert len(mock_supabase_client.note_upserts) == first_note_upserts * 2
+    assert len(mock_supabase_client.notebook_upserts) == first_notebook_upserts * 2
+    assert len(mock_supabase_client.tag_upserts) == first_tag_upserts * 2
+    assert len(mock_supabase_client.relationship_upserts) == first_relationship_upserts * 2
+
+    second_note_half = mock_supabase_client.note_upserts[first_note_upserts:]
+    second_notebook_half = mock_supabase_client.notebook_upserts[first_notebook_upserts:]
+    second_tag_half = mock_supabase_client.tag_upserts[first_tag_upserts:]
+    second_relationship_half = mock_supabase_client.relationship_upserts[
+        first_relationship_upserts:
+    ]
+
+    assert second_note_half == note_upserts_snapshot
+    assert second_notebook_half == notebook_upserts_snapshot
+    assert second_tag_half == tag_upserts_snapshot
+    assert second_relationship_half == relationship_upserts_snapshot
+
+    # ------------------------------------------------------------------
+    # Assert — Embedding called once per run
+    # ------------------------------------------------------------------
+    assert mock_embedding_client.calls == first_embedding_calls * 2
+
+    # ------------------------------------------------------------------
+    # Assert — Summary remains consistent
+    # ------------------------------------------------------------------
+    assert summary_1["notes_processed"] == summary_2["notes_processed"]
+    assert summary_1["notes_inserted"] == summary_2["notes_inserted"]
+    assert summary_1["notes_skipped"] == summary_2["notes_skipped"]

@@ -6,42 +6,54 @@ These functions never touch Supabase directly — they only transform parsed
 note data into deterministic structures that the orchestrator can pass to
 SupabaseClient.
 
-The design is intentionally simple and testable:
-    • extract_all_tags() flattens tag lists across notes
-    • map_note_tags_to_ids() converts tag strings → canonical UUIDs
+Design goals:
+    • Pure functions (no side effects)
+    • Deterministic output
+    • Contributor‑friendly and easy to test
+    • Normalized tag names (trimmed, non‑empty)
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Mapping, Set
 
 
-def extract_all_tags(parsed_notes: List[Dict[str, Any]]) -> List[str]:
+# ---------------------------------------------------------------------------
+# Extract all tag names across parsed notes
+# ---------------------------------------------------------------------------
+def extract_all_tags(parsed_notes: List[Mapping[str, Any]]) -> Set[str]:
     """
-    Extract all tag strings across all notes.
+    Extract the set of all unique, normalized tag names from parsed notes.
 
-    Current behavior:
-        • Look for note["tags"] (set by parse_note)
-        • Flatten all tag lists into a single list
-        • No normalization or deduplication here — SupabaseClient handles that
+    Normalization rules:
+        • Ignore None or empty strings
+        • Strip whitespace
+        • Deduplicate (returns a set)
 
     Args:
         parsed_notes:
             A list of parsed note dictionaries produced by parse_note().
 
     Returns:
-        A flat list of tag strings (may contain duplicates).
+        A set of unique tag strings.
     """
-    all_tags: List[str] = []
+    tags: Set[str] = set()
 
     for note in parsed_notes:
-        tags = note.get("tags", [])
-        all_tags.extend(tags)
+        for tag in note.get("tags", []) or []:
+            if not tag:
+                continue
+            normalized = tag.strip()
+            if normalized:
+                tags.add(normalized)
 
-    return all_tags
+    return tags
 
 
+# ---------------------------------------------------------------------------
+# Map note → tag UUIDs
+# ---------------------------------------------------------------------------
 def map_note_tags_to_ids(
-    parsed_notes: List[Dict[str, Any]],
-    tag_id_map: Dict[str, str],
+    parsed_notes: List[Mapping[str, Any]],
+    tag_id_map: Mapping[str, str],
 ) -> Dict[str, List[str]]:
     """
     Convert tag strings on each note into canonical tag UUIDs.
@@ -53,10 +65,11 @@ def map_note_tags_to_ids(
     Produces:
         {"note_id": ["uuid1", "uuid2"]}
 
-    Notes:
+    Rules:
         • Only tags present in tag_id_map are included.
         • Notes without tags produce an empty list.
         • Notes without an "id" are skipped entirely.
+        • Tag names are normalized (strip whitespace).
 
     Args:
         parsed_notes:
@@ -68,16 +81,27 @@ def map_note_tags_to_ids(
     Returns:
         A mapping of note_id → list of tag UUIDs.
     """
-    result: Dict[str, List[str]] = {}
+    note_tag_map: Dict[str, List[str]] = {}
 
     for note in parsed_notes:
         note_id = note.get("id")
         if not note_id:
             continue
 
-        tag_strings = note.get("tags", [])
-        tag_ids = [tag_id_map[t] for t in tag_strings if t in tag_id_map]
+        tag_names = note.get("tags", []) or []
+        tag_ids: List[str] = []
 
-        result[note_id] = tag_ids
+        for name in tag_names:
+            if not name:
+                continue
+            normalized = name.strip()
+            if not normalized:
+                continue
+            tag_id = tag_id_map.get(normalized)
+            if tag_id:
+                tag_ids.append(tag_id)
 
-    return result
+        if tag_ids:
+            note_tag_map[note_id] = tag_ids
+
+    return note_tag_map

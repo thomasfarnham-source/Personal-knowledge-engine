@@ -1,62 +1,115 @@
-Personal-knowledge-engine
-FastAPI backend for a personal knowledge system that ingests, parses, and stores notes for search and analysis.
+Personal Knowledge Engine
+A FastAPI backend and Typer‑based CLI for a personal knowledge system that parses, ingests, stores, and searches notes for long‑term retrieval and analysis.
+This project provides:
+- A FastAPI backend for querying and retrieval
+- A Supabase‑backed storage layer for notes, embeddings, and metadata
+- A clean, two‑stage ingestion pipeline (pke parse → pke ingest)
+- Pluggable parsers for local exports (e.g., Joplin Markdown)
+- A contributor‑friendly CLI built with Typer
+- Environment‑driven configuration so secrets remain local and safe
 
-<!-- Trigger CI test -->
-
-Features
-- FastAPI backend with async endpoints for ingestion and querying.
-- Supabase integration for persistent storage and search.
-- Pluggable ingestion scripts for parsing notes and syncing from local exports.
-- Environment-driven configuration so secrets remain local and safe.
-- Tests and utilities under tests/ and scripts/.
-
-Quickstart
-Clone and prepare the environment
+🚀 Quickstart
+1. Clone and set up the environment
 git clone https://github.com/<your-org>/Personal-knowledge-engine.git
 cd Personal-knowledge-engine
+
 python -m venv .venv
+
 # Windows PowerShell
 .venv\Scripts\Activate.ps1
-# macOS or Linux
+
+# macOS/Linux
 source .venv/bin/activate
+
 pip install -r requirements.txt
 
 
-Create local environment file
-# Copy the example and edit values
+
+2. Configure environment variables
+Copy the example file:
 cp .env.example .env
-# Edit .env to add your SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY
 
 
-Run the app
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-
-Open http://localhost:8000/docs to explore the API.
-
-Environment variables
-Keep real secrets out of the repo. Use .env for local secrets and keep .env in .gitignore. Track .env.example with placeholders only.
-Required variables
-- SUPABASE_URL — your Supabase project URL.
-- SUPABASE_SERVICE_ROLE_KEY — service role key for server-side access.
-Example .env.example
+Edit .env and add:
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+These values stay local only. .env is intentionally ignored by Git.
+Example:
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 
 
-Deployment
-- Backend hosting: Deploy the FastAPI app to platforms such as Render, Fly, Heroku, or an Azure/AWS VM or container.
-- CI/CD: Use GitHub Actions to run tests and deploy on push to main. Store secrets in the platform’s secret store (GitHub Secrets, Render/Heroku config vars, etc.).
-- Frontend: If you add a frontend, consider Vercel or Netlify for static hosting.
+🧩 Two‑Stage Ingestion Pipeline
+The CLI provides a clean, explicit ingestion workflow.
 
-Contributing
-- Workflow: Fork the repo, create a feature branch, open a PR with a clear description and tests for new behavior.
-- Local config: Add local-only config files (for example config.py or .env) to .gitignore.
-- Code style: Follow existing project patterns and add tests for new functionality.
+Stage 1 — Parse Joplin Markdown exports
+pke parse run \
+  --export-path path/to/joplin_export \
+  --output pke/artifacts/parsed/parsed_notes.json
 
-License
-Add your preferred license file (for example LICENSE) to the repository and update this section accordingly.
 
-I can create a ready-to-run GitHub Actions workflow for CI/CD or a PowerShell script to automate setup — reply create workflow or create script to get one
+This produces a structured JSON artifact containing all parsed notes.
+Default output location:
+pke/artifacts/parsed/parsed_notes.json
+
+
+This file is the input to Stage 2.
+
+Stage 2 — Ingest parsed notes into Supabase
+pke ingest run \
+  --parsed-path pke/artifacts/parsed/parsed_notes.json \
+  --dry-run
+
+
+Use --dry-run to validate ingestion without writing to Supabase.
+You can also limit ingestion for testing:
+pke ingest run --limit 10
+
+
+
+🧠 Running the FastAPI Backend
+Once ingestion is complete, start the API:
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+
+Open:
+http://localhost:8000/docs
+
+
+to explore the API.
+
+🗂 Project Structure
+pke/
+  cli/                 # Typer-based CLI (parse, ingest, notes)
+  ingestion/           # Orchestrator + Supabase integration
+  parsers/             # Joplin Markdown parser and future parsers
+  artifacts/           # Generated pipeline artifacts (gitignored)
+  tests/               # Test suite
+  main.py              # FastAPI entrypoint
+
+
+
+🔐 Environment Variables
+Keep real secrets out of the repo. Only .env.example is tracked.
+Required:
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+Optional variables can be added as the system grows.
+
+🚀 Deployment
+- Backend hosting: Render, Fly.io, Heroku, Azure, AWS, or any container platform
+- CI/CD: GitHub Actions recommended for tests + deploy on push to main
+- Secrets: Store in GitHub Secrets or platform‑specific config vars
+- Frontend (optional): Vercel or Netlify pair well with FastAPI backends
+
+🤝 Contributing
+- Fork the repo and create a feature branch
+- Add tests for new behavior
+- Keep local‑only config (e.g., .env, config.py) out of Git
+- Follow existing patterns for CLI structure and ingestion logic
+
+📄 License
+Add your preferred license (e.g., MIT, Apache 2.0) and update this section.
+
 
