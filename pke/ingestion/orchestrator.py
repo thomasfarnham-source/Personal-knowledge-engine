@@ -1,6 +1,3 @@
-# ------------------------------------------------------------
-# File break point 1
-# ------------------------------------------------------------
 """
 High‑level ingestion orchestrator for parsed Joplin notes.
 
@@ -19,7 +16,7 @@ The orchestrator does *not* perform:
     • schema evolution or versioning (handled at the database layer)
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from pke.ingestion.tag_resolution import extract_all_tags, map_note_tags_to_ids
 from pke.supabase_client import SupabaseClient
@@ -86,7 +83,7 @@ class IngestionReport:
 # MAIN ORCHESTRATOR — SINGLE SOURCE OF TRUTH FOR INGESTION SEQUENCING
 # ============================================================================
 def ingest_notes(
-    parsed_notes: List[Dict[str, Any]],
+    parsed_notes: Sequence[Mapping[str, Any]],
     client: Optional[SupabaseClient] = None,
     dry_run: bool = False,
 ) -> Dict[str, Any]:
@@ -186,6 +183,8 @@ def ingest_notes(
         # ------------------------------
         # Stage 2: Tag simulation
         # ------------------------------
+        # extract_all_tags accepts a Sequence[Mapping[str, Any]], which matches
+        # the parsed_notes type and avoids list/Mapping variance issues.
         all_tags = extract_all_tags(parsed_notes)
         report.tags_inserted = len(all_tags)
 
@@ -199,9 +198,6 @@ def ingest_notes(
         summary = report.to_summary_dict()
         summary["failures"] = report.failures
         return summary
-    # ------------------------------------------------------------
-    # File break point 2
-    # ------------------------------------------------------------
 
     # ------------------------------------------------------------
     # REAL INGESTION — REQUIRES A SUPABASE CLIENT
@@ -221,7 +217,7 @@ def ingest_notes(
     #     notebooks appear in parsed_notes, NOT alphabetical order.
     #
     #     Therefore we must preserve insertion order and avoid using a set.
-    notebook_map = {}
+    notebook_map: Dict[str, Dict[str, Any]] = {}
     for note in parsed_notes:
         nb = note.get("notebook")
         if nb and nb not in notebook_map:
@@ -241,8 +237,11 @@ def ingest_notes(
     #     • call ordering matches the real ingestion contract
     all_tags = extract_all_tags(parsed_notes)
 
+    # SupabaseClient expects a list[str], not a set[str], so we convert here.
+    tag_list = list(all_tags)
+
     # SupabaseClient returns {tag → id}
-    tag_id_map = client.upsert_tags(all_tags)
+    tag_id_map = client.upsert_tags(tag_list)
     report.tags_inserted = len(tag_id_map)
 
     # ------------------------------------------------------------
@@ -274,9 +273,15 @@ def ingest_notes(
             # --------------------------------------------------------
             # Resolve notebook_id via the upserted mapping
             # --------------------------------------------------------
-            notebook_id = None
+            # IMPORTANT:
+            #   We cannot reuse the name `notebook_id` here because the same
+            #   function defines a variable with that name in dry‑run mode.
+            #   mypy treats both as the same scope and raises a no‑redef error.
+            resolved_notebook_id: Optional[str] = None
+
             if note.get("notebook"):
-                notebook_id = notebook_id_map.get(note["notebook"])
+                # Lookup the canonical notebook UUID assigned during upsert_notebooks()
+                resolved_notebook_id = notebook_id_map.get(note["notebook"])
 
             metadata = note.get("metadata", {})
 
@@ -293,7 +298,7 @@ def ingest_notes(
                 title=note.get("title", ""),
                 body=note["body"],
                 metadata=metadata,
-                notebook_id=notebook_id,
+                notebook_id=resolved_notebook_id,  # <-- updated
                 embedding=embedding,
             )
 

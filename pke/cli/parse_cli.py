@@ -60,7 +60,7 @@ def parse_run(
         writable=True,
         help="Where to write the parsed notes JSON artifact.",
     ),
-):
+) -> None:
     """
     Parse a Joplin export directory into a structured JSON artifact.
 

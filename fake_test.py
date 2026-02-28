@@ -34,6 +34,8 @@ This file ensures the real client’s logic remains correct even when
 isolated from the rest of the ingestion pipeline.
 """
 
+from typing import Any, Dict, List
+
 from pke.supabase_client import SupabaseClient
 
 
@@ -52,21 +54,21 @@ class FakeTable:
     enough behavior for deterministic testing.
     """
 
-    def __init__(self, storage):
+    def __init__(self, storage: Dict[str, Dict[str, Any]]) -> None:
         # Shared dict across all FakeTable instances for this FakeClient.
         self.storage = storage
-        self._query_id = None
+        self._query_id: str | None = None
 
-    def select(self, field):
+    def select(self, field: str) -> "FakeTable":
         # Real Supabase returns a query builder; we simply return self.
         return self
 
-    def eq(self, field, value):
+    def eq(self, field: str, value: str) -> "FakeTable":
         # Store the queried ID so execute() can return the correct result.
         self._query_id = value
         return self
 
-    def execute(self):
+    def execute(self) -> Dict[str, List[Dict[str, Any]]]:
         """
         Simulate Supabase's return shape:
 
@@ -77,7 +79,7 @@ class FakeTable:
             return {"data": [{"id": self._query_id}]}
         return {"data": []}
 
-    def upsert(self, record):
+    def upsert(self, record: Dict[str, Any]) -> "FakeTable":
         """
         Simulate Supabase upsert behavior:
             • Insert if new
@@ -98,10 +100,10 @@ class FakeClient:
     FakeTable to simulate existence checks and upserts.
     """
 
-    def __init__(self):
-        self.storage = {}
+    def __init__(self) -> None:
+        self.storage: Dict[str, Dict[str, Any]] = {}
 
-    def table(self, name):
+    def table(self, name: str) -> FakeTable:
         return FakeTable(self.storage)
 
 
@@ -114,13 +116,13 @@ client = SupabaseClient(
 )
 
 # A deterministic fake embedding (the orchestrator would normally generate this)
-FAKE_EMBEDDING = [0.0] * 1536
+FAKE_EMBEDDING: List[float] = [0.0] * 1536
 
 
 # ---------------------------------------------------------------------------
 # First call → should be "inserted"
 # ---------------------------------------------------------------------------
-action1 = client.upsert_note_with_embedding(
+action1: Any = client.upsert_note_with_embedding(
     id="abc123",
     title="Hello",
     body="World",
@@ -134,7 +136,7 @@ print("First call:", action1)  # Expect: "inserted"
 # ---------------------------------------------------------------------------
 # Second call → should be "updated"
 # ---------------------------------------------------------------------------
-action2 = client.upsert_note_with_embedding(
+action2: Any = client.upsert_note_with_embedding(
     id="abc123",
     title="Hello again",
     body="World again",

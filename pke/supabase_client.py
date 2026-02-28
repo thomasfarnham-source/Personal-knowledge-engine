@@ -219,13 +219,14 @@ class SupabaseClient:
 
         # Lookup existing notebook by title
         select_resp = client.table("notebooks").select("id").eq("title", notebook_title).execute()
-        rows = _extract_data(select_resp)
+        rows: list[dict[str, Any]] = _extract_data(select_resp)
+
         if rows:
             return rows[0]["id"]
-
         # Insert new notebook if none exists
         insert_resp = client.table("notebooks").insert({"title": notebook_title}).execute()
-        inserted = _extract_data(insert_resp)
+        inserted: list[dict[str, Any]] = _extract_data(insert_resp)
+
         if not inserted:
             # Defensive: Supabase should always return the inserted row
             raise RuntimeError(f"Notebook insert returned no rows for title={notebook_title!r}")
@@ -245,7 +246,7 @@ class SupabaseClient:
         notebook_id: Optional[str],
         embedding: List[float],
         table: str = "notes",
-    ) -> str:
+    ) -> str | list[NoteRecord]:
         """
         Upsert a note into Supabase using a precomputed embedding.
 
@@ -307,7 +308,7 @@ class SupabaseClient:
         # We keep metadata as a nested dict here as well; if you later decide
         # to denormalize metadata into explicit columns, this is the single
         # place to change.
-        record: NoteRecord = {
+        payload: NoteRecord = {
             "id": id,
             "title": title,
             "body": body,
@@ -320,7 +321,7 @@ class SupabaseClient:
         # Supabase will:
         #   • insert a new row if id does not exist
         #   • update the existing row if id already exists
-        resp = client.table(table).upsert(record).execute()
+        resp = client.table(table).upsert(payload).execute()
         _extract_data(resp)  # surface any errors
 
         # Step 4: return a simple status string for the orchestrator.
@@ -363,7 +364,7 @@ class SupabaseClient:
         client = self._require_client()
         resp = client.table("notebooks").upsert(payload, on_conflict="title").execute()
 
-        rows = _extract_data(resp)
+        rows: list[dict[str, Any]] = _extract_data(resp)
         # Build a mapping from notebook title to its Supabase id
         return {row["title"]: row["id"] for row in rows}
 
@@ -401,7 +402,7 @@ class SupabaseClient:
         client = self._require_client()
         resp = client.table("tags").upsert(payload, on_conflict="name").execute()
 
-        rows = _extract_data(resp)
+        rows: list[dict[str, Any]] = _extract_data(resp)
         # Map tag name → Supabase id
         return {row["name"]: row["id"] for row in rows}
 

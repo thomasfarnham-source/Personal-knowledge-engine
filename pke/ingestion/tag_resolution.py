@@ -13,13 +13,13 @@ Design goals:
     • Normalized tag names (trimmed, non‑empty)
 """
 
-from typing import Any, Dict, List, Mapping, Set
+from typing import Any, Dict, List, Mapping, Sequence, Set
 
 
 # ---------------------------------------------------------------------------
 # Extract all tag names across parsed notes
 # ---------------------------------------------------------------------------
-def extract_all_tags(parsed_notes: List[Mapping[str, Any]]) -> Set[str]:
+def extract_all_tags(parsed_notes: Sequence[Mapping[str, Any]]) -> Set[str]:
     """
     Extract the set of all unique, normalized tag names from parsed notes.
 
@@ -30,17 +30,22 @@ def extract_all_tags(parsed_notes: List[Mapping[str, Any]]) -> Set[str]:
 
     Args:
         parsed_notes:
-            A list of parsed note dictionaries produced by parse_note().
+            A sequence of parsed note dictionaries produced by parse_note().
+            Sequence[...] is used instead of list[...] to avoid mypy variance
+            issues and to allow callers to pass lists, tuples, or other
+            iterable-like structures.
 
     Returns:
-        A set of unique tag strings.
+        A set of unique, normalized tag strings.
     """
     tags: Set[str] = set()
 
     for note in parsed_notes:
+        # note.get("tags") may be None, so we coerce to an empty list
         for tag in note.get("tags", []) or []:
             if not tag:
                 continue
+
             normalized = tag.strip()
             if normalized:
                 tags.add(normalized)
@@ -52,7 +57,7 @@ def extract_all_tags(parsed_notes: List[Mapping[str, Any]]) -> Set[str]:
 # Map note → tag UUIDs
 # ---------------------------------------------------------------------------
 def map_note_tags_to_ids(
-    parsed_notes: List[Mapping[str, Any]],
+    parsed_notes: Sequence[Mapping[str, Any]],
     tag_id_map: Mapping[str, str],
 ) -> Dict[str, List[str]]:
     """
@@ -73,7 +78,8 @@ def map_note_tags_to_ids(
 
     Args:
         parsed_notes:
-            Parsed note dictionaries from parse_note().
+            Parsed note dictionaries from parse_note(). Accepts any Sequence
+            to avoid list invariance issues.
 
         tag_id_map:
             Mapping of tag_name → tag_id returned by SupabaseClient.upsert_tags().
@@ -86,21 +92,25 @@ def map_note_tags_to_ids(
     for note in parsed_notes:
         note_id = note.get("id")
         if not note_id:
+            # Defensive: skip malformed notes
             continue
 
-        tag_names = note.get("tags", []) or []
+        raw_tag_names = note.get("tags", []) or []
         tag_ids: List[str] = []
 
-        for name in tag_names:
+        for name in raw_tag_names:
             if not name:
                 continue
+
             normalized = name.strip()
             if not normalized:
                 continue
+
             tag_id = tag_id_map.get(normalized)
             if tag_id:
                 tag_ids.append(tag_id)
 
+        # Only store entries for notes that actually have mapped tag IDs
         if tag_ids:
             note_tag_map[note_id] = tag_ids
 
