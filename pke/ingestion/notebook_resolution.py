@@ -12,11 +12,10 @@ def resolve_notebook_ids(parsed_notes: List[Dict[str, Any]]) -> Dict[str, Dict[s
     """
     Resolve notebook identifiers from parsed notes.
 
-    Stub behavior:
+    Updated behavior (Feb 2026):
         - Look for note["notebook"] or note["metadata"].get("notebook")
-        - Build a mapping: notebook_name -> {"name": notebook_name}
-
-    Real implementation would normalize notebook metadata.
+        - Build a mapping: notebook_title -> {"title": notebook_title}
+        - Fully aligned with the Supabase schema and orchestrator contract
     """
     notebooks: Dict[str, Dict[str, Any]] = {}
 
@@ -26,6 +25,6 @@ def resolve_notebook_ids(parsed_notes: List[Dict[str, Any]]) -> Dict[str, Dict[s
             continue
 
         if nb not in notebooks:
-            notebooks[nb] = {"name": nb}
+            notebooks[nb] = {"title": nb}
 
     return notebooks

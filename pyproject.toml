@@ -35,6 +35,7 @@ dependencies = [  # Runtime dependencies installed with your package
     "supabase",
     "python-frontmatter",
      "typer[all]",
+     "python-dotenv",
     # Add any other runtime dependencies here
 ]
 

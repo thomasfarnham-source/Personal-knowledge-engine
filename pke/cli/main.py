@@ -11,68 +11,61 @@ Milestone 8 migrates the CLI from Click to Typer to support:
 This module defines the top‑level `pke` command and mounts sub‑apps
 from other modules under pke/cli/, such as:
 
-    • pke/cli/notes_cli.py  →  `pke notes ...`
-    • pke/cli/ingest.py     →  `pke ingest ...`
+    • pke/cli/notes_cli.py   →  `pke notes ...`
+    • pke/cli/ingest.py      →  `pke ingest ...`
+    • pke/cli/parse_cli.py   →  `pke parse ...`
+
+Together, these form a complete ingestion pipeline:
+
+    Stage 1: `pke parse run`
+        Parse a Joplin export directory into a structured JSON artifact.
+        Default output:
+            pke/artifacts/parsed/parsed_notes.json
+
+    Stage 2: `pke ingest run`
+        Ingest the parsed JSON into Supabase.
+        Default input:
+            pke/artifacts/parsed/parsed_notes.json
 """
 
+# ---------------------------------------------------------------------------
+# Imports (must be at top to satisfy flake8 E402)
+# ---------------------------------------------------------------------------
+from dotenv import load_dotenv
 import typer
 
-# ---------------------------------------------------------------------------
-# Import sub‑applications
-# ---------------------------------------------------------------------------
-# Each sub‑application is a Typer app defined in its own module. They are
-# mounted under the root `cli` to form a cohesive CLI:
-#
-#     pke notes  <command>
-#     pke ingest <command>
-# ---------------------------------------------------------------------------
 from .notes_cli import notes_app
 from .ingest import ingest_app
+from .parse_cli import parse_app
+
+# Load environment variables
+load_dotenv()
 
 # ---------------------------------------------------------------------------
 # Root CLI application
 # ---------------------------------------------------------------------------
-# Typer allows us to define a single root application and then attach
-# sub‑applications (command groups) to it. This keeps the CLI modular
-# and makes it easy for contributors to add new groups without touching
-# the core logic.
-#
-# Example usage once everything is wired:
-#
-#     pke notes upsert path/to/note.md
-#     pke ingest run --parsed-path parsed_notes.json
-#     pke notes --help
-#     pke ingest --help
-#     pke --help
-# ---------------------------------------------------------------------------
 cli = typer.Typer(
-    help="Personal Knowledge Engine command-line interface.",
+    help=(
+        "Personal Knowledge Engine command‑line interface.\n\n"
+        "This CLI exposes a two‑stage ingestion pipeline:\n\n"
+        "  Stage 1 — Parse Joplin exports:\n"
+        "      pke parse run --export-path <folder>\n\n"
+        "  Stage 2 — Ingest parsed notes into Supabase:\n"
+        "      pke ingest run --parsed-path pke/artifacts/parsed/parsed_notes.json\n\n"
+        "Additional commands (e.g., `pke notes`) support note management "
+        "and future extensions to the system."
+    )
 )
 
 # ---------------------------------------------------------------------------
 # Register sub‑applications
 # ---------------------------------------------------------------------------
-# Each sub‑app is mounted under a name, which becomes the first token
-# after `pke` on the command line.
-#
-#   • `notes_app`  →  `pke notes <command>`
-#   • `ingest_app` →  `pke ingest <command>`
-#
-# Adding a new command group is as simple as:
-#
-#     from .<module> import <sub_app>
-#     cli.add_typer(<sub_app>, name="<group-name>")
-# ---------------------------------------------------------------------------
 cli.add_typer(notes_app, name="notes")
 cli.add_typer(ingest_app, name="ingest")
+cli.add_typer(parse_app, name="parse")
 
 # ---------------------------------------------------------------------------
 # Entry point for `python -m pke.cli.main`
-# ---------------------------------------------------------------------------
-# This block allows the module to be executed directly, which is useful
-# during development or when invoking the CLI via `python -m`.
-#
-# The console_script entry point (pke.exe) imports `cli` from this module.
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     cli()
