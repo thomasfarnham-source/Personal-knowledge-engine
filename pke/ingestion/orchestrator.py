@@ -1,3 +1,7 @@
+# ------------------------------------------------------------
+# File break point 1
+# ------------------------------------------------------------
+
 """
 High‑level ingestion orchestrator for parsed Joplin notes.
 
@@ -198,6 +202,10 @@ def ingest_notes(
         summary = report.to_summary_dict()
         summary["failures"] = report.failures
         return summary
+
+    # ------------------------------------------------------------
+    # File break point 2
+    # ------------------------------------------------------------
 
     # ------------------------------------------------------------
     # REAL INGESTION — REQUIRES A SUPABASE CLIENT

@@ -1,13 +1,13 @@
 """
 parse_cli.py
 
-Typer command group for parsing a Joplin Markdown export directory into a
+Typer command group for parsing a Joplin sync folder directory into a
 `parsed_notes.json` artifact. This is Stage 1 of the ingestion pipeline.
 
 The pipeline is intentionally split into two stages:
 
     Stage 1: `pke parse run`
-        Parse a Joplin export folder into a structured JSON artifact.
+        Parse a Joplin sync-folder into a structured JSON artifact.
 
     Stage 2: `pke ingest run`
         Ingest the parsed JSON into Supabase.
@@ -21,8 +21,8 @@ import json
 import typer
 from pathlib import Path
 
-# Correct import based on your actual folder + filename
-from pke.parsers.joplin_markdown import parse_joplin_export
+# Canonical parser for the Joplin sync folder (stage 1)
+from pke.parsers.joplin_sync_parser import parse_sync_folder
 
 # ---------------------------------------------------------------------------
 # Create the Typer sub-application for `pke parse`
@@ -30,7 +30,7 @@ from pke.parsers.joplin_markdown import parse_joplin_export
 parse_app = typer.Typer(
     help=(
         "Stage 1 of the ingestion pipeline.\n\n"
-        "Parses a Joplin Markdown export directory into a structured JSON "
+        "Parses a Joplin sync-folder directory into a structured JSON "
         "artifact. The default output location is:\n\n"
         "    pke/artifacts/parsed/parsed_notes.json\n\n"
         "This artifact is consumed by Stage 2:\n\n"
@@ -51,7 +51,7 @@ def parse_run(
         file_okay=False,
         dir_okay=True,
         readable=True,
-        help="Path to the Joplin Markdown export directory.",
+        help="Path to the Joplin sync-folder directory.",
     ),
     output: Path = typer.Option(
         Path("pke/artifacts/parsed/parsed_notes.json"),
@@ -62,7 +62,7 @@ def parse_run(
     ),
 ) -> None:
     """
-    Parse a Joplin export directory into a structured JSON artifact.
+    Parse a Joplin sync-folder directory into a structured JSON artifact.
 
     By default, the parsed notes are written to:
 
@@ -74,9 +74,9 @@ def parse_run(
 
     Use --output to write the artifact to a custom location.
     """
-    typer.echo(f"Parsing Joplin export from: {export_path}")
+    typer.echo(f"Parsing Joplin sync-folder from: {export_path}")
 
-    parsed = parse_joplin_export(str(export_path))
+    parsed = parse_sync_folder(Path(export_path))
 
     with output.open("w", encoding="utf-8") as f:
         json.dump(parsed, f, indent=2)

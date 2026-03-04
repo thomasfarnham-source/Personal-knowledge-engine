@@ -69,3 +69,8 @@ pke/artifacts/
 
 # Ignore manual Joplin exports
 tests/manual/joplin_export_test/
+
+# Operational scripts — manual use only, never commit
+scripts/reset_ingestion_tables.sql
+# Diagnostic/read-only scripts are safe to commit if desired
+# scripts/inspect_schema.sql
