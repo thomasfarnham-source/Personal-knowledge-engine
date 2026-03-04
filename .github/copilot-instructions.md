@@ -223,6 +223,32 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 - Type annotations are used for contract clarity (mypy enforces correctness)
 - Avoid inline comments; use docstrings and section headers instead
 
+### Commentary Standards
+
+When modifying an existing file, always match the commentary style of
+the surrounding code. Do not impose a different style.
+
+**This project uses the following conventions:**
+
+- Section headers use this format:
+```
+  # ----------------------------------------------------------------------
+  # ⭐ N. Section Title
+  #
+  # Explain WHY this section exists, not just what it does.
+  # Include design decisions, gotchas, and non-obvious reasoning.
+  # ----------------------------------------------------------------------
+```
+- Inline comments are brief, on their own line, above the code they describe
+- WHY over WHAT — comments explain intent and reasoning, not mechanics
+- Do not use docstrings where section headers are the established pattern
+- Do not add generic or redundant comments that restate the code
+
+**When generating new code in an existing file:**
+- Read the surrounding comment style before writing
+- Match indentation, spacing, and header format exactly
+- If adding a new numbered section, continue the existing numbering sequence
+
 ## Adding Features
 
 ### Adding a New Parser

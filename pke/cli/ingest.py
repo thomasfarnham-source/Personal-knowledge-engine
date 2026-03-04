@@ -123,10 +123,21 @@ def run_ingest(
         notes = notes[:limit]
 
     # ----------------------------------------------------------------------
-    # ⭐ 3. Instantiate the real Supabase client
+    # ⭐ 3. Instantiate the correct Supabase client
     #
     # The CLI is responsible for dependency creation.
     # The orchestrator receives the client and uses it.
+    #
+    # Dry-run and real mode require different clients:
+    #
+    #   --dry-run → DummyClient (no network calls, no credentials needed)
+    #   real mode → real Supabase SDK client (requires credentials)
+    #
+    # WHY THIS MATTERS:
+    #   The real SDK client must never be constructed in dry-run mode.
+    #   Doing so causes the orchestrator to call real Supabase methods
+    #   with unresolved notebook names instead of UUIDs, producing a
+    #   uuid syntax error.
     #
     # We load SUPABASE_URL and SUPABASE_KEY from the environment.
     # These are populated via python-dotenv in pke/cli/main.py.
@@ -134,17 +145,22 @@ def run_ingest(
     url = os.getenv("SUPABASE_URL")
     key = os.getenv("SUPABASE_KEY")
 
-    if not url or not key:
-        raise RuntimeError(
-            "Supabase credentials not found. Ensure SUPABASE_URL and SUPABASE_KEY "
-            "are set in your environment or .env file."
-        )
+    if dry_run:
+        # Dry-run: use DummyClient — no credentials required
+        from pke.supabase.dummy_client import DummyClient
 
-    # Create the official Supabase SDK client
-    sdk_client = create_client(url, key)
-
-    # Wrap it in our project-specific client
-    client = SupabaseClient(sdk_client)
+        client = SupabaseClient(DummyClient())
+    else:
+        # Real mode: credentials are required
+        if not url or not key:
+            raise RuntimeError(
+                "Supabase credentials not found. Ensure SUPABASE_URL and SUPABASE_KEY "
+                "are set in your environment or .env file."
+            )
+        # Create the official Supabase SDK client
+        sdk_client = create_client(url, key)
+        # Wrap it in our project-specific client
+        client = SupabaseClient(sdk_client)
 
     # ----------------------------------------------------------------------
     # ⭐ 4. Delegate to orchestrator with correct signature
