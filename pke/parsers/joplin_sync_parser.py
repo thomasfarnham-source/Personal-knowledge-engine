@@ -161,7 +161,8 @@ def _load_all_files(sync_dir: Path) -> dict[str, list[dict]]:
     """
     # iterate only the top-level entries in the directory; Joplin sync
     # exports are flat. ignore subdirectories.
-    files_by_type: defaultdict[list] = defaultdict(list)
+    # use full type parameters to satisfy mypy
+    files_by_type: defaultdict[str, list[dict]] = defaultdict(list)
     for child in sync_dir.iterdir():
         if child.is_file() and child.suffix.lower() == ".md":
             parsed = _parse_md_file(child)
