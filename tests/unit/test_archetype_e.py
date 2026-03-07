@@ -244,7 +244,6 @@ class TestAudioBoundarySplitting:
         # Preamble chunk is always present — at least one chunk produced
         assert len(result) >= 1
 
-
     def test_single_audio_produces_chunks(self):
         """
         A note with a single audio recording produces at least one chunk
@@ -374,10 +373,7 @@ class TestTimestamps:
         matching the first recording's filename timestamp.
         """
         result = chunk_archetype_e(STANDARD_BODY, CREATED_AT)
-        audio_chunks = [
-            c for c in result
-            if not c.metadata.get("preamble") and c.entry_timestamp
-        ]
+        audio_chunks = [c for c in result if not c.metadata.get("preamble") and c.entry_timestamp]
         if len(audio_chunks) > 0:
             assert audio_chunks[0].entry_timestamp == "2015-06-21 00:15:50"
 
