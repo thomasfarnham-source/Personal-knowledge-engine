@@ -10,7 +10,7 @@ Structure:
     Broken image placeholders present — strip silently.
 
 Chunking strategy:
-    1. Split on day marker boundaries using _is_day_marker()
+    1. Split on day marker boundaries using DAY_MARKER_RE
     2. Pre-trip planning block (before first day marker) emitted
        as its own reference chunk
     3. Timestamp strategy (three tiers):
@@ -18,7 +18,7 @@ Chunking strategy:
         Tier 2 — Day N or day name marker → "calculated: YYYY-MM-DD"
                  from created_at + day offset
         Tier 3 — no marker detectable → entry_timestamp null
-    4. Resource IDs extracted from image and audio links
+    4. Resource IDs extracted via resource_extractor.extract_resources()
     5. Resource references and broken placeholders stripped from chunk text
     6. Merge chunks under MIN_CHUNK_CHARS with next neighbor
 
@@ -27,13 +27,8 @@ Day marker formats handled:
     Sunday, Monday, Saturday                   (standalone day names)
     Day name followed by content               (day name as header)
 
-Resource formats handled:
-    Markdown:  ![alt](:/resource_id)
-    HTML:      <img src=":/resource_id" .../>
-    Audio:     [filename.m4a](:/resource_id)
-
-Broken placeholder formats stripped silently:
-    {picture)    (Picture)    (picture)    image
+Resource extraction and placeholder stripping delegated to
+pke.chunking.resource_extractor.extract_resources()
 
 Metadata:
     - archetype: "D"
@@ -49,6 +44,7 @@ from typing import Optional
 
 from pke.chunking.chunk import Chunk
 from pke.chunking.date_parser import parse_date
+from pke.chunking.resource_extractor import extract_resources
 
 MIN_CHUNK_CHARS = 400  # ~100 tokens — merge chunks shorter than this
 
@@ -56,17 +52,6 @@ MIN_CHUNK_CHARS = 400  # ~100 tokens — merge chunks shorter than this
 DAY_MARKER_RE = re.compile(
     r"^(?:Day\s+\d+|Monday|Tuesday|Wednesday|Thursday"
     r"|Friday|Saturday|Sunday|Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b",
-    re.IGNORECASE,
-)
-
-# Resource extraction patterns
-MARKDOWN_IMAGE_RE = re.compile(r"!\[.*?\]\(:/([a-f0-9]+)\)")
-HTML_IMAGE_RE = re.compile(r'<img[^>]+src=":/([a-f0-9]+)"[^>]*/?>', re.IGNORECASE)
-AUDIO_LINK_RE = re.compile(r"\[.*?\.(m4a|mp3|wav)\]\(:/([a-f0-9]+)\)", re.IGNORECASE)
-
-# Broken placeholder patterns — strip silently
-BROKEN_PLACEHOLDER_RE = re.compile(
-    r"\{picture\)|\(Picture\)|\(picture\)|(?<!\w)image(?!\w)",
     re.IGNORECASE,
 )
 
@@ -176,23 +161,10 @@ def chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
     for idx, entry in enumerate(merged_entries):
         raw_text = "\n".join(entry["lines"])
 
-        # Extract resource IDs
-        resource_ids: list[str] = []
-        resource_ids += MARKDOWN_IMAGE_RE.findall(raw_text)
-        resource_ids += HTML_IMAGE_RE.findall(raw_text)
-        audio_matches = AUDIO_LINK_RE.findall(raw_text)
-        resource_ids += [match[1] for match in audio_matches]
-
-        # Strip resource references from chunk text
-        clean_text = MARKDOWN_IMAGE_RE.sub("", raw_text)
-        clean_text = HTML_IMAGE_RE.sub("", clean_text)
-        clean_text = AUDIO_LINK_RE.sub("", clean_text)
-
-        # Strip broken placeholders
-        clean_text = BROKEN_PLACEHOLDER_RE.sub("", clean_text)
-
-        # Collapse multiple blank lines left by stripping
-        clean_text = re.sub(r"\n{3,}", "\n\n", clean_text).strip()
+        # Extract resource IDs and strip references from chunk text
+        result = extract_resources(raw_text)
+        clean_text = result.clean_text
+        resource_ids = result.resource_ids
 
         if not clean_text:
             continue
