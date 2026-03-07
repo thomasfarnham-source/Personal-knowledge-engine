@@ -74,11 +74,13 @@ def chunk_archetype_a(body: str, created_at: str) -> list[Chunk]:
         if is_date_header(line, prev_line=prev_line):
             # Finalize previous entry if it has content
             if current_lines:
-                raw_entries.append({
-                    "lines": current_lines,
-                    "timestamp": current_timestamp,
-                    "char_start": current_char_start,
-                })
+                raw_entries.append(
+                    {
+                        "lines": current_lines,
+                        "timestamp": current_timestamp,
+                        "char_start": current_char_start,
+                    }
+                )
             # Start new entry
             current_lines = [line]
             current_timestamp = parse_date(line, fallback_year=fallback_year)
@@ -90,11 +92,13 @@ def chunk_archetype_a(body: str, created_at: str) -> list[Chunk]:
 
     # Finalize last entry
     if current_lines:
-        raw_entries.append({
-            "lines": current_lines,
-            "timestamp": current_timestamp,
-            "char_start": current_char_start,
-        })
+        raw_entries.append(
+            {
+                "lines": current_lines,
+                "timestamp": current_timestamp,
+                "char_start": current_char_start,
+            }
+        )
 
     # Merge entries shorter than MIN_CHUNK_CHARS with their next neighbor
     merged_entries: list[dict] = []
@@ -106,11 +110,13 @@ def chunk_archetype_a(body: str, created_at: str) -> list[Chunk]:
             # Merge with next entry — keep earlier timestamp
             next_entry = raw_entries[i + 1]
             merged_lines = entry["lines"] + next_entry["lines"]
-            merged_entries.append({
-                "lines": merged_lines,
-                "timestamp": entry["timestamp"],
-                "char_start": entry["char_start"],
-            })
+            merged_entries.append(
+                {
+                    "lines": merged_lines,
+                    "timestamp": entry["timestamp"],
+                    "char_start": entry["char_start"],
+                }
+            )
             i += 2  # skip next entry — already merged
         else:
             merged_entries.append(entry)

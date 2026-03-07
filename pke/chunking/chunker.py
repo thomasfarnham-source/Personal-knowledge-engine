@@ -33,7 +33,6 @@ from pke.chunking.archetype_d import chunk_archetype_d
 from pke.chunking.archetype_e import chunk_archetype_e
 from pke.chunking.chunk import Chunk
 
-
 # ============================================================================
 # PUBLIC API
 # ============================================================================
@@ -109,13 +108,9 @@ def detect_archetype(
 
     # --- Archetype D: travel patterns or metadata hint ---
     travel_title_hint = any(
-        word in title.lower()
-        for word in ["ireland", "travel", "trip", "vacation", "holiday"]
+        word in title.lower() for word in ["ireland", "travel", "trip", "vacation", "holiday"]
     )
-    travel_notebook_hint = any(
-        word in notebook.lower()
-        for word in ["travel", "trips", "vacation"]
-    )
+    travel_notebook_hint = any(word in notebook.lower() for word in ["travel", "trips", "vacation"])
     day_marker_pattern = re.search(
         r"(?:^|\n)\s*(?:Day\s+\d+|Monday|Tuesday|Wednesday|Thursday"
         r"|Friday|Saturday|Sunday|Sat|Sun|Mon|Tue|Wed|Thu|Fri)",
