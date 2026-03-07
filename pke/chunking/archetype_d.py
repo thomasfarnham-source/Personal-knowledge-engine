@@ -61,8 +61,8 @@ DAY_MARKER_RE = re.compile(
 
 # Resource extraction patterns
 MARKDOWN_IMAGE_RE = re.compile(r"!\[.*?\]\(:/([a-f0-9]+)\)")
-HTML_IMAGE_RE = re.compile(r'<img[^>]+src=":/([a-f0-9]+)"[^>]*/?>',re.IGNORECASE)
-AUDIO_LINK_RE = re.compile(r"\[.*?\.(m4a|mp3|wav)\]\(:/([a-f0-9]+)\)",re.IGNORECASE)
+HTML_IMAGE_RE = re.compile(r'<img[^>]+src=":/([a-f0-9]+)"[^>]*/?>', re.IGNORECASE)
+AUDIO_LINK_RE = re.compile(r"\[.*?\.(m4a|mp3|wav)\]\(:/([a-f0-9]+)\)", re.IGNORECASE)
 
 # Broken placeholder patterns — strip silently
 BROKEN_PLACEHOLDER_RE = re.compile(
@@ -90,9 +90,7 @@ def chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
     created_date: Optional[datetime] = None
     if created_at:
         try:
-            created_date = datetime.fromisoformat(
-                created_at.replace("Z", "+00:00")
-            )
+            created_date = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
         except (ValueError, AttributeError):
             created_date = None
 
@@ -117,12 +115,14 @@ def chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
         if DAY_MARKER_RE.match(stripped):
             # Finalize previous entry
             if current_lines:
-                raw_entries.append({
-                    "lines": current_lines,
-                    "char_start": current_char_start,
-                    "day_offset": current_day_offset,
-                    "is_reference": not found_first_marker,
-                })
+                raw_entries.append(
+                    {
+                        "lines": current_lines,
+                        "char_start": current_char_start,
+                        "day_offset": current_day_offset,
+                        "is_reference": not found_first_marker,
+                    }
+                )
             found_first_marker = True
             current_lines = [line]
             current_char_start = char_pos
@@ -135,12 +135,14 @@ def chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
 
     # Finalize last entry
     if current_lines:
-        raw_entries.append({
-            "lines": current_lines,
-            "char_start": current_char_start,
-            "day_offset": current_day_offset,
-            "is_reference": not found_first_marker,
-        })
+        raw_entries.append(
+            {
+                "lines": current_lines,
+                "char_start": current_char_start,
+                "day_offset": current_day_offset,
+                "is_reference": not found_first_marker,
+            }
+        )
 
     # Merge entries shorter than MIN_CHUNK_CHARS with next neighbor
     merged_entries: list[dict] = []
@@ -156,12 +158,14 @@ def chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
             and not raw_entries[i + 1]["is_reference"]
         ):
             next_entry = raw_entries[i + 1]
-            merged_entries.append({
-                "lines": entry["lines"] + next_entry["lines"],
-                "char_start": entry["char_start"],
-                "day_offset": entry["day_offset"],
-                "is_reference": False,
-            })
+            merged_entries.append(
+                {
+                    "lines": entry["lines"] + next_entry["lines"],
+                    "char_start": entry["char_start"],
+                    "day_offset": entry["day_offset"],
+                    "is_reference": False,
+                }
+            )
             i += 2
         else:
             merged_entries.append(entry)
