@@ -302,9 +302,7 @@ class TestSubTablePreservation:
         confirming the table was not split at internal date boundaries.
         """
         result = chunk_archetype_c(SUBTABLE_BODY, CREATED_AT)
-        table_chunk = next(
-            (c for c in result if "No reaction" in c.chunk_text), None
-        )
+        table_chunk = next((c for c in result if "No reaction" in c.chunk_text), None)
         assert table_chunk is not None
         assert "Minor redness" in table_chunk.chunk_text
         assert "Clear" in table_chunk.chunk_text
