@@ -33,6 +33,9 @@ from pke.supabase_client import SupabaseClient
 # ⭐ The orchestrator accepts (notes, client, dry_run)
 from pke.ingestion.orchestrator import ingest_notes
 
+# ⭐ OpenAI embedding client for real embeddings
+from pke.embedding.openai_client import OpenAIEmbeddingClient
+
 # ---------------------------------------------------------------------------
 # Sub‑application definition
 # ---------------------------------------------------------------------------
@@ -157,10 +160,19 @@ def run_ingest(
                 "Supabase credentials not found. Ensure SUPABASE_URL and SUPABASE_KEY "
                 "are set in your environment or .env file."
             )
+        # Load OpenAI API key for real embeddings
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if not openai_key:
+            raise RuntimeError(
+                "OpenAI API key not found. Ensure OPENAI_API_KEY is set in your "
+                "environment or .env file."
+            )
         # Create the official Supabase SDK client
         sdk_client = create_client(url, key)
-        # Wrap it in our project-specific client
-        client = SupabaseClient(sdk_client)
+        # Create OpenAI embedding client
+        embedding_client = OpenAIEmbeddingClient(api_key=openai_key)
+        # Wrap it in our project-specific client with embedding client injected
+        client = SupabaseClient(sdk_client, embedding_client=embedding_client)
 
     # ----------------------------------------------------------------------
     # ⭐ 4. Delegate to orchestrator with correct signature

@@ -9,23 +9,32 @@ tools must treat this document as the source of truth.
 
 ## 1. System Overview
 
-The Personal Knowledge Engine is a deterministic, two-stage ingestion
-pipeline that converts personal notes into a structured, queryable
-knowledge base backed by Supabase and embeddings.
+The Personal Knowledge Engine is a personal intelligence layer with two
+faces:
 
-The canonical workflow is:
+**The pipeline** — a deterministic, two-stage ingestion system that converts
+personal notes into a structured, queryable knowledge base backed by
+Supabase and embeddings.
+
+**The writing environment** — an Obsidian-based writing surface with a
+custom plugin that queries the PKE retrieval API in real time, surfacing
+semantically relevant chunks from personal history in a live insight panel
+as the user writes.
+
+The canonical pipeline workflow is:
 
     pke parse run
     pke ingest run --dry-run
     pke ingest run
 
 The system is built around:
-- deterministic, reproducible ingestion
-- explicit contracts between stages
-- pluggable parsers
-- dependency-injected clients
-- testability and isolation
-- clean separation of concerns
+- Deterministic, reproducible ingestion
+- Explicit contracts between stages
+- Pluggable parsers per content source
+- Dependency-injected clients
+- Testability and isolation
+- Clean separation of concerns
+- User ownership of all content (plain text, no lock-in)
 
 ---
 
@@ -48,7 +57,7 @@ never be wired into the CLI.
 ### Stage 2 — Ingest
 
 Goal: Transform parsed notes into Supabase entities with embeddings,
-tags, notebooks, and relationships.
+tags, notebooks, relationships, and chunks.
 
 Entry point:   pke/cli/ingest.py
 Orchestrator:  pke/ingestion/orchestrator.py
@@ -58,6 +67,7 @@ Steps:
 - Extract and upsert tags
 - Upsert notes with embeddings
 - Link notes ↔ tags
+- Chunk notes above length threshold (milestone 8.9.6+)
 
 The orchestrator is deterministic and idempotent.
 
@@ -68,31 +78,17 @@ The orchestrator is deterministic and idempotent.
 ### Markdown Export Parser (Deprecated)
 
 The original parser targeted Joplin's Markdown export format. This
-approach failed because Joplin produced incomplete exports:
-- missing frontmatter
-- missing titles
-- missing tags
-- missing notebook names
-- missing timestamps
-
-This parser (joplin_markdown.py) remains in the repo for reference
-but is no longer used and must never be modified or referenced
-in active code paths.
+approach failed because Joplin produced incomplete exports. This parser
+(joplin_markdown.py) remains in the repo for reference but must never
+be modified or referenced in active code paths.
 
 ### Sync Folder Parser (Canonical Source)
 
 File: pke/parsers/joplin_sync_parser.py
 
-The Joplin sync folder contains:
-- .md files for notes, notebooks, tags, and relationships
-- consistent metadata blocks
-- reliable timestamps
-- stable UUIDs
-
-This is the correct and only source of truth.
-
-parse_cli.py is wired to this parser. Any future changes to Stage 1
-must go through joplin_sync_parser.py, not joplin_markdown.py.
+The Joplin sync folder is the correct and only source of truth for the
+Joplin corpus. parse_cli.py is wired to this parser. Any future changes
+to Stage 1 must go through joplin_sync_parser.py.
 
 ---
 
@@ -100,6 +96,7 @@ must go through joplin_sync_parser.py, not joplin_markdown.py.
 
 Every parsed note must contain exactly these fields:
 
+```
 {
     "id":             str,
     "title":          str,
@@ -112,6 +109,7 @@ Every parsed note must contain exactly these fields:
     "source_file":    str,        # absolute path
     "resource_links": list[str],  # extracted resource IDs
 }
+```
 
 Rules:
 - No missing fields
@@ -119,7 +117,9 @@ Rules:
 - No None values
 - Empty string or empty list for missing metadata
 
-This contract must not change.
+This contract must not change without a formal design decision.
+Extension for multi-source (source_type field) deferred to first
+multi-source parser milestone.
 
 ---
 
@@ -127,69 +127,28 @@ This contract must not change.
 
 All data lives in .md files.
 
-Type Map (Confirmed):
+Type Map:
 - type_ 1 → Note
 - type_ 2 → Notebook
 - type_ 5 → Tag
 - type_ 6 → Note-tag relationship
 
-Note Structure (type_: 1):
-    [first line = title]
-    [blank line]
-    [body content]
-    [metadata block]
-    type_: 1
-
-Notebook Structure (type_: 2):
-    [name]
-    [metadata block]
-    type_: 2
-
-Tag Structure (type_: 5):
-    [name]
-    [metadata block]
-    type_: 5
-
-Relationship Structure (type_: 6):
-    note_id: <uuid>
-    tag_id: <uuid>
-    type_: 6
-
 ---
 
 ## 6. Three-Pass Parser Architecture
 
-The parser must follow this exact sequencing:
-
 Pass 1 — Load and Classify
-- Read every .md file
-- Parse title, body, metadata
-- Classify by type_
-- Produce raw dictionaries
-
-Pass 2 — Build Lookup Maps
-- notebook_map: {notebook_id → notebook_name}
-- tag_map: {tag_id → tag_name}
-- note_tag_map: {note_id → [tag_ids]}
-
-Pass 3 — Enrich and Normalize Notes
-- Resolve parent_id → notebook name
-- Resolve tag IDs → tag names
-- Extract resource links
-- Normalize field names
-- Build final ParsedNote objects
-- Sort by id for determinism
+Pass 2 — Build Lookup Maps (notebook_map, tag_map, note_tag_map)
+Pass 3 — Enrich and Normalize Notes (resolve IDs, sort by id)
 
 ---
 
 ## 7. Determinism Requirements
 
-- Running the parser twice on the same folder must produce identical output.
-- Notes must be sorted by id.
-- No shared mutable state across passes.
-- Each pass must construct new dicts/lists.
-- No randomization or nondeterministic ordering.
-- Running ingestion twice must produce identical Supabase state.
+- Running the parser twice on the same folder must produce identical output
+- Notes must be sorted by id
+- No shared mutable state across passes
+- Running ingestion twice must produce identical Supabase state
 
 ---
 
@@ -198,74 +157,174 @@ Pass 3 — Enrich and Normalize Notes
 - Missing notebook → ""
 - Missing tags → []
 - Missing timestamps → ""
-- Empty body → "" (parser preserves; orchestrator skips at ingest time)
+- Empty body → "" (parser preserves; orchestrator skips at ingest)
 - Encrypted notes (encryption_applied: 1) → skip with warning
 
 ---
 
 ## 9. Parser vs Orchestrator — Intentional Contract Divergence
 
-The parser and orchestrator have different responsibilities with
-respect to empty-body notes. This is intentional and must not change.
+Parser (Stage 1): lossless — preserves all notes including empty-body
+Orchestrator (Stage 2): meaningful — skips empty-body notes at ingest
 
-Parser (Stage 1):
-- Preserves all notes including empty-body notes
-- Never drops or filters notes (except encrypted)
-- Produces a lossless representation of the sync folder
-
-Orchestrator (Stage 2):
-- Skips empty-body notes at ingest time
-- Counts them as notes_skipped in IngestionReport
-- Does not upsert them to Supabase
-
-Reason: empty-body notes produce no embedding, no semantic value,
-and no search utility. The parser must be lossless; the orchestrator
-must be meaningful.
+Reason: empty-body notes produce no embedding and no search utility.
+This divergence is intentional and must not change.
 
 ---
 
-## 10. Supabase Integration
+## 10. Note Archetypes and Chunking Strategy
 
-Supabase stores:
+Analysis of the Joplin corpus identified three note archetypes that
+require different chunking approaches. The chunker must handle all three.
+
+### Archetype A — Fragmented Journal
+Characteristics: short entries (1-10 lines), high noise, date stamps
+as only structure.
+Chunking: split on date stamps, merge entries under ~100 tokens with
+neighbors.
+
+### Archetype B — Structured Journal
+Characteristics: long entries (200-500 words), consistent internal
+template (Score, What did I do well, etc.), retrospective annotations.
+Chunking: split on date stamps (primary), template section headers
+(secondary for long entries). Preserve retrospective annotations
+with the entry they annotate.
+
+### Archetype C — Reference / Medical Log
+Characteristics: undated header (current state) + dated log +
+embedded sub-tables.
+Chunking: undated opening section as its own reference chunk, dated
+log split on date stamps, embedded sub-tables kept intact.
+
+### General Chunking Rules
+- Apply chunking selectively: notes above ~1000 characters only
+- Below threshold: note embedding serves as chunk embedding
+- Date stamp regex must tolerate typo variants (spaces, double slashes,
+  2-digit and 4-digit years)
+- Minimum chunk: ~100 tokens
+- Maximum chunk: ~500 tokens with 1-2 sentence overlap at boundaries
+- Chunking module: pke/chunking/chunker.py (milestone 8.9.6)
+
+---
+
+## 11. Embedding Architecture
+
+Provider: OpenAI text-embedding-3-small
+Dimensions: 1536
+Token limit: 8191 (truncate with warning if exceeded)
+Client: pke/embedding/openai_client.py (implements EmbeddingClient protocol)
+API key: OPENAI_API_KEY in .env (never committed)
+
+Two embedding levels:
+- Note-level embedding: whole-note embedding stored in notes table
+- Chunk-level embedding: per-chunk embedding stored in chunks table
+  (milestone 8.9.6+)
+
+Retrieval uses chunk-level embeddings where available, note-level
+as fallback (hybrid strategy, milestone 8.9.7).
+
+---
+
+## 12. Supabase Integration
+
+Tables:
 - notebooks
 - tags
 - notes (with embeddings)
-- note↔tag relationships
+- note_tags (relationships)
+- chunks (with embeddings, added milestone 8.9.5)
 
-Ingestion table reset order (when a full reset is required):
+Ingestion table reset order (when full reset required):
 
-    TRUNCATE TABLE note_tags, conflicts, resources, notes, notebooks, tags;
-
-All tables must be truncated in a single statement due to FK constraints.
+    TRUNCATE TABLE note_tags, conflicts, resources, chunks, notes, notebooks, tags;
 
 Tables never truncated by the ingestion pipeline:
 - ingestion_log
 - documents
 - deleted_notes
 
-All DB operations go through SupabaseClient, which supports:
-- real Supabase client
-- DummyClient for dry-run
-- mock clients for tests
+All DB operations go through SupabaseClient which supports real client,
+DummyClient for dry-run, and mock clients for tests.
 
 The parser must never call Supabase.
 
 ---
 
-## 11. Testing Philosophy
+## 13. Retrieval API
 
-- deterministic ingestion
-- dependency injection
-- no network calls in unit tests
-- fixtures for parsed notes
-- E2E tests for parse → ingest
+Entry point: FastAPI application
+Endpoint: POST /query
 
-The sync-folder parser has a dedicated test suite:
-    tests/test_joplin_sync_parser.py
+Input: query text, optional filters (notebook, date range, source)
+Output: ranked chunks with note title, notebook, date, matched text,
+similarity score, char offsets, surrounding context
+
+Designed to serve both:
+- Direct search queries
+- Real-time insight panel requests from the Obsidian plugin
+
+Hybrid retrieval: chunk-level where chunks exist, whole-note fallback.
+Vector search via pgvector in Supabase.
 
 ---
 
-## 12. Collaboration Workflow
+## 14. Writing Environment Architecture
+
+### Platform: Obsidian
+
+Obsidian is the chosen writing surface, replacing Joplin.
+Local-first, plain Markdown files, strong plugin API.
+
+### Obsidian Insight Plugin
+
+A custom Obsidian plugin (TypeScript) that:
+1. Watches the active note for changes
+2. After a short debounce, sends the current paragraph to POST /query
+3. Renders the top 3-5 results in a side panel
+4. Displays: date, note title, relevant passage (raw text)
+5. Never generates AI summaries — surfaces raw content only
+
+The insight panel is ambient, not intrusive. The user controls their
+own thinking. The system provides material, not conclusions.
+
+### Note Conventions (Dimension 2)
+
+Future notes follow light conventions by type to improve chunking
+precision. See ROADMAP.md for full convention definitions.
+
+---
+
+## 15. Multi-Source Architecture (Planned)
+
+Each content source gets its own parser. All parsers produce the same
+ParsedNote contract. The ingestion pipeline is source-agnostic.
+
+Planned parsers:
+- pke/parsers/obsidian_parser.py (next after current Joplin corpus)
+- pke/parsers/imessage_parser.py (iMessage threads)
+- pke/parsers/yahoo_mail_parser.py (email from select senders)
+
+ParsedNote contract extension (source_type field) deferred to first
+multi-source milestone.
+
+---
+
+## 16. Testing Philosophy
+
+- Deterministic ingestion
+- Dependency injection
+- No network calls in unit tests
+- Fixtures for parsed notes
+- E2E tests for parse → ingest
+
+Test files:
+- tests/test_joplin_sync_parser.py
+- tests/test_openai_embedding_client.py (milestone 8.9.5)
+- tests/test_chunker.py (milestone 8.9.6)
+
+---
+
+## 17. Collaboration Workflow
 
 Development follows a three-step loop:
 - Design (Thomas + Claude)
@@ -275,14 +334,5 @@ Development follows a three-step loop:
 All decisions are recorded in CURRENT_TASK.md.
 ARCHITECTURE.md is the authoritative reference and must be updated
 whenever a structural decision changes.
-
----
-
-## 13. Current Objective
-
-Complete milestone 8.9.4:
-1. Fix parse_cli.py to wire joplin_sync_parser (prerequisite)
-2. Run pke parse run against the Joplin sync folder
-3. Validate with pke ingest run --dry-run
-4. Run pke ingest run against the clean Supabase baseline
-5. Confirm determinism by running ingestion twice
+ROADMAP.md captures strategic direction and must be updated when
+vision or milestone sequencing changes.
