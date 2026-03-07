@@ -1,5 +1,7 @@
 # Personal Knowledge Engine — System Architecture
 
+Last updated: 2026-03-07 08:32 EST
+
 This document defines the architecture, contracts, and sequencing of the
 Personal Knowledge Engine (PKE). It is the authoritative reference for all
 system-level reasoning, design decisions, and future development. All AI
@@ -174,8 +176,8 @@ This divergence is intentional and must not change.
 
 ## 10. Note Archetypes and Chunking Strategy
 
-Analysis of the Joplin corpus identified three note archetypes that
-require different chunking approaches. The chunker must handle all three.
+Analysis of the Joplin corpus identified four note archetypes that
+require different chunking approaches. The chunker must handle all four.
 
 ### Archetype A — Fragmented Journal
 Characteristics: short entries (1-10 lines), high noise, date stamps
@@ -196,7 +198,76 @@ embedded sub-tables.
 Chunking: undated opening section as its own reference chunk, dated
 log split on date stamps, embedded sub-tables kept intact.
 
-### General Chunking Rules
+### Archetype D — Travel Journal
+Characteristics: single note per multi-day trip (10+ pages), day
+markers of varying formats, images interspersed inline, written
+in real time during the trip.
+
+Primary split: day marker detection — handles all observed formats:
+    Day 1, Day 2, Day 2 Harry Goldens Trail   (explicit numbered)
+    Sunday, Monday, Sat                        (standalone day names)
+    Sunday we stopped over at...               (day name in prose)
+    The second week...Monday rained.           (narrative transition)
+
+Timestamp strategy — three tiers:
+    Tier 1 (explicit): date found in chunk text e.g. Tuesday 9/8/15
+        → store directly as entry_timestamp
+    Tier 2 (calculated): day name or Day N marker found, no explicit date
+        → calculate from note created_at + day offset
+        → store as entry_timestamp with prefix "calculated: "
+        → relies on notes being written in real time (confirmed pattern)
+        → duplicate day names (two Sundays) resolved by sequence order
+    Tier 3 (none): no day marker detectable
+        → entry_timestamp left null
+        → note-level created_at provides rough temporal signal
+
+Image handling — three active formats:
+    Markdown:  ![alt](:/resource_id)           → strip, store resource_id
+    HTML:      <img src=":/resource_id" .../>   → strip, store resource_id
+    Audio:     [filename.m4a](:/resource_id)    → strip, store resource_id
+
+Broken placeholder handling — strip silently, no resource_id stored:
+    {picture)    (Picture)    (picture)    image
+
+Consecutive images with no text between them: kept together, all
+resource_ids added to the surrounding chunk's resource_ids array.
+
+Pre-trip planning block: treated as its own reference chunk, flagged
+with note_type: travel in metadata. Checklist content preserved,
+not stripped.
+
+Fallback: paragraph boundaries where day detection fails.
+
+Metadata flag: note_type: travel stored per chunk for post-hoc
+retrieval quality analysis.
+
+Resource IDs stored in chunks.resource_ids (TEXT[] column).
+
+### Archetype E — Oral History / Conversation Notes
+Characteristics: sparse text as outline or index, audio recordings
+as primary content, photos of people or historical documents,
+fragmentary sentences, single conversation per note.
+
+Audio filename timestamps (e.g. 20150621 00:15:50) are the most
+reliable timestamp signal in the entire corpus — precise to the
+second, reliable because recordings are made in real time.
+
+Chunking: embed whole note if below threshold. If above threshold,
+chunk on audio file boundaries — each recording plus surrounding
+text forms a semantic unit.
+
+Timestamp: extracted from audio filename, stored as entry_timestamp
+in format YYYY-MM-DD HH:MM:SS.
+
+Resource handling:
+- Audio (.m4a, .mp3): strip from text, store resource_id in
+  resource_ids, flag as resource_type: audio in metadata
+- Images: same handling as Archetype D
+
+Future capability: Whisper API transcription of audio content.
+Transcriptions stored as chunk text, making spoken content fully
+retrievable. Original audio surfaced as playable media in the
+Obsidian insight panel. See milestone 9.x Audio Transcription.
 - Apply chunking selectively: notes above ~1000 characters only
 - Below threshold: note embedding serves as chunk embedding
 - Date stamp regex must tolerate typo variants (spaces, double slashes,
@@ -204,6 +275,28 @@ log split on date stamps, embedded sub-tables kept intact.
 - Minimum chunk: ~100 tokens
 - Maximum chunk: ~500 tokens with 1-2 sentence overlap at boundaries
 - Chunking module: pke/chunking/chunker.py (milestone 8.9.6)
+
+### Chunks Table Schema (current — as of milestone 8.9.5)
+
+    CREATE TABLE chunks (
+        id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        note_id          UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
+        chunk_index      INTEGER NOT NULL,
+        chunk_text       TEXT NOT NULL,
+        embedding        vector(1536),
+        char_start       INTEGER NOT NULL,
+        char_end         INTEGER NOT NULL,
+        section_title    TEXT,
+        entry_timestamp  TEXT,
+        resource_ids     TEXT[] DEFAULT '{}',
+        created_at       TIMESTAMPTZ DEFAULT now(),
+        UNIQUE (note_id, chunk_index)
+    );
+
+entry_timestamp format:
+    Explicit date:   "2015-09-08"
+    Calculated date: "calculated: 2014-08-04"
+    Not available:   NULL
 
 ---
 
@@ -256,8 +349,25 @@ Entry point: FastAPI application
 Endpoint: POST /query
 
 Input: query text, optional filters (notebook, date range, source)
-Output: ranked chunks with note title, notebook, date, matched text,
-similarity score, char offsets, surrounding context
+
+Output — every result must include:
+- note_id          for Obsidian deep link construction
+- note_title       human-readable label
+- notebook         for context and filtering
+- matched_text     the relevant passage (raw, never summarized)
+- similarity_score for ranking
+- char_start       exact position in source note
+- char_end         exact position in source note
+- entry_timestamp  date of entry (explicit or calculated)
+- resource_ids     associated images/audio resource IDs
+- resource_types   type flags per resource (image, audio)
+
+Design principle — the insight panel is never a dead end:
+Every surfaced passage must link back to its full source context.
+char_start and char_end enable the Obsidian plugin to navigate
+to the exact paragraph within the note, not just the note title.
+Audio chunks link to playable recordings. Image chunks link to
+the note at the position of the photo.
 
 Designed to serve both:
 - Direct search queries
@@ -284,7 +394,15 @@ A custom Obsidian plugin (TypeScript) that:
 4. Displays: date, note title, relevant passage (raw text)
 5. Never generates AI summaries — surfaces raw content only
 
-The insight panel is ambient, not intrusive. The user controls their
+**The insight panel is never a dead end.**
+Every surfaced passage links back to its full source context:
+- Click note title → opens the source note in Obsidian
+- Click passage → opens source note at the exact paragraph
+  (using char_start offset for precise navigation)
+- Audio chunks → inline play button for the original recording
+- Image chunks → opens note at the photo location
+
+The panel is ambient, not intrusive. The user controls their
 own thinking. The system provides material, not conclusions.
 
 ### Note Conventions (Dimension 2)
@@ -299,8 +417,27 @@ precision. See ROADMAP.md for full convention definitions.
 Each content source gets its own parser. All parsers produce the same
 ParsedNote contract. The ingestion pipeline is source-agnostic.
 
-Planned parsers:
-- pke/parsers/obsidian_parser.py (next after current Joplin corpus)
+### Parser Reusability Principle
+The Joplin sync-folder parser is not legacy code — it is the first
+implementation of a pluggable parser pattern that will support many
+sources. It remains a maintained, reusable parser valuable to any
+Joplin user building a similar system. The pattern:
+
+    Source files → Parser → ParsedNote contract → Ingest pipeline
+
+is identical for every future parser. Only the parser changes.
+
+### Plain Text Is Always the Source of Truth
+The database is an index, never an archive. Re-ingestion from source
+files is always possible and always safe. The database should never
+be treated as the source of truth for content reconstruction.
+
+### Migration Strategy (Joplin → Obsidian)
+See ROADMAP.md milestone 9.x — Obsidian Parser + Migration for the
+full four-phase migration plan including validation gate.
+
+### Planned Parsers
+- pke/parsers/obsidian_parser.py (primary writing surface migration)
 - pke/parsers/imessage_parser.py (iMessage threads)
 - pke/parsers/yahoo_mail_parser.py (email from select senders)
 

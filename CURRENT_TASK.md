@@ -1,64 +1,111 @@
 # CURRENT_TASK.md
-## Milestone 8.9.5 — Real Embeddings + Chunk Schema Foundation
+## Milestone 8.9.6 — Chunking for Long Notes
+
+Last updated: 2026-03-07 08:32 EST
+
 
 ---
 
-## Status: IN PROGRESS
+## Status: PLANNED — NOT STARTED
+
+---
+
+## Previous Milestone: 8.9.5 — COMPLETE ✅
+
+Completed 2026-03-06. All acceptance criteria met.
+
+### What Was Delivered
+- pke/embedding/openai_client.py — OpenAI text-embedding-3-small client
+- generate() alias added for orchestrator compatibility
+- ingest.py updated to wire OpenAIEmbeddingClient
+- tests/test_openai_embedding_client.py — 4 unit tests
+- chunks table created in Supabase with resource_ids TEXT[] column
+- All 1489 notes re-ingested with real OpenAI embeddings (confirmed)
+- Branch feat/8.9.5-embeddings published and PR submitted
+
+### Schema Changes Made in 8.9.5
+- chunks table created via migration script
+- resource_ids TEXT[] DEFAULT '{}' added via ALTER TABLE
+
+### Dead Code Identified (cleanup deferred)
+- pke/embedding/providers/ — entire folder, superseded
+- pke/ingestion.py (root level) — Evernote-era, no active imports
+- pke/entity_resolution.py (root level) — no active imports
+- tests/integration/test_embedding_client_mock.py — placeholder only
+- tests/unit/test_embedding_wrapper.py — placeholder only
+
+### Quality of Life Item (deferred from 8.9.5)
+- Add progress counter to orchestrator (e.g. "Processed 150/1489...")
+- Add logging to file alongside stdout output
+- Add as first task in 8.9.6 or standalone commit
 
 ---
 
 ## What We Are Building
 
-Replace deterministic placeholder embeddings with real semantic embeddings
-using OpenAI's text-embedding-3-small model. Add the chunks table to
-Supabase as an empty schema foundation for milestone 8.9.6 chunking.
-No chunking logic is implemented in this milestone.
+Archetype-aware chunking for notes above a length threshold.
+Populate the chunks table with semantically meaningful chunks.
+Handle all five note archetypes correctly.
 
 ---
 
-## Context From 8.9.4
+## Note Archetypes — Chunking Requirements
 
-- Supabase contains a clean baseline: 1489 notes, 16 notebooks,
-  57 tags, 212 relationships
-- All notes currently have deterministic placeholder embeddings
-- Pipeline is validated as idempotent
-- The ingestion pipeline is the authoritative path for all embedding writes
+### Archetype A — Fragmented Journal
+- Primary split: date stamps (regex, tolerates typo variants)
+- Merge entries under ~100 tokens with neighbors
+- High noise tolerance
+
+### Archetype B — Structured Journal
+- Primary split: date stamps
+- Secondary split: template section headers for long entries
+- Preserve retrospective annotations with their original entry
+
+### Archetype C — Reference / Medical Log
+- Undated opening section → own reference chunk
+- Dated log → split on date stamps
+- Embedded sub-tables → keep intact
+
+### Archetype D — Travel Journal
+- Primary split: flexible day marker detection
+    Day N, Day N Title, standalone day names,
+    day names in prose, narrative transitions
+- Pre-trip planning block → own reference chunk
+- Timestamp strategy (three tiers):
+    Explicit date in text → entry_timestamp directly
+    Day name / Day N → "calculated: YYYY-MM-DD" from created_at
+    No marker → entry_timestamp null
+- Image handling (two formats):
+    Markdown: ![alt](:/resource_id)
+    HTML:     <img src=":/resource_id" .../>
+- Audio handling: [filename.m4a](:/resource_id)
+- Broken placeholders stripped silently:
+    {picture)  (Picture)  (picture)  image
+- Resource IDs → chunks.resource_ids array
+- note_type: travel flag in chunk metadata
+- Fallback: paragraph boundaries where day detection fails
+
+### Archetype E — Oral History / Conversation Notes
+- Embed whole note if below ~1000 char threshold
+- If above threshold: chunk on audio file boundaries
+- Timestamp: extracted from audio filename
+    Format: YYYY-MM-DD HH:MM:SS (most reliable in corpus)
+- Audio resources flagged as resource_type: audio in metadata
 
 ---
 
-## Design Decisions Made
+## General Chunking Rules
 
-### Embedding Provider: OpenAI text-embedding-3-small
-- Model: text-embedding-3-small
-- Output dimensions: 1536
-- Input token limit: 8191 (~6000 words)
-- Notes exceeding token limit: truncate to fit, log a warning
-- API key stored in .env as OPENAI_API_KEY
-
-### EmbeddingClient: New OpenAI implementation
-- New file: pke/embedding/openai_client.py
-- Implements existing EmbeddingClient protocol
-- Constructor accepts model name and API key (injected, not from env)
-- Single public method: embed(text: str) -> list[float]
-- Raises typed exception on API failure (not silent)
-- ingest.py loads OPENAI_API_KEY from env and injects into client
-
-### Chunk Schema: Added now, populated in 8.9.6
-- New Supabase table: chunks
-- Created via migration script this milestone
-- Orchestrator does NOT write to chunks in 8.9.5
-- Schema includes section_title and entry_timestamp fields
-  in anticipation of archetype-aware chunking in 8.9.6
-
-### Re-ingestion Strategy
-- All 1489 notes re-ingested to replace placeholder embeddings
-- Ingestion is idempotent (upsert); re-running is safe
-- No truncation required — existing notes updated in place
-- Run sequence: pke ingest run --dry-run → pke ingest run
+- Apply chunking selectively: notes above ~1000 characters only
+- Below threshold: note embedding serves as the chunk embedding
+- Minimum chunk: ~100 tokens
+- Maximum chunk: ~500 tokens with 1-2 sentence overlap at boundaries
+- Date stamp regex must tolerate typo variants
+- Chunking module: pke/chunking/chunker.py (new file)
 
 ---
 
-## Chunks Table Schema
+## Chunks Table Schema (current)
 
 ```sql
 CREATE TABLE chunks (
@@ -69,502 +116,80 @@ CREATE TABLE chunks (
     embedding        vector(1536),
     char_start       INTEGER NOT NULL,
     char_end         INTEGER NOT NULL,
-    section_title    TEXT,           -- heading above this chunk if any
-    entry_timestamp  TEXT,           -- inline timestamp from entry if any
+    section_title    TEXT,
+    entry_timestamp  TEXT,
+    resource_ids     TEXT[] DEFAULT '{}',
     created_at       TIMESTAMPTZ DEFAULT now(),
     UNIQUE (note_id, chunk_index)
 );
 ```
 
-Migration script: scripts/add_chunks_table.sql
+entry_timestamp format:
+    Explicit:   "2015-09-08"
+    Calculated: "calculated: 2014-08-04"
+    None:       NULL
 
 ---
 
-## Function Signatures Agreed
+## Pre-Work Before Implementation
 
-### pke/embedding/openai_client.py
+None required. Proceed directly to chunker implementation.
 
-```python
-class OpenAIEmbeddingClient:
-    """
-    EmbeddingClient implementation backed by OpenAI text-embedding-3-small.
-    Injects API key and model name via constructor for testability.
-    """
-    def __init__(
-        self,
-        api_key: str,
-        model: str = "text-embedding-3-small"
-    ) -> None: ...
+Note restructuring (adding Current State headers, normalizing dates,
+adding retrospective annotations) is deferred. It is a quality lever
+to pull later — not a prerequisite. The chunker must handle messy
+real-world content from the start. When notes are eventually
+restructured in Obsidian, re-running pke ingest will automatically
+re-chunk and re-embed the updated content.
 
-    def embed(self, text: str) -> list[float]: ...
-```
+Test fixtures will use the real corpus note samples already analyzed
+during archetype design (travel notes, journal samples, oral history).
 
-### pke/cli/ingest.py (changes only)
+---
 
-```python
-# Load OPENAI_API_KEY from env
-# Construct OpenAIEmbeddingClient
-# Inject into SupabaseClient constructor
-# All other CLI behaviour unchanged
-# --dry-run still uses DummyClient with no OpenAI calls
-```
+## Design Decisions To Make
+
+- Exact day marker regex patterns for Archetype D
+- Threshold for "long enough to chunk" (proposed: ~1000 chars)
+- Overlap strategy at chunk boundaries
+- How to handle notes that span multiple archetypes
+- Whether to detect archetype automatically or require manual tagging
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] pke/embedding/openai_client.py exists and implements EmbeddingClient
-- [ ] OpenAIEmbeddingClient.embed() returns list of 1536 floats
-- [ ] ingest.py reads OPENAI_API_KEY from env and injects correctly
-- [ ] --dry-run uses DummyClient; no OpenAI calls made
-- [ ] All 1489 notes re-ingested with real embeddings (notes_updated: 1489)
-- [ ] Notes exceeding 8191 tokens truncated with warning logged
-- [ ] chunks table created in Supabase via migration script
-- [ ] chunks table includes section_title and entry_timestamp columns
-- [ ] No chunking logic added anywhere
-- [ ] All existing tests pass
-- [ ] New unit tests for OpenAIEmbeddingClient with mocked responses
-- [ ] .env.example updated with OPENAI_API_KEY= entry
+- [ ] pke/chunking/chunker.py exists with archetype detection
+- [ ] Archetype A notes chunked correctly on date stamps
+- [ ] Archetype B notes chunked with template section awareness
+- [ ] Archetype C undated opening section as reference chunk
+- [ ] Archetype D day marker detection working for all observed formats
+- [ ] Archetype D calculated timestamps stored with "calculated: " prefix
+- [ ] Archetype D resource IDs extracted into resource_ids array
+- [ ] Archetype D broken placeholders stripped silently
+- [ ] Archetype E audio timestamps extracted from filenames
+- [ ] Notes below threshold not chunked
+- [ ] chunks table populated for all qualifying notes
+- [ ] All chunk embeddings generated via OpenAI
+- [ ] tests/test_chunker.py passing with fixtures for all archetypes
+- [ ] Existing tests still passing
 
 ---
 
 ## Constraints
 
 - Do NOT modify joplin_sync_parser.py
-- Do NOT modify orchestrator.py contracts
 - Do NOT modify ParsedNote structure
-- Do NOT generate embeddings inside the parser
-- Do NOT write to the chunks table in this milestone
-- Do NOT add chunking logic anywhere in this milestone
+- Do NOT modify the orchestrator embedding logic
+- Do NOT write to notes table in the chunking module
 - Do NOT commit .env
 
 ---
 
-## Test Cases (tests/test_openai_embedding_client.py)
-
-1. test_embed_returns_correct_dimension
-   → mock OpenAI response, assert len == 1536
-
-2. test_embed_raises_on_api_failure
-   → mock API error, assert typed exception raised
-
-3. test_embed_sends_correct_model
-   → assert request uses text-embedding-3-small
-
-4. test_dry_run_does_not_call_openai
-   → DummyClient path, assert no OpenAI calls made
-
----
-
-## Open Questions (deferred)
-
-- Should embedding failures be non-fatal (skip note) or fatal (abort)?
-  → Recommend non-fatal, consistent with 8.9.4 transient failure handling
-- Should we store embedding model name alongside each note for future
-  migration tracking?
-- Retry strategy for transient OpenAI failures → deferred post-MVP
-
----
-
-## Next Milestone: 8.9.6 — Chunking for Long Notes
-
-Goal: Archetype-aware chunking for notes above a length threshold.
-Populate the chunks table. Handle Archetype A (fragmented journal),
-Archetype B (structured journal), and Archetype C (reference log)
-correctly.
-CURRENT_TASK.md
-Milestone 8.9.5 — Real Embeddings + Chunk Schema Foundation
-
-Status: IN PROGRESS — IMPLEMENTATION COMPLETE, VALIDATION PENDING
-
-What We Are Building
-Replace deterministic placeholder embeddings with real semantic embeddings
-using OpenAI's text-embedding-3-small model. Add the chunks table to
-Supabase as an empty schema foundation for milestone 8.9.6 chunking.
-No chunking logic is implemented in this milestone.
-
-Context From 8.9.4
-
-Supabase contains a clean baseline: 1489 notes, 16 notebooks,
-57 tags, 212 relationships
-All notes currently have deterministic placeholder embeddings
-Pipeline is validated as idempotent
-The ingestion pipeline is the authoritative path for all embedding writes
-
-
-Design Decisions Made
-Embedding Provider: OpenAI text-embedding-3-small
-
-Model: text-embedding-3-small
-Output dimensions: 1536
-Input token limit: 8191 (~6000 words)
-Notes exceeding token limit: truncate to fit, log a warning
-API key stored in .env as OPENAI_API_KEY
-
-EmbeddingClient: New OpenAI implementation
-
-New file: pke/embedding/openai_client.py
-Implements existing EmbeddingClient protocol
-Constructor accepts model name and API key (injected, not from env)
-Single public method: embed(text: str) -> list[float]
-Raises typed exception on API failure (not silent)
-ingest.py loads OPENAI_API_KEY from env and injects into client
-
-Chunk Schema: Added now, populated in 8.9.6
-
-New Supabase table: chunks
-Created via migration script this milestone
-Orchestrator does NOT write to chunks in 8.9.5
-Schema includes section_title and entry_timestamp fields
-in anticipation of archetype-aware chunking in 8.9.6
-
-Re-ingestion Strategy
-
-All 1489 notes re-ingested to replace placeholder embeddings
-Ingestion is idempotent (upsert); re-running is safe
-No truncation required — existing notes updated in place
-Run sequence: pke ingest run --dry-run → pke ingest run
-
-
-Chunks Table Schema
-sqlCREATE TABLE chunks (
-    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    note_id          UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
-    chunk_index      INTEGER NOT NULL,
-    chunk_text       TEXT NOT NULL,
-    embedding        vector(1536),
-    char_start       INTEGER NOT NULL,
-    char_end         INTEGER NOT NULL,
-    section_title    TEXT,           -- heading above this chunk if any
-    entry_timestamp  TEXT,           -- inline timestamp from entry if any
-    created_at       TIMESTAMPTZ DEFAULT now(),
-    UNIQUE (note_id, chunk_index)
-);
-Migration script: scripts/add_chunks_table.sql
-
-Function Signatures Agreed
-pke/embedding/openai_client.py
-pythonclass OpenAIEmbeddingClient:
-    """
-    EmbeddingClient implementation backed by OpenAI text-embedding-3-small.
-    Injects API key and model name via constructor for testability.
-    """
-    def __init__(
-        self,
-        api_key: str,
-        model: str = "text-embedding-3-small"
-    ) -> None: ...
-
-    def embed(self, text: str) -> list[float]: ...
-pke/cli/ingest.py (changes only)
-python# Load OPENAI_API_KEY from env
-# Construct OpenAIEmbeddingClient
-# Inject into SupabaseClient constructor
-# All other CLI behaviour unchanged
-# --dry-run still uses DummyClient with no OpenAI calls
-
-Progress — End of Session 2026-03-05
-Completed This Session
-
- OpenAI account created, API key generated, added to .env
- chunks table created in Supabase via migration script (confirmed success)
- pgvector confirmed enabled in Supabase
- pke/embedding/openai_client.py created and reviewed
- generate() alias added to OpenAIEmbeddingClient for orchestrator
-compatibility (orchestrator calls .generate(), not .embed())
- ingest.py updated to wire OpenAIEmbeddingClient (not yet reviewed
-in full — paste ingest.py for review at start of next session)
-
-Discovered This Session
-
-pke/embedding/providers/ folder exists with openai_provider.py,
-cohere_provider.py, huggingface_provider.py — all superseded, safe
-to delete once tests pass
-pke/embedding/embedding_client.py is still actively used by
-supabase_client.py, notes_cli.py, and orchestrator dry-run path —
-do NOT delete yet
-pke/ingestion.py (root level, Evernote-era) has no active imports —
-safe to delete, deferred to post-validation cleanup
-pke/wrapped_supabase_client.py and pke/entity_resolution.py exist
-at root level — not yet investigated, review next session
-
-Next Session Start Point
-
-Paste ingest.py here for review before running anything
-Run validation commands in order:
-
-flake8 pke
-mypy pke
-pytest
-pke ingest run --dry-run
-
-
-If all pass, run pke ingest run (real embeddings, 1489 notes)
-Confirm in Supabase: all notes have real embeddings, chunks table empty
-Write Prompt 3 (tests) and run it
-Clean up dead code (providers folder, root ingestion.py)
-Mark 8.9.5 complete and set up 8.9.6
-
-Acceptance Criteria
-
- pke/embedding/openai_client.py exists and implements EmbeddingClient
- OpenAIEmbeddingClient.embed() returns list of 1536 floats
- OpenAIEmbeddingClient.generate() alias works correctly
- ingest.py reads OPENAI_API_KEY from env and injects correctly
- --dry-run uses DummyClient; no OpenAI calls made
- All 1489 notes re-ingested with real embeddings (notes_updated: 1489)
- Notes exceeding 8191 tokens truncated with warning logged
- chunks table created in Supabase via migration script ✅
- chunks table includes section_title and entry_timestamp columns ✅
- No chunking logic added anywhere
- All existing tests pass
- New unit tests for OpenAIEmbeddingClient with mocked responses
- .env.example updated with OPENAI_API_KEY= entry
-
-
-Constraints
-
-Do NOT modify joplin_sync_parser.py
-Do NOT modify orchestrator.py contracts
-Do NOT modify ParsedNote structure
-Do NOT generate embeddings inside the parser
-Do NOT write to the chunks table in this milestone
-Do NOT add chunking logic anywhere in this milestone
-Do NOT commit .env
-
-
-Test Cases (tests/test_openai_embedding_client.py)
-
-test_embed_returns_correct_dimension
-→ mock OpenAI response, assert len == 1536
-test_embed_raises_on_api_failure
-→ mock API error, assert typed exception raised
-test_embed_sends_correct_model
-→ assert request uses text-embedding-3-small
-test_dry_run_does_not_call_openai
-→ DummyClient path, assert no OpenAI calls made
-
-
-Open Questions (deferred)
-
-Should embedding failures be non-fatal (skip note) or fatal (abort)?
-→ Recommend non-fatal, consistent with 8.9.4 transient failure handling
-Should we store embedding model name alongside each note for future
-migration tracking?
-Retry strategy for transient OpenAI failures → deferred post-MVP
-
-
-Next Milestone: 8.9.6 — Chunking for Long Notes
-Goal: Archetype-aware chunking for notes above a length threshold.
-Populate the chunks table. Handle Archetype A (fragmented journal),
-Archetype B (structured journal), and Archetype C (reference log)
-correctly.
-Prerequisites:CURRENT_TASK.md
-Milestone 8.9.5 — Real Embeddings + Chunk Schema Foundation
-
-Status: IN PROGRESS — IMPLEMENTATION COMPLETE, VALIDATION PENDING
-
-What We Are Building
-Replace deterministic placeholder embeddings with real semantic embeddings
-using OpenAI's text-embedding-3-small model. Add the chunks table to
-Supabase as an empty schema foundation for milestone 8.9.6 chunking.
-No chunking logic is implemented in this milestone.
-
-Context From 8.9.4
-
-Supabase contains a clean baseline: 1489 notes, 16 notebooks,
-57 tags, 212 relationships
-All notes currently have deterministic placeholder embeddings
-Pipeline is validated as idempotent
-The ingestion pipeline is the authoritative path for all embedding writes
-
-
-Design Decisions Made
-Embedding Provider: OpenAI text-embedding-3-small
-
-Model: text-embedding-3-small
-Output dimensions: 1536
-Input token limit: 8191 (~6000 words)
-Notes exceeding token limit: truncate to fit, log a warning
-API key stored in .env as OPENAI_API_KEY
-
-EmbeddingClient: New OpenAI implementation
-
-New file: pke/embedding/openai_client.py
-Implements existing EmbeddingClient protocol
-Constructor accepts model name and API key (injected, not from env)
-Single public method: embed(text: str) -> list[float]
-Raises typed exception on API failure (not silent)
-ingest.py loads OPENAI_API_KEY from env and injects into client
-
-Chunk Schema: Added now, populated in 8.9.6
-
-New Supabase table: chunks
-Created via migration script this milestone
-Orchestrator does NOT write to chunks in 8.9.5
-Schema includes section_title and entry_timestamp fields
-in anticipation of archetype-aware chunking in 8.9.6
-
-Re-ingestion Strategy
-
-All 1489 notes re-ingested to replace placeholder embeddings
-Ingestion is idempotent (upsert); re-running is safe
-No truncation required — existing notes updated in place
-Run sequence: pke ingest run --dry-run → pke ingest run
-
-
-Chunks Table Schema
-sqlCREATE TABLE chunks (
-    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    note_id          UUID NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
-    chunk_index      INTEGER NOT NULL,
-    chunk_text       TEXT NOT NULL,
-    embedding        vector(1536),
-    char_start       INTEGER NOT NULL,
-    char_end         INTEGER NOT NULL,
-    section_title    TEXT,           -- heading above this chunk if any
-    entry_timestamp  TEXT,           -- inline timestamp from entry if any
-    created_at       TIMESTAMPTZ DEFAULT now(),
-    UNIQUE (note_id, chunk_index)
-);
-Migration script: scripts/add_chunks_table.sql
-
-Function Signatures Agreed
-pke/embedding/openai_client.py
-pythonclass OpenAIEmbeddingClient:
-    """
-    EmbeddingClient implementation backed by OpenAI text-embedding-3-small.
-    Injects API key and model name via constructor for testability.
-    """
-    def __init__(
-        self,
-        api_key: str,
-        model: str = "text-embedding-3-small"
-    ) -> None: ...
-
-    def embed(self, text: str) -> list[float]: ...
-pke/cli/ingest.py (changes only)
-python# Load OPENAI_API_KEY from env
-# Construct OpenAIEmbeddingClient
-# Inject into SupabaseClient constructor
-# All other CLI behaviour unchanged
-# --dry-run still uses DummyClient with no OpenAI calls
-
-Progress — End of Session 2026-03-05
-Completed This Session
-
- OpenAI account created, API key generated, added to .env
- chunks table created in Supabase via migration script (confirmed success)
- pgvector confirmed enabled in Supabase
- pke/embedding/openai_client.py created and reviewed
- generate() alias added to OpenAIEmbeddingClient for orchestrator
-compatibility (orchestrator calls .generate(), not .embed())
- ingest.py updated to wire OpenAIEmbeddingClient (not yet reviewed
-in full — paste ingest.py for review at start of next session)
-
-Discovered This Session
-
-pke/embedding/providers/ folder exists with openai_provider.py,
-cohere_provider.py, huggingface_provider.py — all superseded, safe
-to delete once tests pass
-pke/embedding/embedding_client.py is still actively used by
-supabase_client.py, notes_cli.py, and orchestrator dry-run path —
-do NOT delete yet
-pke/ingestion.py (root level, Evernote-era) has no active imports —
-safe to delete, deferred to post-validation cleanup
-pke/wrapped_supabase_client.py and pke/entity_resolution.py exist
-at root level — not yet investigated, review next session
-
-Next Session Start Point
-
-Paste ingest.py here for review before running anything
-Run validation commands in order:
-
-flake8 pke
-mypy pke
-pytest
-pke ingest run --dry-run
-
-
-If all pass, run pke ingest run (real embeddings, 1489 notes)
-Confirm in Supabase: all notes have real embeddings, chunks table empty
-Write Prompt 3 (tests) and run it
-Clean up dead code (providers folder, root ingestion.py)
-Mark 8.9.5 complete and set up 8.9.6
-
-Acceptance Criteria
-
- pke/embedding/openai_client.py exists and implements EmbeddingClient
- OpenAIEmbeddingClient.embed() returns list of 1536 floats
- OpenAIEmbeddingClient.generate() alias works correctly
- ingest.py reads OPENAI_API_KEY from env and injects correctly
- --dry-run uses DummyClient; no OpenAI calls made
- All 1489 notes re-ingested with real embeddings (notes_updated: 1489)
- Notes exceeding 8191 tokens truncated with warning logged
- chunks table created in Supabase via migration script ✅
- chunks table includes section_title and entry_timestamp columns ✅
- No chunking logic added anywhere
- All existing tests pass
- New unit tests for OpenAIEmbeddingClient with mocked responses
- .env.example updated with OPENAI_API_KEY= entry
-
-
-Constraints
-
-Do NOT modify joplin_sync_parser.py
-Do NOT modify orchestrator.py contracts
-Do NOT modify ParsedNote structure
-Do NOT generate embeddings inside the parser
-Do NOT write to the chunks table in this milestone
-Do NOT add chunking logic anywhere in this milestone
-Do NOT commit .env
-
-
-Test Cases (tests/test_openai_embedding_client.py)
-
-test_embed_returns_correct_dimension
-→ mock OpenAI response, assert len == 1536
-test_embed_raises_on_api_failure
-→ mock API error, assert typed exception raised
-test_embed_sends_correct_model
-→ assert request uses text-embedding-3-small
-test_dry_run_does_not_call_openai
-→ DummyClient path, assert no OpenAI calls made
-
-
-Open Questions (deferred)
-
-Should embedding failures be non-fatal (skip note) or fatal (abort)?
-→ Recommend non-fatal, consistent with 8.9.4 transient failure handling
-Should we store embedding model name alongside each note for future
-migration tracking?
-Retry strategy for transient OpenAI failures → deferred post-MVP
-
-
-Next Milestone: 8.9.6 — Chunking for Long Notes
-Goal: Archetype-aware chunking for notes above a length threshold.
-Populate the chunks table. Handle Archetype A (fragmented journal),
-Archetype B (structured journal), and Archetype C (reference log)
-correctly.
-Prerequisites:
-
-8.9.5 complete (real embeddings, chunks table exists)
-10-15 most important historical notes re-read and lightly
-restructured (Current State headers, normalized dates)
-These restructured notes used as primary chunker test cases
-Chunking strategy finalized (date-stamp primary, template
-sections secondary, undated headers as reference chunks)
-
-8.9.5 complete (real embeddings, chunks table exists)
-10-15 most important historical notes re-read and lightly
-restructured (Current State headers, normalized dates)
-These restructured notes used as primary chunker test cases
-Chunking strategy finalized (date-stamp primary, template
-sections secondary, undated headers as reference chunks)
-Prerequisites:
-- 8.9.5 complete (real embeddings, chunks table exists)
-- 10-15 most important historical notes re-read and lightly
-  restructured (Current State headers, normalized dates)
-- These restructured notes used as primary chunker test cases
-- Chunking strategy finalized (date-stamp primary, template
-  sections secondary, undated headers as reference chunks)
+## Next Session Start Point
+
+1. Cut branch: git checkout -b feat/8.9.6-chunking
+2. Review dead code list from 8.9.5 — clean up before chunker work
+3. Add progress counter and file logging to orchestrator
+4. Begin chunker design with Archetype A as first implementation
+5. Use real corpus notes as test fixtures
