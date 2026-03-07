@@ -23,10 +23,10 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-
 # ============================================================================
 # RESOURCE RESULT — RETURN TYPE
 # ============================================================================
+
 
 @dataclass
 class ResourceResult:
@@ -39,6 +39,7 @@ class ResourceResult:
         resource_ids:   extracted resource IDs in order of appearance
         resource_types: mapping of resource_id → "image" or "audio"
     """
+
     clean_text: str
     resource_ids: list[str] = field(default_factory=list)
     resource_types: dict[str, str] = field(default_factory=dict)
@@ -73,6 +74,7 @@ _BROKEN_PLACEHOLDER_RE = re.compile(
 # ============================================================================
 # PUBLIC API
 # ============================================================================
+
 
 def extract_resources(text: str) -> ResourceResult:
     """
