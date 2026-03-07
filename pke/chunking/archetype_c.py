@@ -81,12 +81,14 @@ def chunk_archetype_c(body: str, created_at: str) -> list[Chunk]:
         if not is_table_row and is_date_header(line, prev_line=prev_line):
             # Finalize previous block
             if current_lines:
-                raw_entries.append({
-                    "lines": current_lines,
-                    "timestamp": current_timestamp,
-                    "char_start": current_char_start,
-                    "is_reference": not found_first_date,
-                })
+                raw_entries.append(
+                    {
+                        "lines": current_lines,
+                        "timestamp": current_timestamp,
+                        "char_start": current_char_start,
+                        "is_reference": not found_first_date,
+                    }
+                )
             found_first_date = True
             current_lines = [line]
             current_timestamp = parse_date(line, fallback_year=fallback_year)
@@ -98,12 +100,14 @@ def chunk_archetype_c(body: str, created_at: str) -> list[Chunk]:
 
     # Finalize last entry
     if current_lines:
-        raw_entries.append({
-            "lines": current_lines,
-            "timestamp": current_timestamp,
-            "char_start": current_char_start,
-            "is_reference": not found_first_date,
-        })
+        raw_entries.append(
+            {
+                "lines": current_lines,
+                "timestamp": current_timestamp,
+                "char_start": current_char_start,
+                "is_reference": not found_first_date,
+            }
+        )
 
     # Merge entries shorter than MIN_CHUNK_CHARS with their next neighbor
     # Never merge the reference block with a log entry
@@ -113,9 +117,7 @@ def chunk_archetype_c(body: str, created_at: str) -> list[Chunk]:
         entry = raw_entries[i]
         text = "\n".join(entry["lines"]).strip()
         next_exists = i + 1 < len(raw_entries)
-        next_is_not_reference = (
-            next_exists and not raw_entries[i + 1]["is_reference"]
-        )
+        next_is_not_reference = next_exists and not raw_entries[i + 1]["is_reference"]
         if (
             len(text) < MIN_CHUNK_CHARS
             and not entry["is_reference"]
@@ -124,12 +126,14 @@ def chunk_archetype_c(body: str, created_at: str) -> list[Chunk]:
         ):
             next_entry = raw_entries[i + 1]
             merged_lines = entry["lines"] + next_entry["lines"]
-            merged_entries.append({
-                "lines": merged_lines,
-                "timestamp": entry["timestamp"],
-                "char_start": entry["char_start"],
-                "is_reference": False,
-            })
+            merged_entries.append(
+                {
+                    "lines": merged_lines,
+                    "timestamp": entry["timestamp"],
+                    "char_start": entry["char_start"],
+                    "is_reference": False,
+                }
+            )
             i += 2
         else:
             merged_entries.append(entry)
