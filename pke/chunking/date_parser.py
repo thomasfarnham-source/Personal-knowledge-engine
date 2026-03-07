@@ -149,8 +149,9 @@ def is_date_header(
 
     A line is a date header when:
         1. It contains a recognizable date pattern
-        2. It is short — DATE_HEADER_MAX_WORDS words or fewer
-        3. The previous line is blank, a heading, or another date header
+        2. The date appears at or near the start of the line
+        3. It is short — fewer than DATE_HEADER_MAX_WORDS words
+        4. The previous line is blank, a heading, or another date header
            (i.e. we are not mid-paragraph)
 
     Decoration that does not count toward word limit:
@@ -167,13 +168,22 @@ def is_date_header(
     """
     stripped = _strip_decoration(line).strip()
 
-    # Must contain a date pattern
+    # Must contain a date pattern anywhere in the line
     if not parse_date(stripped):
+        return False
+
+    # Date must appear at or near the start — not embedded mid-sentence.
+    # Strip pure punctuation tokens before checking so that separators
+    # like " - " and " — " between day markers and dates don't push
+    # the date beyond the lookahead window.
+    words = [w for w in stripped.split() if w not in {"-", "—", "–"}]
+    first_word = words[0] if words else ""
+    if not parse_date(first_word) and not parse_date(" ".join(words[:4])):
         return False
 
     # Must be short enough to be a header
     word_count = len(stripped.split())
-    if word_count > DATE_HEADER_MAX_WORDS:
+    if word_count >= DATE_HEADER_MAX_WORDS:
         return False
 
     # Must not be mid-paragraph — previous line must be blank or a header
@@ -287,14 +297,14 @@ def _parse_month_name(text: str, fallback_year: Optional[int]) -> Optional[str]:
         "March 15"         → "FALLBACK_YEAR-03-15"
     """
     pattern = re.search(
-        r"\b([A-Za-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?" r"(?:[,\s]+(\d{2,4}))?\b",
+        r"\b([A-Za-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?" r"(?:[,\s]+(\d{2,4}))?\b",
         text,
         re.IGNORECASE,
     )
     if not pattern:
         return None
 
-    month_str = pattern.group(1).lower()
+    month_str = pattern.group(1).lower().rstrip(".")
     if month_str not in MONTH_NAMES:
         return None
 
@@ -348,7 +358,7 @@ def _strip_day_name(text: str) -> str:
     Example: "Monday, Jan 3" → "Jan 3"
     Only strips from the start of the string.
     """
-    pattern = r"^(?:" + "|".join(DAY_NAMES) + r")[,.\s]+"
+    pattern = r"^(?:" + "|".join(DAY_NAMES) + r")\.?[,.\s]+"
     return re.sub(pattern, "", text, flags=re.IGNORECASE).strip()
 
 
@@ -372,13 +382,13 @@ def _is_header_line(line: str) -> bool:
     """
     Return True if a line looks like a header or is blank.
     Used by is_date_header to validate the previous line context.
-    A line is a header if it starts with ## or is short (≤ DATE_HEADER_MAX_WORDS words).
+    A line is a header if it starts with ##, is blank, or is itself a date.
     """
     stripped = line.strip()
     if not stripped:
         return True
     if stripped.startswith("#"):
         return True
-    if len(stripped.split()) <= DATE_HEADER_MAX_WORDS:
+    if parse_date(stripped):
         return True
     return False
