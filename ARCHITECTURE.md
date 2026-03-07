@@ -274,7 +274,19 @@ Obsidian insight panel. See milestone 9.x Audio Transcription.
   2-digit and 4-digit years)
 - Minimum chunk: ~100 tokens
 - Maximum chunk: ~500 tokens with 1-2 sentence overlap at boundaries
-- Chunking module: pke/chunking/chunker.py (milestone 8.9.6)
+- Chunking module structure (milestone 8.9.6):
+
+    pke/chunking/
+        __init__.py
+        chunk.py              — Chunk dataclass (extracted to avoid circular imports)
+        chunker.py            — public API: chunk_note(), detect_archetype()
+        date_parser.py        — parse_date(), is_date_header(), is_ambiguous_date()
+        resource_extractor.py — extract_resources(), ResourceResult
+        archetype_a.py        — chunk_archetype_a() — implemented
+        archetype_b.py        — chunk_archetype_b() — implemented
+        archetype_c.py        — chunk_archetype_c() — implemented
+        archetype_d.py        — chunk_archetype_d() — implemented
+        archetype_e.py        — chunk_archetype_e() — implemented
 
 ### Chunks Table Schema (current — as of milestone 8.9.5)
 
@@ -454,10 +466,35 @@ multi-source milestone.
 - Fixtures for parsed notes
 - E2E tests for parse → ingest
 
-Test files:
-- tests/test_joplin_sync_parser.py
-- tests/test_openai_embedding_client.py (milestone 8.9.5)
-- tests/test_chunker.py (milestone 8.9.6)
+Test structure:
+
+    tests/
+        conftest.py
+        test_chunker.py            — detect_archetype(), chunk_note(), Chunk dataclass
+        test_date_parser.py        — parse_date(), is_date_header(), is_ambiguous_date()
+        test_joplin_sync_parser.py
+        test_openai_embedding_client.py
+        test_notebook_resolution.py
+        test_supabase_client.py
+        unit/
+            test_cli_arguments.py
+            test_embedding_wrapper.py
+            test_metadata_parsing.py
+            test_payload_builder.py
+            test_archetype_a.py    — chunk_archetype_a() (milestone 8.9.6)
+            test_archetype_b.py    — chunk_archetype_b() (milestone 8.9.6)
+            test_archetype_c.py    — chunk_archetype_c() (milestone 8.9.6)
+            test_archetype_d.py    — chunk_archetype_d() (milestone 8.9.6)
+            test_archetype_e.py    — chunk_archetype_e() (milestone 8.9.6)
+            test_resource_extractor.py — extract_resources() (milestone 8.9.6)
+        integration/
+            test_pipeline_integration.py
+            test_embedding_client_mock.py
+            test_idempotency_behavior.py
+            test_supabase_client_mock.py
+        e2e/
+        fixtures/
+        test_data/
 
 ---
 
