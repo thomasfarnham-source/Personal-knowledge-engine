@@ -2,19 +2,27 @@
 
 ## AI-Assisted Development Workflow
 
-This project uses a structured three-step collaboration model between **Thomas** (owner), **Claude** (system-level reasoning), and **VS Code Copilot** (file-level implementation).
+This project uses a structured three-step collaboration model between
+**Thomas** (owner), **Claude** (system-level reasoning), and
+**VS Code Copilot** (file-level implementation).
 
 ### Roles
 
-- **Thomas**: Owner and final authority. Defines problems, approves all architectural decisions and code.
-- **Claude (External)**: System-level reasoning. Defines module boundaries, contracts, schemas, failure modes, and architectural coherence. Does *not* write code.
-- **VS Code Copilot**: File-level implementation. Writes functions, generates tests, refactors modules, updates imports. Does *not* make architectural decisions.
+- **Thomas**: Owner and final authority. Defines problems, approves all
+  architectural decisions and code.
+- **Claude (External)**: System-level reasoning. Defines module boundaries,
+  contracts, schemas, failure modes, and architectural coherence.
+  Does *not* write code.
+- **VS Code Copilot**: File-level implementation. Writes functions, generates
+  tests, refactors modules, updates imports. Does *not* make architectural
+  decisions.
 
 ### Three-Step Development Loop
 
 1. **System-Level Design** (Thomas + Claude)
    - Output: `CURRENT_TASK.md` specification
-   - Includes: function signatures, contracts, acceptance criteria, constraints, test cases, open questions
+   - Includes: function signatures, contracts, acceptance criteria,
+     constraints, test cases, open questions
    - This is the handoff to VS Code Copilot
 
 2. **File-Level Implementation** (VS Code Copilot)
@@ -22,7 +30,8 @@ This project uses a structured three-step collaboration model between **Thomas**
    - Thomas reviews before proceeding
 
 3. **System-Level Review** (Thomas + Claude)
-   - Checklist: signatures match? determinism preserved? failure modes explicit? tests present? no hidden coupling? aligned with constraints?
+   - Checklist: signatures match? determinism preserved? failure modes
+     explicit? tests present? no hidden coupling? aligned with constraints?
    - Revise if needed and repeat
 
 ### The CURRENT_TASK.md Handoff Artifact
@@ -52,7 +61,8 @@ This file bridges sessions, tools, and architectural decisions:
 [unresolved items]
 ```
 
-Update this file at the end of every session; paste it at the start of the next to carry context forward.
+Update this file at the end of every session; paste it at the start of
+the next to carry context forward.
 
 ### Guiding Principles
 
@@ -66,72 +76,146 @@ Update this file at the end of every session; paste it at the start of the next 
 
 ## Project Overview
 
-**Personal Knowledge Engine** is a two-stage ingestion pipeline that parses, stores, and queries personal notes. It combines:
-- A **Typer CLI** (pke parse, pke ingest, pke notes) for ergonomic command-line workflows
-- A **FastAPI backend** (main.py) for REST queries over parsed notes
-- **Supabase storage** with embeddings, tags, notebooks, and resources as first-class entities
-- **Pluggable parsers** (currently Joplin sync-folder parser) for extensible source imports
+**Personal Knowledge Engine** is a personal intelligence layer built
+around a reflective writing experience. The system has two faces:
 
-The canonical workflow is: `pke parse run` (now using the sync-folder parser) → `pke ingest run --dry-run` → `pke ingest run` → API queries.
+**The pipeline** — a deterministic, two-stage ingestion system that
+parses personal notes and other content channels into a structured,
+queryable knowledge base backed by Supabase and semantic embeddings.
+
+**The writing environment** — an Obsidian-based writing surface with
+a custom plugin (TypeScript) that queries the PKE retrieval API in
+real time as the user writes, surfacing semantically relevant passages
+from personal history in a live insight panel alongside the writing
+surface.
+
+The core user experience: while writing a journal entry, the system
+quietly surfaces diary reflections from the past that connect to what
+the user is thinking about right now. The writing process belongs to
+the user. The system provides material for reflection, not conclusions.
+
+The canonical pipeline workflow is:
+
+    pke parse run
+    pke ingest run --dry-run
+    pke ingest run
+
+---
 
 ## Architecture & Data Flow
 
 ### Two-Stage Pipeline
 
-**Stage 1: Parse** (`pke/parsers/joplin_sync_parser.py`, `pke/cli/parse_cli.py`)
+**Stage 1: Parse** (`pke/parsers/joplin_sync_parser.py`,
+`pke/cli/parse_cli.py`)
 - Accepts a Joplin sync-folder directory containing raw `.md` files
-- Returns `pke/artifacts/parsed/parsed_notes.json` (structured, lossless representation)
-- Extracts: id, title, body, timestamps, resources, notebook/tag metadata via three-pass sync-folder parser
+- Returns `pke/artifacts/parsed/parsed_notes.json`
+- Extracts: id, title, body, timestamps, resources, notebook/tag
+  metadata via three-pass sync-folder parser
+- The Markdown export parser is deprecated and must never be used
 
-  The earlier Markdown export parser is deprecated, kept only for reference, and must never be used; the sync-folder parser is now the canonical Stage 1 implementation.
-
-**Stage 2: Ingest** (`pke/ingestion/orchestrator.py`, `pke/cli/ingest.py`)
+**Stage 2: Ingest** (`pke/ingestion/orchestrator.py`,
+`pke/cli/ingest.py`)
 - Reads parsed JSON; performs deterministic multi-step upsert:
-  1. **Tag resolution** (extract & upsert unique tags)
-  2. **Notebook resolution** (map notebook titles → Supabase IDs)
-  3. **Note upsert** (with computed embeddings via SupabaseClient)
-  4. **Relationship linking** (note ↔ tag, note ↔ notebook)
-- Supports `--dry-run` (uses DummyClient, no writes), `--limit` (test ingestion)
-- Produces `IngestionReport` (processed, inserted, updated, skipped, failures counts)
+  1. Tag resolution (extract & upsert unique tags)
+  2. Notebook resolution (map notebook titles → Supabase IDs)
+  3. Note upsert (with computed embeddings via SupabaseClient)
+  4. Relationship linking (note ↔ tag, note ↔ notebook)
+  5. Chunk upsert (milestone 8.9.6+; not yet implemented)
+- Supports `--dry-run` (uses DummyClient, no writes),
+  `--limit` (test ingestion)
+- Produces `IngestionReport` (processed, inserted, updated,
+  skipped, failures counts)
+
+### Embedding Architecture
+
+- Provider: OpenAI text-embedding-3-small (1536 dimensions)
+- Client: `pke/embedding/openai_client.py` (implements EmbeddingClient)
+- API key: `OPENAI_API_KEY` in `.env` — never committed
+- Two embedding levels:
+  - Note-level: whole-note embedding in the notes table
+  - Chunk-level: per-chunk embedding in the chunks table (8.9.6+)
+
+### Chunking Architecture
+
+Notes above ~1000 characters are split into semantically meaningful
+chunks before embedding. Three note archetypes exist in the corpus,
+each requiring different chunking logic:
+
+- **Archetype A** (fragmented journal): split on date stamps, merge
+  very short entries with neighbors
+- **Archetype B** (structured journal): split on date stamps (primary),
+  template section headers (secondary for long entries)
+- **Archetype C** (reference/medical log): undated opening section
+  as its own reference chunk, dated log split on date stamps,
+  embedded sub-tables kept intact
+
+Chunking module: `pke/chunking/chunker.py` (milestone 8.9.6)
+
+### Retrieval API
+
+FastAPI endpoint: `POST /query`
+- Input: query text, optional filters (notebook, date range, source)
+- Output: ranked chunks with note title, notebook, date, matched text,
+  similarity score, char offsets, surrounding context
+- Hybrid retrieval: chunk-level where chunks exist, whole-note fallback
+- Powers both direct search and the Obsidian insight plugin
+
+### Obsidian Insight Plugin
+
+A custom Obsidian plugin (TypeScript) — the primary consumer-facing
+expression of the system.
+
+- Watches the active note for changes
+- After a short debounce, sends the current paragraph to POST /query
+- Renders top 3-5 results in a side panel
+- Each result: date, note title, relevant passage (raw text only —
+  never AI-generated summaries)
+- The panel is ambient, not intrusive; it updates quietly as the
+  user writes
+- Built with the Obsidian plugin API (TypeScript)
+- Lives in: `obsidian-plugin/` at the repo root
+
+**Important:** The Obsidian plugin is TypeScript, not Python. It is
+a separate development surface with its own conventions. See the
+TypeScript section below before working on plugin files.
 
 ### Types & Contracts
 
-All types live in **pke/types.py**:
-- **NoteRecord**: Supabase row (id, title, body, embedding, metadata, resources, notebook_id)
-- **IngestionSummary**: Orchestrator output (SupabaseClient calls and metrics)
+All Python types live in **pke/types.py**:
+- **NoteRecord**: Supabase row (id, title, body, embedding, metadata,
+  resources, notebook_id)
+- **IngestionSummary**: Orchestrator output (metrics)
 - **EmbeddingClient**: Protocol for pluggable embedding providers
-
-Reason: Single source of truth for CLI ↔ ingestion ↔ Supabase contracts; enables deterministic testing.
 
 ### Supabase Client Abstraction
 
 **SupabaseClient** (`pke/supabase_client.py`):
 - Wrapper around real Supabase SDK (or test substitutes)
-- Dependency-injected constructor: accepts real client, DummyClient, or test stubs
-- Detects DummyClient by classname (`__name__ == "DummyClient"`) → forces `dry_run=True`
-- Public methods: `resolve_notebook_id()`, `upsert_note_with_embedding()`, `upsert_tags()`, `upsert_note_tag_relationships()`
+- Dependency-injected constructor
+- Detects DummyClient by classname → forces `dry_run=True`
 
 **DummyClient** (`pke/supabase/dummy_client.py`):
-- Minimal in-memory stand-in; prints "Would upsert note: ..." instead of network calls
-- Used by orchestrator to validate pipeline shape without side effects
-- Tests can assert on call counts by passing mock clients
+- In-memory stand-in for dry-run and testing
+- Prints "Would upsert note: ..." instead of network calls
+
+---
 
 ## Developer Workflows
 
-### Local Development
+### Python Pipeline — Local Development
 
-**Environment Setup:**
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # or .venv\Scripts\Activate.ps1 on Windows
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Configuration:**
+Configuration:
 - Copy `.env.example` → `.env`
-- Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (kept local; .env is .gitignore'd)
+- Add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENAI_API_KEY`
 
-### Build & Test Commands
+### Python Pipeline — Build & Test Commands
 
 All commands in **Makefile**:
 - `make format`: Black auto-format
@@ -141,165 +225,284 @@ All commands in **Makefile**:
 - `make check`: Run all above in sequence
 - `make fix`: Auto-fix with black + isort
 
-**Test Setup:**
-- **pytest.ini**: Loads `.env` for secrets (SUPABASE_URL, etc.)
-- **tests/conftest.py**: Centralizes fixtures (cli_runner, load_json_fixture, mock Supabase clients)
-- **tests/fixtures/**: Parsed note examples, expected outputs, Joplin sync-folder samples
-
-### Running Ingestion Locally
+### Python Pipeline — Running Ingestion Locally
 
 ```bash
-# Stage 1: Parse a Joplin export (requires actual export directory)
-pke parse run --export-path /path/to/joplin_export --output pke/artifacts/parsed/parsed_notes.json
+# Stage 1: Parse
+pke parse run --export-path /path/to/joplin_export \
+  --output pke/artifacts/parsed/parsed_notes.json
 
-# Stage 2: Validate (dry-run; no DB writes)
-pke ingest run --parsed-path pke/artifacts/parsed/parsed_notes.json --dry-run
+# Stage 2: Validate (dry-run)
+pke ingest run --parsed-path pke/artifacts/parsed/parsed_notes.json \
+  --dry-run
 
-# Stage 3: Real ingestion (requires valid Supabase credentials in .env)
+# Stage 3: Real ingestion
 pke ingest run --parsed-path pke/artifacts/parsed/parsed_notes.json
 
-# Query API (if running via FastAPI)
+# Retrieval API
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-# Then visit http://localhost:8000/docs for Swagger UI
 ```
+
+### Obsidian Plugin — Local Development
+
+```bash
+cd obsidian-plugin
+npm install
+npm run dev       # watch mode, builds to main.js
+npm run build     # production build
+npm run test      # Jest unit tests
+```
+
+The plugin is developed against the Obsidian plugin API. During
+development, symlink or copy the plugin folder into an Obsidian
+vault's `.obsidian/plugins/pke-insight/` directory to test live.
+
+---
 
 ## Key Conventions & Patterns
 
-### Determinism & Testability
+### Python — Determinism & Testability
 
-- **Orchestrator is pure & linear**: `ingest()` method chains deterministic steps with no hidden behavior
-- **IngestionReport accumulates state** across stages for easy assertion in tests
-- **Dependency injection**: SupabaseClient and EmbeddingClient are injected; tests can supply stubs
-- **No global state**: All mutable state is passed explicitly through function calls
+- **Orchestrator is pure & linear**: `ingest()` chains deterministic
+  steps with no hidden behavior
+- **IngestionReport accumulates state** across stages for assertion
+  in tests
+- **Dependency injection**: SupabaseClient and EmbeddingClient are
+  injected; tests supply stubs
+- **No global state**: All mutable state passed explicitly
 
-#### Parser-specific reminders
+### Python — Parser-Specific Reminders
 
-- The Joplin sync-folder parser is the only active Stage 1 parser; the Markdown exporter (`joplin_markdown.py`) is deprecated and must not be modified or referenced.
-- Parsers must follow the three-pass architecture (load/classify → build maps → enrich notes) with no side effects, no network calls, and no embedding generation.
-- Do not skip any notes during parsing (except encrypted notes, which should be logged and ignored).
-- Never use `None` for missing notebook, tag, or timestamp fields; use empty strings or empty lists instead.
-- Notes must be sorted by `id` for deterministic output.
-- Parsers should not rely on YAML frontmatter or any Markdown-specific assumptions.
+- The Joplin sync-folder parser is the only active Stage 1 parser;
+  `joplin_markdown.py` is deprecated and must not be modified or
+  referenced
+- Parsers follow the three-pass architecture (load/classify →
+  build maps → enrich notes) with no side effects, no network
+  calls, and no embedding generation
+- Do not skip notes during parsing (except encrypted notes)
+- Never use `None` for missing fields; use empty strings or lists
+- Notes must be sorted by `id` for deterministic output
+- Parsers must not rely on YAML frontmatter assumptions
 
-### Types-First Design
+### Python — Types-First Design
 
 - Type hints are mandatory (mypy enforced in CI)
-- TypedDict for cross-module contracts (NoteRecord, IngestionSummary)
-- Protocol for pluggable clients (EmbeddingClient, SupabaseClient)
-- Reason: Enables safe refactoring across CLI → ingestion → Supabase layers
+- TypedDict for cross-module contracts
+- Protocol for pluggable clients
+- Reason: enables safe refactoring across CLI → ingestion → Supabase
 
-### Module Responsibilities
+### Python — Module Responsibilities
 
-- **pke/cli/**: Typer entrypoints (parse_cli.py, ingest.py, notes_cli.py, main.py)
-  - Argument parsing, environment loading, CLI output formatting
-  - Delegates actual work to orchestrator/parsers
-- **pke/parsers/**: File→dict converters (joplin_sync_parser.py)
-  - No I/O side effects; pure transformation functions (three‑pass parser architecture)
-- **pke/ingestion/**: Multi-step upsert orchestration (orchestrator.py + resolution modules)
-  - Tag extraction (tag_resolution.py), notebook lookup (notebook_resolution.py), resource linking
-  - Works with injected SupabaseClient
-- **pke/supabase_client.py**: SupabaseClient wrapper (single source for all DB operations)
-- **pke/types.py**: Centralized type definitions (shared across all modules)
+- **pke/cli/**: Typer entrypoints — argument parsing, env loading,
+  output formatting. Delegates work to orchestrator/parsers.
+- **pke/parsers/**: File→dict converters. Pure transformation,
+  no side effects.
+- **pke/embedding/**: EmbeddingClient implementations. One file
+  per provider.
+- **pke/chunking/**: Note chunking logic. Pure functions, no
+  side effects, no network calls.
+- **pke/ingestion/**: Multi-step upsert orchestration.
+- **pke/supabase_client.py**: Single source for all DB operations.
+- **pke/types.py**: Centralized type definitions.
 
-### Testing Patterns
+### Python — Testing Patterns
 
-- **Unit tests**: Use DummyClient or mock fixtures in conftest.py; assert on counts/structure
-- **Integration tests**: Use real SupabaseClient + pytest-env to load actual Supabase credentials
-- **E2E tests**: full parse → ingest cycle with mocked Supabase, verify IngestionReport
-- **Fixtures live in tests/fixtures/** (parsed_notes.json examples, Joplin sync-folder samples)
-- **No network calls in unit tests**: Stub clients make CI fast and reliable
+- Unit tests: DummyClient or mock fixtures; assert on counts/structure
+- Integration tests: real SupabaseClient + pytest-env for credentials
+- E2E tests: full parse → ingest cycle with mocked Supabase
+- Fixtures live in `tests/fixtures/`
+- No network calls in unit tests
 
-#### Test-writing guidelines
+Test-writing guidelines:
+- Use `tmp_path` for filesystem isolation
+- Import `Path` from `pathlib` for path handling
+- Make fixtures deterministic and self-contained
 
-- Write parser tests in the file specified by the current task (e.g., `tests/test_joplin_sync_parser.py`).
-- Use `tmp_path` fixtures for filesystem isolation and import `Path` from `pathlib` when dealing with paths.
-- Avoid any real network calls; use mocks or DummyClient for Supabase interactions.
-- Make fixtures deterministic and self‑contained to ensure repeatable results.
+### Python — Code Organization
 
-### Code Organization
+- Each module has a docstring explaining *why* it exists
+- Multi-step functions broken into numbered sections
+- Type annotations used throughout
+- Avoid inline comments; use docstrings and section headers
 
-- Each module has a docstring explaining *why* it exists (not just what it does)
-- Multi-step functions are broken into numbered sections (e.g., "# 1 — PARSE A SINGLE NOTE")
-- Type annotations are used for contract clarity (mypy enforces correctness)
-- Avoid inline comments; use docstrings and section headers instead
+### Python — Commentary Standards
 
-### Commentary Standards
+When modifying an existing file, always match the commentary style
+of the surrounding code. Do not impose a different style.
 
-When modifying an existing file, always match the commentary style of
-the surrounding code. Do not impose a different style.
+This project uses the following conventions:
 
-**This project uses the following conventions:**
-
-- Section headers use this format:
+Section headers:
+```python
+# ----------------------------------------------------------------------
+# ⭐ N. Section Title
+#
+# Explain WHY this section exists, not just what it does.
+# Include design decisions, gotchas, and non-obvious reasoning.
+# ----------------------------------------------------------------------
 ```
-  # ----------------------------------------------------------------------
-  # ⭐ N. Section Title
-  #
-  # Explain WHY this section exists, not just what it does.
-  # Include design decisions, gotchas, and non-obvious reasoning.
-  # ----------------------------------------------------------------------
-```
-- Inline comments are brief, on their own line, above the code they describe
+
+- Inline comments are brief, on their own line, above the code
 - WHY over WHAT — comments explain intent and reasoning, not mechanics
 - Do not use docstrings where section headers are the established pattern
 - Do not add generic or redundant comments that restate the code
+- When adding a new numbered section, continue the existing sequence
 
-**When generating new code in an existing file:**
-- Read the surrounding comment style before writing
-- Match indentation, spacing, and header format exactly
-- If adding a new numbered section, continue the existing numbering sequence
+---
+
+## TypeScript — Obsidian Plugin Conventions
+
+The Obsidian plugin is a separate development surface from the Python
+pipeline. It is TypeScript, uses the Obsidian plugin API, and has
+different conventions.
+
+### Plugin Structure
+
+```
+obsidian-plugin/
+  src/
+    main.ts          ← plugin entry point, registers commands and views
+    insight-panel.ts ← side panel UI component
+    retrieval.ts     ← PKE API client (calls POST /query)
+    debounce.ts      ← debounce utility for editor change events
+    types.ts         ← TypeScript interfaces for API responses
+  tests/
+    retrieval.test.ts
+    debounce.test.ts
+  manifest.json      ← Obsidian plugin manifest
+  package.json
+  tsconfig.json
+```
+
+### TypeScript Conventions
+
+- Strict TypeScript (`"strict": true` in tsconfig)
+- Interfaces over type aliases for API contracts
+- Async/await over raw promises
+- No `any` types — define interfaces for all API responses
+- Error boundaries around all API calls — plugin must never crash
+  Obsidian even if the PKE API is unavailable
+
+### Plugin Behavior Contracts
+
+- The plugin must degrade gracefully when the PKE API is offline.
+  If the retrieval API is unreachable, the insight panel shows a
+  subtle "PKE offline" indicator and no error is thrown.
+- Debounce: editor changes trigger a retrieval call after 2000ms
+  of inactivity. Do not fire on every keystroke.
+- The panel renders raw passage text, date, and note title only.
+  It never generates or displays AI-produced summaries.
+- The panel must never interrupt the writing flow. No modal dialogs,
+  no focus stealing, no aggressive animations.
+- All API calls include a timeout (default 5000ms). Slow responses
+  are silently dropped, not surfaced as errors.
+
+### TypeScript Testing
+
+- Jest for unit tests
+- Mock the Obsidian API in tests — do not depend on a live vault
+- Mock the PKE retrieval API — do not make real HTTP calls in tests
+- Test the debounce logic, API client, and response rendering
+  independently
+
+### Plugin — Commentary Standards
+
+- JSDoc for all exported functions and interfaces
+- WHY over WHAT — same philosophy as the Python codebase
+- Section comments for logical blocks within a file:
+
+```typescript
+// ─────────────────────────────────────────────
+// N. Section Title
+//
+// Explain why this section exists.
+// ─────────────────────────────────────────────
+```
+
+---
 
 ## Adding Features
 
-### Adding a New Parser
+### Adding a New Parser (Python)
 
-1. Prefer the sync-folder parser (`pke/parsers/joplin_sync_parser.py`) as the canonical Stage 1 implementation; new parsers should follow the same three-pass style.
-2. For a different source format, create `pke/parsers/my_format.py` with a pure `parse_notes(source_path) -> List[dict]` entrypoint.
-3. Add or extend types in `pke/types.py` if format-specific metadata is required.
-4. Add a CLI command or flag in `pke/cli/parse_cli.py` if the new parser should be exposed (e.g., `pke parse my_format --source-path ...`).
-5. Add tests in `tests/test_parse_note.py` or a dedicated test file; use fixtures under `tests/fixtures/` that reflect the new source format.
-6. Update README.md with usage example if the parser is user-facing.
+1. Create `pke/parsers/my_format.py` with a pure
+   `parse_notes(source_path) -> List[dict]` entrypoint
+2. Follow the three-pass architecture of joplin_sync_parser.py
+3. Add or extend types in `pke/types.py` if needed
+4. Add a CLI command in `pke/cli/parse_cli.py`
+5. Add tests with fixtures in `tests/fixtures/`
+6. Update README.md if user-facing
 
-### Adding an Embedding Provider
+### Adding an Embedding Provider (Python)
 
-1. Implement `EmbeddingClient` protocol in `pke/embedding/` (e.g., openai_client.py)
-2. SupabaseClient constructor already accepts `embedding_client=` parameter
-3. Update environment variables in `.env.example` (e.g., OPENAI_API_KEY)
-4. Add tests in `tests/test_supabase_client.py` with mocked embeddings
+1. Implement `EmbeddingClient` protocol in `pke/embedding/`
+2. SupabaseClient constructor accepts `embedding_client=` parameter
+3. Update `.env.example` with new API key
+4. Add tests with mocked embeddings
 
-### Adding a New Ingestion Resolution Step
+### Adding a New Ingestion Resolution Step (Python)
 
-1. Create `pke/ingestion/my_resolution.py` with pure functions (no side effects)
-2. Update `orchestrator.py` to call your function in the correct sequence
-3. Update `IngestionReport` to track relevant metrics (if needed)
-4. Add tests that assert on IngestionReport state after each step
+1. Create `pke/ingestion/my_resolution.py` with pure functions
+2. Update `orchestrator.py` to call it in the correct sequence
+3. Update `IngestionReport` to track relevant metrics
+4. Add tests asserting on IngestionReport state
+
+### Adding a Plugin Feature (TypeScript)
+
+1. Define the interface contract in `src/types.ts` first
+2. Implement in the appropriate src/ module
+3. Add Jest tests before or alongside implementation
+4. Verify graceful degradation when PKE API is offline
+5. Verify the feature does not interrupt the writing flow
+
+---
 
 ## Common Pitfalls
 
-- **Don't call SupabaseClient.from_env() inside orchestrator**: Inject the client via constructor parameter for testability
-- **Don't mutate parsed notes dict**: Create new dicts for transformed data; immutability aids debugging
-- **Don't skip type hints**: mypy is enforced; use TypedDict for complex returns
-- **Don't add logic to the CLI layer**: CLI should parse args, load env, call orchestrator, format output
-- **Don't commit .env**: It contains secrets; use .env.example as template
-- **Don't skip --dry-run testing**: Always validate ingestion with DummyClient before real writes
+### Python
 
-### Parser Constraints
+- **Don't call SupabaseClient.from_env() inside orchestrator**:
+  inject via constructor
+- **Don't mutate parsed notes dict**: create new dicts for
+  transformed data
+- **Don't skip type hints**: mypy is enforced
+- **Don't add logic to the CLI layer**: parse args, load env,
+  call orchestrator, format output — nothing else
+- **Don't commit .env**: use .env.example as template
+- **Don't skip --dry-run testing**: always validate before real writes
+- **Don't modify joplin_markdown.py**: it is deprecated
+- **Don't modify the orchestrator or Supabase schema** without a
+  formal design decision from CURRENT_TASK.md
+- **Don't generate embeddings inside a parser**
+- **Don't sort notes by title**: always sort by `id`
 
-- **Do not modify `joplin_markdown.py`** or rely on the Markdown export format; it is deprecated.
-- **Do not modify the orchestrator or Supabase schema**; these are fixed contracts.
-- **Do not generate embeddings inside a parser**; embedding computation belongs to the ingestion layer.
-- **Do not skip notes** during parsing (encrypted notes may be skipped with a warning).
-- **Do not use `None` for missing fields**; use empty string or empty list as specified by the ParsedNote contract.
-- **Do not add new dependencies** for parsing logic; keep the dependency graph minimal.
-- **Do not sort notes by title** – always sort by `id` for determinism.
-- **Do not mix sync-folder and markdown logic**; keep parser implementations separate.
+### TypeScript / Obsidian Plugin
+
+- **Don't crash Obsidian**: all plugin errors must be caught and
+  handled gracefully
+- **Don't call the PKE API synchronously**: always async/await
+- **Don't render AI-generated text in the panel**: raw passages only
+- **Don't fire retrieval on every keystroke**: debounce is mandatory
+- **Don't use `any`**: define interfaces for all external data
+- **Don't steal focus**: the panel is read-only and ambient
+
+---
 
 ## References
 
+### Python Pipeline
 - **README.md**: High-level overview, quickstart, env setup
-- **CONTRIBUTING.md**: Git workflow, pre-commit checks, issue/PR process
-- **pyproject.toml**: Centralized tool config (black, isort, flake8, mypy)
+- **ARCHITECTURE.md**: Full system architecture, authoritative reference
+- **ROADMAP.md**: Strategic direction, milestone sequence, vision
+- **CURRENT_TASK.md**: Active milestone spec — always read this first
+- **CONTRIBUTING.md**: Git workflow, pre-commit checks
+- **pyproject.toml**: Tool config (black, isort, flake8, mypy)
 - **pytest.ini**: Test env loading, plugin config
 - **tests/conftest.py**: Shared fixtures, mock factories
-- **pke/types.py**: Type contracts (NoteRecord, IngestionSummary, EmbeddingClient)
-- **pke/ingestion/orchestrator.py**: Canonical ingestion logic; start here for data flow
+- **pke/types.py**: Type contracts
+- **pke/ingestion/orchestrator.py**: Canonical ingestion logic
+
+### Obsidian Plugin
+- **obsidian-plugin/src/main.ts**: Plugin entry point
+- **obsidian-plugin/src/types.ts**: TypeScript contracts
+- **Obsidian Plugin API docs**: https://docs.obsidian.md/Plugins/Getting+started/Build+a+plugin

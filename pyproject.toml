@@ -36,6 +36,7 @@ dependencies = [  # Runtime dependencies installed with your package
     "python-frontmatter",
      "typer[all]",
      "python-dotenv",
+     "openai",
     # Add any other runtime dependencies here
 ]
 
