@@ -209,6 +209,7 @@ that the chunker must handle:
 | iMessage threads | 🔵 Planned  | Specific contacts or groups                 |
 | Yahoo Mail       | 🔵 Planned  | Select senders                              |
 | Others (TBD)     | 🔵 Open     | Calendar, bookmarks, documents              |
+| Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser          |
 
 ### Obsidian
 - Source: local vault Markdown files
@@ -560,6 +561,47 @@ surface them with an inline audio player, making it possible to
 hear the original voice while writing about the same themes years
 later. This is one of the most emotionally resonant capabilities
 the system could have. See milestone 9.x Audio Transcription.
+
+**Handwritten Journal Digitization**
+The corpus currently begins with digital notes, but decades of handwritten
+Moleskine journals predate it — 20-30 years of personal history that exists
+nowhere in the system. Digitizing these journals would dramatically extend
+the temporal depth of the knowledge base.
+
+The workflow is now technically feasible:
+    1. Photograph each page with a phone camera
+    2. Pass images through a vision model (GPT-4 Vision or similar)
+       for handwriting transcription — far more accurate than
+       traditional OCR for casual handwriting
+    3. Run transcribed text through the PKE parser pipeline
+    4. Date inference via date_parser.py — the same logic already
+       built for handling informal date formats in typed notes
+    5. Ingest as a new content channel with its own parser:
+       pke/parsers/handwritten_journal_parser.py
+
+Key challenges:
+    - Handwriting quality and ink aging vary across decades
+    - Page photos require consistent lighting and angle for best results
+    - Dates may be absent or implicit — requires contextual inference
+    - Physical journals are the archive — digital version is an index,
+      not a replacement
+
+The service opportunity:
+    If an efficient personal workflow is established, every component
+    is reusable — the capture process, vision transcription pipeline,
+    date inference, and PKE ingestion. Others face the same problem.
+    A handwritten journal digitization service built on top of PKE
+    infrastructure is a natural extension.
+
+What to preserve:
+    The physical journals have texture that digital cannot capture —
+    handwriting changes over time, crossed-out words, margin notes,
+    the emotional weight of the ink. The digital version is an index
+    into the physical object, not a replacement for it.
+
+Dependency: none — can be prototyped independently of other milestones.
+First step: experiment with a single Moleskine page through GPT-4 Vision
+to assess transcription quality before committing to a workflow.
 
 **Insight Listener**
 Real-time monitoring of new notes to surface relevant insights as

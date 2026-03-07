@@ -2,9 +2,14 @@
 Archetype-aware note chunker for the Personal Knowledge Engine.
 
 This module is the single entry point for all chunking logic. It detects
-the note archetype and delegates to the appropriate chunker. The orchestrator
-calls chunk_note() for every note above the character threshold and receives
-a list of Chunk objects ready to be written to the chunks table.
+the note archetype and delegates to the appropriate archetype-specific
+chunker module. The orchestrator calls chunk_note() for every note above
+the character threshold and receives a list of Chunk objects ready to be
+written to the chunks table.
+
+Archetype detection is centralized here. Archetype-specific chunking
+implementations live in separate files (archetype_a.py through archetype_e.py).
+The Chunk dataclass is defined in chunk.py to avoid circular imports.
 
 Archetype detection order (most specific first):
     E — audio resource links present
@@ -20,39 +25,13 @@ Detection uses both text patterns (primary) and optional metadata hints
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
-from typing import Optional
 
-# ============================================================================
-# CHUNK — THE ATOMIC UNIT OF RETRIEVAL
-# ============================================================================
-
-
-@dataclass
-class Chunk:
-    """
-    A single chunk of a note, ready to be written to the chunks table.
-
-    Fields:
-        chunk_index:     position in the note's chunk sequence (0-based)
-        chunk_text:      cleaned text with all resource references stripped
-        char_start:      start position in the original note body
-        char_end:        end position in the original note body
-        section_title:   nearest heading above this chunk, if any
-        entry_timestamp: explicit date ("2015-09-08"), calculated date
-                         ("calculated: 2014-08-04"), or None
-        resource_ids:    resource IDs extracted from this chunk (images, audio)
-        metadata:        archetype-specific flags e.g. note_type, resource_type
-    """
-
-    chunk_index: int
-    chunk_text: str
-    char_start: int
-    char_end: int
-    section_title: Optional[str] = None
-    entry_timestamp: Optional[str] = None
-    resource_ids: list[str] = field(default_factory=list)
-    metadata: dict = field(default_factory=dict)
+from pke.chunking.archetype_a import chunk_archetype_a
+from pke.chunking.archetype_b import chunk_archetype_b
+from pke.chunking.archetype_c import chunk_archetype_c
+from pke.chunking.archetype_d import chunk_archetype_d
+from pke.chunking.archetype_e import chunk_archetype_e
+from pke.chunking.chunk import Chunk
 
 
 # ============================================================================
@@ -90,11 +69,11 @@ def chunk_note(
     archetype = detect_archetype(body, title=title, notebook=notebook)
 
     dispatch = {
-        "A": _chunk_archetype_a,
-        "B": _chunk_archetype_b,
-        "C": _chunk_archetype_c,
-        "D": _chunk_archetype_d,
-        "E": _chunk_archetype_e,
+        "A": chunk_archetype_a,
+        "B": chunk_archetype_b,
+        "C": chunk_archetype_c,
+        "D": chunk_archetype_d,
+        "E": chunk_archetype_e,
     }
 
     chunker_fn = dispatch[archetype]
@@ -130,9 +109,13 @@ def detect_archetype(
 
     # --- Archetype D: travel patterns or metadata hint ---
     travel_title_hint = any(
-        word in title.lower() for word in ["ireland", "travel", "trip", "vacation", "holiday"]
+        word in title.lower()
+        for word in ["ireland", "travel", "trip", "vacation", "holiday"]
     )
-    travel_notebook_hint = any(word in notebook.lower() for word in ["travel", "trips", "vacation"])
+    travel_notebook_hint = any(
+        word in notebook.lower()
+        for word in ["travel", "trips", "vacation"]
+    )
     day_marker_pattern = re.search(
         r"(?:^|\n)\s*(?:Day\s+\d+|Monday|Tuesday|Wednesday|Thursday"
         r"|Friday|Saturday|Sunday|Sat|Sun|Mon|Tue|Wed|Thu|Fri)",
@@ -154,6 +137,7 @@ def detect_archetype(
     if has_dated_entries and has_undated_header:
         return "C"
 
+    # --- Archetype B: structured template headers ---
     template_headers = re.search(
         r"(?:^|\n)#{1,3}\s*(?:Score|What did I do well|Improvements"
         r"|Gratitude|Intentions|Goals|Summary|Notes)",
@@ -165,114 +149,3 @@ def detect_archetype(
 
     # --- Archetype A: fallback ---
     return "A"
-
-
-# ============================================================================
-# ARCHETYPE CHUNKERS — PRIVATE IMPLEMENTATIONS
-# ============================================================================
-
-
-def _chunk_archetype_a(body: str, created_at: str) -> list[Chunk]:
-    """
-    Archetype A — Fragmented Journal.
-
-    Splits on date stamps. Merges entries under ~100 tokens with neighbors.
-    High noise tolerance — do not strip content aggressively.
-
-    Implementation deferred — returns single whole-note chunk as placeholder.
-    """
-    return [
-        Chunk(
-            chunk_index=0,
-            chunk_text=body,
-            char_start=0,
-            char_end=len(body),
-            metadata={"archetype": "A", "status": "placeholder"},
-        )
-    ]
-
-
-def _chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
-    """
-    Archetype B — Structured Journal.
-
-    Primary split: date stamps.
-    Secondary split: template section headers for long entries.
-    Retrospective annotations preserved with their original entry.
-
-    Implementation deferred — returns single whole-note chunk as placeholder.
-    """
-    return [
-        Chunk(
-            chunk_index=0,
-            chunk_text=body,
-            char_start=0,
-            char_end=len(body),
-            metadata={"archetype": "B", "status": "placeholder"},
-        )
-    ]
-
-
-def _chunk_archetype_c(body: str, created_at: str) -> list[Chunk]:
-    """
-    Archetype C — Reference / Medical Log.
-
-    Undated opening section → own reference chunk.
-    Dated log entries → split on date stamps.
-    Embedded sub-tables → kept intact.
-
-    Implementation deferred — returns single whole-note chunk as placeholder.
-    """
-    return [
-        Chunk(
-            chunk_index=0,
-            chunk_text=body,
-            char_start=0,
-            char_end=len(body),
-            metadata={"archetype": "C", "status": "placeholder"},
-        )
-    ]
-
-
-def _chunk_archetype_d(body: str, created_at: str) -> list[Chunk]:
-    """
-    Archetype D — Travel Journal.
-
-    Primary split: flexible day marker detection.
-    Timestamp strategy: explicit > calculated from created_at > null.
-    Resource IDs extracted and stripped from chunk text.
-    Broken placeholders stripped silently.
-    note_type: travel flag in metadata.
-
-    Implementation deferred — returns single whole-note chunk as placeholder.
-    """
-    return [
-        Chunk(
-            chunk_index=0,
-            chunk_text=body,
-            char_start=0,
-            char_end=len(body),
-            metadata={"archetype": "D", "note_type": "travel", "status": "placeholder"},
-        )
-    ]
-
-
-def _chunk_archetype_e(body: str, created_at: str) -> list[Chunk]:
-    """
-    Archetype E — Oral History / Conversation Notes.
-
-    Splits on audio file boundaries.
-    Timestamps extracted from audio filenames (most reliable signal).
-    Audio resources flagged as resource_type: audio in metadata.
-
-    Implementation deferred — returns single whole-note chunk as placeholder.
-    """
-    return [
-        Chunk(
-            chunk_index=0,
-            chunk_text=body,
-            char_start=0,
-            char_end=len(body),
-            metadata={"archetype": "E", "resource_type": "audio", "status": "placeholder"},
-        )
-    ]
