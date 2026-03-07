@@ -47,7 +47,7 @@ TEMPLATE_HEADER_RE = re.compile(
     re.IGNORECASE,
 )
 
-MIN_CHUNK_CHARS = 400   # ~100 tokens — merge entries shorter than this
+MIN_CHUNK_CHARS = 400  # ~100 tokens — merge entries shorter than this
 MAX_CHUNK_CHARS = 2000  # ~500 tokens — split entries longer than this
 
 
@@ -87,11 +87,13 @@ def chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
         if is_date_header(line, prev_line=prev_line):
             # Finalize previous entry if it has content
             if current_lines:
-                raw_entries.append({
-                    "lines": current_lines,
-                    "timestamp": current_timestamp,
-                    "char_start": current_char_start,
-                })
+                raw_entries.append(
+                    {
+                        "lines": current_lines,
+                        "timestamp": current_timestamp,
+                        "char_start": current_char_start,
+                    }
+                )
             # Start new entry
             current_lines = [line]
             current_timestamp = parse_date(line, fallback_year=fallback_year)
@@ -103,11 +105,13 @@ def chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
 
     # Finalize last entry
     if current_lines:
-        raw_entries.append({
-            "lines": current_lines,
-            "timestamp": current_timestamp,
-            "char_start": current_char_start,
-        })
+        raw_entries.append(
+            {
+                "lines": current_lines,
+                "timestamp": current_timestamp,
+                "char_start": current_char_start,
+            }
+        )
 
     # Secondary split: break long entries on template section headers
     split_entries: list[dict] = []
@@ -126,11 +130,13 @@ def chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
         for line in entry["lines"]:
             if TEMPLATE_HEADER_RE.match(line) and section_lines:
                 # Finalize current section
-                split_entries.append({
-                    "lines": section_lines,
-                    "timestamp": section_timestamp,
-                    "char_start": section_char_start,
-                })
+                split_entries.append(
+                    {
+                        "lines": section_lines,
+                        "timestamp": section_timestamp,
+                        "char_start": section_char_start,
+                    }
+                )
                 # Start new section — inherit timestamp from parent entry
                 section_lines = [line]
                 section_char_start = section_char_pos
@@ -140,11 +146,13 @@ def chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
 
         # Finalize last section
         if section_lines:
-            split_entries.append({
-                "lines": section_lines,
-                "timestamp": section_timestamp,
-                "char_start": section_char_start,
-            })
+            split_entries.append(
+                {
+                    "lines": section_lines,
+                    "timestamp": section_timestamp,
+                    "char_start": section_char_start,
+                }
+            )
 
     # Merge entries shorter than MIN_CHUNK_CHARS with their next neighbor
     merged_entries: list[dict] = []
@@ -155,11 +163,13 @@ def chunk_archetype_b(body: str, created_at: str) -> list[Chunk]:
         if len(text) < MIN_CHUNK_CHARS and i + 1 < len(split_entries):
             next_entry = split_entries[i + 1]
             merged_lines = entry["lines"] + next_entry["lines"]
-            merged_entries.append({
-                "lines": merged_lines,
-                "timestamp": entry["timestamp"],  # keep earlier timestamp
-                "char_start": entry["char_start"],
-            })
+            merged_entries.append(
+                {
+                    "lines": merged_lines,
+                    "timestamp": entry["timestamp"],  # keep earlier timestamp
+                    "char_start": entry["char_start"],
+                }
+            )
             i += 2
         else:
             merged_entries.append(entry)
