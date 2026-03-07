@@ -64,10 +64,12 @@ Long walk on the beach in the evening. Perfect day overall.
 
 # Note with no pre-trip block — starts directly with Day 1
 # Entries are padded well above MIN_CHUNK_CHARS (400 chars) each
-NO_PREAMBLE_BODY = "\n\n".join([
-    "Day 1\n\n" + "Arrived in Dublin at 4:30am. Long flight but worth it. " * 10,
-    "Day 2\n\n" + "Slept well. Beach walk in the morning with Killian. " * 10,
-])
+NO_PREAMBLE_BODY = "\n\n".join(
+    [
+        "Day 1\n\n" + "Arrived in Dublin at 4:30am. Long flight but worth it. " * 10,
+        "Day 2\n\n" + "Slept well. Beach walk in the morning with Killian. " * 10,
+    ]
+)
 
 # Note with day name markers instead of Day N format
 DAY_NAME_BODY = """
@@ -403,7 +405,8 @@ class TestTimestamps:
         result = chunk_archetype_d(STANDARD_BODY, CREATED_AT)
         day_chunks = [c for c in result if not c.metadata.get("reference")]
         calculated = [
-            c.entry_timestamp for c in day_chunks
+            c.entry_timestamp
+            for c in day_chunks
             if c.entry_timestamp and c.entry_timestamp.startswith("calculated:")
         ]
         assert len(calculated) > 0
@@ -427,9 +430,7 @@ class TestTimestamps:
         ref_chunk = result[0]
         # Reference chunk timestamp is None or a calculated value —
         # either is valid depending on whether a date appears in the text
-        assert ref_chunk.entry_timestamp is None or isinstance(
-            ref_chunk.entry_timestamp, str
-        )
+        assert ref_chunk.entry_timestamp is None or isinstance(ref_chunk.entry_timestamp, str)
 
 
 # ============================================================================
