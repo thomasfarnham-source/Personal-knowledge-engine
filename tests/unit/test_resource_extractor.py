@@ -53,11 +53,7 @@ BROKEN_PLACEHOLDERS = (
 
 # Duplicate resource ID — same image referenced twice in one note
 # Should be stored once in resource_ids and resource_types
-DUPLICATE_RESOURCE = (
-    "![First](:/aabbccdd1122)\n"
-    "Some text.\n"
-    "![Second](:/aabbccdd1122)\n"
-)
+DUPLICATE_RESOURCE = "![First](:/aabbccdd1122)\n" "Some text.\n" "![Second](:/aabbccdd1122)\n"
 
 # Plain text with no resource references of any kind
 PLAIN_TEXT = "Just some plain text.\nNo resources here.\nNothing to extract."
@@ -68,9 +64,7 @@ EMPTY = ""
 # HTML image with attributes in non-standard order
 # Validates that the regex does not depend on src appearing first
 HTML_IMAGE_ALT_ATTRS = (
-    'Text before.\n'
-    '<img width="800" src=":/ff00aa1122334455" height="600" />\n'
-    'Text after.'
+    "Text before.\n" '<img width="800" src=":/ff00aa1122334455" height="600" />\n' "Text after."
 )
 
 
