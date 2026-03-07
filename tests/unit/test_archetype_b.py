@@ -114,12 +114,9 @@ Final short entry. Early night.
 LONG_ENTRY_BODY = (
     "## 2019-03-15\n\n"
     "### Score\n7\n\n"
-    "### What did I do well\n"
-    + "Had a really productive day. " * 40 + "\n\n"
-    "### Improvements\n"
-    + "Should have taken more breaks. " * 40 + "\n\n"
-    "### Gratitude\n"
-    + "Grateful for many things today. " * 40
+    "### What did I do well\n" + "Had a really productive day. " * 40 + "\n\n"
+    "### Improvements\n" + "Should have taken more breaks. " * 40 + "\n\n"
+    "### Gratitude\n" + "Grateful for many things today. " * 40
 )
 
 # Note with no date stamps — should fall back to single whole-note chunk
