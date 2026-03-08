@@ -448,6 +448,66 @@ class SupabaseClient:
         _extract_data(resp)  # surface errors, ignore returned rows
 
     # ------------------------------------------------------------------
+    # Chunk Operations
+    # ------------------------------------------------------------------
+    def delete_chunks_for_note(self, note_id: str) -> None:
+        """
+        Delete all existing chunks for a note before re-inserting.
+
+        Called by the orchestrator before upsert_chunks() to ensure
+        stale chunks from a previous ingest are cleared. This is safe
+        because the database is an index, never an archive — chunks
+        are always regenerated from the source note body.
+
+        Dry-run: no-op.
+        """
+        if self.dry_run:
+            return
+
+        client = self._require_client()
+        resp = client.table("chunks").delete().eq("note_id", note_id).execute()
+        _extract_data(resp)  # surface errors, ignore returned rows
+
+    def upsert_chunks(self, note_id: str, chunks: List[Any]) -> None:
+        """
+        Insert chunk records for a note into the chunks table.
+
+        Called by the orchestrator after chunking a note. Chunks are
+        always re-inserted fresh after delete_chunks_for_note() clears
+        any stale records.
+
+        Each Chunk object is mapped to a row in the chunks table schema:
+            note_id, chunk_index, chunk_text, char_start, char_end,
+            section_title, entry_timestamp, resource_ids
+
+        Embeddings are not generated here — chunk-level embeddings are
+        deferred to milestone 8.9.7 (Retrieval API).
+
+        Dry-run: no-op.
+        """
+        if self.dry_run or not chunks:
+            return
+
+        client = self._require_client()
+
+        payload = [
+            {
+                "note_id": note_id,
+                "chunk_index": chunk.chunk_index,
+                "chunk_text": chunk.chunk_text,
+                "char_start": chunk.char_start,
+                "char_end": chunk.char_end,
+                "section_title": chunk.section_title,
+                "entry_timestamp": chunk.entry_timestamp,
+                "resource_ids": chunk.resource_ids,
+            }
+            for chunk in chunks
+        ]
+
+        resp = client.table("chunks").insert(payload).execute()
+        _extract_data(resp)  # surface errors, ignore returned rows
+
+    # ------------------------------------------------------------------
     # Direct Note Upsert (legacy helper)
     # ------------------------------------------------------------------
     def upsert_note(self, payload: dict) -> NoteRecord:

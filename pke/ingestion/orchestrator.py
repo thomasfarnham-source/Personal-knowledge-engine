@@ -352,6 +352,26 @@ def ingest_notes(
                 report.notes_inserted += 1
 
             # --------------------------------------------------------
+            # CHUNKING — notes above threshold only
+            # --------------------------------------------------------
+            # Chunk the note body and write chunks to the chunks table.
+            # delete_chunks_for_note() clears any stale chunks from a
+            # previous ingest before fresh chunks are inserted.
+            # Notes below threshold (default 1000 chars) are not chunked —
+            # their note-level embedding is sufficient for retrieval.
+            # Chunk-level embeddings deferred to milestone 8.9.7.
+            from pke.chunking.chunker import chunk_note
+            chunks = chunk_note(
+                body=note["body"],
+                created_at=note.get("created_at", ""),
+                title=note.get("title", ""),
+                notebook=note.get("notebook", ""),
+            )
+            if chunks:
+                client.delete_chunks_for_note(note["id"])
+                client.upsert_chunks(note["id"], chunks)
+
+            # --------------------------------------------------------
             # PER‑NOTE RELATIONSHIP UPSERT (required by E2E call ordering)
             # --------------------------------------------------------
             tag_ids = note_tag_map.get(note["id"], [])
