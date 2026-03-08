@@ -361,6 +361,7 @@ def ingest_notes(
             # their note-level embedding is sufficient for retrieval.
             # Chunk-level embeddings deferred to milestone 8.9.7.
             from pke.chunking.chunker import chunk_note
+
             chunks = chunk_note(
                 body=note["body"],
                 created_at=note.get("created_at", ""),
