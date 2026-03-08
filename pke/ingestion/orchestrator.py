@@ -20,10 +20,37 @@ The orchestrator does *not* perform:
     • schema evolution or versioning (handled at the database layer)
 """
 
+import logging
+import sys
+from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence
-
 from pke.ingestion.tag_resolution import extract_all_tags, map_note_tags_to_ids
 from pke.supabase_client import SupabaseClient
+
+
+# ----------------------------------------------------------------------------
+# LOGGING — console + rotating file handler
+# ----------------------------------------------------------------------------
+def _get_logger() -> logging.Logger:
+    logger = logging.getLogger("pke.orchestrator")
+    if logger.handlers:
+        return logger  # already configured
+
+    logger.setLevel(logging.INFO)
+
+    # Console handler
+    console = logging.StreamHandler(sys.stdout)
+    console.setFormatter(logging.Formatter("%(message)s"))
+    logger.addHandler(console)
+
+    # File handler
+    log_path = Path("logs/ingest.log")
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(log_path, encoding="utf-8")
+    file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+    logger.addHandler(file_handler)
+
+    return logger
 
 
 # ============================================================================
@@ -112,6 +139,9 @@ def ingest_notes(
     """
 
     report = IngestionReport()
+
+    logger = _get_logger()
+    total = len(parsed_notes) if hasattr(parsed_notes, "__len__") else "?"
 
     # ------------------------------------------------------------
     # DRY‑RUN MODE — FULL PIPELINE SIMULATION WITHOUT I/O
@@ -270,6 +300,9 @@ def ingest_notes(
     for note in parsed_notes:
         report.notes_processed += 1
 
+        if report.notes_processed % 50 == 0:
+            logger.info(f"Processed {report.notes_processed}/{total} notes...")
+
         try:
             # --------------------------------------------------------
             # Skip empty‑body notes (contract: never upserted)
@@ -278,7 +311,7 @@ def ingest_notes(
                 report.notes_skipped += 1
                 continue
 
-            # --------------------------------------------------------
+            # ----------------------------------+----------------------
             # Resolve notebook_id via the upserted mapping
             # --------------------------------------------------------
             # IMPORTANT:
@@ -319,6 +352,27 @@ def ingest_notes(
                 report.notes_inserted += 1
 
             # --------------------------------------------------------
+            # CHUNKING — notes above threshold only
+            # --------------------------------------------------------
+            # Chunk the note body and write chunks to the chunks table.
+            # delete_chunks_for_note() clears any stale chunks from a
+            # previous ingest before fresh chunks are inserted.
+            # Notes below threshold (default 1000 chars) are not chunked —
+            # their note-level embedding is sufficient for retrieval.
+            # Chunk-level embeddings deferred to milestone 8.9.7.
+            from pke.chunking.chunker import chunk_note
+
+            chunks = chunk_note(
+                body=note["body"],
+                created_at=note.get("created_at", ""),
+                title=note.get("title", ""),
+                notebook=note.get("notebook", ""),
+            )
+            if chunks:
+                client.delete_chunks_for_note(note["id"])
+                client.upsert_chunks(note["id"], chunks)
+
+            # --------------------------------------------------------
             # PER‑NOTE RELATIONSHIP UPSERT (required by E2E call ordering)
             # --------------------------------------------------------
             tag_ids = note_tag_map.get(note["id"], [])
@@ -332,6 +386,14 @@ def ingest_notes(
     # ------------------------------------------------------------
     # SUMMARY — RETURN STRUCTURED PIPELINE METRICS
     # ------------------------------------------------------------
+    logger.info(
+        f"Ingestion complete — "
+        f"{report.notes_inserted} inserted, "
+        f"{report.notes_updated} updated, "
+        f"{report.notes_skipped} skipped, "
+        f"{len(report.failures)} failures."
+    )
+
     summary = report.to_summary_dict()
     summary["failures"] = report.failures
     return summary

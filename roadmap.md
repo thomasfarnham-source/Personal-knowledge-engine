@@ -135,7 +135,7 @@ significantly better retrieval quality.
 
 ## Note Archetypes Identified
 
-Analysis of the Joplin corpus revealed three distinct archetypes
+Analysis of the Joplin corpus revealed four distinct archetypes
 that the chunker must handle:
 
 **Archetype A — Fragmented journal**
@@ -161,6 +161,43 @@ that the chunker must handle:
 - Chunking: treat undated opening section as its own chunk,
   split dated log on date stamps, preserve embedded sub-tables
 
+**Archetype D — Travel journal**
+- Single note per multi-day trip, 10+ pages, written in real time
+- Day markers in multiple formats: Day N, Day N Title, standalone
+  day names, day names embedded in prose, narrative transitions
+- Images interspersed inline in two formats (Markdown and HTML)
+- Audio resource links also present
+- Broken image placeholders in multiple formats — strip silently:
+  {picture)  (Picture)  (picture)  image
+- Pre-trip planning block treated as its own reference chunk
+- Chunking: flexible day marker detection as primary split,
+  paragraph boundaries as fallback
+- Timestamp strategy (three tiers):
+    Explicit date in text → stored directly as entry_timestamp
+    Day name / Day N marker → calculated from note created_at
+    plus day offset, stored as "calculated: YYYY-MM-DD"
+    No marker detectable → entry_timestamp null
+- Resource IDs (images, audio) stored in chunks.resource_ids,
+  stripped from chunk text
+- note_type: travel flag stored in chunk metadata for post-hoc
+  retrieval quality analysis
+
+**Archetype E — Oral history / conversation notes**
+- Sparse text serving as an outline or index to a conversation
+- Audio resource links as primary content (not supplementary)
+- Photos of people or historical documents as supporting evidence
+- Audio filenames carry precise timestamps (e.g. 20150621 00:15:50)
+  — the most reliable timestamp signal in the entire corpus
+- Fragmentary sentences — memory triggers, not complete thoughts
+- Single conversation or session per note
+- Chunking: embed whole note if below threshold; chunk on audio
+  file boundaries if above threshold
+- Timestamp: extracted from audio filename, stored directly as
+  entry_timestamp (format: YYYY-MM-DD HH:MM:SS)
+- Audio resources flagged distinctly in metadata as resource_type: audio
+- Future: Whisper transcription makes spoken content fully retrievable
+  and semantically indexed (see milestone 9.x Audio Transcription)
+
 ---
 
 ## Content Channels (Current and Planned)
@@ -172,6 +209,7 @@ that the chunker must handle:
 | iMessage threads | 🔵 Planned  | Specific contacts or groups                 |
 | Yahoo Mail       | 🔵 Planned  | Select senders                              |
 | Others (TBD)     | 🔵 Open     | Calendar, bookmarks, documents              |
+| Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser          |
 
 ### Obsidian
 - Source: local vault Markdown files
@@ -230,13 +268,22 @@ Key decisions:
 **Status: PLANNED**
 
 Archetype-aware chunking for notes above a length threshold.
-Populate the chunks table. Handle all three archetypes correctly.
+Populate the chunks table. Handle all four archetypes correctly.
 
 Key decisions:
-- Primary split: date stamps (regex tolerates typo variants)
-- Secondary split: template section headers (Archetype B)
+- Primary split: date stamps (Archetypes A, B, C) and flexible
+  day marker detection (Archetype D)
+- Secondary split: template section headers (Archetype B),
+  image boundaries (Archetype D)
 - Undated opening sections treated as reference chunks (Archetype C)
-- Embedded sub-tables kept intact
+- Pre-trip planning blocks treated as reference chunks (Archetype D)
+- Embedded sub-tables kept intact (Archetype C)
+- Resource IDs (images, audio) extracted into resource_ids array,
+  stripped from chunk text (Archetype D)
+- Broken image placeholders stripped silently (Archetype D)
+- Timestamp strategy: explicit dates direct, day markers calculated
+  from created_at with "calculated: " prefix (Archetype D)
+- note_type: travel flag in metadata for travel chunks
 - Minimum chunk: ~100 tokens; merge short entries with neighbors
 - Maximum chunk: ~500 tokens; split on paragraph boundaries
   with 1-2 sentence overlap
@@ -260,11 +307,21 @@ the Obsidian insight panel.
 Key decisions:
 - Endpoint: POST /query
 - Input: query text, optional filters (notebook, date range, source)
-- Returns: ranked chunks with note title, notebook, date, matched
-  text, similarity score, char offsets, surrounding context
+- Returns per result:
+    note_id          for Obsidian deep link construction
+    note_title       human-readable label
+    notebook         for context and filtering
+    matched_text     relevant passage (raw, never summarized)
+    similarity_score for ranking
+    char_start       exact position in source note
+    char_end         exact position in source note
+    entry_timestamp  date of entry (explicit or calculated)
+    resource_ids     associated images/audio resource IDs
+    resource_types   type flags per resource (image, audio)
+- Design principle: the insight panel is never a dead end —
+  every result must carry enough information for the plugin
+  to link back to the exact location in the source note
 - Hybrid retrieval: chunk-level where chunks exist, whole-note fallback
-- Response format designed for insight panel: enough context to render
-  a meaningful passage, not just a similarity score
 - Supabase vector search via pgvector
 
 ---
@@ -281,6 +338,11 @@ Key decisions:
 - Renders top 3-5 results in a side panel
 - Each result: date, note title, relevant passage (raw text)
 - No AI-generated summaries — raw content only, user draws conclusions
+- The insight panel is never a dead end:
+    Click note title → opens source note in Obsidian
+    Click passage → opens source note at exact paragraph
+    Audio chunks → inline play button for original recording
+    Image chunks → opens note at photo location
 - Results optionally appendable to current entry as dated annotation
 - Built with Obsidian plugin API (TypeScript)
 - Requires PKE retrieval API (8.9.7) running locally or hosted
@@ -314,19 +376,90 @@ Notes:
 
 ---
 
-### 🔵 9.x — Obsidian Parser
+### 🔵 9.x — Audio Transcription and Playback
+**Status: FUTURE — HIGH VALUE**
+
+Transcribe audio recordings from oral history and conversation notes
+using OpenAI Whisper. Surface original recordings as playable audio
+in the Obsidian insight panel during writing.
+
+Why this matters:
+    The corpus contains recorded family history conversations —
+    a parent's voice telling stories about ancestors, relatives,
+    and events that exist nowhere else. These recordings are currently
+    invisible to retrieval. Transcription makes them fully searchable.
+    Playback makes them emotionally present during the act of writing.
+
+The experience:
+    You write about your Irish heritage. The insight panel surfaces
+    a passage from a 2015 family history note. Beside the text,
+    a play button. You press it. Your mother's voice fills the room.
+
+Dependency chain:
+    1. Audio files accessible from Supabase Storage or local path
+    2. Whisper API transcription → stored as chunk text
+    3. Retrieval API returns audio resource URLs alongside chunks
+    4. Obsidian insight panel renders inline audio player
+
+Key decisions (deferred to milestone design):
+    - Whisper API vs local Whisper model
+    - Audio file storage: local resources folder vs Supabase Storage
+    - Transcription chunking: per-recording or by silence detection
+    - Speaker identification: single speaker assumed for now
+    - Language: English primary, Irish names handled gracefully
+
+---
+
+### 🔵 9.x — Obsidian Parser + Migration
 **Status: PLANNED**
 
-Add Obsidian vault as ingestion source alongside Joplin.
-Eventually becomes primary source as writing migrates.
+Add Obsidian vault as ingestion source. Migrate historical Joplin
+corpus into Obsidian. Retire Joplin as active writing surface.
 
-Key decisions:
+#### Parser
 - New parser: pke/parsers/obsidian_parser.py
 - Source: local Obsidian vault directory (Markdown files)
 - Frontmatter support: YAML frontmatter natively supported
 - Tags extracted from both inline (#tag) and frontmatter
 - Backlinks extractable as relationships
-- ParsedNote contract unchanged
+- ParsedNote contract unchanged — pipeline is source-agnostic
+
+#### Migration Strategy (Joplin → Obsidian)
+The migration follows a strict sequence with a validation gate:
+
+Phase 1 — Build the Obsidian parser first
+    Continue using Joplin pipeline as-is during development.
+    New notes can be written in Obsidian immediately.
+    Both sources can be ingested in parallel during transition.
+
+Phase 2 — Migrate Joplin corpus into Obsidian vault
+    Use Joplin's built-in Markdown export or Obsidian export plugin.
+    Handles attachments and internal links.
+    Validation gate: compare note count, check resource files,
+    spot-check content against original Joplin source.
+    Do NOT proceed until validation passes.
+
+Phase 3 — Re-ingest from Obsidian
+    Point pipeline at Obsidian vault. Full re-ingest.
+    Validate: note count and embedding count match previous baseline.
+    Retire Joplin as active source once confirmed.
+
+Phase 4 — Restructure notes gradually (ongoing)
+    Restructure notes opportunistically in Obsidian over time.
+    Each restructure → re-ingest → improved retrieval quality.
+    This is a quality lever, not a prerequisite.
+
+#### The Joplin Parser Is Not Throwaway
+The Joplin sync-folder parser is the first implementation of a
+pluggable parser architecture that will support many sources.
+It remains in the codebase as a maintained, reusable parser —
+valuable to any Joplin user who wants to build a similar system.
+The pattern established here (parse → ParsedNote contract →
+ingest) is the same pattern for every future parser.
+
+Plain text files are always the source of truth.
+The database is an index, never an archive.
+Re-ingestion from source files is always possible.
 
 ---
 
@@ -346,9 +479,129 @@ Source format (IMAP vs MBOX) TBD.
 
 ---
 
+## Long Term Vision
+
+*"Today's recordings become tomorrow's memories."*
+
+The PKE retrieval API is intentionally interface-agnostic. The
+intelligence layer — semantic chunking, vector retrieval, deep
+links back to source — does not change regardless of how it is
+presented. Every interface below connects to the same engine.
+
+### Virtual Reality — The Memory Room
+
+A spatially organized environment where personal history has
+physical presence. Not a flat list of notes but a room, or series
+of rooms, where memories are arranged architecturally.
+
+The walls are a timeline. Walk toward a section and entries from
+that period materialize. Ireland trips cluster near a window.
+Medical notes occupy a quieter corner. Family history recordings
+emanate from an old chair by a fireplace — your mother's voice
+anchored to a photograph of Dr. Thomas Rearden on the wall.
+
+Speak a thought and the room rearranges around it semantically.
+Passages float toward you connected by threads of light showing
+how themes evolved across years.
+
+The VR layer is a spatial rendering of what the insight panel
+already does. The retrieval engine underneath is identical.
+
+Platform: Meta Quest or Apple Vision Pro. A Unity or Unreal
+application connecting to the PKE retrieval API over a local
+network. Meta's acquisition of Limitless AI in December 2025
+signals that Meta is actively building toward this vision —
+their Ray-Ban Meta and Oakley Meta glasses are early expressions
+of the same direction. Worth watching for API or platform
+opportunities as Meta's AR ecosystem matures.
+
+### Augmented Reality — The Contextual Layer
+
+More powerful than VR in some ways because it is ambient rather
+than immersive. Memories come to you in the world you already
+inhabit.
+
+Possible triggers:
+    Location — GPS coordinates matching places in notes surface
+    relevant entries as you physically stand in that place
+    Face recognition — people you have written about
+    Object recognition — old photographs, artifacts, places
+    Voice — speak a thought and it queries the repository
+    Time — "on this day" surfacing entries from the same date
+    in previous years
+
+The experience: you are sitting with Killian doing homework.
+The glasses recognize the moment and surface a passage from
+three years ago — a quiet overlay at the edge of your vision,
+not an interruption.
+
+You pick up an old photograph. The glasses recognize Dr. John B.
+Rearden. Your mother's voice begins to play — the recording from
+June 2015 where she told you his story.
+
+The hardware does not fully exist yet at the quality this vision
+requires. Apple Vision Pro is too heavy for all-day wear. But
+the trajectory is clear. Lightweight AR glasses with sufficient
+processing power are coming within 5-10 years. What you are
+building now — the pipeline, the retrieval API, the semantic
+chunking, the deep links — is the intelligence layer that any
+future interface can connect to. The interface changes.
+The knowledge base persists.
+
 ## Future Concepts (Conceptual Horizon)
 
 Named now so no near-term decision closes them off accidentally.
+
+**Voice Memory**
+The oral history recordings in the corpus — family stories told in
+a parent's voice — are among the most irreplaceable content in the
+system. Once transcribed via Whisper, these recordings become fully
+retrievable by semantic content. The Obsidian insight panel can
+surface them with an inline audio player, making it possible to
+hear the original voice while writing about the same themes years
+later. This is one of the most emotionally resonant capabilities
+the system could have. See milestone 9.x Audio Transcription.
+
+**Handwritten Journal Digitization**
+The corpus currently begins with digital notes, but decades of handwritten
+Moleskine journals predate it — 20-30 years of personal history that exists
+nowhere in the system. Digitizing these journals would dramatically extend
+the temporal depth of the knowledge base.
+
+The workflow is now technically feasible:
+    1. Photograph each page with a phone camera
+    2. Pass images through a vision model (GPT-4 Vision or similar)
+       for handwriting transcription — far more accurate than
+       traditional OCR for casual handwriting
+    3. Run transcribed text through the PKE parser pipeline
+    4. Date inference via date_parser.py — the same logic already
+       built for handling informal date formats in typed notes
+    5. Ingest as a new content channel with its own parser:
+       pke/parsers/handwritten_journal_parser.py
+
+Key challenges:
+    - Handwriting quality and ink aging vary across decades
+    - Page photos require consistent lighting and angle for best results
+    - Dates may be absent or implicit — requires contextual inference
+    - Physical journals are the archive — digital version is an index,
+      not a replacement
+
+The service opportunity:
+    If an efficient personal workflow is established, every component
+    is reusable — the capture process, vision transcription pipeline,
+    date inference, and PKE ingestion. Others face the same problem.
+    A handwritten journal digitization service built on top of PKE
+    infrastructure is a natural extension.
+
+What to preserve:
+    The physical journals have texture that digital cannot capture —
+    handwriting changes over time, crossed-out words, margin notes,
+    the emotional weight of the ink. The digital version is an index
+    into the physical object, not a replacement for it.
+
+Dependency: none — can be prototyped independently of other milestones.
+First step: experiment with a single Moleskine page through GPT-4 Vision
+to assess transcription quality before committing to a workflow.
 
 **Insight Listener**
 Real-time monitoring of new notes to surface relevant insights as
