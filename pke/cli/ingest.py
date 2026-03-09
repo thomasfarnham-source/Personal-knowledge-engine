@@ -126,7 +126,7 @@ def run_ingest(
         notes = notes[:limit]
 
     # ----------------------------------------------------------------------
-    # ⭐ 3. Instantiate the correct Supabase client
+    # 3. Instantiate the correct Supabase client
     #
     # The CLI is responsible for dependency creation.
     # The orchestrator receives the client and uses it.
@@ -175,7 +175,7 @@ def run_ingest(
         client = SupabaseClient(sdk_client, embedding_client=embedding_client)
 
     # ----------------------------------------------------------------------
-    # ⭐ 4. Delegate to orchestrator with correct signature
+    # 4. Delegate to orchestrator with correct signature
     # ----------------------------------------------------------------------
     summary = ingest_notes(
         parsed_notes=notes,
@@ -191,3 +191,7 @@ def run_ingest(
         print(f"{key}: {value}")
 
     return summary
+
+
+if __name__ == "__main__":
+    ingest_app()

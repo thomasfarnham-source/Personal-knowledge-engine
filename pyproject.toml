@@ -37,6 +37,9 @@ dependencies = [  # Runtime dependencies installed with your package
      "typer[all]",
      "python-dotenv",
      "openai",
+     "fastapi",
+    "uvicorn",
+    "tiktoken",
     # Add any other runtime dependencies here
 ]
 

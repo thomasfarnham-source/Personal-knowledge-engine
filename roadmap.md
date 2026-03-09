@@ -1,5 +1,7 @@
 # Personal Knowledge Engine — Product Roadmap
 
+Last updated: 2026-03-08 21:48 EST
+
 This document captures the strategic vision, milestone sequence, and
 per-milestone design notes for the PKE project. It is persistent across
 sessions and should be updated whenever direction changes.
@@ -135,7 +137,7 @@ significantly better retrieval quality.
 
 ## Note Archetypes Identified
 
-Analysis of the Joplin corpus revealed four distinct archetypes
+Analysis of the Joplin corpus revealed five distinct archetypes
 that the chunker must handle:
 
 **Archetype A — Fragmented journal**
@@ -202,14 +204,14 @@ that the chunker must handle:
 
 ## Content Channels (Current and Planned)
 
-| Channel          | Status      | Notes                                       |
-|------------------|-------------|---------------------------------------------|
-| Joplin notes     | ✅ Complete  | Sync-folder parser, canonical Stage 1       |
-| Obsidian notes   | 🔵 Planned  | Future primary writing surface              |
-| iMessage threads | 🔵 Planned  | Specific contacts or groups                 |
-| Yahoo Mail       | 🔵 Planned  | Select senders                              |
-| Others (TBD)     | 🔵 Open     | Calendar, bookmarks, documents              |
-| Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser          |
+| Channel              | Status      | Notes                                   |
+|----------------------|-------------|------------------------------------------|
+| Joplin notes         | ✅ Complete  | Sync-folder parser, canonical Stage 1   |
+| Obsidian notes       | 🔵 Planned  | Future primary writing surface          |
+| iMessage threads     | 🔵 Planned  | Specific contacts or groups             |
+| Yahoo Mail           | 🔵 Planned  | Select senders                          |
+| Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser       |
+| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents          |
 
 ### Obsidian
 - Source: local vault Markdown files
@@ -247,16 +249,16 @@ Result: 1489 notes, 16 notebooks, 57 tags, 212 relationships.
 
 ---
 
-### 🔄 8.9.5 — Real Embeddings + Chunk Schema Foundation
-**Status: IN PROGRESS**
+### ✅ 8.9.5 — Real Embeddings + Chunk Schema Foundation
+**Status: COMPLETE (2026-03-06)**
 
-Replace placeholder embeddings with real OpenAI embeddings. Add empty
+Replaced placeholder embeddings with real OpenAI embeddings. Added empty
 chunks table to Supabase as schema foundation for 8.9.6.
 
 Key decisions:
 - Provider: OpenAI text-embedding-3-small (1536 dimensions)
 - New EmbeddingClient: pke/embedding/openai_client.py
-- Re-ingest all 1489 notes in place (idempotent upsert)
+- Re-ingested all 1489 notes in place (idempotent upsert)
 - chunks table created via migration script; not populated
 - chunks table schema includes section_title and entry_timestamp
   fields in anticipation of 8.9.6
@@ -264,65 +266,58 @@ Key decisions:
 
 ---
 
-### 🔵 8.9.6 — Chunking for Long Notes
-**Status: PLANNED**
+### ✅ 8.9.6 — Chunking for Long Notes
+**Status: COMPLETE (2026-03-07)**
 
 Archetype-aware chunking for notes above a length threshold.
-Populate the chunks table. Handle all four archetypes correctly.
+All five archetypes implemented. Chunks table populated via orchestrator.
 
 Key decisions:
-- Primary split: date stamps (Archetypes A, B, C) and flexible
-  day marker detection (Archetype D)
-- Secondary split: template section headers (Archetype B),
-  image boundaries (Archetype D)
-- Undated opening sections treated as reference chunks (Archetype C)
-- Pre-trip planning blocks treated as reference chunks (Archetype D)
-- Embedded sub-tables kept intact (Archetype C)
-- Resource IDs (images, audio) extracted into resource_ids array,
-  stripped from chunk text (Archetype D)
-- Broken image placeholders stripped silently (Archetype D)
-- Timestamp strategy: explicit dates direct, day markers calculated
-  from created_at with "calculated: " prefix (Archetype D)
-- note_type: travel flag in metadata for travel chunks
-- Minimum chunk: ~100 tokens; merge short entries with neighbors
-- Maximum chunk: ~500 tokens; split on paragraph boundaries
-  with 1-2 sentence overlap
-- Chunking module: pke/chunking/chunker.py
-- Applied selectively: notes above ~1000 characters only
-
-Pre-work recommended before implementation:
-- Re-read and lightly restructure 10-15 most important notes
-- Add Current State headers to reference notes
-- Normalize date formats in key journal notes
-- These notes become primary test cases for the chunker
+- Five archetypes implemented: A (Fragmented Journal), B (Structured
+  Journal), C (Reference/Medical Log), D (Travel Journal),
+  E (Oral History)
+- Chunk dataclass extracted into chunk.py to resolve circular import
+- Resource extraction centralized in resource_extractor.py — shared
+  by Archetype D and E, reusable by future parsers
+- Re-ingest strategy: delete and replace (safe — database is an index)
+- Chunk-level embeddings deferred to 8.9.7
+- Chunker wired into orchestrator after each note upsert
+- 322 tests passing across chunking module
 
 ---
 
-### 🔵 8.9.7 — Retrieval API
-**Status: PLANNED**
+### ✅ 8.9.7 — Retrieval API
+**Status: COMPLETE (2026-03-08)**
 
-FastAPI retrieval endpoint. The engine that powers both search and
-the Obsidian insight panel.
+FastAPI retrieval endpoint. Chunk-level embeddings generated and
+backfilled. Hybrid retrieval working. Smoke test confirmed against
+live corpus.
 
 Key decisions:
-- Endpoint: POST /query
-- Input: query text, optional filters (notebook, date range, source)
-- Returns per result:
-    note_id          for Obsidian deep link construction
-    note_title       human-readable label
-    notebook         for context and filtering
-    matched_text     relevant passage (raw, never summarized)
-    similarity_score for ranking
-    char_start       exact position in source note
-    char_end         exact position in source note
-    entry_timestamp  date of entry (explicit or calculated)
-    resource_ids     associated images/audio resource IDs
-    resource_types   type flags per resource (image, audio)
-- Design principle: the insight panel is never a dead end —
-  every result must carry enough information for the plugin
-  to link back to the exact location in the source note
-- Hybrid retrieval: chunk-level where chunks exist, whole-note fallback
-- Supabase vector search via pgvector
+- tiktoken used for token-accurate truncation — character-based
+  truncation unreliable for corpus with markdown, Irish text,
+  and special characters
+- Hybrid retrieval: chunk-level search primary, note-level fallback
+  for notes with no chunks (match_notes uses NOT EXISTS subquery
+  to prevent overlap with chunk results)
+- Scoring hook (_score) isolated in retriever for future signals
+  (recency, archetype weighting, timestamp confidence)
+- Dependencies wired once at FastAPI startup — not per-request
+- Deep link infrastructure complete — note_id, chunk_index,
+  char_start, resource_ids all returned per result
+- tiktoken added to pyproject.toml as formal dependency
+
+Results at completion:
+- 1489 notes with real OpenAI embeddings, 0 failures
+- 866 chunks with real OpenAI embeddings
+- Smoke test: POST /query "Ireland family history" → 3 chunk-level
+  results, similarity scores 0.435–0.482, resource_ids and
+  entry_timestamp correctly returned
+
+Deferred to next session:
+- tests/unit/test_retriever.py
+- tests/test_retrieval_api.py
+- tests/unit/test_embed_chunks.py
 
 ---
 
@@ -660,3 +655,8 @@ Exponential backoff for transient API failures. Deferred post-MVP.
 Obsidian paid sync vs iCloud vs git-based sync. Decision needed
 before Obsidian becomes primary writing tool. Affects where the
 vault lives and how the parser accesses it.
+
+**Test folder reorganization**
+Flat tests/ root contains older test files alongside the unit/
+and integration/ subfolders. Consolidation into subfolders deferred
+until ingestion and parser tests grow enough to warrant it.
