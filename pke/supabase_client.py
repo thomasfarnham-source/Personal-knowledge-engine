@@ -507,6 +507,110 @@ class SupabaseClient:
         resp = client.table("chunks").insert(payload).execute()
         _extract_data(resp)  # surface errors, ignore returned rows
 
+    def fetch_unembedded_chunks(self, batch_size: int = 100) -> List[Dict[str, Any]]:
+        """
+        Fetch chunks where embedding IS NULL, in batches.
+
+        Returns a list of {id, chunk_text} dicts.
+        Used by the embed_chunks CLI to backfill chunk embeddings.
+        Safe to call repeatedly — each call returns the next batch
+        of unembedded chunks until none remain.
+
+        Dry-run: returns empty list.
+        """
+        if self.dry_run:
+            return []
+
+        client = self._require_client()
+        resp = (
+            client.table("chunks")
+            .select("id, chunk_text")
+            .is_("embedding", "null")
+            .limit(batch_size)
+            .execute()
+        )
+        return _extract_data(resp)
+
+    def update_chunk_embedding(self, chunk_id: str, embedding: List[float]) -> None:
+        """
+        Write a generated embedding back to a chunk row.
+
+        Called by the embed_chunks CLI after generating each embedding.
+        Idempotent — safe to call multiple times on the same chunk.
+
+        Dry-run: no-op.
+        """
+        if self.dry_run:
+            return
+
+        client = self._require_client()
+        resp = client.table("chunks").update({"embedding": embedding}).eq("id", chunk_id).execute()
+        _extract_data(resp)
+
+    def match_chunks(
+        self,
+        query_embedding: List[float],
+        match_count: int,
+        filter_notebook: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Call match_chunks RPC — pgvector cosine similarity search on
+        the chunks table.
+
+        Returns rows ordered by similarity descending. Only returns
+        chunks where embedding IS NOT NULL.
+
+        Called by pke/retrieval/retriever.py on every query request.
+
+        Dry-run: returns empty list.
+        """
+        if self.dry_run:
+            return []
+
+        client = self._require_client()
+        resp = client.rpc(
+            "match_chunks",
+            {
+                "query_embedding": query_embedding,
+                "match_count": match_count,
+                "filter_notebook": filter_notebook,
+            },
+        ).execute()
+        return _extract_data(resp)
+
+    def match_notes(
+        self,
+        query_embedding: List[float],
+        match_count: int,
+        filter_notebook: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Call match_notes RPC — pgvector cosine similarity search on
+        the notes table.
+
+        Only returns notes that have NO chunk-level embeddings.
+        This is the hybrid retrieval fallback — ensures chunk results
+        and note-level results never overlap.
+
+        Called by pke/retrieval/retriever.py on every query request
+        after match_chunks.
+
+        Dry-run: returns empty list.
+        """
+        if self.dry_run:
+            return []
+
+        client = self._require_client()
+        resp = client.rpc(
+            "match_notes",
+            {
+                "query_embedding": query_embedding,
+                "match_count": match_count,
+                "filter_notebook": filter_notebook,
+            },
+        ).execute()
+        return _extract_data(resp)
+
     # ------------------------------------------------------------------
     # Direct Note Upsert (legacy helper)
     # ------------------------------------------------------------------

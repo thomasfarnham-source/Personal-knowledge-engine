@@ -11,6 +11,7 @@ embedding model.
 """
 
 import openai
+import tiktoken
 from pke.embedding.embedding_client import EmbeddingClient
 
 
@@ -49,11 +50,21 @@ class OpenAIEmbeddingClient(EmbeddingClient):
         # ⭐ 2. Generate embedding via OpenAI API
         #
         # WHY: Call the OpenAI embeddings endpoint to get the semantic vector
-        # representation of the input text. Returns exactly 1536 floats as
-        # required by the PKE embedding contract.
+        # representation of the input text. Truncates to 32000 characters
+        # (~8000 tokens) to stay within OpenAI's 8192 token limit.
+        # Note-level embeddings on long notes are fallback only — these notes
+        # are always retrieved via chunk embeddings anyway.
         # ----------------------------------------------------------------------
         try:
-            response = self.client.embeddings.create(model=self.model, input=text)
+            encoder = tiktoken.encoding_for_model("text-embedding-3-small")
+            tokens = encoder.encode(text)
+            if len(tokens) > 8191:
+                tokens = tokens[:8191]
+                text = encoder.decode(tokens)
+            response = self.client.embeddings.create(
+                model=self.model,
+                input=text,
+            )
             return response.data[0].embedding
         except Exception as e:
             raise OpenAIEmbeddingError(f"OpenAI embedding failed: {e}") from e

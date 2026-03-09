@@ -75,3 +75,6 @@ tests/manual/joplin_export_test/
 scripts/reset_ingestion_tables.sql
 # Diagnostic/read-only scripts are safe to commit if desired
 # scripts/inspect_schema.sql
+
+# Personal files - never commit
+vision.md
