@@ -76,7 +76,6 @@ TEST STRUCTURE
 import logging
 from unittest.mock import MagicMock, patch
 
-
 # ═══════════════════════════════════════════════════════════════════
 # CONSTANTS AND HELPERS
 # ═══════════════════════════════════════════════════════════════════
@@ -143,6 +142,7 @@ def make_clients(chunks_by_batch):
 # TEST CLASSES
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TestEmbedChunksCore:
     """
     Verify the fundamental fetch → generate → update pipeline.
@@ -170,10 +170,13 @@ class TestEmbedChunksCore:
         supabase.fetch_unembedded_chunks.return_value = []
         embedder = MagicMock()
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         embedder.generate.assert_not_called()
@@ -189,10 +192,13 @@ class TestEmbedChunksCore:
         chunks = [make_chunk(f"id-{i}") for i in range(3)]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert embedder.generate.call_count == 3
@@ -208,10 +214,13 @@ class TestEmbedChunksCore:
         chunks = [make_chunk("id-1", text="My specific chunk text")]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         embedder.generate.assert_called_with("My specific chunk text")
@@ -229,15 +238,16 @@ class TestEmbedChunksCore:
         chunks = [make_chunk("chunk-uuid-99")]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
-        supabase.update_chunk_embedding.assert_called_once_with(
-            "chunk-uuid-99", FAKE_EMBEDDING
-        )
+        supabase.update_chunk_embedding.assert_called_once_with("chunk-uuid-99", FAKE_EMBEDDING)
 
     def test_generate_called_before_update_for_each_chunk(self, monkeypatch):
         """
@@ -265,10 +275,13 @@ class TestEmbedChunksCore:
         embedder.generate.side_effect = track_generate
         supabase.update_chunk_embedding.side_effect = track_update
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert call_order == ["generate", "update"]
@@ -302,10 +315,13 @@ class TestBatching:
         supabase.fetch_unembedded_chunks.return_value = []
         embedder = MagicMock()
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         supabase.fetch_unembedded_chunks.assert_called_with(batch_size=100)
@@ -321,10 +337,13 @@ class TestBatching:
         batch2 = [make_chunk(f"b2-{i}") for i in range(2)]
         supabase, embedder = make_clients([batch1, batch2])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         # 3 from batch1 + 2 from batch2 = 5 total
@@ -345,10 +364,13 @@ class TestBatching:
         batch1 = [make_chunk("id-1")]
         supabase, embedder = make_clients([batch1])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert supabase.fetch_unembedded_chunks.call_count == 2
@@ -370,10 +392,13 @@ class TestBatching:
         chunks = [make_chunk("id-1"), make_chunk("id-2")]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert supabase.update_chunk_embedding.call_count == 2
@@ -409,11 +434,14 @@ class TestProgressLogging:
         supabase.fetch_unembedded_chunks.return_value = []
         embedder = MagicMock()
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase), \
-             caplog.at_level(logging.INFO, logger="pke.embed_chunks"):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+            caplog.at_level(logging.INFO, logger="pke.embed_chunks"),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert any("Starting" in r.message for r in caplog.records)
@@ -429,11 +457,14 @@ class TestProgressLogging:
         chunks = [make_chunk(f"id-{i}") for i in range(3)]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase), \
-             caplog.at_level(logging.INFO, logger="pke.embed_chunks"):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+            caplog.at_level(logging.INFO, logger="pke.embed_chunks"),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         assert any("3" in r.message and "Done" in r.message for r in caplog.records)
@@ -450,16 +481,18 @@ class TestProgressLogging:
         chunks = [make_chunk(f"id-{i}") for i in range(50)]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase), \
-             caplog.at_level(logging.INFO, logger="pke.embed_chunks"):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+            caplog.at_level(logging.INFO, logger="pke.embed_chunks"),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         progress_logs = [
-            r for r in caplog.records
-            if "Embedded" in r.message and "chunks" in r.message
+            r for r in caplog.records if "Embedded" in r.message and "chunks" in r.message
         ]
         assert len(progress_logs) == 1
         assert "50" in progress_logs[0].message
@@ -474,16 +507,18 @@ class TestProgressLogging:
         chunks = [make_chunk(f"id-{i}") for i in range(49)]
         supabase, embedder = make_clients([chunks])
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase), \
-             caplog.at_level(logging.INFO, logger="pke.embed_chunks"):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+            caplog.at_level(logging.INFO, logger="pke.embed_chunks"),
+        ):
             from pke.cli.embed_chunks import embed_chunks
+
             embed_chunks()
 
         progress_logs = [
-            r for r in caplog.records
-            if "Embedded" in r.message and "chunks" in r.message
+            r for r in caplog.records if "Embedded" in r.message and "chunks" in r.message
         ]
         assert len(progress_logs) == 0
 
@@ -520,11 +555,14 @@ class TestEnvironmentWiring:
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
 
-        with patch("pke.cli.embed_chunks.create_client"), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.create_client"),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             with patch("pke.cli.embed_chunks.OpenAIEmbeddingClient") as mock_cls:
                 mock_cls.return_value.generate.return_value = FAKE_EMBEDDING
                 from pke.cli.embed_chunks import embed_chunks
+
                 embed_chunks()
             mock_cls.assert_called_once_with(api_key="test-openai-key")
 
@@ -540,11 +578,14 @@ class TestEnvironmentWiring:
         embedder = MagicMock()
         embedder.generate.return_value = FAKE_EMBEDDING
 
-        with patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder), \
-             patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase):
+        with (
+            patch("pke.cli.embed_chunks.OpenAIEmbeddingClient", return_value=embedder),
+            patch("pke.cli.embed_chunks.SupabaseClient", return_value=supabase),
+        ):
             with patch("pke.cli.embed_chunks.create_client") as mock_create:
                 mock_create.return_value = MagicMock()
                 from pke.cli.embed_chunks import embed_chunks
+
                 embed_chunks()
             mock_create.assert_called_once_with(
                 "https://test.supabase.co",

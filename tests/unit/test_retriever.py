@@ -76,7 +76,6 @@ from unittest.mock import MagicMock
 
 from pke.retrieval.retriever import Retriever
 
-
 # ═══════════════════════════════════════════════════════════════════
 # CONSTANTS
 # ═══════════════════════════════════════════════════════════════════
@@ -94,6 +93,7 @@ FAKE_EMBEDDING = [0.1] * 1536
 # These factory functions create mock objects and test data with
 # sensible defaults. Tests override only the fields they care about.
 # This keeps test code concise and focused on what is being tested.
+
 
 def make_supabase_mock(chunk_rows=None, note_rows=None):
     """
@@ -204,6 +204,7 @@ def make_note_row(
 # ═══════════════════════════════════════════════════════════════════
 # TEST CLASSES
 # ═══════════════════════════════════════════════════════════════════
+
 
 class TestRetrieverConstruction:
     """
@@ -594,8 +595,7 @@ class TestRankingAndLimit:
         each source separately. This is what makes the hybrid
         strategy coherent — the best N results across both tables.
         """
-        chunk_rows = [make_chunk_row(note_id=f"c{i}", similarity=0.5 + i * 0.01)
-                      for i in range(8)]
+        chunk_rows = [make_chunk_row(note_id=f"c{i}", similarity=0.5 + i * 0.01) for i in range(8)]
         note_rows = [make_note_row(note_id=f"n{i}") for i in range(3)]
         supabase = make_supabase_mock(chunk_rows=chunk_rows, note_rows=note_rows)
         retriever = Retriever(
