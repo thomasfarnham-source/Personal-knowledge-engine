@@ -87,25 +87,25 @@ WHY WE DO NOT USE allow_origins=["*"]:
         http://127.0.0.1    — local development tools (numeric form)
 
 ═══════════════════════════════════════════════════════════════════
-WHY DEPENDENCIES ARE WIRED ONCE AT STARTUP
+WHY DEPENDENCIES ARE WIRED AT STARTUP NOT IMPORT TIME
 ═══════════════════════════════════════════════════════════════════
 
 The retriever, embedding client, and Supabase client are all
-constructed once when the server starts — not on every request.
+constructed inside the @app.on_event("startup") handler rather
+than at module level. This is important for two reasons:
 
-This matters because each client construction is expensive:
-    - SupabaseClient opens an HTTP connection to Supabase
-    - OpenAIEmbeddingClient initialises an API client
-    - Retriever holds references to both
+    1. Tests can import `app` without needing real credentials.
+       Module-level construction runs immediately on import —
+       if SUPABASE_URL is not set, the import fails. Moving
+       construction to startup means tests can import and patch
+       the retriever before the server starts.
 
-If we constructed these on every request, a busy server would
-open and close hundreds of connections per minute. Constructing
-once and reusing across requests keeps the server fast and the
-connection count low.
+    2. The startup event only fires when the server actually
+       runs — not during test collection or import.
 
-The tradeoff: if credentials change (e.g. a new API key), the
-server must be restarted to pick them up. This is acceptable
-for a local personal tool.
+The retriever is stored as a module-level variable so it can
+be imported by name in pke/api/routes/query.py:
+    from pke.api.main import retriever
 
 ═══════════════════════════════════════════════════════════════════
 RELATIONSHIP TO OTHER FILES
@@ -175,36 +175,52 @@ app.add_middleware(
 )
 
 # ------------------------------------------------------------------
-# Dependency wiring.
+# Module-level retriever reference.
 #
-# All clients are constructed once at startup and reused across
-# every request. See module docstring for rationale.
+# Initialised to None at import time — constructed in the startup
+# event below when the server actually runs. Stored here so it
+# can be imported by name in pke/api/routes/query.py without
+# triggering credential reads at import time.
+#
+# Tests patch this name directly:
+#     with patch("pke.api.main.retriever", mock_retriever):
+# ------------------------------------------------------------------
+retriever: Retriever | None = None
+
+
+# ------------------------------------------------------------------
+# Startup event — dependency wiring.
+#
+# Runs once when the server starts, not at import time.
+# This allows tests to import `app` without needing real
+# credentials in the environment.
 #
 # Construction order matters:
 #   1. Raw Supabase client  — needs SUPABASE_URL and SUPABASE_KEY
 #   2. Embedding client     — needs OPENAI_API_KEY
 #   3. SupabaseClient       — wraps raw client + embedding client
 #   4. Retriever            — wraps SupabaseClient + embedding client
-#
-# The retriever is the only object the route handler needs.
-# It is imported by name in pke/api/routes/query.py:
-#     from pke.api.main import retriever
 # ------------------------------------------------------------------
-_raw_client = create_client(
-    os.environ["SUPABASE_URL"],
-    os.environ["SUPABASE_KEY"],
-)
-_embedding_client = OpenAIEmbeddingClient(
-    api_key=os.environ["OPENAI_API_KEY"],
-)
-_supabase_client = SupabaseClient(
-    client=_raw_client,
-    embedding_client=_embedding_client,
-)
-retriever = Retriever(
-    supabase_client=_supabase_client,
-    embedding_client=_embedding_client,
-)
+@app.on_event("startup")
+async def startup() -> None:
+    global retriever
+
+    _raw_client = create_client(
+        os.environ["SUPABASE_URL"],
+        os.environ["SUPABASE_KEY"],
+    )
+    _embedding_client = OpenAIEmbeddingClient(
+        api_key=os.environ["OPENAI_API_KEY"],
+    )
+    _supabase_client = SupabaseClient(
+        client=_raw_client,
+        embedding_client=_embedding_client,
+    )
+    retriever = Retriever(
+        supabase_client=_supabase_client,
+        embedding_client=_embedding_client,
+    )
+
 
 # ------------------------------------------------------------------
 # Route registration.

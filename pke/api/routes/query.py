@@ -5,10 +5,10 @@ POST /query endpoint for the PKE retrieval API.
 
 Intentionally thin — all retrieval logic lives in
 pke/retrieval/retriever.py. This route only handles:
-    • request validation (delegated to Pydantic)
-    • calling the retriever
-    • wrapping the response
-    • surfacing errors as HTTP exceptions
+    - request validation (delegated to Pydantic)
+    - calling the retriever
+    - wrapping the response
+    - surfacing errors as HTTP exceptions
 """
 
 from fastapi import APIRouter, HTTPException
@@ -31,6 +31,11 @@ def query(request: QueryRequest) -> QueryResponse:
     """
     try:
         from pke.api.main import retriever
+
+        # retriever is None only if the server startup event has not
+        # fired — which should never happen in normal operation but
+        # can occur in misconfigured environments.
+        assert retriever is not None, "Retriever not initialised — server startup failed"
 
         results = retriever.query(
             query_text=request.query,
