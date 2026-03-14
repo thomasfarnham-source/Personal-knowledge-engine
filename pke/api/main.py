@@ -166,9 +166,9 @@ app = FastAPI(title="PKE Retrieval API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "app://obsidian.md",    # Obsidian desktop plugin origin
-        "http://localhost",     # local dev tools
-        "http://127.0.0.1",     # local dev tools (numeric form)
+        "app://obsidian.md",  # Obsidian desktop plugin origin
+        "http://localhost",  # local dev tools
+        "http://127.0.0.1",  # local dev tools (numeric form)
     ],
     allow_methods=["POST", "GET"],
     allow_headers=["Content-Type"],
@@ -212,4 +212,3 @@ retriever = Retriever(
 # Additional routers (future milestones) would be added here.
 # ------------------------------------------------------------------
 app.include_router(query_router)
-
