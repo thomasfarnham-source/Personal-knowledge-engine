@@ -1,6 +1,6 @@
 # Personal Knowledge Engine — Product Roadmap
 
-Last updated: 2026-03-08 21:48 EST
+Last updated: 2026-03-14
 
 This document captures the strategic vision, milestone sequence, and
 per-milestone design notes for the PKE project. It is persistent across
@@ -329,8 +329,9 @@ retrieval API. The primary consumer-facing expression of the system.
 
 Key decisions:
 - Plugin watches active note
-- After short debounce, sends current paragraph to POST /query
-- Renders top 3-5 results in a side panel
+- After short debounce, sends current paragraph + 2-3 preceding
+  paragraphs (capped ~500 tokens) to POST /query
+- Renders top 3-5 reflections in a side panel
 - Each result: date, note title, relevant passage (raw text)
 - No AI-generated summaries — raw content only, user draws conclusions
 - The insight panel is never a dead end:
@@ -338,9 +339,24 @@ Key decisions:
     Click passage → opens source note at exact paragraph
     Audio chunks → inline play button for original recording
     Image chunks → opens note at photo location
-- Results optionally appendable to current entry as dated annotation
+- Link feature (not append) — one-click inserts dated link at cursor
+- Relevance feedback UI hooks (thumbs up/down, dismiss) logged locally
 - Built with Obsidian plugin API (TypeScript)
 - Requires PKE retrieval API (8.9.7) running locally or hosted
+
+Settings UI exposed in human terms:
+- Refresh speed (Immediately / After a moment / Only when I stop)
+- Result count (3 / 5 / 7)
+- Notebook filter (All / current / multi-select)
+- Recency preference: "Do you prefer older reflections, more recent
+  ones, or both?"
+    → Favour older memories
+    → Favour recent entries
+    → No preference (recommended)
+  Maps to recency decay function in retriever._score(). Tilts the
+  scoring curve — does not create hard cutoffs. Applies uniformly
+  across all content types when multi-source is available (unified
+  timeline principle — see Cross-Cutting Concerns).
 
 Writing surface setup (same milestone):
 - Obsidian vault configured as primary writing tool
@@ -348,16 +364,72 @@ Writing surface setup (same milestone):
 - Journal, medical/reference, book/idea templates defined
 - Migration plan for Joplin notes into Obsidian vault
 
+**Commercial validation note:**
+The insight panel is the first moment the system becomes an experience
+rather than a pipeline. Living with it — writing and having your own
+history surface in real time — is the real validation gate for
+commercial potential. A few months of use will clarify whether this
+is something other people would pay for, and what they would actually
+be paying for. Capture surprise moments in the running log in VISION.md.
+
+**Post-launch improvement backlog (from first live session 2026-03-12):**
+
+Query scope control — three modes needed:
+    Auto      — current behaviour, last few paragraphs (default)
+    Paragraph — only the current paragraph
+    Selection — user highlights text and triggers a reflection
+                query from exactly that selection. Turns the panel
+                from ambient to intentional. Priority addition.
+
+HTML stripping — Joplin export artefacts visible in matched_text.
+    Some notes were stored with HTML markup that carried through
+    the parser into the database. Strip at parse time in the
+    chunker — the database should never contain raw HTML.
+
+Relevance ranking — raw cosine similarity not always immediately
+    meaningful to the user. Personal relevance scoring (8.9.9)
+    is the planned solution. Continue capturing specific cases
+    that feel off to build intuition for what signals are missing.
+
+Navigation / deep links — reflection panel links non-functional
+    until Joplin → Obsidian migration is complete (milestone 9.x).
+    Expected dependency, not a bug.
+
 ---
 
 ### 🔵 8.9.9 — Insight Generation
-**Status: PLANNED — design TBD**
+**Status: PLANNED — north star defined, design TBD**
 
 Higher-order insight generation on top of the retrieval layer.
-Design should emerge from experience with the Obsidian plugin.
+Design should emerge from experience with the Obsidian plugin (8.9.8).
 
-Possible directions:
-- Temporal synthesis: "what did I think about X over time?"
+**North star — Temporal Reflection**
+
+A named retrieval mode distinct from topical similarity. Where topical
+retrieval answers "what have I thought about this subject before",
+Temporal Reflection answers "what was I feeling the last time I was
+in a moment like this one."
+
+The signals are already in the corpus: anxiety patterns in language,
+recurring themes across years, outcomes that followed fears that never
+materialized. The distance between how something felt and what actually
+happened. The recognition, surfaced in the moment of writing, that the
+same fear appeared in 2018 and resolved — that catastrophizing was a
+liability, that it turned out ok.
+
+No productivity tool has ever deliberately designed for this. The
+_score() hook in retriever.py is the right implementation point.
+Requires living with topical retrieval in 8.9.8 first to understand
+what temporal signal looks like in practice before building the
+scoring model.
+
+**Personal relevance scoring**
+
+A learned layer on top of cosine similarity, trained from thumbs
+up/down interactions logged in 8.9.8. The _score() hook in
+retriever.py is already isolated for this extension.
+
+**Other possible directions**
 - Corpus summarization: "what patterns emerge in this notebook?"
 - Relationship surfacing: "what connects these two notes?"
 - Conversational Q&A over the full knowledge base
@@ -368,6 +440,9 @@ Notes:
 - Requires generation layer on top of retrieval
 - Quality of chunking (8.9.6) directly determines insight quality
 - The insight panel (8.9.8) is the natural delivery surface
+- Temporal Reflection and personal relevance scoring are the
+  priority directions — others follow from lived experience
+  with the plugin
 
 ---
 
@@ -455,6 +530,91 @@ ingest) is the same pattern for every future parser.
 Plain text files are always the source of truth.
 The database is an index, never an archive.
 Re-ingestion from source files is always possible.
+
+---
+
+### 🔵 9.x — Photo Intelligence
+**Status: FUTURE — PLACEHOLDER**
+
+Surface personal photo library as a retrievable content channel,
+using metadata signals and optional ML-assisted semantic signals.
+
+Retrieval signal layers:
+    Tier 1 — Metadata (no ML required, implement first):
+        GPS coordinates cross-referenced against place mentions
+        in notes and travel journal chunks
+        Timestamp for temporal anchoring and cross-source correlation
+
+    Tier 2 — ML-assisted (deferred):
+        Facial recognition → surface notes mentioning photographed
+        people; anchor oral history recordings to faces
+        Scene/object recognition → match visual content to written
+        descriptions of the same place or event
+        Vision model captioning → generate searchable text from
+        image content, making photos retrievable by semantic query
+
+Parser: pke/parsers/photo_parser.py
+    Produces ParsedNote contract entries with GPS, timestamp,
+    and caption as primary fields. Standard pipeline unchanged.
+
+Design constraint: recency preference applies to photos on the
+same curve as all other content types (unified timeline principle).
+
+Dependencies:
+    - ParsedNote contract extension (source_type field)
+    - Photo library access strategy (local export vs API TBD)
+    - Vision model captioning deferred to Tier 2
+
+First step: prototype metadata extraction from a small photo export
+to validate the ParsedNote mapping before committing to the workflow.
+
+---
+
+### 🔵 9.x — Handwritten Journal Parser
+**Status: FUTURE — PLACEHOLDER**
+
+Digitize decades of handwritten Moleskine journals to extend the
+temporal depth of the knowledge base by 20-30 years.
+
+Why this matters:
+    The digital corpus begins with Evernote/Joplin-era notes.
+    Handwritten journals predate it entirely — personal history
+    that currently exists nowhere in the system. Digitizing them
+    dramatically extends the temporal range of retrieval and
+    temporal reflection.
+
+Workflow (technically feasible now):
+    1. Photograph each page with a phone camera
+    2. Pass images through a vision model (GPT-4 Vision or similar)
+       for handwriting transcription — far more accurate than
+       traditional OCR for casual handwriting
+    3. Run transcribed text through the PKE parser pipeline
+    4. Date inference via date_parser.py — handles informal and
+       absent date formats already
+    5. Ingest via pke/parsers/handwritten_journal_parser.py
+
+Key challenges:
+    - Handwriting quality and ink aging vary across decades
+    - Page photos need consistent lighting and angle
+    - Dates may be absent or implicit — contextual inference required
+    - Physical journals are the archive — digital version is an index
+
+What to preserve:
+    The physical journals have texture digital cannot capture —
+    handwriting changes over time, crossed-out words, margin notes,
+    the emotional weight of the ink. The digital version is an
+    index into the physical object, not a replacement for it.
+
+Service opportunity:
+    A repeatable workflow here is reusable by others facing the same
+    problem. A handwritten journal digitization service built on PKE
+    infrastructure is a natural commercial extension.
+
+Dependency: none — can be prototyped independently of all other
+milestones.
+First step: experiment with a single Moleskine page through
+GPT-4 Vision to assess transcription quality before committing
+to a full workflow.
 
 ---
 
@@ -558,45 +718,45 @@ later. This is one of the most emotionally resonant capabilities
 the system could have. See milestone 9.x Audio Transcription.
 
 **Handwritten Journal Digitization**
-The corpus currently begins with digital notes, but decades of handwritten
-Moleskine journals predate it — 20-30 years of personal history that exists
-nowhere in the system. Digitizing these journals would dramatically extend
-the temporal depth of the knowledge base.
+See milestone placeholder: 9.x — Handwritten Journal Parser below.
 
-The workflow is now technically feasible:
-    1. Photograph each page with a phone camera
-    2. Pass images through a vision model (GPT-4 Vision or similar)
-       for handwriting transcription — far more accurate than
-       traditional OCR for casual handwriting
-    3. Run transcribed text through the PKE parser pipeline
-    4. Date inference via date_parser.py — the same logic already
-       built for handling informal date formats in typed notes
-    5. Ingest as a new content channel with its own parser:
-       pke/parsers/handwritten_journal_parser.py
+**Photo Intelligence**
+Photos are a distinct content type with retrieval signals that no
+other source carries. Unlike notes or messages, a photo's retrieval
+value comes from multiple layers of metadata and context:
 
-Key challenges:
-    - Handwriting quality and ink aging vary across decades
-    - Page photos require consistent lighting and angle for best results
-    - Dates may be absent or implicit — requires contextual inference
-    - Physical journals are the archive — digital version is an index,
-      not a replacement
+    Metadata signals (available now, no ML required):
+        - GPS coordinates → place matching against notes and travel entries
+        - Timestamp → precise temporal anchoring, cross-source correlation
+        - Device metadata → implicit context (who took it, which trip)
 
-The service opportunity:
-    If an efficient personal workflow is established, every component
-    is reusable — the capture process, vision transcription pipeline,
-    date inference, and PKE ingestion. Others face the same problem.
-    A handwritten journal digitization service built on top of PKE
-    infrastructure is a natural extension.
+    Semantic signals (ML-assisted, deferred):
+        - Facial recognition → surface notes mentioning the person
+          photographed; anchor oral history recordings to faces
+        - Scene/object recognition → match visual content to written
+          descriptions of the same place or event
+        - Vision model captioning → generate searchable text from
+          image content, making photos retrievable by semantic query
 
-What to preserve:
-    The physical journals have texture that digital cannot capture —
-    handwriting changes over time, crossed-out words, margin notes,
-    the emotional weight of the ink. The digital version is an index
-    into the physical object, not a replacement for it.
+    Corpus signals (available from existing data):
+        - resource_ids already link photos to their parent notes
+        - entry_timestamp and GPS can cross-reference travel journal
+          chunks (Archetype D) against photo library metadata
 
-Dependency: none — can be prototyped independently of other milestones.
-First step: experiment with a single Moleskine page through GPT-4 Vision
-to assess transcription quality before committing to a workflow.
+The photo metadata intelligence layer does not require a new parser
+in the traditional sense — it requires a photo metadata extractor
+that produces entries conforming to the ParsedNote contract, with
+GPS, timestamp, and caption as primary fields. The retrieval and
+chunking pipeline is unchanged.
+
+Design constraint: the recency preference setting must apply to
+photos on the same curve as notes and messages. A photo from 2015
+and a journal entry from 2015 are equivalent temporal signals.
+This is a specific instance of the unified timeline principle.
+
+Dependency: ParsedNote contract extension (source_type field) needed
+to distinguish photo results in the panel UI. Deferred to first
+multi-source milestone.
 
 **Insight Listener**
 Real-time monitoring of new notes to surface relevant insights as
@@ -632,6 +792,104 @@ contracts principles. Tension worth naming explicitly when designed.
 ---
 
 ## Cross-Cutting Concerns (Deferred)
+
+**⚠ Critical Unresolved Dependency — Local-First vs Cloud Access Tension**
+
+This tension must be resolved before any packaging or distribution
+decisions are made. It runs through storage, the retrieval API,
+mobile, and the plugin itself.
+
+The PKE should align to Obsidian's core promise:
+    Local-first. User-owned data. No cloud required.
+    Files you control, on hardware you own.
+
+The current architecture uses Supabase (cloud) and OpenAI (cloud).
+Both are appropriate for personal use where the user controls their
+own keys and accounts. Neither is appropriate as a default for a
+distributed product — particularly given the nature of the content
+(personal journals, family history, medical logs, oral recordings).
+
+Hosting user data is explicitly not a direction we want to pursue.
+
+The resolution path:
+
+    Storage layer:
+        Replace Supabase with a local embedded database.
+        sqlite-vec (SQLite + vector extension) is the leading
+        candidate. The data model is simple — notebooks, tags,
+        notes, note_tags, chunks. The SupabaseClient abstraction
+        already isolates all DB calls. Swapping the backend is
+        a client implementation change only. The pipeline,
+        orchestrator, and retrieval logic are untouched.
+        This is a direct payoff of the dependency injection design.
+
+    Embedding layer:
+        OpenAI API remains a dependency for embedding generation.
+        A local embedding model (e.g. nomic-embed via Ollama) is
+        the local-first alternative — no API key, no data leaving
+        the machine, one-time model download. Quality tradeoff
+        vs text-embedding-3-small to be evaluated when relevant.
+        The EmbeddingClient protocol already abstracts this —
+        a local client is a drop-in replacement.
+
+    Retrieval API:
+        FastAPI server already runs locally. No change needed.
+        For distribution, packaging as a standalone executable
+        (pyinstaller) removes the Python install dependency.
+
+    Mobile:
+        Deferred. But note: the local-first resolution above
+        makes mobile harder (API must be reachable from the
+        phone). This is the core of the tension — local-first
+        and accessible-anywhere are in genuine conflict.
+        Do not resolve the storage question in a way that
+        accidentally forecloses mobile later.
+
+No near-term decisions should be made that lock in Supabase as
+a permanent dependency or assume cloud availability. Design for
+replaceability at every layer. This is already the architecture —
+it just needs to be stated as an explicit constraint.
+
+Target milestone for resolution: before any plugin distribution
+or packaging work begins.
+
+---
+
+**Plugin Distribution — Milestone Placeholder**
+
+When the insight panel has been lived with and validated, the
+path to distribution is:
+
+    1. Submit plugin to Obsidian community plugin directory
+       (public GitHub repo + manifest.json + compiled main.js)
+    2. Resolve local-first tension (see above) — replace Supabase
+       and optionally OpenAI with local equivalents
+    3. Package retrieval API as standalone executable (pyinstaller)
+       so users need no Python installation
+    4. Document setup: install plugin → run executable → configure
+       vault path → done
+
+The plugin itself is already portable — it talks to a configurable
+API URL. Step 3 is the distribution enabler for non-technical users.
+
+Additional consideration when packaging is revisited:
+    User-selectable embedding provider (OpenAI / local Ollama / custom
+    endpoint). EmbeddingClient protocol already supports this.
+    Full design deferred to packaging milestone.
+
+Prerequisite: local-first tension resolved.
+
+---
+
+**Unified timeline principle**
+When multi-source content is available, the recency preference
+setting (and any future temporal scoring signal) must apply
+uniformly across all content types. A text message from 2019,
+a journal entry from 2019, a photo taken in 2019, and an email
+from 2019 are equivalent temporal signals — source type has no
+bearing on the recency curve. This constraint must be designed
+into parsers early (normalised entry_timestamp across all sources)
+not retrofitted after multi-source is live.
 
 **Identity and deduplication across sources**
 If a topic appears in a note and an iMessage thread, how does the
