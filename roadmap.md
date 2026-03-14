@@ -1,6 +1,6 @@
 # Personal Knowledge Engine — Product Roadmap
 
-Last updated: 2026-03-09
+Last updated: 2026-03-14
 
 This document captures the strategic vision, milestone sequence, and
 per-milestone design notes for the PKE project. It is persistent across
@@ -371,6 +371,29 @@ history surface in real time — is the real validation gate for
 commercial potential. A few months of use will clarify whether this
 is something other people would pay for, and what they would actually
 be paying for. Capture surprise moments in the running log in VISION.md.
+
+**Post-launch improvement backlog (from first live session 2026-03-12):**
+
+Query scope control — three modes needed:
+    Auto      — current behaviour, last few paragraphs (default)
+    Paragraph — only the current paragraph
+    Selection — user highlights text and triggers a reflection
+                query from exactly that selection. Turns the panel
+                from ambient to intentional. Priority addition.
+
+HTML stripping — Joplin export artefacts visible in matched_text.
+    Some notes were stored with HTML markup that carried through
+    the parser into the database. Strip at parse time in the
+    chunker — the database should never contain raw HTML.
+
+Relevance ranking — raw cosine similarity not always immediately
+    meaningful to the user. Personal relevance scoring (8.9.9)
+    is the planned solution. Continue capturing specific cases
+    that feel off to build intuition for what signals are missing.
+
+Navigation / deep links — reflection panel links non-functional
+    until Joplin → Obsidian migration is complete (milestone 9.x).
+    Expected dependency, not a bug.
 
 ---
 
@@ -848,6 +871,11 @@ path to distribution is:
 
 The plugin itself is already portable — it talks to a configurable
 API URL. Step 3 is the distribution enabler for non-technical users.
+
+Additional consideration when packaging is revisited:
+    User-selectable embedding provider (OpenAI / local Ollama / custom
+    endpoint). EmbeddingClient protocol already supports this.
+    Full design deferred to packaging milestone.
 
 Prerequisite: local-first tension resolved.
 

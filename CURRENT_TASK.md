@@ -1,13 +1,51 @@
 # CURRENT_TASK.md
 ## Milestone 8.9.8 — Obsidian Insight Plugin
 
-Last updated: 2026-03-10 19:30 EST
+Last updated: 2026-03-14 09:46 EST
 
 ---
 
-## Status: IN DESIGN
+## Status: IN PROGRESS
 
-Branch to cut: feat/8.9.8-obsidian-plugin
+Branch: feat/8.9.8-obsidian-plugin (PKE repo)
+Plugin repo: https://github.com/thomasfarnham-source/pke-obsidian-plugin
+VS Code workspace: C:\Users\thoma\Documents\dev\PKE.code-workspace
+
+---
+
+## Progress Log
+
+### Session 2026-03-11
+- ✅ Fixed test_retrieval_api.py patch target (routes.query → main)
+- ✅ All 385 tests passing
+- ✅ Deferred 8.9.7 tests committed on feat/8.9.8 branch
+- ✅ Plugin repo created on GitHub (thomasfarnham-source/pke-obsidian-plugin)
+- ✅ Plugin repo cloned to C:\Users\thoma\Documents\dev\pke-obsidian-plugin
+- ✅ VS Code workspace file created (PKE.code-workspace)
+- ✅ Full plugin scaffold designed and generated (see files below)
+- ⏳ Scaffold files not yet copied into plugin repo
+- ⏳ npm install not yet run
+- ⏳ Plugin not yet built or loaded in Obsidian
+
+### Plugin Scaffold Files Generated
+All files are in Claude outputs. Need to be copied into the plugin repo:
+
+    pke-obsidian-plugin\
+        src\
+            main.ts         — entry point, wires everything together
+            types.ts        — shared types, settings schema, defaults
+            api.ts          — HTTP client for PKE retrieval API
+            query-engine.ts — debounce, pause gate, context extraction
+            insight-view.ts — sidebar panel and all rendering
+            settings.ts     — settings tab UI
+        manifest.json       — Obsidian plugin identity
+        package.json        — Node project and build scripts
+        tsconfig.json       — TypeScript compiler config
+        esbuild.config.mjs  — build script
+        styles.css          — panel styles
+        .gitignore
+
+---
 
 ---
 
@@ -91,8 +129,28 @@ Exposed in human terms, not technical parameters.
     → Favour recent entries
     → No preference (recommended)
 
-Implementation note: this preference maps directly to the recency
-decay function in the retriever's _score() hook. "Favour older"
+"Do you want to exclude any notes from reflections?"
+    → Tag-based exclusion: notes tagged #private, #sensitive,
+      or any user-defined exclusion tag will never surface
+      as reflections regardless of semantic similarity
+    → This is a privacy control within your own corpus —
+      useful for notes you've marked sensitive that you don't
+      want surfacing unexpectedly while writing other content
+
+Implementation note: exclusion tags are checked at render time
+in the plugin — the API returns results as normal and the plugin
+filters them out client-side before rendering. This keeps the
+API contract simple and the exclusion logic close to the UI.
+Alternative: pass exclusion tags to the API as a filter parameter
+so excluded notes are never retrieved. Deferred decision — either
+approach works, client-side is simpler for 8.9.8.
+
+Tag convention TBD — options:
+    #pke-exclude    (explicit, namespaced)
+    #private        (natural, already in common use)
+    #no-reflect     (descriptive of the specific behaviour)
+Recommend letting the user configure their preferred exclusion
+tag in settings rather than hardcoding one. "Favour older"
 boosts entries with earlier entry_timestamp values; "Favour recent"
 boosts more recent ones. "No preference" applies no decay — raw
 cosine similarity only (current default behaviour).
@@ -155,6 +213,12 @@ before building a correction mechanism for it.
 
 ## Acceptance Criteria
 
+### Deferred Tests from 8.9.7 (completed 2026-03-11)
+- [x] tests/unit/test_retriever.py — 25 tests passing
+- [x] tests/integration/test_retrieval_api.py — 22 tests passing
+- [x] tests/unit/test_embed_chunks.py — 16 tests passing
+- [x] All committed on feat/8.9.8 branch
+
 ### Core
 - [ ] Plugin watches active note for changes
 - [ ] Debounce fires after configurable interval (default ~1000ms)
@@ -189,6 +253,8 @@ before building a correction mechanism for it.
 - [ ] Notebook filter (All / current / multi-select)
 - [ ] Recency preference (Favour older / Favour recent / No preference)
 - [ ] Recency preference passed to POST /query as retrieval parameter
+- [ ] Note exclusion tag — user-configurable tag name (default: #private)
+- [ ] Notes carrying the exclusion tag filtered from rendered reflections
 
 ### Edge Cases
 - [ ] API server not running → clear message, not silent failure
@@ -275,12 +341,58 @@ full details.
 
 ---
 
+### Session 2026-03-12
+- ✅ Fixed CORS issue in pke/api/main.py — added CORSMiddleware
+- ✅ Plugin fully operational — reflections surfacing in real time
+- ✅ First live session with the plugin — feedback captured below
+
+### First Live Session Observations (2026-03-12)
+These observations come from the first real use of the plugin and
+drive the post-launch improvement backlog:
+
+1. Relevance ranking needs work
+   Raw cosine similarity surfaces semantically related content but
+   the connection is not always immediately obvious to the user.
+   Expected at this stage — personal relevance scoring (8.9.9) is
+   the planned solution. Capture specific cases that feel off to
+   build intuition for what signals are missing.
+
+2. Query scope needs user control
+   Currently always sends last 4 lines (~500 tokens). Three modes
+   needed:
+       Auto      — current behaviour, last few paragraphs
+       Paragraph — only the current paragraph
+       Selection — user highlights text, triggers reflection query
+                   from exactly that selection (most powerful mode —
+                   turns the panel from ambient to intentional)
+   Selection mode is a priority addition to settings UI.
+
+3. HTML markup visible in some reflections
+   Joplin export artefacts — some notes were stored with HTML
+   that the parser carried through into matched_text. Fix options:
+       a) Strip HTML at parse time in the chunker
+       b) Strip HTML at render time in insight-view.ts
+   Option (a) is cleaner — the database should never contain raw
+   HTML markup. Deferred to a chunker cleanup pass.
+
+4. Reflection panel links not working
+   Navigation tries to match note_title against Obsidian vault
+   files. Corpus is Joplin notes not yet migrated into Obsidian —
+   no matching vault files exist. Links will work correctly after
+   the Joplin → Obsidian migration (milestone 9.x). Not a bug —
+   a migration dependency surfacing as expected.
+
+---
+
 ## Next Session Start Point
 
-1. Cut branch: git checkout -b feat/8.9.8-obsidian-plugin
-2. Write deferred tests from 8.9.7 first:
-   - tests/unit/test_retriever.py
-   - tests/integration/test_retrieval_api.py
-   - tests/unit/test_embed_chunks.py
-3. Begin Obsidian plugin scaffolding (TypeScript)
-4. Update CURRENT_TASK.md timestamp (ask Thomas for actual time)
+1. Commit current state on feat/8.9.8 branch:
+   - pke/api/main.py (CORS fix)
+   - plugin scaffold files
+2. Begin post-launch improvement backlog (from live observations):
+   a) Query scope control — add selection mode to plugin
+   b) HTML stripping — chunker cleanup pass
+   c) Relevance ranking — note observations for 8.9.9 scoring work
+3. Contract testing deep dive → CONTRACT_TESTING_NOTES.md
+4. Obsidian vault templates and migration plan
+5. Keep the running log in VISION.md updated with surprise moments
