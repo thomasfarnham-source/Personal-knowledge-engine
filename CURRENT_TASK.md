@@ -1,7 +1,295 @@
 # CURRENT_TASK.md
-## Milestone 8.9.8 — Obsidian Insight Plugin
+## Milestone 9.x — iMessage Parser + Local Platform Setup
 
-Last updated: 2026-03-14 09:46 EST
+Last updated: 2026-03-15 11:16 EST
+
+---
+
+## Status: PLANNING
+
+Branch to cut: feat/9.x-imessage-parser
+
+---
+
+## Parallel Task — Local Platform Setup
+**Priority: HIGH — do this before or alongside the iMessage parser**
+
+The goal is a fully sovereign, internet-independent PKE stack.
+Everything runs locally. No external dependencies required.
+This is both a privacy architecture and an emergency resilience plan.
+
+### Step 1 — Ensure Joplin notes are locally available
+
+OneDrive may be configured for Files On-Demand — files stored
+in the cloud and only downloaded when opened. This must be
+changed so all files are always available offline.
+
+In File Explorer:
+    Right-click the OneDrive icon in the system tray
+    → Settings → Account → Choose folders
+    Ensure the Joplin sync folder is set to always keep on device
+
+Or right-click the Joplin sync folder in File Explorer:
+    → Always keep on this device
+
+Verify: files should show a green checkmark, not a cloud icon.
+
+Confirm the Joplin sync folder path:
+```powershell
+Get-ChildItem -Path "C:\Users\thoma\OneDrive" -Recurse -Filter "*.md" -ErrorAction SilentlyContinue | Select-Object -First 5 FullName
+```
+
+### Step 2 — Download and install Ollama
+
+Ollama manages local model downloads and runs them as a local
+API server — the same interface pattern as OpenAI and Anthropic.
+
+    1. Download from: https://ollama.com
+    2. Install — accept all defaults
+    3. Verify: ollama --version
+
+### Step 3 — Download Llama 3
+
+```powershell
+ollama pull llama3
+```
+
+This is a one-time download of approximately 4-8GB.
+After this it runs fully offline forever.
+
+Hardware note: check which variant is appropriate.
+    llama3          — 8B parameters, runs on most modern laptops
+    llama3:70b      — more capable, needs a GPU or powerful machine
+
+Check available RAM first:
+```powershell
+Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum
+```
+
+8B model needs ~8GB RAM minimum.
+70B model needs ~40GB RAM — likely needs GPU.
+Start with llama3 (8B) — can upgrade later.
+
+### Step 4 — Verify Ollama is working
+
+```powershell
+ollama serve
+```
+
+In a second terminal:
+```powershell
+ollama run llama3
+```
+
+Type a test message. If it responds, the local model is working.
+Exit with /bye
+
+### Step 5 — Migrate Supabase to sqlite-vec (deferred milestone)
+
+This is the final step to full local sovereignty.
+Supabase is the last external dependency — it holds the
+embeddings and indexed content. sqlite-vec replaces it.
+
+Deferred — see ROADMAP.md Cross-Cutting Concerns.
+But name it here as the completion step for the resilience plan.
+
+### Why This Matters
+
+In an offline or grid-down scenario the fully configured
+local stack provides:
+    - Full access to personal note corpus (Joplin sync folder)
+    - Semantic retrieval across the corpus (local sqlite-vec)
+    - Llama 3 reasoning and generation (Ollama)
+    - Obsidian writing environment (local app)
+    - PKE retrieval API (local FastAPI + uvicorn)
+    - Companion voice (Llama 3 as provider)
+    - General world knowledge (Llama 3 training data)
+
+Nothing requires internet. Nothing requires a subscription.
+Nothing requires any company to still be operating.
+
+---
+
+## MVP Plan — Companion Layer
+
+Four phases to a working end-to-end prototype:
+
+    Phase 1 — Get the data in (next milestone)
+        iMessage parser. Conversation burst ingestion.
+        Group chat corpus in the PKE pipeline.
+
+    Phase 2 — Run the analysis
+        Corpus Analysis Tool against ingested corpus.
+        All eight dimensions. Statistical + interpreted report.
+        Producer reads and writes first personality descriptor.
+
+    Phase 3 — First generation
+        Simple script — not the full plugin yet.
+        Pass a journal excerpt, get a response in the group voice.
+        Does it sound right? Adjust. Listen again.
+
+    Phase 4 — Plugin integration
+        Wire into Obsidian. Unprompted model.
+        Engagement thread. Separate visual presence.
+
+The first version will be off in ways you can feel before you can
+articulate. That is the point. The refinement loop is the product.
+
+---
+
+## Data Model Design Notes
+
+### Thread vs Burst — Both Required
+
+A thread is the container. A burst is the retrievable unit.
+
+```
+Thread (the whole conversation)
+    └── Burst 1 (Jan 28 2018, 4 messages)
+    └── Burst 2 (Jan 29 2018, 7 messages)
+    └── Burst N (Mar 14 2026, 3 messages)
+```
+
+Every burst carries a thread_id linking back to imessage_threads.
+This enables:
+    - Filtering reflections by thread type (group vs bilateral)
+    - Navigating to the source thread for full context
+    - Keeping group chat and bilateral corpora separated for
+      the Group Voice Synthesis milestone
+    - The retrieval API thread_filter parameter (same pattern
+      as existing notebook filter)
+
+The bilateral register is distinct from the group register.
+Patrick one-on-one with Thomas is a different voice than
+Patrick performing for the group. Thread separation
+preserves this distinction at the data level.
+
+### Schema — Four New Tables
+
+```sql
+imessage_threads (
+    id, thread_name, thread_type,   -- "group" | "bilateral"
+    participants, source_file,
+    date_start, date_end, message_count
+)
+
+imessage_participants (
+    id, display_name, phone_numbers,
+    is_self, thread_ids
+    -- v1: phone + display name composite key
+    -- known limitation: numbers and names can change over time
+    -- full Person/PersonIdentifier model deferred
+)
+
+imessage_messages (
+    id, thread_id, participant_id,
+    timestamp, text, message_type,
+    reactions, reply_to_id
+)
+
+imessage_bursts (
+    id, thread_id,                  -- ← thread attribute here
+    date_start, date_end,
+    participants, message_ids,
+    text_combined, dominant_sender,
+    topic_hints, embedding
+)
+```
+
+### ParsedNote Contract Additions
+    source_type      — "imessage"
+    participants     — list of display names in burst
+    dominant_sender  — who contributed most in burst
+    thread_id        — links to source thread
+    thread_type      — "group" | "bilateral"
+    person_ids       — reserved, optional, not populated in v1
+                       will link to entity layer when built
+                       every parser going forward should reserve
+                       this field even if it cannot populate it yet
+
+### Identity Resolution (v1)
+Primary key: phone number + display name composite.
+Known limitations: numbers and names can change over time.
+Full resolution model deferred — revisit when a second
+export surfaces ambiguous identities.
+
+---
+
+Manual prototype analysis run against the group chat CSV.
+13,579 messages, January 2018 to March 2026.
+Five participants: Patrick Mangan, James Root, Thomas,
+Chris Zicchelo, William Renahan.
+
+Key findings captured in ROADMAP.md under Personality Skin v1.
+These findings are the starting material for the personality descriptor.
+
+Notable gap: near silence 2019-2021. Conversation likely moved
+to bilateral threads or a different group thread during this period.
+Additional threads should be exported from iMazing to fill the gap.
+
+---
+
+---
+
+## First Steps (next session)
+
+1. Install iTunes / Apple Devices on Windows if not present
+2. Connect iPhone and create a local encrypted backup
+3. Locate chat.db in the backup:
+   C:\Users\thoma\AppData\Roaming\Apple Computer\
+       MobileSync\Backup\
+4. Extract chat.db and explore the schema
+5. Identify target threads (group chat + any individual threads)
+6. Design the parser — conversation burst strategy
+7. Cut branch and begin implementation
+
+---
+
+## Design Decisions (session 2026-03-14)
+
+### Unit of ingestion — conversation burst
+Messages grouped into natural conversation bursts. New burst
+begins when gap between messages exceeds configurable threshold
+(default: 4 hours). Preserves conversational context and produces
+semantically meaningful chunks.
+
+### Attribution
+Every message stored with sender attribution. Full burst stored
+as matched_text. Per-sender attribution in metadata for Group
+Voice Synthesis milestone.
+
+### ParsedNote contract additions needed
+    source_type: "imessage"
+    participants: list[str]
+    sender: str
+
+### Unified timeline
+entry_timestamp normalised to ISO format. Recency preference
+applies to iMessages on same curve as all other content types.
+
+---
+
+## Downstream Milestones Planned
+
+### Group Voice Synthesis
+Build composite AI voice from group chat corpus. Music studio
+model — each participant is a channel, Thomas is the producer
+controlling channel weights, era filters, mood. Validation by
+group recognition. See ROADMAP.md for full design.
+
+### Group Voice Obsidian Integration
+Surface group voice as second observer in Obsidian alongside
+Reflections panel. Three observers model:
+    Reflections    — personal corpus, semantic retrieval
+    Group Voice    — composite group voice, generative
+    Temporal Mirror — emotional pattern layer (8.9.9)
+
+---
+
+## Previous Milestone: 8.9.8 — COMPLETE ✅
+
+Completed 2026-03-14. Obsidian Insight Plugin running end to end.
+Reflections surfacing in real time. See git history for full details.
 
 ---
 
@@ -386,13 +674,29 @@ drive the post-launch improvement backlog:
 
 ## Next Session Start Point
 
-1. Commit current state on feat/8.9.8 branch:
-   - pke/api/main.py (CORS fix)
-   - plugin scaffold files
-2. Begin post-launch improvement backlog (from live observations):
-   a) Query scope control — add selection mode to plugin
-   b) HTML stripping — chunker cleanup pass
-   c) Relevance ranking — note observations for 8.9.9 scoring work
-3. Contract testing deep dive → CONTRACT_TESTING_NOTES.md
-4. Obsidian vault templates and migration plan
-5. Keep the running log in VISION.md updated with surprise moments
+### Priority 1 — Local Platform Setup
+Complete the local platform setup tasks in order:
+1. Ensure Joplin notes always available offline (OneDrive settings)
+2. Install Ollama from ollama.com
+3. Download Llama 3: ollama pull llama3
+4. Verify Ollama working: ollama serve + ollama run llama3
+5. Note machine specs for model variant decision
+
+### Priority 2 — iMessage Parser
+1. Export bilateral threads from iMazing:
+   - Thomas <-> Patrick
+   - Thomas <-> James
+   - Thomas <-> Chris
+   - Thomas <-> William
+   Save to: C:\Users\thoma\Documents\dev\pke-data\imessage-exports\
+2. Cut branch: git checkout -b feat/9.x-imessage-parser
+3. Begin parser implementation
+
+### Priority 3 — Observer Layer Milestone
+Capture in roadmap — see session notes from 2026-03-15.
+A frontier/local model watches the journal being written,
+has been given a persistent context document about the writer,
+sees what the retrieval engine surfaced, and comments on
+the relationship between current writing and past history.
+
+Update CURRENT_TASK.md timestamp at session start.

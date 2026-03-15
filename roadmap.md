@@ -18,7 +18,7 @@ A personal intelligence layer that ingests content from multiple channels —
 notes, messages, email, and others — embeds and indexes that content
 semantically, and surfaces relevant insights during the act of writing itself.
 
-The system has two faces:
+The system has three faces:
 
 **The pipeline** — a deterministic, reproducible ingestion system that keeps
 the knowledge base current. Pluggable parsers per content channel. Clean
@@ -29,9 +29,18 @@ custom plugin that queries the PKE retrieval API in real time as the user
 writes, surfacing semantically relevant chunks from personal history in a
 live insight panel alongside the writing surface.
 
-The long-term experience: writing a journal entry and seeing, in a sidebar,
-the most relevant passages from years of prior entries — not because you
-searched for them, but because the system recognized the connection.
+**The companion layer** — a distilled voice derived from years of real
+human relationships, operating as an unprompted, unpredictable presence
+in the writing environment. Not a chatbot. Not a retrieval tool. A personality
+constructed from a real corpus, speaking when it has something worth saying,
+silent when it doesn't.
+
+The long-term experience: writing a journal entry with three presences
+alongside you — your own past surfacing in the Reflections panel, the
+distilled voice of your closest friendships weighing in unpredictably,
+and the emotional patterns of your history visible across time. Multiple
+voices in dialogue with your thinking. None of them interrupting. All of
+them paying attention.
 
 ---
 
@@ -45,8 +54,19 @@ These must survive as the system grows:
 - Retrieval precision that scales with content length and complexity
 - The writing process belongs to the user — the system serves it, never
   replaces it
-- No vendor lock-in at any layer (parser, embedding, storage, writing surface)
+- No vendor lock-in at any layer (parser, embedding, storage, writing surface,
+  companion provider)
 - Plain-text, user-owned notes as the source of truth
+- The companion is a presence, not a feature — it has its own sense of when
+  to speak
+- Personality is constructed, not generated — the producer's creative judgment
+  cannot be automated
+- Provider and skin are independent — swap either without touching the other
+- Knowledge persistence through structured documents — a model that reads
+  a well-maintained .md document behaves as if it has been present all along.
+  This pattern applies to development sessions (project documents) and to
+  the journaling environment (Writer Portrait). Rationale persists. Context
+  accumulates. The collaboration improves over time.
 
 ---
 
@@ -198,7 +218,7 @@ that the chunker must handle:
   entry_timestamp (format: YYYY-MM-DD HH:MM:SS)
 - Audio resources flagged distinctly in metadata as resource_type: audio
 - Future: Whisper transcription makes spoken content fully retrievable
-  and semantically indexed (see milestone 9.x Audio Transcription)
+  and semantically indexed (see milestone 9.8 Audio Transcription)
 
 ---
 
@@ -321,8 +341,8 @@ Deferred to next session:
 
 ---
 
-### 🔵 8.9.8 — Obsidian Insight Plugin
-**Status: PLANNED**
+### ✅ 8.9.8 — Obsidian Insight Plugin
+**Status: COMPLETE (2026-03-14)**
 
 The Obsidian plugin that connects the writing surface to the PKE
 retrieval API. The primary consumer-facing expression of the system.
@@ -392,7 +412,7 @@ Relevance ranking — raw cosine similarity not always immediately
     that feel off to build intuition for what signals are missing.
 
 Navigation / deep links — reflection panel links non-functional
-    until Joplin → Obsidian migration is complete (milestone 9.x).
+    until Joplin → Obsidian migration is complete (milestone 9.9).
     Expected dependency, not a bug.
 
 ---
@@ -446,7 +466,7 @@ Notes:
 
 ---
 
-### 🔵 9.x — Audio Transcription and Playback
+### 🔵 9.8 — Audio Transcription and Playback
 **Status: FUTURE — HIGH VALUE**
 
 Transcribe audio recordings from oral history and conversation notes
@@ -480,7 +500,7 @@ Key decisions (deferred to milestone design):
 
 ---
 
-### 🔵 9.x — Obsidian Parser + Migration
+### 🔵 9.9 — Obsidian Parser + Migration
 **Status: PLANNED**
 
 Add Obsidian vault as ingestion source. Migrate historical Joplin
@@ -533,7 +553,7 @@ Re-ingestion from source files is always possible.
 
 ---
 
-### 🔵 9.x — Photo Intelligence
+### 🔵 9.10 — Photo Intelligence
 **Status: FUTURE — PLACEHOLDER**
 
 Surface personal photo library as a retrievable content channel,
@@ -570,7 +590,7 @@ to validate the ParsedNote mapping before committing to the workflow.
 
 ---
 
-### 🔵 9.x — Handwritten Journal Parser
+### 🔵 9.11 — Handwritten Journal Parser
 **Status: FUTURE — PLACEHOLDER**
 
 Digitize decades of handwritten Moleskine journals to extend the
@@ -618,19 +638,1019 @@ to a full workflow.
 
 ---
 
-### 🔵 9.x — iMessage Parser
-**Status: FUTURE**
+### 🔵 9.1 — iMessage Parser
+**Status: NEXT — design complete, build ready**
 
-Add iMessage as ingestion source. Specific contacts or group threads
-from the macOS Messages SQLite database.
+Add iMessage as an ingestion source. Parses message threads from
+the iPhone backup SQLite database into the PKE ParsedNote contract.
+Foundation for both the Reflections use case and the Group Voice
+Synthesis milestone.
+
+Extraction tool: iMazing (imazing.com)
+    Licensed for 1 device ($29.99 one-time).
+    Connects via USB using Apple Mobile Device Protocol —
+    same access mechanism as iTunes, fully legitimate.
+    Exports message threads to CSV, PDF, or JSON without
+    requiring a full device backup.
+    Upgrade to multi-device license if needed in future.
+    First external tool cost in PKE stack beyond API costs.
+
+Source:
+    iPhone via iMazing USB export. iMazing reads from the
+    same encrypted backup data as iTunes but presents it
+    cleanly without requiring manual database extraction.
+    Export target folder:
+        C:\Users\thoma\Documents\dev\pke-data\imessage-exports\
+
+    Raw database reference (if direct access needed later):
+    iPhone local backup via iTunes/Apple Devices on Windows.
+    Messages stored in chat.db — a SQLite database within the
+    encrypted backup. Location after backup:
+        C:\Users\thoma\AppData\Roaming\Apple Computer\
+            MobileSync\Backup\
+
+Schema (chat.db key tables):
+    message          — every message, text content, timestamps
+    handle           — contacts (phone numbers, Apple IDs)
+    chat             — conversation threads
+    chat_message_join — links messages to threads
+    attachment       — media files
+
+Unit of ingestion — conversation burst:
+    Messages grouped into natural conversation bursts. A new burst
+    begins when the gap between messages exceeds a configurable
+    threshold (default: 4 hours). This preserves conversational
+    context and produces semantically meaningful chunks.
+    A single message ("ok sounds good") is too thin for retrieval.
+    A full day's conversation may span multiple distinct topics.
+    Bursts are the right granularity.
+
+Attribution:
+    Every message stored with sender attribution. Full conversation
+    burst stored as matched_text for retrieval context. Per-sender
+    attribution stored in metadata for the Group Voice Synthesis
+    milestone.
+
+ParsedNote contract additions required:
+    source_type: "imessage"  — distinguishes in panel UI
+    participants: list[str]  — phone numbers / Apple IDs in thread
+    sender: str              — per-message attribution
+
+Parser: pke/parsers/imessage_parser.py
+
+Unified timeline: entry_timestamp normalised to ISO format.
+Recency preference applies to iMessages on the same curve as
+notes — source type has no bearing on the recency curve.
+
+Use cases served:
+    1. Reflections — iMessages surface in Obsidian panel alongside
+       journal entries from the same period. Unified timeline.
+    2. Group Voice Synthesis — per-sender attribution enables
+       channel separation for the mixing layer (see milestone below)
+
+Dependencies:
+    - iTunes/Apple Devices installed, local backup created
+    - ParsedNote contract extension (source_type, participants)
+    - Consent from all participants — confirmed
+
+First step: extract chat.db from backup, explore schema, identify
+target threads before writing the parser.
 
 ---
 
-### 🔵 9.x — Yahoo Mail Parser
+### 🔵 9.4 — Companion Engine / Group Voice Synthesis
+**Status: FUTURE — depends on iMessage Parser**
+
+Build a composite AI voice from a multi-year group chat thread.
+Not a simulation of any one person — a synthesis of the emergent
+personality of the group itself. The voice that only exists in
+the dynamic between the participants.
+
+Background:
+    A group chat with three friends spanning multiple years.
+    The corpus contains vocabulary, humour, recurring themes,
+    shorthand, and a shared way of thinking that none of the
+    individuals would produce alone. All participants have
+    consented to this use.
+
+The music studio model:
+    Each participant is a channel with distinct characteristics:
+        - Vocabulary fingerprint
+        - Humour register (sarcasm, wordplay, absurdism, dry wit)
+        - Response patterns and cadence
+        - Topic affinity — what they drive vs follow
+        - Emotional tone
+
+    The producer (Thomas) controls the mixing board:
+        - Channel weight — how much of each voice in the output
+        - Era filter — weight certain time periods more heavily
+        - Topic filter — suppress or amplify certain registers
+        - Mood — tune the emotional register of the output
+
+    The output is listened to, not measured. Does it sound like
+    the group? Adjust. Listen again. Iterative refinement.
+
+Validation:
+    Ground truth is recognition by the group members themselves.
+    Show output to participants — their reaction (recognition,
+    laughter, surprise) is the signal. Blind listening sessions
+    before revealing parameters.
+
+Technical approach:
+    Phase 1 — Per-sender corpus analysis
+        Extract and visualise each channel in isolation. What does
+        each person's voice actually look like in aggregate?
+        Vocabulary frequency, response length distribution,
+        topic clustering, temporal patterns.
+
+    Phase 2 — Retrieval-augmented generation
+        Given a prompt or topic, retrieve the most relevant
+        message bursts per sender. Pass to a generation model
+        with a system prompt describing the composite voice and
+        the current channel weights. Generate response.
+        No fine-tuning required in Phase 1 — prompt engineering
+        with retrieved examples is sufficient to start.
+
+    Phase 3 — Fine-tuning (optional, later)
+        For better stylistic fidelity, fine-tune a model on the
+        per-sender corpus. Higher cost and complexity. Evaluate
+        whether Phase 2 output quality warrants it.
+
+Dependencies:
+    - iMessage parser complete and corpus ingested
+    - Per-sender attribution in metadata
+    - Generation layer (new — not part of retrieval pipeline)
+
+---
+
+### 🔵 9.12 — Group Voice Obsidian Integration
+**Status: FUTURE — depends on Group Voice Synthesis**
+
+Surface the group voice as a second observer in the Obsidian
+writing environment. A distinct panel alongside the existing
+Reflections panel — or a second tab within it.
+
+The three observers model:
+    Reflections      — your own corpus, semantic retrieval
+                       "what have I thought about this before?"
+    Group Voice      — composite group voice, generative
+                       "what would the group say about this?"
+    Temporal Mirror  — emotional pattern layer (8.9.9)
+                       "what was I feeling last time I was here?"
+
+Each fires independently against what you are currently writing.
+Each has a different relationship to your history.
+Together they create a genuinely novel writing environment —
+multiple voices in dialogue with your thinking in real time.
+
+The producer analogy extended:
+    You are no longer mixing the group voice in isolation. You are
+    mixing it against your own voice and against time. The journaling
+    surface becomes the mixing board for all three channels
+    simultaneously. The output is the insight — not any single
+    reflection but the conversation between them.
+
+Plugin additions:
+    - Group Voice panel or tab in the insight sidebar
+    - Channel weight controls accessible from the panel
+    - Era and mood filters in settings
+    - Independent query firing from editor-change event
+
+Dependencies:
+    - Group Voice Synthesis milestone complete
+    - Plugin architecture extensible for second panel (already is)
+
+
+
+### 🔵 9.13 — Yahoo Mail Parser
 **Status: FUTURE**
 
 Add Yahoo Mail as ingestion source. Select senders or folders.
 Source format (IMAP vs MBOX) TBD.
+
+---
+
+## The Companion Layer
+
+*The PKE started as a retrieval system. The Companion Layer is where it becomes a presence.*
+
+The retrieval pipeline surfaces your own past. The Companion Layer
+introduces a second kind of intelligence into the writing environment —
+a distilled voice derived from years of real human relationships,
+operating as an unprompted, unpredictable companion to the journaling
+process.
+
+This is not a chatbot. Not a search interface. Not a notification system.
+It is a presence — one that has absorbed the spirit of a specific group
+of people thinking together over years, and can now participate in your
+inner life with something approaching genuine personality.
+
+---
+
+### The Three-Level Document Architecture
+
+Three distinct portrait documents feed different layers of the system.
+Each is built from different sources and serves a different purpose.
+
+**Level 1 — Writer Portrait (person level)**
+About Thomas as an individual. The context layer for the Observer.
+Built from two inputs:
+    Passive inference — corpus analysis reads journal entries
+    and infers patterns over time
+    Active conversation — Thomas directly converses with the
+    Observer to correct, add context, and redirect attention
+
+Contains:
+    - How Thomas writes (register, patterns, avoidances)
+    - Recurring themes — the questions underneath the topics
+    - Emotional patterns — how different states show up in prose
+    - The gap between feeling and outcome — documented instances
+      where catastrophizing didn't materialise
+    - Direct instructions to the Observer
+    - What the corpus has revealed (automated, periodically updated)
+    - Observer calibration notes (running log of interactions)
+
+One document. Continuously refined. The writer is an active
+collaborator in their own portrait — not just the subject of
+observation but a participant in how they are understood.
+
+Template: WRITER_PORTRAIT_TEMPLATE.md (created 2026-03-15)
+First version: to be completed by Thomas manually.
+Automated refinement: after Corpus Analysis Tool is built.
+
+**Level 2 — Thread Portrait (relationship level)**
+About a specific conversation context — its history, arc,
+dynamics, core themes, and how it has evolved over time.
+One document per thread (group chat, each bilateral thread).
+
+Contains:
+    - Thread history and arc
+    - How the group dynamic has evolved over time
+    - Core themes and recurring debates
+    - The emotional texture of this relationship context
+    - Notable gaps or shifts in the conversation
+    - How this thread differs from others
+
+Built from: Corpus Analysis Tool output (automated)
+Refined by: producer review and annotation
+
+**Level 3 — Voice Profile (person-within-thread level)**
+How a specific person shows up in a specific thread.
+Patrick in the group chat vs Patrick in the bilateral thread
+are different registers. The Voice Profile captures that.
+
+Contains:
+    - Vocabulary fingerprint for this thread
+    - Role in this conversation (initiator, sparring partner,
+      observer, connector)
+    - How they've changed over time in this thread
+    - What they drive vs what they follow
+    - Their relationship to each other participant
+    - The specific humour and emotional register in this context
+
+Built from: per-sender corpus analysis (automated)
+Used by: Companion Engine for channel weighting
+
+**Build sequence:**
+    Writer Portrait v1 — manual, start now, no dependencies
+    Thread Portraits   — after Corpus Analysis Tool complete
+    Voice Profiles     — after Corpus Analysis Tool complete
+
+**Note on theoretical grounding:**
+This architecture maps to established frameworks in narrative
+psychology (McAdams — personal narrative identity), cognitive
+behavioural therapy (gap between feared and actual outcomes),
+and attachment theory (the Observer as secure base). Arrived
+at through intuition and lived experience — which is the right
+way to arrive at it.
+
+---
+
+The Obsidian writing environment will ultimately have three distinct
+presences alongside the writing surface:
+
+**Reflections** — your own corpus (built, milestone 8.9.8)
+    Semantic retrieval from personal history. Ambient, always present.
+    Answers: "what have I thought about this before?"
+
+**The Companion** — derived from relationship corpus (this section)
+    Unprompted. Unpredictable. Periodic. A distilled group voice.
+    Answers: nothing directly — it has its own sense of when to speak.
+
+**Temporal Mirror** — emotional pattern layer (milestone 8.9.9)
+    The distance between how something felt and what actually happened.
+    Answers: "what was I feeling the last time I was in a moment like this?"
+
+Each observer has a different relationship to the writing. Together they
+create a writing environment unlike anything that has existed before —
+multiple voices in dialogue with your thinking in real time.
+
+---
+
+### The Source Corpus
+
+A group chat with three college friends spanning 2018 to present.
+13,579 messages. Four people who have known each other for over 25
+years. The thread is called "Thom's Book Club" — the name is
+characteristic of the group's humour — but the conversation ranges
+far beyond books. This is 25 years of friendship expressed in
+eight years of messages.
+
+All participants have consented to this use.
+
+The corpus contains:
+- Vocabulary and expression distinctive to each person
+- Recurring debates, references, and in-jokes accumulated over decades
+- The emotional texture of deep, long friendship
+- How the group handles difficulty, disagreement, and joy
+- The outside world brought in — books, films, news, culture, sport
+- Eight years of documented conversation grounded in 25 years of history
+
+---
+
+### The Companion's Behaviour
+
+**Unprompted**
+The Companion does not wait to be asked. It is always listening —
+running silent retrieval against what is being written. It speaks
+when it has something worth saying. When it doesn't, it is silent.
+
+**Unpredictable**
+The register varies. Sometimes a direct response to what was written.
+Sometimes only indirectly relevant — a connection the writer didn't see.
+Sometimes ironic — commenting obliquely on what's being expressed.
+Sometimes a memory surfaced from the corpus.
+Sometimes something from the real world brought in.
+The unpredictability is not randomness. It is a personality that has
+its own logic — one you can feel but not predict.
+
+**Periodic**
+The Companion speaks at most once per writing session by default.
+User-configurable. The scarcity is intentional — it makes each
+intervention feel meaningful rather than routine.
+
+**Restrained**
+The Companion knows when not to speak. It has standards. Not everything
+warrants a response. The silence is part of the personality.
+
+**Brief**
+One to three sentences maximum. The value is in the moment of connection
+— not a lecture, not a summary. A passing observation from someone
+who has been paying attention.
+
+---
+
+### The Response Modes
+
+Three modes, user-configurable per skin:
+
+**Direct quote**
+A real message from the corpus surfaced verbatim. No generation.
+The most authentic mode — it really happened, that person said that,
+and it connects to what is being written right now. The power is
+the reality of it.
+
+**Attributed quote**
+A real message with attribution and date.
+"James, March 2019: ..."
+Creates a specific temporal and personal anchor. A particular person
+at a particular moment reaching across time.
+
+**Light synthesis**
+The Companion generates a short response in the composite group style,
+grounded in retrieved examples. Not a direct quote — something that
+sounds like it could have been said. More flexible, more present-tense.
+The risk is slight inauthenticity. The gain is the ability to respond
+to things the group never literally discussed.
+
+All three modes are available. The producer chooses the default.
+The user can adjust per session.
+
+---
+
+### The Engagement Model
+
+When the Companion speaks, a subtle cursor appears beneath the message.
+No button. No prompt. No Yes/No dialog.
+
+If the writer types there — they are in the conversation.
+If they keep writing in the journal — the moment passes. The Companion
+respects this and waits.
+
+The natural human signal: response = engagement. Silence = continuation.
+
+When engagement begins, a brief conversational thread opens — visually
+distinct from the journal entry. Indented. A different register.
+The journal is the writer's voice. The margin is the dialogue.
+
+The thread stays brief. Two or three exchanges before it naturally
+closes. Not a chat session — a passing conversation in a hallway.
+
+What gets saved: the journal entry, the Companion message that triggered
+the exchange, and the writer's response — all linked. Over time these
+micro-conversations become their own corpus. The journal as dialogue,
+not just monologue.
+
+---
+
+### The Architecture — CompanionProvider Protocol
+
+The same pattern as EmbeddingClient. A protocol that any provider
+implements. Provider and skin are independent — swap either without
+touching the other.
+
+```python
+class CompanionProvider(Protocol):
+    def generate(
+        self,
+        system_prompt: str,
+        context: list[str],
+        journal_excerpt: str,
+    ) -> str: ...
+```
+
+Planned providers:
+    ClaudeCompanionProvider    — Anthropic API (start here)
+    OpenAICompanionProvider    — OpenAI API
+    OllamaCompanionProvider    — local Llama/Mistral via Ollama
+    GeminiCompanionProvider    — Google API
+
+The provider is the instrument. The personality skin is the score.
+The retrieval layer is what makes it grounded in reality.
+
+Starting provider: Claude (Anthropic API)
+Privacy path: Ollama with local open source model (no data leaves machine)
+
+---
+
+### The Personality Skin
+
+The skin is a configuration object — separate from the provider,
+separately editable, separately versioned.
+
+```
+PersonalitySkin:
+    name                — "Book Club", "Family", etc.
+    system_prompt       — the core personality descriptor
+    channel_weights     — per-sender retrieval weights
+    era_filter          — date range for retrieval
+    response_modes      — direct / attributed / synthesis
+    register_weights    — direct / ironic / oblique / nostalgic
+    max_response_length — one sentence / two / three
+    trigger_threshold   — resonance score required to speak
+    cadence_limit       — max interventions per session
+```
+
+Multiple skins can coexist. The producer selects the active skin.
+Different skins for different corpora — the book club group, a family
+thread, a solo skin derived from the journal corpus alone.
+
+**The system_prompt is the heart of the skin.**
+
+It is not written by the code. It is written by the producer — after
+studying the corpus analysis — and refined iteratively through
+listening sessions. The code provides the raw material. The producer
+makes the creative judgment.
+
+The difference between a thin descriptor and a rich one:
+
+Thin (generic, insufficient):
+    "You are warm, intellectually curious, and occasionally ironic."
+
+Rich (specific, grounded):
+    "You have known each other since college — over 25 years. The
+    dynamic was set long before the messages began. You take each
+    other seriously without taking each other too seriously. There
+    is a shorthand that doesn't need explaining. When someone is
+    struggling you don't make a fuss about it — you make a joke
+    and then quietly show up. You argue about everything but rarely
+    fall out. You have strong opinions and enjoy being wrong almost
+    as much as being right. The outside world comes in constantly —
+    something one of you read, watched, heard, or thought about on
+    the way to work. The thread is called Thom's Book Club which
+    tells you everything you need to know about the group's
+    relationship with its own pretensions."
+
+The specifics — the recurring debate, the contempt for page-turners,
+the way the group handles difficulty — are extracted from the corpus
+analysis. The adjectives are worthless. The specifics are everything.
+
+---
+
+### The Personality Construction Process
+
+The personality is not generated automatically. It is constructed
+through a deliberate process:
+
+**Step 1 — Corpus ingestion**
+iMessage parser runs. All messages ingested into PKE pipeline.
+Per-sender attribution preserved in metadata.
+
+**Step 2 — Corpus analysis**
+A separate analysis tool produces a structured report per sender
+and for the group as a whole:
+    - Vocabulary fingerprint (words used disproportionately)
+    - Recurring references (books, films, people, places, ideas)
+    - Argument patterns (how disagreement is handled)
+    - Humour mechanics (what kind, at whose expense, how structured)
+    - Emotional register (how the group handles serious moments)
+    - Topic affinity (what each person drives vs follows)
+    - Cadence (message length, response time, rhythm)
+    - The group's blind spots (what consistently goes unaddressed)
+    - Relationship dynamics (who responds to whom, conversation drivers)
+
+**Step 3 — Producer writes the descriptor**
+The producer (Thomas) reads the analysis report and writes the
+system_prompt. This is creative work, not engineering. The code
+cannot do it. The producer uses the analysis as raw material and
+their own knowledge of the group as the filter.
+
+**Step 4 — Listening sessions**
+Generate responses to sample journal entries. No labels — don't
+know which settings produced which response. React instinctively.
+Does this sound like the group? Adjust. Listen again. Repeat.
+
+**Step 5 — Refinement**
+The descriptor is never finished. It improves with use. Every time
+the voice says something that feels off, the producer adjusts.
+Every time it says something that lands perfectly, the producer
+notes what made it work.
+
+This is the producer's ongoing relationship with the instrument.
+
+---
+
+### Real World Awareness
+
+The group brings the outside world into conversation naturally —
+a book review, something in the news, a film, a cultural moment.
+The Companion should be able to do the same.
+
+Implementation: the CompanionProvider is given permission in the
+system prompt to reference current events and cultural context.
+Frontier models (Claude, GPT-4) have this capability natively.
+Local models do not — this is one of the real capability gaps
+between frontier and local providers.
+
+This is a named capability difference between providers. The skin
+can specify whether real world awareness is expected. If the
+provider is local, this capability is gracefully absent.
+
+---
+
+### The Knowledge Persistence Document
+
+One of the most effective patterns discovered during PKE development
+is the use of a structured .md document to maintain knowledge
+continuity across sessions with a frontier model.
+
+The problem it solves:
+    Frontier models have no persistent memory. Every conversation
+    starts fresh. Without intervention, a model that helped design
+    the retrieval API on Monday knows nothing about it on Thursday.
+    All context must be re-established from scratch each session.
+
+The solution:
+    A set of carefully maintained .md documents — ARCHITECTURE.md,
+    ROADMAP.md, CURRENT_TASK.md, VISION.md — that are loaded at
+    the start of each session. The model reads them and immediately
+    has full context: what was built, why decisions were made,
+    what comes next, what the vision is.
+
+    This is not a workaround. It is a design pattern. The documents
+    are not just notes — they are the shared memory of the
+    collaboration. They are written to be read by a model as much
+    as by a human.
+
+Why it works:
+    - The documents are structured and precise — models read
+      structured text well
+    - They are maintained as living documents — updated every
+      session to reflect current state
+    - They contain not just facts but rationale — why decisions
+      were made, what was considered and rejected, what the
+      principles are. A model with rationale can reason forward.
+      A model with only facts cannot.
+    - They are version controlled — the history of the project
+      is in the git log, the current state is in the documents
+
+The PKE development sessions are the proof of concept. Across
+dozens of sessions spanning months, the collaboration has
+maintained full architectural coherence. No decision has been
+made that contradicts an earlier one without explicit reasoning.
+The system has grown in complexity without losing integrity.
+The .md documents are why.
+
+---
+
+### Applying This Pattern to the Journal — The Writer Portrait
+
+The same pattern applied to the journaling environment produces
+something different in character but identical in principle:
+
+A **Writer Portrait document** — a structured .md file that
+captures not facts about the writer but patterns. Maintained
+by an automated process that reads the journal periodically
+and updates the document. Loaded by the Observer layer at
+the start of each writing session.
+
+What it contains:
+    Recurring themes — what subjects the writer returns to,
+    how their thinking on those subjects has evolved over time
+
+    Emotional signature — how the writer's prose changes
+    when anxious vs clear vs processing something difficult.
+    The linguistic tells. The sentence length patterns.
+    The words that appear when something is unresolved.
+
+    The resolution record — fears that consumed weeks and
+    never materialised. Decisions that felt impossible and
+    turned out fine. The gap between how things felt and
+    how they resolved. This is the temporal mirror made
+    explicit and persistent.
+
+    Recurring people — names that appear across entries,
+    the emotional register around each, how relationships
+    have changed over time
+
+    Open questions — subjects the writer keeps returning to
+    without resolving. The questions that are still live.
+
+    What the corpus reflects — what the retrieval engine
+    tends to surface. What themes the writer's past keeps
+    offering back. Patterns in the patterns.
+
+    Recent context — what the writer has been working through
+    in the last weeks. What is live right now. What the
+    Observer should be sensitive to.
+
+How it is maintained:
+    A periodic process — weekly or monthly — reads recent
+    journal entries and compares them to the existing portrait.
+    A model generates a proposed update: what has changed,
+    what new patterns have emerged, what old patterns have
+    shifted or resolved. The writer reviews and approves
+    before the document is updated.
+
+    The document has a version history. The writer can see
+    how their portrait has changed over time. That is itself
+    a form of insight.
+
+How the Observer uses it:
+    Loaded at the start of each writing session alongside
+    the current journal entry and the retrieval results.
+    The Observer reads all three simultaneously and comments
+    on the relationship between them — grounded in who this
+    writer is, what they've been thinking about, and what
+    their own history is now offering back.
+
+The difference from generic AI assistance:
+    A generic model responding to a journal entry knows
+    nothing about the writer. It can only respond to what
+    is on the page right now.
+
+    The Observer with the Writer Portrait knows this writer
+    across time. It recognises the pattern. It knows this
+    fear has appeared before and how it resolved. It knows
+    this subject keeps coming back. It knows the difference
+    between a writer who is thinking clearly and one who
+    is writing in circles.
+
+    That difference is what makes it a genuine companion
+    rather than a tool.
+
+---
+
+The Companion's primary home is the Obsidian journaling environment.
+That is where it lives permanently — private, personal, always available,
+never wearing out its welcome.
+
+The group chat is a different use case entirely — a periodic guest
+appearance, not a persistent integration.
+
+**The novelty arc is real.** The group would experience the Companion
+as a fascinating novelty for a session or two. Then they would want
+their own dynamic back. The design should respect this — the voice
+as an invocable guest, not a permanent participant.
+
+**Declared, not undeclared.** The group knows the Companion exists
+and has consented to the corpus use. When the Companion appears in
+the chat it is announced. The fascination is part of the experience —
+showing the group what the analysis revealed about them is likely the
+best group chat conversation in years.
+
+**The conduit model — MVP approach:**
+The Companion generates responses in Obsidian. Thomas reads them.
+Thomas decides whether to send — verbatim, paraphrased, or as
+inspiration for something he writes himself. No technical complexity.
+The friction is intentional — Thomas is the producer deciding what
+goes out. The group responds to Thomas, not to a model.
+
+**Technical options for future direct integration:**
+    iOS Shortcuts — can send iMessages programmatically with
+    a manual confirmation tap. Creates a pathway from generation
+    to send without full automation.
+
+    Dedicated Apple ID — a declared fifth participant in the thread
+    speaking as the Companion directly. Changes the social dynamic
+    significantly. Worth exploring after the conduit model is proven.
+
+    WhatsApp — has a business API for programmatic sending. If the
+    group ever moves platforms this becomes the cleanest path.
+
+**The key insight:**
+The conduit model is not a limitation — it is the right design for
+this use case. The Companion informs what Thomas says rather than
+speaking for him. The group chat integration is a demonstration.
+The journaling companion is the actual product.
+
+---
+
+**9.1 — iMessage Parser** (NEXT — see milestone above)
+Foundation. All subsequent Companion milestones depend on this.
+
+**9.2 — Corpus Analysis Tool**
+Standalone analysis tool that processes any ingested message corpus
+and produces a structured report across eight analytical dimensions.
+Output is the raw material the producer uses to write the personality
+descriptor. Runs on demand and produces a diff report on subsequent
+runs showing what has changed since the last analysis.
+
+The Eight Analytical Dimensions:
+
+    1. Relationship History
+       How long in contact, gap analysis, volume trajectory,
+       periods of silence and what preceded/followed them.
+
+    2. Group Dynamics
+       Starter rates, conversion rates, response rates between
+       all pairs, burst depth per starter, who watches vs participates.
+       The bilateral relationships — where real conversations happen.
+
+    3. Individual Profiles
+       Vocabulary fingerprint, message length and cadence, humour
+       register, topic affinity, agreement vs pushback tendency,
+       how each person handles difficulty.
+
+    4. Relationship Characterisation
+       For each pair: volume, pushback rate, exchange samples,
+       nature of dynamic. Who pursues, deflects, reframes.
+       What subjects bring them together vs pull them apart.
+
+    5. Core Themes
+       Topic clustering, recurring debates without resolution,
+       shared references, how current events enter the conversation,
+       what the group consistently avoids.
+
+    6. Emotional Register
+       How the group handles difficulty, loss, illness.
+       Warmth-to-friction ratio. Humour as deflection vs connection.
+       Moments of genuine vulnerability and how they are received.
+
+    7. Temporal Patterns
+       Time of day, day of week, seasonal variations, how the
+       group has changed over time in tone, volume, and topics.
+
+    8. Group Self-Awareness
+       How the group talks about itself, in-jokes referencing
+       group history, named recurring phenomena, what the group
+       thinks it is vs what the data shows.
+
+Output per dimension:
+    Statistical summary — objective, reproducible, updatable
+    Interpreted findings — plain language characterisation
+                           generated by a model reading the numbers
+
+The interpreted findings are the raw material for the personality
+descriptor. The producer reads them, recognises the truth, and
+decides what to absorb into the skin.
+
+Note: A prototype of this analysis was run manually on 2026-03-14
+against the Book Club group chat corpus (13,579 messages, 2018-2026).
+Key findings are captured as starting material for Personality Skin v1.
+
+Dependency: iMessage Parser complete, corpus ingested.
+
+**9.3 — Personality Skin v1**
+Producer writes the first system_prompt based on corpus analysis.
+Listening sessions. Iterative refinement. Output: a PersonalitySkin
+configuration that produces responses that feel like the group.
+This is not a code milestone — it is a creative milestone.
+
+Preliminary findings from 2026-03-14 manual analysis (starting material):
+
+    The group dynamic:
+        Patrick is the ignition switch — 51.7% of messages, 64% of
+        conversation starters. Drives volume and energy. Invites
+        conflict deliberately as a way of keeping the group alive.
+        Low response rate (59%) doesn't slow him down.
+
+        Thomas has the highest conversion rate of the main participants
+        (84%) and deepest average burst depth. Starts fewer conversations
+        but when he does they matter more. Responds to Patrick obliquely —
+        sidesteps rather than engages head-on. The flywheel to Patrick's
+        engine.
+
+        James is the analytical sparring partner. Highest pushback rate
+        against Patrick (9.5%). Refuses to accept framings — attacks the
+        premise. When James starts something the group runs deep (16.4
+        msgs/burst avg). The person who turns Patrick's provocations into
+        actual arguments.
+
+        Chris speaks least, lands most. 90% response rate — highest in
+        the group. Surgical precision. The group pays attention when Chris
+        weighs in precisely because he doesn't often.
+
+        William is underestimated by volume. Lowest message count but
+        highest average burst depth when he starts (19.0). The ideological
+        fault line with James — highest pushback rate of any pair (11.6%).
+        Brings the real world in — logistics, politics, coordinates things.
+
+    The Patrick-Thomas dynamic:
+        4,988 direct exchanges — the core relationship. Patrick provokes.
+        Thomas deflects into the oblique and absurdist rather than
+        engaging directly. 25 years means they have each other's moves
+        memorised. Real warmth underneath the sparring.
+
+    The Patrick-James dynamic:
+        5,891 exchanges — highest volume bilateral. Patrick charges,
+        James attacks the premise. Neither convinces the other. Neither
+        stops trying. Addictive friction.
+
+    The James-William dynamic:
+        232 exchanges, 11.6% pushback — the political fault line.
+        Direct statement, direct counter. Less warmth-to-friction
+        ratio than other pairs. They argue when they talk.
+
+    Core themes (by message frequency):
+        Articles and links (318), music (220), work (203),
+        Biden/Trump (181/135), bars and drinks (124/62),
+        books (62), podcasts (55).
+
+    Temporal pattern:
+        Peak hours 8-9am and 7-9pm. The group starts and ends
+        the day together. Rarely active during working hours.
+
+    The gap:
+        Near silence 2019-2021. The conversation moved somewhere
+        else — likely bilateral threads or a different group thread.
+        Worth finding this material to fill the temporal gap.
+
+    Starting point for the system prompt:
+        "You have known each other since college — over 25 years.
+        The dynamic was set long before the messages began. You take
+        each other seriously without taking each other too seriously.
+        There is a shorthand that doesn't need explaining. When someone
+        is struggling you don't make a fuss about it — you make a joke
+        and then quietly show up. You argue about everything but rarely
+        fall out. You have strong opinions and enjoy being wrong almost
+        as much as being right. The outside world comes in constantly —
+        something one of you read, watched, heard, or thought about on
+        the way to work. The thread is called Thom's Book Club which
+        tells you everything you need to know about the group's
+        relationship with its own pretensions."
+
+Depends on: Corpus Analysis Tool complete.
+
+**9.4 — Companion Engine**
+Implementation of the CompanionProvider protocol. Claude as the
+starting provider. Retrieval-augmented generation — for a given
+journal excerpt, retrieve relevant message bursts, assemble the
+prompt, generate. Trigger threshold logic. Cadence limiting.
+Depends on: Personality Skin v1 complete.
+
+**9.5 — Companion Plugin Integration**
+Wire the Companion Engine into the Obsidian plugin. Unprompted
+intervention model — no button, natural engagement signal.
+Separate visual presence from the Reflections panel. Brief
+conversational thread with save. Response mode selection in
+settings.
+Depends on: Companion Engine complete.
+
+**9.6 — Writer Portrait Document**
+Design and implement the automated process that generates
+and maintains the Writer Portrait — the persistent context
+document that gives the Observer layer knowledge of the
+writer across time.
+
+The document is a structured .md file maintained by a
+periodic process:
+    1. Reads recent journal entries (last 30-90 days)
+    2. Compares to existing portrait
+    3. Generates proposed updates — what has changed,
+       what new patterns have emerged, what has resolved
+    4. Writer reviews and approves changes
+    5. Updated document committed to version control
+
+The document contains patterns not facts:
+    Recurring themes, emotional signature, resolution record,
+    recurring people, open questions, what the corpus reflects,
+    recent context.
+
+This is the same pattern used in PKE development sessions —
+structured .md documents as shared memory between a human
+and a model across time. Proven effective. Applied here to
+the writer's inner life rather than a software project.
+
+Output: a living document that makes the Observer layer
+behave as if it has known the writer for years — because
+in a meaningful sense, it has.
+
+Depends on: Observer Layer designed, journal corpus ingested.
+
+**9.7a — Observer Layer**
+A reasoning model that watches the journal being written,
+has been provided a persistent context document about the
+writer, sees what the PKE retrieval engine surfaces, and
+comments on the relationship between current writing and
+past history.
+
+Distinct from the Companion — the Observer is not a personality
+derived from a relationship corpus. It is a reasoning layer
+that understands the writer as an individual over time.
+
+The context document:
+    A living portrait of the writer — not facts but patterns.
+    Built and refined through two distinct inputs:
+
+    Passive inference — a process reads recent journal entries
+    and infers patterns:
+        - Recurring themes in the writing
+        - Emotional patterns — how the writer writes when
+          anxious vs clear vs processing something difficult
+        - The gap between how things felt and how they resolved
+        - People and relationships that recur across entries
+        - Questions the writer keeps asking without answering
+        - How thinking has changed over time on specific subjects
+        - What the retrieval engine tends to surface — what the
+          corpus keeps reflecting back
+
+    Active conversation — the writer directly converses with
+    the Observer during journaling sessions:
+        - Corrects misreadings ("that's not anxiety, that's
+          how I write when I'm tired")
+        - Adds context that doesn't appear in the journal
+          ("this connects to something from 2019 I haven't
+          written about")
+        - Redirects attention ("pay more attention to X")
+        - Articulates things they know about themselves that
+          passive reading could never infer
+
+    The writer is not just the subject of the portrait —
+    they are an active collaborator in how they are understood.
+    This is the difference between a portrait painted from
+    observation and one painted from conversation.
+
+    Direct conversations are flagged for incorporation into
+    the context document at the next update cycle. Over time
+    they become their own layer of the knowledge base —
+    not just what was written in the journal but what was
+    said about what was written. Meta-reflection, captured
+    and searchable.
+
+What the Observer does:
+    - Pattern recognition across the session
+      "You've approached this three times tonight and pulled
+      back each time."
+    - Commentary on the reflections surfaced
+      Not just the passage — what it means that this particular
+      passage surfaced at this particular moment
+    - The temporal mirror made explicit
+      "This passage is from six months before the thing you
+      were worried about resolved. You didn't know that then."
+    - Gentle challenge when warranted
+      Speaks with the tentativeness of observation, not diagnosis.
+      "I notice" rather than "you always."
+    - Receives direct conversation from the writer
+      The writer can respond to any Observer comment and engage
+      in a brief conversational thread. The Observer adjusts
+      its behaviour for the current session immediately and
+      flags the conversation for context document update.
+
+The engagement model:
+    Same as the Companion — no button, natural signal.
+    Observer surfaces a comment. Subtle cursor appears.
+    Writer types = conversation begins.
+    Writer continues journaling = moment passes.
+    All conversations saved alongside the journal entry.
+
+The .md handoff model used in PKE development sessions is the
+prototype of this concept — a context document built and refined
+over time, updated through both passive reading and active
+conversation, that makes a general model behave as if it knows
+the person. The same principle applied to the journal at scale.
+
+Provider: frontier model (Claude) for quality, Llama 3 for
+local/offline operation. Same CompanionProvider protocol.
+
+Depends on: context document generation process designed,
+Companion Engine complete (shares infrastructure).
+
+**9.7b — Ollama Provider**
+Local open source model as an alternative provider. Same interface,
+lower quality, zero privacy cost. No data leaves the machine.
+Graceful degradation of real world awareness capability.
+Depends on: Companion Engine complete.
 
 ---
 
@@ -715,10 +1735,10 @@ retrievable by semantic content. The Obsidian insight panel can
 surface them with an inline audio player, making it possible to
 hear the original voice while writing about the same themes years
 later. This is one of the most emotionally resonant capabilities
-the system could have. See milestone 9.x Audio Transcription.
+the system could have. See milestone 9.8 Audio Transcription.
 
 **Handwritten Journal Digitization**
-See milestone placeholder: 9.x — Handwritten Journal Parser below.
+See milestone placeholder: 9.11 — Handwritten Journal Parser below.
 
 **Photo Intelligence**
 Photos are a distinct content type with retrieval signals that no
@@ -793,7 +1813,50 @@ contracts principles. Tension worth naming explicitly when designed.
 
 ## Cross-Cutting Concerns (Deferred)
 
-**⚠ Critical Unresolved Dependency — Local-First vs Cloud Access Tension**
+**Local-First as Resilience — not just Privacy**
+
+The local-first architecture serves two distinct goals that
+reinforce each other:
+
+    Privacy — personal journal content, family history, medical
+    logs, and relationship corpus never leave the user's machine.
+    No third party has access. No data custody risk.
+
+    Resilience — in a scenario where internet infrastructure
+    is unavailable (cyberattack, grid disruption, extended
+    outage, geopolitical escalation affecting cloud services),
+    the entire PKE stack continues to function without
+    degradation. Nothing is held hostage to a subscription
+    or a server being up.
+
+The fully sovereign local stack:
+    Notes corpus        — Joplin sync folder, always local
+    Obsidian vault      — local app, local files
+    Embeddings/index    — sqlite-vec (replaces Supabase)
+    Retrieval API       — FastAPI + uvicorn, runs locally
+    Embedding model     — Ollama local model (replaces OpenAI)
+    Companion voice     — Llama 3 via Ollama (replaces Claude)
+    Observer layer      — Llama 3 via Ollama
+    General knowledge   — Llama 3 training data (Wikipedia
+                          and broad web corpus, offline)
+
+This system should still be working in twenty years regardless
+of what happens to Anthropic, OpenAI, Supabase, or Microsoft.
+The knowledge base built over decades is too valuable to be
+dependent on any company's continued operation.
+
+Local model: Llama 3 via Ollama (ollama.com)
+    - Free, open source, runs on consumer hardware
+    - 8B parameter variant runs on most modern laptops
+    - One-time download ~4-8GB, works fully offline after
+    - Same API interface as OpenAI — drop-in replacement
+    - General world knowledge including Wikipedia corpus
+    - Capable of practical advisory tasks (medical triage,
+      home repair, technical guidance) without internet
+
+Setup task: see CURRENT_TASK.md — Local Platform Setup.
+
+
 
 This tension must be resolved before any packaging or distribution
 decisions are made. It runs through storage, the retrieval API,
@@ -891,9 +1954,65 @@ bearing on the recency curve. This constraint must be designed
 into parsers early (normalised entry_timestamp across all sources)
 not retrofitted after multi-source is live.
 
-**Identity and deduplication across sources**
-If a topic appears in a note and an iMessage thread, how does the
-system know they are related? Deferred until multi-source is real.
+**Entity Layer — Cross-Channel Identity**
+
+One of the most important cross-cutting design decisions in the system.
+Named now so no parser decision accidentally closes it off.
+
+The problem: Pat is a participant in the iMessage thread, referenced
+by name in journal entries, mentioned in emails, appears in oral
+history recordings. Every reference is currently an island. The system
+has no way to know "Patrick Mangan" in a message and "Pat" in a journal
+entry are the same person.
+
+The solution: a Person entity that exists independently of any single
+content channel. Sitting above all parsers as a shared reference layer.
+
+```
+Person (channel-agnostic)
+    person_id        — permanent, never changes
+    canonical_name   — "Patrick Mangan"
+    aliases          — ["Pat", "PJM", "Patrick", "Mangan"]
+    first_known_date — when they first appear in any channel
+    channels         — which content channels they appear in
+    notes            — human-added context about this person
+```
+
+The broader entity pattern applies beyond people:
+    People       — Pat, James, Killian, Ger, family members
+    Places       — Ireland, specific recurring locations
+    Organisations — Citi, specific institutions
+    Events       — recurring annual events, named trips
+    Concepts     — recurring ideas that span multiple channels
+
+With the entity layer, two retrieval modes become available:
+    Semantic retrieval — find by meaning (what exists now)
+    Entity retrieval   — find by person, place, event (precise)
+
+Together they are significantly more powerful than either alone.
+
+Cross-channel vision: a journal entry mentioning Pat automatically
+surfaces relevant message bursts with Pat from the same period,
+other journal entries mentioning Pat, the Voice Profile for Pat,
+and the Thread Portrait of the Patrick-Thomas relationship — all
+triggered by the entity reference, not just semantic similarity.
+
+Build sequence:
+    Now   — reserve person_id as optional field in ParsedNote
+             contract. Don't populate yet. Field is there, reserved.
+    Soon  — entity extraction for iMessage (natural extension of
+             participant identity already in the parser)
+    Later — named entity recognition across Joplin journal corpus.
+             1,489 entries become searchable by entity.
+    Much  — full entities table, entity resolution across all
+    later   channels, relationship graph visible across corpus.
+
+Design principle: name it now, reserve the architecture, don't
+over-build it yet. Every parser going forward should ask: "what
+entities does this content reference?" Even if the answer is
+"unknown" for now — the question is in the design.
+
+
 
 **ParsedNote contract extension**
 Adding source_type would allow filtering by source. Deferred to
