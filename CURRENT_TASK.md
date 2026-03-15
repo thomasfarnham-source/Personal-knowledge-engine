@@ -213,7 +213,20 @@ Known limitations: numbers and names can change over time.
 Full resolution model deferred — revisit when a second
 export surfaces ambiguous identities.
 
----
+The Obsidian insight plugin is the first moment the system becomes
+an experience rather than a pipeline. It is the primary consumer-facing
+expression of the PKE and the real validation gate for everything built
+in 8.9.4 through 8.9.7.
+
+Two retrieval modes define the experience:
+
+**Topical Retrieval** — surfaces passages semantically related to what
+the user is writing about now. The default mode. Answers the question:
+"what have I thought about this before?"
+
+**Temporal Reflection** — surfaces passages emotionally and situationally
+resonant with the current moment, across time. Answers the question:
+"what was I feeling the last time I was in a moment like this one?"
 
 Manual prototype analysis run against the group chat CSV.
 13,579 messages, January 2018 to March 2026.
