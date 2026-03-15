@@ -1,6 +1,6 @@
 # Personal Knowledge Engine — System Architecture
 
-Last updated: 2026-03-08 21:48 EST
+Last updated: 2026-03-15 11:16 EST
 
 This document defines the architecture, contracts, and sequencing of the
 Personal Knowledge Engine (PKE). It is the authoritative reference for all
@@ -11,17 +11,23 @@ tools must treat this document as the source of truth.
 
 ## 1. System Overview
 
-The Personal Knowledge Engine is a personal intelligence layer with two
+The Personal Knowledge Engine is a personal intelligence layer with three
 faces:
 
 **The pipeline** — a deterministic, two-stage ingestion system that converts
-personal notes into a structured, queryable knowledge base backed by
-Supabase and embeddings.
+personal notes and messages into a structured, queryable knowledge base
+backed by Supabase (or local sqlite-vec) and embeddings.
 
 **The writing environment** — an Obsidian-based writing surface with a
 custom plugin that queries the PKE retrieval API in real time, surfacing
 semantically relevant chunks from personal history in a live insight panel
 as the user writes.
+
+**The companion layer** — a distilled voice derived from years of real
+human relationships, operating as an unprompted, unpredictable presence
+in the writing environment. Built on the CompanionProvider protocol —
+pluggable across frontier models (Claude, GPT-4) and local models (Llama 3
+via Ollama). See Section 18.
 
 The canonical pipeline workflow is:
 
@@ -37,6 +43,7 @@ The system is built around:
 - Testability and isolation
 - Clean separation of concerns
 - User ownership of all content (plain text, no lock-in)
+- Local-first architecture — all components can run without internet
 
 ---
 
@@ -113,15 +120,27 @@ Every parsed note must contain exactly these fields:
 }
 ```
 
+Multi-source extension fields (optional, added milestone 9.x):
+```
+    "source_type":      str | None,       # "joplin" | "imessage" | "email" etc.
+    "participants":     list[str] | None, # for message sources
+    "dominant_sender":  str | None,       # for message sources
+    "thread_id":        str | None,       # for message sources
+    "thread_type":      str | None,       # "group" | "bilateral"
+    "person_ids":       list[str] | None, # RESERVED — entity layer (see Section 17)
+                                          # not populated until entity milestone
+                                          # every parser must reserve this field
+```
+
 Rules:
-- No missing fields
-- No extra fields
-- No None values
-- Empty string or empty list for missing metadata
+- No missing fields (core fields)
+- No None values (core fields)
+- Empty string or empty list for missing core metadata
+- Multi-source extension fields default to None if not applicable
+- person_ids must be reserved as None by every parser until the
+  entity layer is built — never omit this field from the contract
 
 This contract must not change without a formal design decision.
-Extension for multi-source (source_type field) deferred to first
-multi-source parser milestone.
 
 ---
 
@@ -344,6 +363,21 @@ Corpus state as of milestone 8.9.7:
 - 1489 notes with real OpenAI embeddings, 0 failures
 - 866 chunks with real OpenAI embeddings
 
+### EmbeddingClient Protocol
+
+```python
+class EmbeddingClient(Protocol):
+    def generate(self, text: str) -> list[float]: ...
+```
+
+Implementations:
+    OpenAIEmbeddingClient  — calls OpenAI API (current)
+    DummyEmbeddingClient   — deterministic, for tests
+    OllamaEmbeddingClient  — local model via Ollama (planned)
+
+Swap the provider — nothing else changes. This is the pattern
+the CompanionProvider protocol (Section 18) follows exactly.
+
 ---
 
 ## 12. Supabase Integration
@@ -354,6 +388,12 @@ Tables:
 - notes (with embeddings)
 - note_tags (relationships)
 - chunks (with embeddings, populated milestone 8.9.7)
+
+Planned tables (milestone 9.x — iMessage Parser):
+- imessage_threads
+- imessage_participants
+- imessage_messages
+- imessage_bursts (primary retrieval target, with embedding column)
 
 SQL migration scripts:
 - scripts/add_chunks_table.sql — chunks table schema
@@ -380,6 +420,13 @@ SupabaseClient methods added in milestone 8.9.7:
 - match_chunks(query_embedding, match_count, filter_notebook) — pgvector RPC
 - match_notes(query_embedding, match_count, filter_notebook) — pgvector RPC
   fallback (NOT EXISTS subquery ensures no overlap with chunk results)
+
+Local database alternative (planned):
+    sqlite-vec — SQLite with vector extension, full local operation.
+    Replaces Supabase for privacy-first and offline deployments.
+    SupabaseClient abstraction already isolates all DB calls —
+    swapping the backend is a client implementation change only.
+    See Cross-Cutting Concerns in ROADMAP.md.
 
 ---
 
@@ -408,11 +455,12 @@ File structure:
 Input:
 ```json
 {
-    "query":     "string",
-    "notebook":  "string (optional)",
-    "date_from": "YYYY-MM-DD (optional)",
-    "date_to":   "YYYY-MM-DD (optional)",
-    "limit":     "int (optional, default 5, max 20)"
+    "query":              "string",
+    "notebook":           "string (optional)",
+    "date_from":          "YYYY-MM-DD (optional)",
+    "date_to":            "YYYY-MM-DD (optional)",
+    "limit":              "int (optional, default 5, max 20)",
+    "recency_preference": "string (optional): 'older' | 'recent' | 'none'"
 }
 ```
 
@@ -441,8 +489,20 @@ Hybrid retrieval strategy:
 5. Return top N QueryResult objects
 
 Scoring hook: Retriever._score() returns raw cosine similarity.
-Isolated for future extension: recency decay, archetype weighting,
-timestamp confidence signals.
+Isolated for future extension. Planned signals in priority order:
+    1. Recency decay — user-configurable preference (favour older /
+       favour recent / no preference). Exposed in Obsidian plugin
+       settings UI and passed as recency_preference parameter.
+       Tilts the scoring curve — does not create hard cutoffs.
+       Applies uniformly across all content types (unified timeline
+       principle).
+    2. Archetype weighting — oral history vs journal fragments
+    3. Timestamp confidence — explicit > calculated > null
+
+CORS middleware: added to allow Obsidian plugin origin.
+    Permitted origins: app://obsidian.md, http://localhost,
+    http://127.0.0.1
+    Not using allow_origins=["*"] — content is personal and sensitive.
 
 Design principle — the insight panel is never a dead end:
 Every surfaced passage carries enough information for the Obsidian
@@ -467,23 +527,51 @@ To start the API server:
 Obsidian is the chosen writing surface, replacing Joplin.
 Local-first, plain Markdown files, strong plugin API.
 
-### Obsidian Insight Plugin
+### Obsidian Insight Plugin (milestone 8.9.8 — COMPLETE)
 
-A custom Obsidian plugin (TypeScript) that:
+Repo: thomasfarnham-source/pke-obsidian-plugin
+Language: TypeScript
+Built: 2026-03-14
+
+File structure:
+    src/
+        main.ts          — entry point, wires all components
+        types.ts         — shared types, mirrors Python API contract
+        api.ts           — HTTP client for PKE retrieval API
+        query-engine.ts  — debounce, pause gate, context extraction
+        insight-view.ts  — sidebar panel rendering reflections
+        settings.ts      — settings tab UI
+
+A custom Obsidian plugin that:
 1. Watches the active note for changes
-2. After a short debounce, sends the current paragraph to POST /query
-3. Renders the top 3-5 results in a side panel
+2. After a short debounce (~1000ms), sends current paragraph +
+   2-3 preceding lines to POST /query
+3. Renders top 3-5 reflections in a right sidebar panel
 4. Displays: date, note title, relevant passage (raw text)
 5. Never generates AI summaries — surfaces raw content only
 
-**The insight panel is never a dead end.**
-Every surfaced passage links back to its full source context:
-- Click note title → opens the source note in Obsidian
-- Click passage → opens source note at the exact paragraph
-  (using char_start offset for precise navigation)
-- Audio chunks → inline play button for the original recording
-- Image chunks → opens note at the photo location
+Settings UI (human-framed):
+- Refresh speed (Immediately / After a moment / Only when I stop)
+- Result count (3 / 5 / 7)
+- Notebook filter (All / current / multi-select)
+- Recency preference (Favour older / Favour recent / No preference)
+- Note exclusion tag (default: #private)
 
+Features:
+- Cold start: fires initial query from last session context on load
+- Link feature: one-click inserts dated Obsidian link at cursor
+- Relevance feedback: thumbs up/down and dismiss, logged locally
+- Note exclusion: user-configurable tag, filtered client-side
+
+Post-launch improvement backlog:
+- Query scope control — selection mode (highlight text to trigger)
+- HTML stripping — Joplin export artefacts in matched_text
+- Navigation/deep links — non-functional until Joplin → Obsidian
+  migration complete
+- Relevance ranking — personal relevance scoring deferred to 8.9.9
+
+**The insight panel is never a dead end.**
+Every surfaced passage links back to its full source context.
 The panel is ambient, not intrusive. The user controls their
 own thinking. The system provides material, not conclusions.
 
@@ -520,12 +608,42 @@ full four-phase migration plan including validation gate.
 
 ### Planned Parsers
 - pke/parsers/obsidian_parser.py (primary writing surface migration)
-- pke/parsers/imessage_parser.py (iMessage threads)
+- pke/parsers/imessage_parser.py (iMessage threads — milestone 9.x)
 - pke/parsers/yahoo_mail_parser.py (email from select senders)
 - pke/parsers/handwritten_journal_parser.py (Moleskine digitization)
 
-ParsedNote contract extension (source_type field) deferred to first
-multi-source milestone.
+### iMessage Parser Design (milestone 9.x — IN PROGRESS)
+
+Extraction tool: iMazing (imazing.com) — $29.99 one-time, 1 device
+Source format: iMazing CSV export (17 columns, ISO timestamps)
+Unit of ingestion: conversation burst (4-hour gap threshold)
+
+CSV columns:
+    Chat Session, Message Date, Delivered Date, Read Date,
+    Edited Date, Deleted Date, Service, Type, Sender ID,
+    Sender Name, Status, Replying to, Subject, Text,
+    Reactions, Attachment, Attachment type
+
+Sender resolution:
+    Outgoing + blank Sender Name → Thomas (self)
+    All others → display name from Sender Name column
+
+New database tables:
+    imessage_threads      — conversation containers
+    imessage_participants — identity registry (v1: phone + name)
+    imessage_messages     — atomic message records
+    imessage_bursts       — retrievable units with embedding column
+
+Thread attribute on burst:
+    Every burst carries thread_id linking to imessage_threads.
+    Enables filtering by thread type (group vs bilateral).
+    Bilateral and group registers are distinct — Patrick one-on-one
+    with Thomas is a different voice than Patrick in the group.
+
+Identity resolution (v1):
+    Primary key: phone number + display name composite.
+    Known limitation: numbers and names can change over time.
+    Full Person/PersonIdentifier model deferred — see Section 17.
 
 ---
 
@@ -558,14 +676,14 @@ Test structure:
             test_archetype_d.py          — chunk_archetype_d() (milestone 8.9.6)
             test_archetype_e.py          — chunk_archetype_e() (milestone 8.9.6)
             test_resource_extractor.py   — extract_resources() (milestone 8.9.6)
-            test_retriever.py            — retrieval logic (milestone 8.9.7 — TODO)
-            test_embed_chunks.py         — backfill CLI (milestone 8.9.7 — TODO)
+            test_retriever.py            — retrieval logic (milestone 8.9.7 ✅)
+            test_embed_chunks.py         — backfill CLI (milestone 8.9.7 ✅)
         integration/
             test_pipeline_integration.py
             test_embedding_client_mock.py
             test_idempotency_behavior.py
             test_supabase_client_mock.py
-            test_retrieval_api.py        — FastAPI endpoint tests (8.9.7 — TODO)
+            test_retrieval_api.py        — FastAPI endpoint tests (8.9.7 ✅)
         e2e/
         fixtures/
         test_data/
@@ -574,9 +692,224 @@ Note: flat tests/ root files predate the unit/integration subfolder
 structure. Consolidation deferred to a housekeeping pass once the
 ingestion and parser test suites grow enough to warrant it.
 
+Test count as of milestone 8.9.8: 385 passing, 0 failing.
+
 ---
 
-## 17. Collaboration Workflow
+## 17. Entity Layer (Planned)
+
+A cross-channel identity layer that sits above all parsers.
+Allows the same person, place, or event to be recognised and
+linked across multiple content channels.
+
+Primary use case: "Patrick Mangan" in an iMessage thread and
+"Pat" in a journal entry resolve to the same Person entity.
+
+### The Problem
+Without the entity layer, the system retrieves by semantic
+similarity — "find things that feel like this." But it cannot
+answer relationship queries — "find everything about Pat" or
+"find everything that happened in Ireland." Every reference
+across channels is currently an island.
+
+### The Person Entity
+
+```python
+Person:
+    person_id        # permanent, never changes
+    canonical_name   # "Patrick Mangan"
+    aliases          # ["Pat", "PJM", "Patrick", "Mangan"]
+    first_known_date # when they first appear in any channel
+    channels         # which content channels they appear in
+    notes            # human-added context
+
+PersonIdentifier:    # mutable, append-only
+    identifier_id
+    person_id        # links to Person
+    identifier_type  # "phone" | "apple_id" | "display_name"
+    identifier_value # "+16467327168"
+    date_first_seen
+    date_last_seen
+    confidence       # "confirmed" | "inferred"
+```
+
+Known limitations: phone numbers and display names can change
+over time. The PersonIdentifier model handles this by treating
+identifiers as append-only — a new number adds a new record,
+old messages still resolve via the old number.
+
+### The Broader Entity Pattern
+
+Same concept applies to:
+    People       — Pat, James, Killian, Ger, family members
+    Places       — Ireland, specific recurring locations
+    Organisations — Citi, specific institutions
+    Events       — recurring annual events, named trips
+    Concepts     — recurring ideas that span channels
+
+### Two Retrieval Modes Enabled
+
+    Semantic retrieval — find by meaning (current)
+    Entity retrieval   — find by person, place, event (planned)
+
+Together significantly more powerful than either alone.
+
+### The person_ids Field Rule
+
+Every parser must include person_ids as an optional field
+in its ParsedNote output — even if it cannot populate it.
+The field must exist before entity resolution logic is built
+so no migration is needed when it arrives.
+
+    person_ids: list[str] | None = None  # reserved, always present
+
+### Build Sequence
+
+    Now   — person_ids reserved in ParsedNote contract ✅
+    Soon  — entity extraction for iMessage participants
+    Later — named entity recognition across Joplin corpus
+    Much  — full entities table, cross-channel resolution,
+    later   relationship graph
+
+---
+
+## 18. Companion Layer Architecture (Planned)
+
+The third face of the PKE. A distilled voice derived from years
+of real human relationships, operating as an unprompted presence
+in the writing environment.
+
+### CompanionProvider Protocol
+
+Same pattern as EmbeddingClient. Any provider that implements
+this interface is a valid companion engine.
+
+```python
+class CompanionProvider(Protocol):
+    def generate(
+        self,
+        system_prompt: str,
+        context: list[str],
+        journal_excerpt: str,
+    ) -> str: ...
+```
+
+Planned implementations:
+    ClaudeCompanionProvider   — Anthropic API (start here)
+    OpenAICompanionProvider   — OpenAI API
+    OllamaCompanionProvider   — local Llama 3 via Ollama
+    GeminiCompanionProvider   — Google API
+
+Provider and PersonalitySkin are independent.
+Swap either without touching the other.
+
+### PersonalitySkin
+
+A configuration object — separate from the provider,
+separately editable, separately versioned.
+
+```python
+PersonalitySkin:
+    name                # "Book Club", "Family", etc.
+    system_prompt       # core personality descriptor
+    channel_weights     # per-sender retrieval weights
+    era_filter          # date range for retrieval
+    response_modes      # direct / attributed / synthesis
+    register_weights    # direct / ironic / oblique / nostalgic
+    max_response_length # one sentence / two / three
+    trigger_threshold   # resonance score required to speak
+    cadence_limit       # max interventions per session
+```
+
+The system_prompt is the heart of the skin. Written by the
+producer after corpus analysis — not generated automatically.
+Specifics over adjectives. See ROADMAP.md Companion Layer.
+
+### Three-Level Document Architecture
+
+Three portrait documents feed the companion and observer layers:
+
+    Level 1 — Writer Portrait (person level)
+        About Thomas as an individual. Context for the Observer.
+        Built from passive corpus inference + active conversation.
+        Template: WRITER_PORTRAIT_TEMPLATE.md
+
+    Level 2 — Thread Portrait (relationship level)
+        About a specific conversation context.
+        One document per thread. Built from corpus analysis.
+
+    Level 3 — Voice Profile (person-within-thread level)
+        How a specific person shows up in a specific thread.
+        Used by Companion Engine for channel weighting.
+        Built from per-sender corpus analysis.
+
+### Observer Layer
+
+A reasoning model that watches the journal being written,
+has been provided the Writer Portrait, sees what the retrieval
+engine surfaces, and comments on the relationship between
+current writing and past history.
+
+The writer can respond directly to Observer comments — these
+conversations are flagged for incorporation into the Writer
+Portrait at the next update cycle. The writer is an active
+collaborator in their own portrait, not just its subject.
+
+### Local Operation
+
+All companion and observer functionality can run on Llama 3
+via Ollama — no internet required. Quality degrades compared
+to frontier models but core functionality is preserved.
+
+See ROADMAP.md Companion Layer for full milestone sequence.
+
+---
+
+## 19. Local-First and Resilience Architecture
+
+The PKE is designed to operate without internet connectivity.
+This serves two goals: privacy and resilience.
+
+### Privacy
+Personal journal content, family history, medical logs, and
+relationship corpus never need to leave the user's machine.
+
+### Resilience
+In scenarios where internet infrastructure is unavailable,
+the entire PKE stack continues to function.
+
+### The Fully Sovereign Local Stack
+
+    Notes corpus        — Joplin sync folder (OneDrive, always-offline)
+    Obsidian vault      — local app, local Markdown files
+    Embeddings/index    — sqlite-vec (replaces Supabase — planned)
+    Retrieval API       — FastAPI + uvicorn, runs locally
+    Embedding model     — Ollama local model (replaces OpenAI — planned)
+    Companion voice     — Llama 3 via Ollama
+    Observer layer      — Llama 3 via Ollama
+    General knowledge   — Llama 3 training data (Wikipedia + web corpus)
+
+### Local Model Setup
+
+    Tool: Ollama (ollama.com)
+    Model: Llama 3 (8B variant for standard laptops)
+    Download: ollama pull llama3  (~4-8GB, one-time)
+    Serve: ollama serve
+    API: http://localhost:11434 (same interface pattern as OpenAI)
+
+### Current External Dependencies
+
+    Supabase    — embeddings and index (migrate to sqlite-vec)
+    OpenAI API  — embedding generation (migrate to Ollama)
+    Anthropic   — companion/observer generation (Ollama as fallback)
+
+All three are isolated behind protocol interfaces. Replacing any
+one of them is a client implementation change only — the pipeline,
+retrieval logic, and plugin are untouched.
+
+---
+
+## 20. Collaboration Workflow
 
 Development follows a three-step loop:
 - Design (Thomas + Claude)
@@ -588,3 +921,6 @@ ARCHITECTURE.md is the authoritative reference and must be updated
 whenever a structural decision changes.
 ROADMAP.md captures strategic direction and must be updated when
 vision or milestone sequencing changes.
+WRITER_PORTRAIT_TEMPLATE.md captures the Observer context document
+structure and will be populated through corpus analysis + Thomas
+annotation.
