@@ -199,6 +199,7 @@ class IMessageBurst:
     text_combined: str = ""  # full text for embedding
     resource_links: list[str] = field(default_factory=list)
     source_file: str = ""
+    privacy_tier: int = 2  # 2 = group, 3 = bilateral
 
     @property
     def has_content(self) -> bool:
@@ -258,6 +259,7 @@ def burst_to_parsed_note(burst: IMessageBurst) -> dict:
         "dominant_sender": burst.dominant_sender,
         "thread_id": burst.thread_id,
         "thread_type": burst.thread_type,
+        "privacy_tier": 3 if burst.thread_type == THREAD_TYPE_BILATERAL else 2,
         # ── Entity layer — reserved, not populated in v1 ─────────
         "person_ids": None,
     }
@@ -531,9 +533,11 @@ def parse_imessage_csv(csv_path: str) -> tuple[IMessageThread, list[IMessageBurs
         message_count=len(raw_messages),
     )
 
-    # Backfill thread_type onto bursts (known after participant analysis)
+    # Backfill thread_type and privacy_tier onto bursts
+    # (known after participant analysis)
     for burst in bursts:
         burst.thread_type = thread_type
+        burst.privacy_tier = 3 if thread_type == THREAD_TYPE_BILATERAL else 2
 
     return thread, bursts
 

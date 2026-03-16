@@ -110,7 +110,149 @@ Nothing requires any company to still be operating.
 
 ---
 
-## MVP Plan — Companion Layer
+## Known Corpus Gaps
+
+A record of what is missing from the PKE corpus and why.
+The Observer Layer and Writer Portrait must be calibrated with
+awareness that the corpus is incomplete. Absence of evidence
+is not evidence of absence.
+
+### Irrecoverable
+
+**Hotmail (pre-~2005)**
+Early personal email. Dormant account, likely purged.
+Contains correspondence from college and early post-college years.
+Period: approximately late 1990s — early 2000s.
+
+**JP Morgan Chase corporate email**
+Professional correspondence from JPM years.
+Corporate IT retention policies almost certainly purged.
+Irrecoverable.
+
+**Other old addresses**
+Any additional personal email addresses from early internet era
+that are no longer accessible.
+
+### Potentially Recoverable
+
+**Early Patrick correspondence (email)**
+Patrick may have Thomas's early emails on his end if he has
+maintained the same address. Worth asking.
+
+**Early James / other friends correspondence**
+Same principle. Key correspondents from the pre-iMessage era
+may have archived emails that Thomas sent them.
+
+**Gmail forwards**
+Anything forwarded from old addresses to Gmail would be in
+Google Takeout. Worth checking.
+
+### Known Gaps by Channel
+
+**iMessage — group chat**
+Near silence 2019-2021. Confirmed bridged by bilateral threads.
+Patrick bilateral thread active throughout this period.
+
+**iMessage — bilateral threads**
+Patrick thread starts December 2013. Pre-2013 record missing.
+James, Chris, William bilateral threads not yet exported.
+Any sub-group threads (Thomas + Patrick + James etc) not yet
+exported.
+
+**Journal (Joplin)**
+1,489 notes ingested. Coverage likely uneven — some periods
+heavily journaled, others sparse. Corpus analysis will reveal
+temporal distribution.
+
+**Pre-digital record**
+Handwritten Moleskine journals — not yet digitized (milestone 9.11).
+These may cover the pre-digital gap more than any other source.
+
+### The Oral Record — Structural Gap Across All Channels
+
+The most important conversations in most lives happen out loud.
+The PKE corpus captures what was written down. It is working
+with the written shadow of a life, not the life itself.
+
+This is a structural limitation that applies across all channels
+and must be named explicitly in the Writer Portrait and Observer
+Layer calibration.
+
+The Patrick bilateral thread is the clearest example:
+    - Weekly phone calls for years left no text record
+    - The iMessage thread is logistics around conversations
+      that happened verbally and are now gone
+    - "Give me a call in 10 min" is evidence of a call
+      the corpus will never contain
+    - The pre-Killian period — the richest phase of the
+      friendship — was primarily conducted by phone and
+      in person, not by text
+
+The corpus interpretation rule:
+    Thin text record ≠ thin relationship
+    Frequent logistics messages = evidence of oral relationship
+    The written record understates relationships that were
+    primarily conducted by phone or in person
+
+The Observer Layer should be calibrated to understand:
+    - What is present in the corpus
+    - What is structurally absent (oral record)
+    - What the written residue implies about the unwritten whole
+    - "The corpus is sparse here" is different from
+      "the relationship was sparse here"
+
+Writer Portrait note (to be added when built):
+    "Patrick as captured in the corpus is the text version
+    of a friendship that was primarily conducted by phone
+    and in person for many years. The corpus understates
+    both the volume and depth of the relationship,
+    particularly pre-2015 and pre-Killian."
+
+---
+
+These items are deferred to the Obsidian plugin testing milestone.
+Each will be implemented alongside its test cases.
+
+1. **Auto-retry / status indicator** — when the API is not reachable
+   on plugin load, poll every 30 seconds rather than showing a static
+   error. When the API comes online the panel wakes up automatically
+   without requiring a plugin toggle. Show a subtle "connecting..."
+   indicator while waiting. Implement alongside plugin test cases.
+
+2. **Hover context expansion** — on hover over a reflection passage,
+   show 10 lines above and 10 lines below the matched text from the
+   source note. Bounded context window — not the full note.
+   Requires new API endpoint: GET /note/{note_id}/context
+   passing char_start + line_count. Returns only the surrounding
+   window. Also lays the groundwork for deep link paragraph
+   navigation (milestone 9.9 dependency).
+
+3. **Relevance explanation** — two layers:
+   a) Keyword highlighting — highlight words in the passage that
+      overlap with the current writing. Visual, immediate, no
+      generation required. Computable client-side.
+   b) Subtle confidence indicator — similarity score expressed
+      visually (bar, dot intensity, colour) not as a raw number.
+      "Strong match" vs "weaker connection" without technical noise.
+   Generated one-line explanations ("surfaced because: both discuss
+   anxiety about career decisions") deferred to Observer Layer
+   milestone — that's the right home for AI commentary on
+   what's being surfaced and why.
+
+4. **Query scope control** — selection mode: user highlights text
+   to trigger a targeted reflection query from exactly that selection.
+   Turns the panel from ambient to intentional.
+
+5. **HTML stripping** — Joplin export artefacts visible in some
+   matched_text passages. Strip at parse time in the chunker.
+
+6. **Navigation/deep links** — non-functional until Joplin → Obsidian
+   migration complete (milestone 9.9).
+
+7. **Relevance ranking** — personal relevance scoring deferred to 8.9.9.
+   Continue capturing specific cases that feel off.
+
+---
 
 Four phases to a working end-to-end prototype:
 
@@ -202,6 +344,9 @@ imessage_bursts (
     dominant_sender  — who contributed most in burst
     thread_id        — links to source thread
     thread_type      — "group" | "bilateral"
+    privacy_tier     — 2 (journal/personal) | 3 (bilateral/relational)
+                       group threads = tier 2, bilateral threads = tier 3
+                       default retrieval excludes tier 3 unless opted in
     person_ids       — reserved, optional, not populated in v1
                        will link to entity layer when built
                        every parser going forward should reserve
@@ -213,20 +358,7 @@ Known limitations: numbers and names can change over time.
 Full resolution model deferred — revisit when a second
 export surfaces ambiguous identities.
 
-The Obsidian insight plugin is the first moment the system becomes
-an experience rather than a pipeline. It is the primary consumer-facing
-expression of the PKE and the real validation gate for everything built
-in 8.9.4 through 8.9.7.
-
-Two retrieval modes define the experience:
-
-**Topical Retrieval** — surfaces passages semantically related to what
-the user is writing about now. The default mode. Answers the question:
-"what have I thought about this before?"
-
-**Temporal Reflection** — surfaces passages emotionally and situationally
-resonant with the current moment, across time. Answers the question:
-"what was I feeling the last time I was in a moment like this one?"
+---
 
 Manual prototype analysis run against the group chat CSV.
 13,579 messages, January 2018 to March 2026.

@@ -547,6 +547,95 @@ class SupabaseClient:
         resp = client.table("chunks").update({"embedding": embedding}).eq("id", chunk_id).execute()
         _extract_data(resp)
 
+    # ------------------------------------------------------------------
+    # Generic Row Operations (added milestone 9.1 — iMessage ingestion)
+    # ------------------------------------------------------------------
+
+    def upsert_rows(self, table: str, rows: List[Dict[str, Any]]) -> None:
+        """
+        Generic batch upsert into any table.
+
+        Used by the iMessage ingestor to write to imessage_threads,
+        imessage_participants, imessage_messages, imessage_bursts,
+        and the chunks mirror in a uniform way.
+
+        Batches automatically to avoid Supabase payload size limits.
+        Dry-run: no-op.
+        """
+        if self.dry_run or not rows:
+            return
+
+        client = self._require_client()
+
+        # Batch in groups of 500 to avoid payload limits
+        for i in range(0, len(rows), 500):
+            batch = rows[i : i + 500]
+            resp = client.table(table).upsert(batch).execute()
+            _extract_data(resp)  # surface errors
+
+    def delete_where(self, table: str, column: str, value: str) -> None:
+        """
+        Delete all rows from a table where column = value.
+
+        Used by the iMessage ingestor to clear stale bursts and
+        chunk mirror rows before re-inserting on each re-ingest.
+
+        Same pattern as delete_chunks_for_note — safe because
+        the database is an index, never an archive.
+
+        Dry-run: no-op.
+        """
+        if self.dry_run:
+            return
+
+        client = self._require_client()
+        resp = client.table(table).delete().eq(column, value).execute()
+        _extract_data(resp)  # surface errors
+
+    def fetch_unembedded_bursts(self, batch_size: int = 100) -> List[Dict[str, Any]]:
+        """
+        Fetch imessage_bursts where embedding IS NULL, in batches.
+
+        Returns a list of {id, text_combined} dicts.
+        Used by the embed_chunks CLI to backfill burst embeddings
+        alongside chunk embeddings.
+
+        Dry-run: returns empty list.
+        """
+        if self.dry_run:
+            return []
+
+        client = self._require_client()
+        resp = (
+            client.table("imessage_bursts")
+            .select("id, text_combined")
+            .is_("embedding", "null")
+            .limit(batch_size)
+            .execute()
+        )
+        return _extract_data(resp)
+
+    def update_burst_embedding(self, burst_id: str, embedding: List[float]) -> None:
+        """
+        Write a generated embedding back to an imessage_bursts row.
+
+        Called by the embed_chunks CLI after generating each burst embedding.
+        Idempotent — safe to call multiple times on the same burst.
+
+        Dry-run: no-op.
+        """
+        if self.dry_run:
+            return
+
+        client = self._require_client()
+        resp = (
+            client.table("imessage_bursts")
+            .update({"embedding": embedding})
+            .eq("id", burst_id)
+            .execute()
+        )
+        _extract_data(resp)
+
     def match_chunks(
         self,
         query_embedding: List[float],

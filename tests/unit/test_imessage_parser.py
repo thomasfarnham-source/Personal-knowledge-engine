@@ -80,10 +80,23 @@ from pke.parsers.imessage_parser import (
 # ─────────────────────────────────────────────────────────────────
 
 COLUMNS = [
-    "Chat Session", "Message Date", "Delivered Date", "Read Date",
-    "Edited Date", "Deleted Date", "Service", "Type", "Sender ID",
-    "Sender Name", "Status", "Replying to", "Subject", "Text",
-    "Reactions", "Attachment", "Attachment type",
+    "Chat Session",
+    "Message Date",
+    "Delivered Date",
+    "Read Date",
+    "Edited Date",
+    "Deleted Date",
+    "Service",
+    "Type",
+    "Sender ID",
+    "Sender Name",
+    "Status",
+    "Replying to",
+    "Subject",
+    "Text",
+    "Reactions",
+    "Attachment",
+    "Attachment type",
 ]
 
 
@@ -106,9 +119,7 @@ def make_csv(rows: list[dict], thread_name: str = "Alice & Bob") -> str:
 
 def write_csv_file(content: str) -> str:
     """Write CSV content to a temp file and return the path."""
-    f = tempfile.NamedTemporaryFile(
-        mode="w", suffix=".csv", delete=False, encoding="utf-8"
-    )
+    f = tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8")
     f.write(content)
     f.close()
     return f.name
@@ -467,8 +478,11 @@ class TestThreadClassification:
     def test_five_participants_is_group(self):
         """The real group chat has 5 participants — must be group."""
         participants = [
-            SELF_NAME, "Patrick Mangan", "James Root",
-            "Chris Zicchelo", "William Renahan"
+            SELF_NAME,
+            "Patrick Mangan",
+            "James Root",
+            "Chris Zicchelo",
+            "William Renahan",
         ]
         assert _classify_thread(participants) == THREAD_TYPE_GROUP
 
@@ -508,10 +522,7 @@ class TestThreadClassification:
         base = "2023-01-01 10:00:00"
         rows = [
             make_message_row(base, "Just us", sender_name="Patrick Mangan"),
-            make_message_row(
-                ts(base, 0.5), "Indeed",
-                sender_name="", msg_type="Outgoing"
-            ),
+            make_message_row(ts(base, 0.5), "Indeed", sender_name="", msg_type="Outgoing"),
         ]
         csv_content = make_csv(rows)
         path = write_csv_file(csv_content)
@@ -558,11 +569,22 @@ class TestParsedNoteContract:
         """
         note = self._make_single_burst_note()
         required_fields = [
-            "id", "title", "body", "notebook", "tags",
-            "created_at", "updated_at", "metadata",
-            "source_file", "resource_links",
-            "source_type", "participants", "dominant_sender",
-            "thread_id", "thread_type", "person_ids",
+            "id",
+            "title",
+            "body",
+            "notebook",
+            "tags",
+            "created_at",
+            "updated_at",
+            "metadata",
+            "source_file",
+            "resource_links",
+            "source_type",
+            "participants",
+            "dominant_sender",
+            "thread_id",
+            "thread_type",
+            "person_ids",
         ]
         for field in required_fields:
             assert field in note, f"Missing required field: {field}"
@@ -644,7 +666,55 @@ class TestParsedNoteContract:
         assert "participants" in note["metadata"]
         assert note["participants"] == note["metadata"]["participants"]
 
-    def test_dominant_sender_is_most_frequent_sender(self):
+    def test_group_thread_has_privacy_tier_2(self):
+        """
+        Group threads are privacy tier 2 (personal/journal level).
+        They may surface in general Reflections by default.
+        """
+        base = "2023-01-01 10:00:00"
+        rows = [
+            make_message_row(base, "Group message one", sender_name="Alice"),
+            make_message_row(ts(base, 0.5), "Group message two", sender_name="Bob"),
+            make_message_row(ts(base, 1), "Group message three", sender_name="Carol"),
+        ]
+        csv_content = make_csv(rows)
+        path = write_csv_file(csv_content)
+        try:
+            _, bursts = parse_imessage_csv(path)
+            note = burst_to_parsed_note(bursts[0])
+            assert note["privacy_tier"] == 2
+        finally:
+            os.unlink(path)
+
+    def test_bilateral_thread_has_privacy_tier_3(self):
+        """
+        Bilateral threads are privacy tier 3 (relational/private).
+        They must NOT surface in general Reflections by default.
+        Requires explicit opt-in from the user.
+        """
+        base = "2023-01-01 10:00:00"
+        rows = [
+            make_message_row(
+                base, "Private bilateral message content here", sender_name="Patrick Mangan"
+            ),
+            make_message_row(
+                ts(base, 0.5), "Private reply content here", sender_name="", msg_type="Outgoing"
+            ),
+        ]
+        csv_content = make_csv(rows)
+        path = write_csv_file(csv_content)
+        try:
+            _, bursts = parse_imessage_csv(path)
+            note = burst_to_parsed_note(bursts[0])
+            assert note["privacy_tier"] == 3
+        finally:
+            os.unlink(path)
+
+    def test_privacy_tier_present_in_all_notes(self):
+        """privacy_tier must be present in every ParsedNote output."""
+        note = self._make_single_burst_note()
+        assert "privacy_tier" in note
+        assert note["privacy_tier"] is not None
         """
         dominant_sender must be the sender with the most messages
         in the burst. Critical for Group Voice channel weighting.
@@ -673,9 +743,7 @@ class TestParsedNoteContract:
         base = "2023-01-01 10:00:00"
         rows = [
             make_message_row(base, "Look at this photo"),
-            make_message_row(
-                ts(base, 0.1), text="", attachment="IMG_1234.jpg"
-            ),
+            make_message_row(ts(base, 0.1), text="", attachment="IMG_1234.jpg"),
         ]
         csv_content = make_csv(rows)
         path = write_csv_file(csv_content)
@@ -749,10 +817,7 @@ class TestEdgeCases:
         base = "2023-01-01 10:00:00"
         rows = [
             make_message_row(base, "Incoming", sender_name="Alice"),
-            make_message_row(
-                ts(base, 0.5), "Outgoing reply",
-                sender_name="", msg_type="Outgoing"
-            ),
+            make_message_row(ts(base, 0.5), "Outgoing reply", sender_name="", msg_type="Outgoing"),
         ]
         csv_content = make_csv(rows)
         path = write_csv_file(csv_content)
@@ -768,8 +833,14 @@ class TestEdgeCases:
         and return one thread + bursts per file.
         """
         base = "2023-01-01 10:00:00"
-        rows1 = [make_message_row(base, "File 1 message with enough content to embed", sender_name="Alice")]
-        rows2 = [make_message_row(base, "File 2 message with enough content to embed", sender_name="Bob")]
+        rows1 = [
+            make_message_row(
+                base, "File 1 message with enough content to embed", sender_name="Alice"
+            )
+        ]
+        rows2 = [
+            make_message_row(base, "File 2 message with enough content to embed", sender_name="Bob")
+        ]
 
         with tempfile.TemporaryDirectory() as tmpdir:
             path1 = os.path.join(tmpdir, "thread1.csv")

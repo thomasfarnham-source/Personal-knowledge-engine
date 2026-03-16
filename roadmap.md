@@ -830,7 +830,54 @@ Source format (IMAP vs MBOX) TBD.
 
 ---
 
-## The Companion Layer
+### Future Content Channels (not yet milestoned)
+
+**Facebook Archive**
+An active Facebook posting period is a distinct and valuable corpus.
+What you chose to share publicly vs what you wrote privately at the
+same time reveals something about self-presentation and authenticity.
+The gap between public posts and journal entries from the same period
+is a signal the Observer Layer can use — how you presented yourself
+outward vs how you were actually thinking and feeling.
+Export: Settings → Your Facebook Information → Download Your
+Information. Returns JSON or HTML archive including posts, messages,
+photos, reactions, and comments.
+
+**Family iMessage Threads**
+Distinct from friendship bilateral threads in register and sensitivity.
+Family conversations carry more obligation, more history, more things
+unsaid. Generational depth that no friendship thread has.
+Privacy consideration: family content is likely the most sensitive
+corpus in the system — more so than bilateral friendship threads.
+Propose Tier 4 in the privacy tiering model (above Tier 3 bilateral).
+Requires careful deliberate thought before ingestion. Not to be
+treated as equivalent to friendship threads.
+
+**Instagram Archive**
+Visual corpus. Different register from text — what images you chose
+to share publicly at a specific life period. Useful for the Observer
+Layer's temporal portrait but lower information density than text.
+
+**Twitter/X Archive**
+If active. Public intellectual and political register. Reveals what
+you thought was worth broadcasting into the world.
+
+**LinkedIn Archive**
+Professional self-presentation corpus. Useful for contrast with
+private journal register — how professional identity and personal
+identity relate over time.
+
+Privacy tiering for future channels:
+    Facebook posts     — Tier 2 (was public, personal context)
+    Facebook messages  — Tier 3 (bilateral/relational)
+    Family threads     — Tier 4 (family — most sensitive)
+    Instagram          — Tier 2 (was public)
+    Twitter/X          — Tier 2 (was public)
+    LinkedIn           — Tier 2 (was public, professional)
+
+---
+
+
 
 *The PKE started as a retrieval system. The Companion Layer is where it becomes a presence.*
 
@@ -1944,7 +1991,75 @@ Prerequisite: local-first tension resolved.
 
 ---
 
-**Unified timeline principle**
+**Content Privacy Tiering**
+
+Different content sources have different privacy levels. Retrieval
+must respect those levels — content from a more private context
+must never surface in a less private one.
+
+Privacy tiers (lowest to highest):
+    Tier 1 — Public / shareable
+        Content the writer would share openly.
+
+    Tier 2 — Personal / journal
+        Private to the writer. Journal entries, personal notes,
+        public social media posts (past public content now in
+        private corpus). Default retrieval tier for Reflections.
+
+    Tier 3 — Bilateral / relational
+        Private to two people. iMessage bilateral threads, private
+        email threads, Facebook messages. Should never surface in
+        group contexts or mixed with group content without explicit
+        opt-in.
+
+    Tier 4 — Family / most sensitive
+        Family conversations. More obligation, more history, more
+        things unsaid than friendship threads. Generational depth.
+        Requires explicit opt-in. Never surfaces by default.
+        Treated with the highest level of care in the system.
+
+The rule: a reflection should only surface in a context that is
+at least as private as the source.
+
+Bilateral thread content (Tier 3) may surface:
+    - In private journal entries (writer is alone)
+    - In bilateral Obsidian notes with the same person
+    - As input to Companion voice analysis (writer controls this)
+
+Bilateral thread content must NOT surface:
+    - In group contexts
+    - Mixed with group chat content without clear attribution
+    - As a reflection that might be shared or visible to others
+
+Implementation:
+    source_filter parameter on POST /query:
+        "source_filter": {
+            "include": ["joplin", "imessage-group"],
+            "exclude": ["imessage-bilateral"]
+        }
+
+    Plugin settings — privacy tier control:
+        "Which sources should surface as Reflections?"
+            → Journal notes only
+            → Journal notes + group messages (recommended)
+            → All sources including private threads (explicit opt-in)
+
+    Default: bilateral threads excluded from general Reflections.
+    User explicitly opts in to surfacing bilateral content.
+
+    Corpus analysis: bilateral threads kept as separate corpus for
+    Personality Skin and Voice Profile work. They inform the
+    analysis but do not flow into general retrieval by default.
+
+Design rule: every parser must assign a privacy tier to its output.
+Every retrieval query must respect the tier of the current context.
+No future parser decision should accidentally violate this principle.
+
+This is the first instance of content tiering in the PKE. The same
+principle applies to email, medical notes, and any other sensitive
+source added later.
+
+
 When multi-source content is available, the recency preference
 setting (and any future temporal scoring signal) must apply
 uniformly across all content types. A text message from 2019,

@@ -127,6 +127,10 @@ Multi-source extension fields (optional, added milestone 9.x):
     "dominant_sender":  str | None,       # for message sources
     "thread_id":        str | None,       # for message sources
     "thread_type":      str | None,       # "group" | "bilateral"
+    "privacy_tier":     int | None,       # 2 = personal/journal
+                                          # 3 = bilateral/relational
+                                          # default retrieval excludes tier 3
+                                          # see Content Privacy Tiering in ROADMAP.md
     "person_ids":       list[str] | None, # RESERVED — entity layer (see Section 17)
                                           # not populated until entity milestone
                                           # every parser must reserve this field
