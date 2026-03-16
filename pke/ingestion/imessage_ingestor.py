@@ -71,9 +71,11 @@ logger = logging.getLogger(__name__)
 # INGESTION RESULT
 # ─────────────────────────────────────────────────────────────────
 
+
 @dataclass
 class IMessageIngestionResult:
     """Summary of a completed ingestion run."""
+
     thread_id: str
     thread_name: str
     messages_upserted: int
@@ -97,6 +99,7 @@ class IMessageIngestionResult:
 # ─────────────────────────────────────────────────────────────────
 # CORE INGESTOR
 # ─────────────────────────────────────────────────────────────────
+
 
 class IMessageIngestor:
     """
@@ -243,15 +246,15 @@ class IMessageIngestor:
 
     def _upsert_thread(self, thread: IMessageThread) -> None:
         row = {
-            "id":            thread.thread_id,
-            "thread_name":   thread.thread_name,
-            "thread_type":   thread.thread_type,
-            "participants":  thread.participants,
-            "source_file":   _basename(thread.source_file),
-            "date_start":    thread.date_start,
-            "date_end":      thread.date_end,
+            "id": thread.thread_id,
+            "thread_name": thread.thread_name,
+            "thread_type": thread.thread_type,
+            "participants": thread.participants,
+            "source_file": _basename(thread.source_file),
+            "date_start": thread.date_start,
+            "date_end": thread.date_end,
             "message_count": thread.message_count,
-            "privacy_tier":  3 if thread.thread_type == "bilateral" else 2,
+            "privacy_tier": 3 if thread.thread_type == "bilateral" else 2,
         }
         logger.debug(f"Upserting thread: {thread.thread_name}")
         self.db.upsert_rows("imessage_threads", [row])
@@ -259,12 +262,14 @@ class IMessageIngestor:
     def _upsert_participants(self, thread: IMessageThread) -> int:
         rows = []
         for name in thread.participants:
-            rows.append({
-                "id":           _make_id(name),
-                "display_name": name,
-                "is_self":      name == SELF_NAME,
-                "thread_ids":   [thread.thread_id],
-            })
+            rows.append(
+                {
+                    "id": _make_id(name),
+                    "display_name": name,
+                    "is_self": name == SELF_NAME,
+                    "thread_ids": [thread.thread_id],
+                }
+            )
         if rows:
             self.db.upsert_rows("imessage_participants", rows)
         logger.debug(f"Upserted {len(rows)} participants")
@@ -303,21 +308,23 @@ class IMessageIngestor:
 
         rows = []
         for burst in bursts:
-            rows.append({
-                "id":              str(uuid.uuid4()),
-                "note_id":         None,
-                "chunk_index":     burst.burst_index,
-                "chunk_text":      burst.text_combined,
-                "embedding":       None,
-                "char_start":      0,
-                "char_end":        len(burst.text_combined),
-                "section_title":   burst.thread_name,
-                "entry_timestamp": burst.date_start,
-                "resource_ids":    burst.resource_links,
-                "source_type":     "imessage",
-                "source_id":       burst.burst_id,
-                "privacy_tier":    burst.privacy_tier,
-            })
+            rows.append(
+                {
+                    "id": str(uuid.uuid4()),
+                    "note_id": None,
+                    "chunk_index": burst.burst_index,
+                    "chunk_text": burst.text_combined,
+                    "embedding": None,
+                    "char_start": 0,
+                    "char_end": len(burst.text_combined),
+                    "section_title": burst.thread_name,
+                    "entry_timestamp": burst.date_start,
+                    "resource_ids": burst.resource_links,
+                    "source_type": "imessage",
+                    "source_id": burst.burst_id,
+                    "privacy_tier": burst.privacy_tier,
+                }
+            )
 
         if rows:
             self.db.upsert_rows("chunks", rows)
@@ -329,35 +336,35 @@ class IMessageIngestor:
 
     def _burst_to_row(self, burst: IMessageBurst) -> dict:
         return {
-            "id":              burst.burst_id,
-            "thread_id":       burst.thread_id,
-            "thread_name":     burst.thread_name,
-            "thread_type":     burst.thread_type,
-            "burst_index":     burst.burst_index,
-            "date_start":      burst.date_start,
-            "date_end":        burst.date_end,
-            "participants":    burst.participants,
+            "id": burst.burst_id,
+            "thread_id": burst.thread_id,
+            "thread_name": burst.thread_name,
+            "thread_type": burst.thread_type,
+            "burst_index": burst.burst_index,
+            "date_start": burst.date_start,
+            "date_end": burst.date_end,
+            "participants": burst.participants,
             "dominant_sender": burst.dominant_sender,
-            "text_combined":   burst.text_combined,
-            "resource_links":  burst.resource_links,
-            "privacy_tier":    burst.privacy_tier,
-            "embedding":       None,
-            "source_file":     _basename(burst.source_file),
+            "text_combined": burst.text_combined,
+            "resource_links": burst.resource_links,
+            "privacy_tier": burst.privacy_tier,
+            "embedding": None,
+            "source_file": _basename(burst.source_file),
         }
 
     def _message_to_row(self, msg: IMessageMessage, thread_id: str) -> dict:
         return {
-            "id":              msg.message_id,
-            "thread_id":       thread_id,
-            "sender_name":     msg.sender_name,
-            "sender_id":       msg.sender_id,
-            "timestamp":       msg.timestamp.isoformat(),
-            "text":            msg.text,
-            "message_type":    msg.message_type,
-            "reactions":       msg.reactions,
-            "attachment":      msg.attachment,
+            "id": msg.message_id,
+            "thread_id": thread_id,
+            "sender_name": msg.sender_name,
+            "sender_id": msg.sender_id,
+            "timestamp": msg.timestamp.isoformat(),
+            "text": msg.text,
+            "message_type": msg.message_type,
+            "reactions": msg.reactions,
+            "attachment": msg.attachment,
             "attachment_type": msg.attachment_type,
-            "has_text":        msg.has_text,
+            "has_text": msg.has_text,
         }
 
 
@@ -365,6 +372,8 @@ class IMessageIngestor:
 # UTILITIES
 # ─────────────────────────────────────────────────────────────────
 
+
 def _basename(path: str) -> str:
     from pathlib import Path
+
     return Path(path).name

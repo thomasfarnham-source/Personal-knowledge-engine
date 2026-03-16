@@ -44,10 +44,10 @@ import csv
 from pke.ingestion.imessage_ingestor import IMessageIngestor
 from pke.parsers.imessage_parser import SELF_NAME
 
-
 # ─────────────────────────────────────────────────────────────────
 # MOCK CLIENT
 # ─────────────────────────────────────────────────────────────────
+
 
 class MockSupabaseClient:
     """
@@ -58,7 +58,7 @@ class MockSupabaseClient:
 
     def __init__(self, dry_run: bool = False) -> None:
         self.dry_run = dry_run
-        self.upserted: dict[str, list[dict]] = {}   # table -> list of rows
+        self.upserted: dict[str, list[dict]] = {}  # table -> list of rows
         self.deleted: list[tuple[str, str, str]] = []  # (table, column, value)
 
     def upsert_rows(self, table: str, rows: list[dict]) -> None:
@@ -85,18 +85,29 @@ class MockSupabaseClient:
 # ─────────────────────────────────────────────────────────────────
 
 COLUMNS = [
-    "Chat Session", "Message Date", "Delivered Date", "Read Date",
-    "Edited Date", "Deleted Date", "Service", "Type", "Sender ID",
-    "Sender Name", "Status", "Replying to", "Subject", "Text",
-    "Reactions", "Attachment", "Attachment type",
+    "Chat Session",
+    "Message Date",
+    "Delivered Date",
+    "Read Date",
+    "Edited Date",
+    "Deleted Date",
+    "Service",
+    "Type",
+    "Sender ID",
+    "Sender Name",
+    "Status",
+    "Replying to",
+    "Subject",
+    "Text",
+    "Reactions",
+    "Attachment",
+    "Attachment type",
 ]
 
 
 def make_csv_file(rows: list[dict], thread_name: str = "Alice & Bob") -> str:
     """Write a minimal CSV to a temp file and return the path."""
-    f = tempfile.NamedTemporaryFile(
-        mode="w", suffix=".csv", delete=False, encoding="utf-8"
-    )
+    f = tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8")
     writer = csv.DictWriter(f, fieldnames=COLUMNS)
     writer.writeheader()
     for row in rows:
@@ -108,8 +119,13 @@ def make_csv_file(rows: list[dict], thread_name: str = "Alice & Bob") -> str:
     return f.name
 
 
-def msg(timestamp: str, text: str, sender: str = "Alice",
-        msg_type: str = "Incoming", sender_id: str = "+10001112222") -> dict:
+def msg(
+    timestamp: str,
+    text: str,
+    sender: str = "Alice",
+    msg_type: str = "Incoming",
+    sender_id: str = "+10001112222",
+) -> dict:
     return {
         "Message Date": timestamp,
         "Type": msg_type,
@@ -137,15 +153,18 @@ def outgoing(timestamp: str, text: str) -> dict:
 # TESTS
 # ─────────────────────────────────────────────────────────────────
 
+
 class TestThreadRow:
     """Verify thread rows are constructed correctly."""
 
     def test_thread_row_fields_present(self):
         """Thread row must contain all required fields."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello from Alice"),
-            outgoing("2023-01-01 10:01:00", "Hello back from Thomas"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello from Alice"),
+                outgoing("2023-01-01 10:01:00", "Hello back from Thomas"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             ingestor = IMessageIngestor(db)
@@ -154,19 +173,29 @@ class TestThreadRow:
             threads = db.rows_for("imessage_threads")
             assert len(threads) == 1
             t = threads[0]
-            for field in ["id", "thread_name", "thread_type", "participants",
-                          "source_file", "date_start", "date_end",
-                          "message_count", "privacy_tier"]:
+            for field in [
+                "id",
+                "thread_name",
+                "thread_type",
+                "participants",
+                "source_file",
+                "date_start",
+                "date_end",
+                "message_count",
+                "privacy_tier",
+            ]:
                 assert field in t, f"Missing field: {field}"
         finally:
             os.unlink(path)
 
     def test_bilateral_thread_privacy_tier_3(self):
         """Bilateral threads must have privacy_tier = 3."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Just the two of us talking here"),
-            outgoing("2023-01-01 10:01:00", "Indeed just us talking here"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Just the two of us talking here"),
+                outgoing("2023-01-01 10:01:00", "Indeed just us talking here"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -177,13 +206,23 @@ class TestThreadRow:
 
     def test_group_thread_privacy_tier_2(self):
         """Group threads must have privacy_tier = 2."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Group message from Alice here"),
-            msg("2023-01-01 10:01:00", "Group message from Bob here",
-                sender="Bob", sender_id="+10009998888"),
-            msg("2023-01-01 10:02:00", "Group message from Carol here",
-                sender="Carol", sender_id="+10007776666"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Group message from Alice here"),
+                msg(
+                    "2023-01-01 10:01:00",
+                    "Group message from Bob here",
+                    sender="Bob",
+                    sender_id="+10009998888",
+                ),
+                msg(
+                    "2023-01-01 10:02:00",
+                    "Group message from Carol here",
+                    sender="Carol",
+                    sender_id="+10007776666",
+                ),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -194,9 +233,11 @@ class TestThreadRow:
 
     def test_source_file_is_basename_only(self):
         """Source file stored in DB must be filename only, no directory path."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -209,11 +250,13 @@ class TestThreadRow:
 
     def test_message_count_correct(self):
         """Thread row message_count must match actual message count."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Message one from Alice here"),
-            msg("2023-01-01 10:01:00", "Message two from Alice here"),
-            outgoing("2023-01-01 10:02:00", "Message three outgoing reply"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Message one from Alice here"),
+                msg("2023-01-01 10:01:00", "Message two from Alice here"),
+                outgoing("2023-01-01 10:02:00", "Message three outgoing reply"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -228,10 +271,12 @@ class TestParticipantRow:
 
     def test_self_participant_is_flagged(self):
         """Thomas (outgoing sender) must be flagged as is_self=True."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Incoming message from Alice here"),
-            outgoing("2023-01-01 10:01:00", "Outgoing reply from Thomas here"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Incoming message from Alice here"),
+                outgoing("2023-01-01 10:01:00", "Outgoing reply from Thomas here"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -244,9 +289,11 @@ class TestParticipantRow:
 
     def test_participant_has_thread_id(self):
         """Each participant row must reference the thread."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -263,28 +310,40 @@ class TestMessageRow:
 
     def test_message_row_fields_present(self):
         """Message rows must contain all required fields."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
             messages = db.rows_for("imessage_messages")
             assert len(messages) >= 1
             m = messages[0]
-            for field in ["id", "thread_id", "sender_name", "sender_id",
-                          "timestamp", "text", "message_type", "has_text"]:
+            for field in [
+                "id",
+                "thread_id",
+                "sender_name",
+                "sender_id",
+                "timestamp",
+                "text",
+                "message_type",
+                "has_text",
+            ]:
                 assert field in m, f"Missing field: {field}"
         finally:
             os.unlink(path)
 
     def test_message_count_matches_thread(self):
         """Number of message rows must match thread.message_count."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "First message from Alice here"),
-            msg("2023-01-01 10:01:00", "Second message from Alice here"),
-            outgoing("2023-01-01 10:02:00", "Third message outgoing reply"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "First message from Alice here"),
+                msg("2023-01-01 10:01:00", "Second message from Alice here"),
+                outgoing("2023-01-01 10:02:00", "Third message outgoing reply"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -296,9 +355,11 @@ class TestMessageRow:
 
     def test_outgoing_message_attributed_to_self(self):
         """Outgoing messages must be attributed to SELF_NAME."""
-        path = make_csv_file([
-            outgoing("2023-01-01 10:00:00", "This is an outgoing message reply"),
-        ])
+        path = make_csv_file(
+            [
+                outgoing("2023-01-01 10:00:00", "This is an outgoing message reply"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -313,29 +374,43 @@ class TestBurstRow:
 
     def test_burst_row_fields_present(self):
         """Burst rows must contain all required fields."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-            msg("2023-01-01 10:01:00", "Another message from Alice here"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+                msg("2023-01-01 10:01:00", "Another message from Alice here"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
             bursts = db.rows_for("imessage_bursts")
             assert len(bursts) >= 1
             b = bursts[0]
-            for field in ["id", "thread_id", "thread_name", "thread_type",
-                          "burst_index", "date_start", "date_end",
-                          "participants", "dominant_sender", "text_combined",
-                          "privacy_tier", "embedding"]:
+            for field in [
+                "id",
+                "thread_id",
+                "thread_name",
+                "thread_type",
+                "burst_index",
+                "date_start",
+                "date_end",
+                "participants",
+                "dominant_sender",
+                "text_combined",
+                "privacy_tier",
+                "embedding",
+            ]:
                 assert field in b, f"Missing field: {field}"
         finally:
             os.unlink(path)
 
     def test_burst_embedding_is_none(self):
         """Burst embedding must be None — populated by embed_chunks CLI."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -346,10 +421,12 @@ class TestBurstRow:
 
     def test_burst_thread_id_matches_thread(self):
         """All burst rows must reference the correct thread_id."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "First burst message here today"),
-            msg("2023-01-01 15:00:00", "Second burst message here today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "First burst message here today"),
+                msg("2023-01-01 15:00:00", "Second burst message here today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -366,9 +443,11 @@ class TestChunkMirrorRow:
 
     def test_chunk_mirror_source_type_is_imessage(self):
         """Chunk mirror rows must have source_type = 'imessage'."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -379,9 +458,11 @@ class TestChunkMirrorRow:
 
     def test_chunk_mirror_note_id_is_none(self):
         """Chunk mirror rows must have note_id = None."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -392,9 +473,11 @@ class TestChunkMirrorRow:
 
     def test_chunk_mirror_source_id_links_to_burst(self):
         """Chunk mirror source_id must match a burst id."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -407,10 +490,12 @@ class TestChunkMirrorRow:
 
     def test_chunk_mirror_privacy_tier_matches_burst(self):
         """Chunk mirror privacy_tier must match its source burst."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Bilateral private message here today"),
-            outgoing("2023-01-01 10:01:00", "Bilateral reply message here today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Bilateral private message here today"),
+                outgoing("2023-01-01 10:01:00", "Bilateral reply message here today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -422,9 +507,11 @@ class TestChunkMirrorRow:
 
     def test_chunk_mirror_embedding_is_none(self):
         """Chunk mirror embeddings must be None — populated by embed_chunks."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -453,13 +540,14 @@ class TestIngestionOrder:
             def delete_where(self, table, column, value):
                 pass
 
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             IMessageIngestor(OrderTrackingClient()).ingest_csv(path)
-            assert call_order.index("imessage_threads") < \
-                   call_order.index("imessage_messages")
+            assert call_order.index("imessage_threads") < call_order.index("imessage_messages")
         finally:
             os.unlink(path)
 
@@ -476,13 +564,14 @@ class TestIngestionOrder:
             def delete_where(self, table, column, value):
                 pass
 
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             IMessageIngestor(OrderTrackingClient()).ingest_csv(path)
-            assert call_order.index("imessage_threads") < \
-                   call_order.index("imessage_bursts")
+            assert call_order.index("imessage_threads") < call_order.index("imessage_bursts")
         finally:
             os.unlink(path)
 
@@ -495,9 +584,11 @@ class TestReIngestion:
         imessage_bursts must be deleted by thread_id before re-insertion.
         This handles ghost rows from deleted or edited messages.
         """
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -506,8 +597,7 @@ class TestReIngestion:
             delete_calls = db.delete_calls_for("imessage_bursts")
 
             assert len(delete_calls) >= 1
-            assert any(c[1] == "thread_id" and c[2] == thread_id
-                       for c in delete_calls)
+            assert any(c[1] == "thread_id" and c[2] == thread_id for c in delete_calls)
         finally:
             os.unlink(path)
 
@@ -515,9 +605,11 @@ class TestReIngestion:
         """
         chunks mirror rows must be deleted by source_id before re-insertion.
         """
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             IMessageIngestor(db).ingest_csv(path)
@@ -534,9 +626,11 @@ class TestDryRun:
 
     def test_dry_run_no_upserts(self):
         """No upsert_rows calls must reach the database in dry-run mode."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient(dry_run=True)
             IMessageIngestor(db).ingest_csv(path)
@@ -546,9 +640,11 @@ class TestDryRun:
 
     def test_dry_run_no_deletes(self):
         """No delete_where calls must reach the database in dry-run mode."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ]
+        )
         try:
             db = MockSupabaseClient(dry_run=True)
             IMessageIngestor(db).ingest_csv(path)
@@ -562,11 +658,13 @@ class TestIngestionResult:
 
     def test_result_counts_match_actual_data(self):
         """Result counts must accurately reflect what was ingested."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "First message from Alice here"),
-            msg("2023-01-01 10:30:00", "Second message from Alice here"),
-            outgoing("2023-01-01 10:31:00", "Reply message from Thomas here"),
-        ])
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "First message from Alice here"),
+                msg("2023-01-01 10:30:00", "Second message from Alice here"),
+                outgoing("2023-01-01 10:31:00", "Reply message from Thomas here"),
+            ]
+        )
         try:
             db = MockSupabaseClient()
             result = IMessageIngestor(db).ingest_csv(path)
@@ -592,9 +690,12 @@ class TestIngestionResult:
 
     def test_result_str_includes_thread_name(self):
         """String representation must include the thread name."""
-        path = make_csv_file([
-            msg("2023-01-01 10:00:00", "Hello there from Alice today"),
-        ], thread_name="Alice & Bob")
+        path = make_csv_file(
+            [
+                msg("2023-01-01 10:00:00", "Hello there from Alice today"),
+            ],
+            thread_name="Alice & Bob",
+        )
         try:
             db = MockSupabaseClient()
             result = IMessageIngestor(db).ingest_csv(path)
