@@ -16,7 +16,7 @@ This file tests:
     - Core behaviour: fetch → generate → update pipeline
     - Batching: processes chunks in batches of 100, stops correctly
     - Idempotency: only processes chunks without embeddings
-    - Progress logging: start, progress, and done messages
+    - Progress logging: start, progress every 50, done with total
     - Environment wiring: credentials passed to the right constructors
 
 ═══════════════════════════════════════════════════════════════════
@@ -62,6 +62,25 @@ This means:
 The CLI itself does no additional filtering — it trusts the database
 contract. Tests here verify that the CLI processes every chunk
 returned by fetch_unembedded_chunks() and does not skip any.
+
+═══════════════════════════════════════════════════════════════════
+TEST MAINTENANCE NOTE
+═══════════════════════════════════════════════════════════════════
+
+embed_chunks.py contains one while-loop per source type:
+    - Joplin chunks  → fetch_unembedded_chunks()
+    - iMessage bursts → fetch_unembedded_bursts()
+
+Every time a new source loop is added (e.g. email → fetch_unembedded_emails),
+BOTH of the following must be updated:
+
+    1. make_clients() — add the new fetch method with return_value=[]
+    2. Every test that builds supabase = MagicMock() directly — add
+       the same mock line manually
+
+Failure to do this causes a silent infinite loop: the unmocked method
+returns a MagicMock object, which is always truthy, so the while loop
+never exits. The test hangs for 3+ minutes with no error message.
 
 ═══════════════════════════════════════════════════════════════════
 TEST STRUCTURE
@@ -120,6 +139,10 @@ def make_clients(chunks_by_batch):
         → second call returns [chunk3]
         → third call returns []  (loop exits)
 
+    NOTE: fetch_unembedded_bursts is always mocked to return [] here.
+    If you add a new source loop to embed_chunks.py, add the matching
+    fetch method mock to this function. See TEST MAINTENANCE NOTE above.
+
     Parameters
     ----------
     chunks_by_batch : list[list[dict]] — batches to return in sequence
@@ -131,6 +154,7 @@ def make_clients(chunks_by_batch):
     supabase = MagicMock()
     # side_effect takes a list — each call pops the next value
     supabase.fetch_unembedded_chunks.side_effect = chunks_by_batch + [[]]
+    supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
 
     embedder = MagicMock()
     embedder.generate.return_value = FAKE_EMBEDDING
@@ -168,6 +192,7 @@ class TestEmbedChunksCore:
         monkeypatch.setattr("os.environ", ENV_VARS)
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
         embedder = MagicMock()
 
         with (
@@ -263,6 +288,7 @@ class TestEmbedChunksCore:
         chunks = [make_chunk("id-1", text="text")]
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.side_effect = [chunks, []]
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
         embedder = MagicMock()
 
         def track_generate(text):
@@ -313,6 +339,7 @@ class TestBatching:
         monkeypatch.setattr("os.environ", ENV_VARS)
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
         embedder = MagicMock()
 
         with (
@@ -432,6 +459,7 @@ class TestProgressLogging:
         monkeypatch.setattr("os.environ", ENV_VARS)
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
         embedder = MagicMock()
 
         with (
@@ -554,6 +582,7 @@ class TestEnvironmentWiring:
         monkeypatch.setattr("os.environ", ENV_VARS)
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
 
         with (
             patch("pke.cli.embed_chunks.create_client"),
@@ -575,6 +604,7 @@ class TestEnvironmentWiring:
         monkeypatch.setattr("os.environ", ENV_VARS)
         supabase = MagicMock()
         supabase.fetch_unembedded_chunks.return_value = []
+        supabase.fetch_unembedded_bursts.return_value = []  # prevents burst loop from hanging
         embedder = MagicMock()
         embedder.generate.return_value = FAKE_EMBEDDING
 

@@ -1,0 +1,357 @@
+-- =============================================================
+-- PKE iMessage Schema Migration
+-- Milestone 9.1 — iMessage Parser
+-- Script: scripts/add_imessage_tables.sql
+--
+-- Run once against Supabase. Safe to re-run — uses
+-- IF NOT EXISTS and CREATE OR REPLACE throughout.
+--
+-- Verified against live schema 2026-03-15.
+--
+-- What this script does:
+--   1. Creates four new iMessage tables
+--   2. Extends the existing chunks table (3 new columns)
+--   3. Makes chunks.note_id nullable (for iMessage mirror rows)
+--   4. Creates match_bursts RPC
+--   5. Updates match_chunks RPC with privacy_tier filtering
+--   6. Creates indexes
+--   7. Creates updated_at triggers
+--
+-- Live schema confirmed:
+--   chunks.id        — UUID (gen_random_uuid())
+--   chunks.note_id   — UUID NOT NULL → made nullable in step 3
+--   notes.id         — UUID (uuid_generate_v4())
+--   notebooks.id     — UUID (uuid_generate_v4())
+--   notes.notebook_id → notebooks.id FK confirmed
+-- =============================================================
+
+
+-- =============================================================
+-- 1. imessage_threads
+-- =============================================================
+
+CREATE TABLE IF NOT EXISTS imessage_threads (
+    id              TEXT PRIMARY KEY,
+    thread_name     TEXT NOT NULL,
+    thread_type     TEXT NOT NULL
+        CHECK (thread_type IN ('group', 'bilateral')),
+    participants    TEXT[] NOT NULL DEFAULT '{}',
+    source_file     TEXT NOT NULL,
+    date_start      TEXT NOT NULL,
+    date_end        TEXT NOT NULL,
+    message_count   INTEGER NOT NULL DEFAULT 0,
+    privacy_tier    INTEGER NOT NULL DEFAULT 2
+        CHECK (privacy_tier IN (2, 3)),
+    created_at      TIMESTAMPTZ DEFAULT now(),
+    updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE imessage_threads IS
+    'One record per iMessage thread (CSV export). '
+    'Source file is the archive — this table is a derived index.';
+
+
+-- =============================================================
+-- 2. imessage_participants
+-- =============================================================
+
+CREATE TABLE IF NOT EXISTS imessage_participants (
+    id              TEXT PRIMARY KEY,
+    display_name    TEXT NOT NULL,
+    phone_numbers   TEXT[] NOT NULL DEFAULT '{}',
+    is_self         BOOLEAN NOT NULL DEFAULT false,
+    thread_ids      TEXT[] NOT NULL DEFAULT '{}',
+    created_at      TIMESTAMPTZ DEFAULT now(),
+    updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE imessage_participants IS
+    'Identity registry for iMessage senders. '
+    'v1: phone + display name composite key. '
+    'Full Person/PersonIdentifier model deferred to entity layer.';
+
+
+-- =============================================================
+-- 3. imessage_messages
+-- =============================================================
+
+CREATE TABLE IF NOT EXISTS imessage_messages (
+    id              TEXT PRIMARY KEY,
+    thread_id       TEXT NOT NULL
+        REFERENCES imessage_threads(id) ON DELETE CASCADE,
+    sender_name     TEXT NOT NULL,
+    sender_id       TEXT NOT NULL DEFAULT '',
+    timestamp       TIMESTAMPTZ NOT NULL,
+    text            TEXT NOT NULL DEFAULT '',
+    message_type    TEXT NOT NULL
+        CHECK (message_type IN ('Incoming', 'Outgoing')),
+    reactions       TEXT NOT NULL DEFAULT '',
+    attachment      TEXT NOT NULL DEFAULT '',
+    attachment_type TEXT NOT NULL DEFAULT '',
+    has_text        BOOLEAN NOT NULL DEFAULT false,
+    created_at      TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE imessage_messages IS
+    'Atomic iMessage records. One row per message. '
+    'Insert-only in practice. Re-ingestion uses upsert.';
+
+
+-- =============================================================
+-- 4. imessage_bursts
+-- =============================================================
+
+CREATE TABLE IF NOT EXISTS imessage_bursts (
+    id              TEXT PRIMARY KEY,
+    thread_id       TEXT NOT NULL
+        REFERENCES imessage_threads(id) ON DELETE CASCADE,
+    thread_name     TEXT NOT NULL,
+    thread_type     TEXT NOT NULL
+        CHECK (thread_type IN ('group', 'bilateral')),
+    burst_index     INTEGER NOT NULL,
+    date_start      TEXT NOT NULL,
+    date_end        TEXT NOT NULL,
+    participants    TEXT[] NOT NULL DEFAULT '{}',
+    dominant_sender TEXT NOT NULL DEFAULT '',
+    text_combined   TEXT NOT NULL,
+    resource_links  TEXT[] NOT NULL DEFAULT '{}',
+    privacy_tier    INTEGER NOT NULL DEFAULT 2
+        CHECK (privacy_tier IN (2, 3)),
+    embedding       vector(1536),
+    source_file     TEXT NOT NULL DEFAULT '',
+    created_at      TIMESTAMPTZ DEFAULT now(),
+    updated_at      TIMESTAMPTZ DEFAULT now(),
+
+    UNIQUE (thread_id, burst_index)
+);
+
+COMMENT ON TABLE imessage_bursts IS
+    'Conversation bursts — primary retrieval unit for iMessage corpus. '
+    'Mirrored into chunks table for unified retrieval. '
+    'Embeddings generated by embed_chunks CLI backfill.';
+
+
+-- =============================================================
+-- 5. Extend chunks table
+-- =============================================================
+
+ALTER TABLE chunks
+    ADD COLUMN IF NOT EXISTS source_type  TEXT NOT NULL DEFAULT 'joplin',
+    ADD COLUMN IF NOT EXISTS source_id    TEXT DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS privacy_tier INTEGER NOT NULL DEFAULT 2;
+
+COMMENT ON COLUMN chunks.source_type IS '"joplin" | "imessage". Existing rows default to joplin.';
+COMMENT ON COLUMN chunks.source_id IS 'For imessage rows: imessage_bursts.id. NULL for joplin rows.';
+COMMENT ON COLUMN chunks.privacy_tier IS '2 = personal/group (default), 3 = bilateral.';
+
+
+-- =============================================================
+-- 6. Make chunks.note_id nullable
+--    Required for iMessage mirror rows which have no parent note.
+--    Existing Joplin rows are unaffected.
+-- =============================================================
+
+ALTER TABLE chunks
+    ALTER COLUMN note_id DROP NOT NULL;
+
+COMMENT ON COLUMN chunks.note_id IS
+    'UUID of parent note (Joplin rows). NULL for iMessage mirror rows.';
+
+
+-- =============================================================
+-- 7. Indexes
+-- =============================================================
+
+CREATE INDEX IF NOT EXISTS idx_imessage_threads_type
+    ON imessage_threads(thread_type);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_threads_privacy
+    ON imessage_threads(privacy_tier);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_messages_thread
+    ON imessage_messages(thread_id);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_messages_timestamp
+    ON imessage_messages(timestamp);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_messages_sender
+    ON imessage_messages(sender_name);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_bursts_thread
+    ON imessage_bursts(thread_id);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_bursts_privacy
+    ON imessage_bursts(privacy_tier);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_bursts_date
+    ON imessage_bursts(date_start);
+
+CREATE INDEX IF NOT EXISTS idx_imessage_bursts_embedding
+    ON imessage_bursts USING ivfflat (embedding vector_cosine_ops)
+    WITH (lists = 100);
+
+CREATE INDEX IF NOT EXISTS idx_chunks_source_type
+    ON chunks(source_type);
+
+CREATE INDEX IF NOT EXISTS idx_chunks_privacy_tier
+    ON chunks(privacy_tier);
+
+
+-- =============================================================
+-- 8. match_bursts RPC
+-- =============================================================
+
+CREATE OR REPLACE FUNCTION match_bursts(
+    query_embedding     vector(1536),
+    match_count         INT DEFAULT 5,
+    filter_thread_type  TEXT DEFAULT NULL,
+    filter_thread_id    TEXT DEFAULT NULL,
+    max_privacy_tier    INT DEFAULT 2
+)
+RETURNS TABLE (
+    id              TEXT,
+    thread_id       TEXT,
+    thread_name     TEXT,
+    thread_type     TEXT,
+    burst_index     INTEGER,
+    date_start      TEXT,
+    date_end        TEXT,
+    participants    TEXT[],
+    dominant_sender TEXT,
+    text_combined   TEXT,
+    resource_links  TEXT[],
+    privacy_tier    INTEGER,
+    similarity      FLOAT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        b.id,
+        b.thread_id,
+        b.thread_name,
+        b.thread_type,
+        b.burst_index,
+        b.date_start,
+        b.date_end,
+        b.participants,
+        b.dominant_sender,
+        b.text_combined,
+        b.resource_links,
+        b.privacy_tier,
+        1 - (b.embedding <=> query_embedding) AS similarity
+    FROM imessage_bursts b
+    WHERE
+        b.embedding IS NOT NULL
+        AND b.privacy_tier <= max_privacy_tier
+        AND (filter_thread_type IS NULL OR b.thread_type = filter_thread_type)
+        AND (filter_thread_id IS NULL OR b.thread_id = filter_thread_id)
+    ORDER BY b.embedding <=> query_embedding
+    LIMIT match_count;
+END;
+$$;
+
+COMMENT ON FUNCTION match_bursts IS
+    'Semantic search across iMessage bursts. '
+    'max_privacy_tier=2 default excludes bilateral threads.';
+
+
+-- =============================================================
+-- 9. Update match_chunks RPC
+--    Adds privacy_tier filtering and source fields to output.
+--    Default max_privacy_tier=2 preserves existing behaviour.
+--    filter_notebook guard added for nullable note_id.
+-- =============================================================
+
+CREATE OR REPLACE FUNCTION match_chunks(
+    query_embedding     vector(1536),
+    match_count         INT DEFAULT 5,
+    filter_notebook     TEXT DEFAULT NULL,
+    max_privacy_tier    INT DEFAULT 2
+)
+RETURNS TABLE (
+    id              UUID,
+    note_id         UUID,
+    chunk_index     INTEGER,
+    chunk_text      TEXT,
+    similarity      FLOAT,
+    section_title   TEXT,
+    entry_timestamp TEXT,
+    resource_ids    TEXT[],
+    result_type     TEXT,
+    source_type     TEXT,
+    source_id       TEXT,
+    privacy_tier    INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        c.id,
+        c.note_id,
+        c.chunk_index,
+        c.chunk_text,
+        1 - (c.embedding <=> query_embedding) AS similarity,
+        c.section_title,
+        c.entry_timestamp,
+        c.resource_ids,
+        'chunk'::TEXT AS result_type,
+        c.source_type,
+        c.source_id,
+        c.privacy_tier
+    FROM chunks c
+    WHERE
+        c.embedding IS NOT NULL
+        AND c.privacy_tier <= max_privacy_tier
+        AND (
+            filter_notebook IS NULL
+            OR (
+                c.note_id IS NOT NULL
+                AND EXISTS (
+                    SELECT 1 FROM notes n
+                    JOIN notebooks nb ON n.notebook_id = nb.id
+                    WHERE n.id = c.note_id
+                    AND nb.title = filter_notebook
+                )
+            )
+        )
+    ORDER BY c.embedding <=> query_embedding
+    LIMIT match_count;
+END;
+$$;
+
+COMMENT ON FUNCTION match_chunks IS
+    'Semantic search across all chunks (Joplin + iMessage mirror rows). '
+    'max_privacy_tier=2 default preserves existing behaviour for Joplin-only retrieval. '
+    'Pass max_privacy_tier=3 to include bilateral thread content. '
+    'filter_notebook applies to Joplin chunks only (iMessage rows have NULL note_id).';
+
+
+-- =============================================================
+-- 10. updated_at triggers
+-- =============================================================
+
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS imessage_threads_updated_at ON imessage_threads;
+CREATE TRIGGER imessage_threads_updated_at
+    BEFORE UPDATE ON imessage_threads
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+DROP TRIGGER IF EXISTS imessage_bursts_updated_at ON imessage_bursts;
+CREATE TRIGGER imessage_bursts_updated_at
+    BEFORE UPDATE ON imessage_bursts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+DROP TRIGGER IF EXISTS imessage_participants_updated_at ON imessage_participants;
+CREATE TRIGGER imessage_participants_updated_at
+    BEFORE UPDATE ON imessage_participants
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
