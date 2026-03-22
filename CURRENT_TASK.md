@@ -1,13 +1,60 @@
 # CURRENT_TASK.md
-## Milestone 9.x — iMessage Parser + Local Platform Setup
+## Milestone 9.1 — iMessage Parser
+Last updated: 2026-03-22
 
-Last updated: 2026-03-15 11:16 EST
+## Status: NEARLY COMPLETE
 
----
+Branch: feat/9.1-imessage-parser
 
-## Status: PLANNING
+### Completed This Session
+- ✅ Parser (imessage_parser.py) — 50 tests passing
+- ✅ Ingestor (imessage_ingestor.py) — 27 tests passing
+- ✅ CLI (ingest_imessage.py) — Typer, registered as pke ingest-imessage
+- ✅ Schema migration (add_imessage_tables.sql) — run against Supabase
+- ✅ SupabaseClient extended (upsert_rows, delete_where, fetch_unembedded_bursts, update_burst_embedding)
+- ✅ CLAUDE.md created at repo root
+- ✅ All four CSV threads ingested into Supabase:
+    Group chat:              13,560 messages, 964 bursts
+    Patrick bilateral:          963 messages, 276 bursts
+    Patrick + James + William:   42 messages,  38 bursts
+    Patrick + William + Glenn:    1 message,    1 burst
+    Total:                   14,566 messages, 1,279 bursts
+- ✅ embed_chunks.py extended to backfill iMessage burst embeddings
 
-Branch to cut: feat/9.x-imessage-parser
+### Remaining — Do First Next Session
+1. Fix hanging test: tests/unit/test_embed_chunks.py::TestEmbedChunksCore::test_exits_cleanly_when_no_chunks
+   - Root cause: mock not properly stopping the while True loop
+   - Our burst loop follows same pattern — same fix needed for both
+   - Do NOT use --no-verify after this is fixed
+
+2. Run embedding backfill:
+   python -m pke.cli.embed_chunks
+   This will embed all 1,279 bursts (currently embedding IS NULL)
+   Cost: ~1,279 OpenAI API calls
+
+3. Verify in Supabase:
+   SELECT source_type, COUNT(*) as count, COUNT(embedding) as with_embedding
+   FROM chunks GROUP BY source_type;
+   Expected: imessage 964 with_embedding = 964
+
+4. Verify in Obsidian:
+   Start the PKE API (uvicorn pke.api.main:app --reload)
+   Write a journal entry referencing themes from the group chat
+   Confirm iMessage bursts surface in Reflections panel
+
+5. Create PR and close milestone 9.1
+
+### Current Supabase State
+chunks table:
+    imessage: 964 rows, 0 with embedding (needs backfill)
+    joplin:   866 rows, 866 with embedding ✅
+
+imessage_threads: 4 rows
+imessage_participants: populated
+imessage_messages: 14,566 rows
+imessage_bursts: 1,279 rows, 0 with embedding (needs backfill)
+
+
 
 ---
 
@@ -168,7 +215,51 @@ temporal distribution.
 Handwritten Moleskine journals — not yet digitized (milestone 9.11).
 These may cover the pre-digital gap more than any other source.
 
-### The Oral Record — Structural Gap Across All Channels
+### iMessage Export History Archive
+
+The source files are the archive. The database is the index.
+This is the same principle as the Joplin corpus — the database
+is always reconstructable from source files.
+
+**Immediate practice — date-stamped exports:**
+Keep every iMazing export permanently. Never overwrite.
+Name convention:
+    Messages - Patrick Mangan - 2026-03-15.csv
+    Messages - Patrick Mangan - 2027-01-10.csv
+
+This solves the most common case at zero overhead cost.
+Disk space is negligible — CSV files are tiny.
+
+**Scenarios this protects against:**
+- Edited messages (iMessage allows editing — re-export
+  reflects edited version, original is gone from CSV)
+- Deleted messages (re-export, re-ingest, message gone)
+- iMazing export differences across versions
+- Any case where you need the record as it existed
+  at a specific point in time
+
+**Future milestone — message history table:**
+A proper history archive tracking changes at message level:
+
+```sql
+imessage_message_history (
+    id           -- same as imessage_messages.id
+    version      -- incrementing integer
+    text         -- content at this version
+    captured_at  -- when this version was first seen
+    change_type  -- "created" | "edited" | "deleted"
+)
+```
+
+Every re-ingest detects differences from existing records
+before overwriting. Current state in imessage_messages.
+Full history in imessage_message_history.
+
+Deferred — revisit after living with the corpus for a year.
+Real overhead: ingestion needs a comparison pass before
+upserting. Build it when you have evidence it's needed.
+
+---
 
 The most important conversations in most lives happen out loud.
 The PKE corpus captures what was written down. It is working

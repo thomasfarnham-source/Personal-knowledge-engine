@@ -32,9 +32,17 @@
 --     descending so the most relevant results surface first.
 --
 -- IDEMPOTENCY:
---     Both functions use CREATE OR REPLACE, so this script is safe to
---     re-run. Re-running will update the function definition in place
---     without dropping dependent objects.
+--     match_notes uses CREATE OR REPLACE and is safe to re-run in place.
+--
+--     match_chunks cannot use CREATE OR REPLACE alone when its return type
+--     changes — Postgres requires DROP FUNCTION first in that case.
+--     The canonical drop + create sequence is:
+--
+--         DROP FUNCTION match_chunks(vector, integer, text, integer);
+--         CREATE OR REPLACE FUNCTION match_chunks(...) ...
+--
+--     This is safe — no table data is affected. The function definition
+--     is recreated immediately in the same statement batch.
 --
 -- USAGE:
 --     Run once in the Supabase SQL editor to register the functions.
@@ -51,9 +59,13 @@
 -- Primary retrieval function. Searches the chunks table for the most
 -- semantically similar chunks to the query embedding.
 --
--- Each chunk represents a single dated entry or section of a note. Chunk-level
--- search is more precise than note-level search because long notes containing
--- months of content are split into individually retrievable units.
+-- Supports multiple source types in the chunks table:
+--     source_type = 'joplin'   — joined to notes + notebooks for title/notebook
+--     source_type = 'imessage' — joined to imessage_bursts for thread_name;
+--                                notebook returned as 'iMessage'
+--
+-- All joins are LEFT JOINs so rows from either source type are returned
+-- correctly. COALESCE selects the appropriate value per source type.
 --
 -- Parameters:
 --     query_embedding  — the 1536-dimensional embedding of the user's query,
@@ -67,65 +79,102 @@
 --
 --     filter_notebook  — optional notebook title filter. When provided, only
 --                        chunks belonging to notes in that notebook are
---                        returned. When NULL, all notebooks are searched.
+--                        returned. Applies to Joplin chunks only — iMessage
+--                        rows have NULL note_id and are unaffected by this
+--                        filter. When NULL, all sources are searched.
+--
+--     max_privacy_tier — maximum privacy tier to include. Default 2 excludes
+--                        bilateral threads (tier 3). Pass 3 to include them.
 --
 -- Returns one row per matching chunk with full provenance metadata:
---     chunk_id         — UUID of the chunk row (for future deep linking)
---     note_id          — UUID of the parent note (for Obsidian deep linking)
---     note_title       — human-readable note title for display in insight panel
---     notebook         — notebook name for context and optional filtering
---     chunk_text       — the raw passage text (never summarized)
+--     id               — UUID of the chunk row
+--     note_id          — UUID of the parent note (Joplin rows); NULL for iMessage
 --     chunk_index      — position of this chunk within its parent note
+--     chunk_text       — the raw passage text (never summarized)
+--     similarity       — cosine similarity score in range [-1, 1]
 --     section_title    — section heading if detected during chunking, else NULL
 --     entry_timestamp  — date of entry: explicit, calculated, or NULL
---                        format: "2015-09-08" | "calculated: 2014-08-04" | NULL
 --     resource_ids     — array of image/audio resource IDs embedded in chunk
---     similarity       — cosine similarity score in range [-1, 1],
---                        higher = more relevant
+--     result_type      — always 'chunk'
+--     source_type      — 'joplin' | 'imessage'
+--     source_id        — imessage_bursts.id for iMessage rows; NULL for Joplin
+--     privacy_tier     — 2 (group/personal) | 3 (bilateral)
+--     note_title       — note title (Joplin) | thread name (iMessage)
+--     notebook         — notebook name (Joplin) | 'iMessage'
 --
--- WHY JOIN TO notebooks:
---     The notes table stores notebook_id (a UUID foreign key) not the
---     notebook title. Joining to notebooks resolves the human-readable
---     title needed by the insight panel and the optional title-based filter.
+-- ADD NEW SOURCE TYPES HERE:
+--     When a new source is added (e.g. email), add a LEFT JOIN to the
+--     relevant table and extend the COALESCE chain for note_title and
+--     notebook. The retriever requires both fields on every row.
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS match_chunks(vector, integer, text, integer);
+
 CREATE OR REPLACE FUNCTION match_chunks(
-    query_embedding  vector(1536),
-    match_count      int,
-    filter_notebook  text DEFAULT NULL
+    query_embedding     vector(1536),
+    match_count         INT DEFAULT 5,
+    filter_notebook     TEXT DEFAULT NULL,
+    max_privacy_tier    INT DEFAULT 2
 )
 RETURNS TABLE (
-    chunk_id         uuid,
-    note_id          uuid,
-    note_title       text,
-    notebook         text,
-    chunk_text       text,
-    chunk_index      int,
-    section_title    text,
-    entry_timestamp  text,
-    resource_ids     text[],
-    similarity       float
+    id              UUID,
+    note_id         UUID,
+    chunk_index     INTEGER,
+    chunk_text      TEXT,
+    similarity      FLOAT,
+    section_title   TEXT,
+    entry_timestamp TEXT,
+    resource_ids    TEXT[],
+    result_type     TEXT,
+    source_type     TEXT,
+    source_id       TEXT,
+    privacy_tier    INTEGER,
+    note_title      TEXT,
+    notebook        TEXT
 )
-LANGUAGE sql STABLE
+LANGUAGE plpgsql
 AS $$
+BEGIN
+    RETURN QUERY
     SELECT
-        c.id                                   AS chunk_id,
-        c.note_id                              AS note_id,
-        n.title                                AS note_title,
-        nb.title                               AS notebook,
-        c.chunk_text                           AS chunk_text,
-        c.chunk_index                          AS chunk_index,
-        c.section_title                        AS section_title,
-        c.entry_timestamp                      AS entry_timestamp,
-        c.resource_ids                         AS resource_ids,
-        1 - (c.embedding <=> query_embedding)  AS similarity
-    FROM   chunks    c
-    JOIN   notes     n  ON c.note_id     = n.id
-    JOIN   notebooks nb ON n.notebook_id = nb.id
-    WHERE  c.embedding IS NOT NULL
-    AND   (filter_notebook IS NULL OR nb.title = filter_notebook)
+        c.id,
+        c.note_id,
+        c.chunk_index,
+        c.chunk_text,
+        1 - (c.embedding <=> query_embedding) AS similarity,
+        c.section_title,
+        c.entry_timestamp,
+        c.resource_ids,
+        'chunk'::TEXT                             AS result_type,
+        c.source_type,
+        c.source_id,
+        c.privacy_tier,
+        COALESCE(n.title,   b.thread_name)        AS note_title,
+        COALESCE(nb.title,  'iMessage'::TEXT)     AS notebook
+    FROM chunks c
+    LEFT JOIN notes           n  ON c.note_id  = n.id
+    LEFT JOIN notebooks       nb ON n.notebook_id = nb.id
+    LEFT JOIN imessage_bursts b  ON c.source_id = b.id
+    WHERE
+        c.embedding IS NOT NULL
+        AND c.privacy_tier <= max_privacy_tier
+        AND (
+            filter_notebook IS NULL
+            OR (
+                c.note_id IS NOT NULL
+                AND nb.title = filter_notebook
+            )
+        )
     ORDER BY c.embedding <=> query_embedding
-    LIMIT  match_count;
+    LIMIT match_count;
+END;
 $$;
+
+COMMENT ON FUNCTION match_chunks IS
+    'Semantic search across all chunks (Joplin + iMessage + future sources). '
+    'Returns note_title and notebook for every row regardless of source type. '
+    'Joplin rows: joined to notes + notebooks. '
+    'iMessage rows: thread_name as note_title, ''iMessage'' as notebook. '
+    'max_privacy_tier=2 default excludes bilateral threads (tier 3).';
 
 
 -- -----------------------------------------------------------------------------
