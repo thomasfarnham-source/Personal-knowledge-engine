@@ -1,17 +1,18 @@
 """
 pke/cli/embed_chunks.py
 
-CLI command to backfill chunk-level embeddings.
+CLI command to backfill chunk-level and burst-level embeddings.
 
-Walks all chunks where embedding IS NULL and generates embeddings
-via OpenAI text-embedding-3-small. Safe to re-run — only processes
-unembedded chunks. Progress logged every 50 chunks.
+Walks all chunks where embedding IS NULL and all iMessage bursts
+where embedding IS NULL, and generates embeddings via OpenAI
+text-embedding-3-small. Safe to re-run — only processes
+unembedded rows. Progress logged every 50 rows.
 
 WHY THIS IS A SEPARATE CLI:
-    Chunk embedding generation is decoupled from ingestion
-    intentionally. Ingestion writes chunk text and metadata.
-    Embedding generation is a separate, expensive, rate-limited
-    operation that may need to be re-run independently of ingest.
+    Embedding generation is decoupled from ingestion intentionally.
+    Ingestion writes text and metadata. Embedding generation is a
+    separate, expensive, rate-limited operation that may need to be
+    re-run independently of ingest.
 
 Usage:
     python -m pke.cli.embed_chunks
@@ -38,11 +39,11 @@ logger.addHandler(console)
 
 def embed_chunks() -> None:
     """
-    Backfill embeddings for all chunks where embedding IS NULL.
+    Backfill embeddings for all unembedded chunks and iMessage bursts.
 
-    Fetches chunks in batches of 100 to keep memory flat regardless
-    of total chunk count. Logs progress every 50 chunks. Exits
-    cleanly when no unembedded chunks remain.
+    Processes chunks first, then bursts. Fetches in batches of 100
+    to keep memory flat regardless of total row count. Logs progress
+    every 50 rows. Exits cleanly when no unembedded rows remain.
     """
     api_key = os.environ["OPENAI_API_KEY"]
     supabase_url = os.environ["SUPABASE_URL"]
@@ -55,14 +56,13 @@ def embed_chunks() -> None:
     total = 0
     batch_size = 100
 
+    # ── Joplin chunks ─────────────────────────────────────────────
     logger.info("Starting chunk embedding backfill...")
 
     while True:
-        # Fetch next batch of unembedded chunks
         chunks = client.fetch_unembedded_chunks(batch_size=batch_size)
 
         if not chunks:
-            # No more unembedded chunks — we are done
             break
 
         for chunk in chunks:
@@ -74,6 +74,26 @@ def embed_chunks() -> None:
                 logger.info(f"Embedded {total} chunks...")
 
     logger.info(f"Done. {total} chunks embedded.")
+
+    # ── iMessage bursts ───────────────────────────────────────────
+    burst_total = 0
+    logger.info("Starting burst embedding backfill...")
+
+    while True:
+        bursts = client.fetch_unembedded_bursts(batch_size=batch_size)
+
+        if not bursts:
+            break
+
+        for burst in bursts:
+            embedding = embedding_client.generate(burst["text_combined"])
+            client.update_burst_embedding(burst["id"], embedding)
+            burst_total += 1
+
+            if burst_total % 50 == 0:
+                logger.info(f"Embedded {burst_total} bursts...")
+
+    logger.info(f"Done. {burst_total} bursts embedded.")
 
 
 if __name__ == "__main__":
