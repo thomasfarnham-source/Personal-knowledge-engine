@@ -27,9 +27,7 @@ from pke.ingestion.imessage_ingestor import IMessageIngestor, IMessageIngestionR
 
 logger = logging.getLogger(__name__)
 
-imessage_app = typer.Typer(
-    help="Ingest iMessage CSV exports into the PKE database."
-)
+imessage_app = typer.Typer(help="Ingest iMessage CSV exports into the PKE database.")
 
 
 def _get_db(dry_run: bool) -> Any:
