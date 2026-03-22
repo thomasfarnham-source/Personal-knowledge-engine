@@ -37,6 +37,7 @@ import typer
 from .notes_cli import notes_app
 from .ingest import ingest_app
 from .parse_cli import parse_app
+from .ingest_imessage import imessage_app
 
 # Load environment variables
 load_dotenv()
@@ -63,7 +64,7 @@ cli = typer.Typer(
 cli.add_typer(notes_app, name="notes")
 cli.add_typer(ingest_app, name="ingest")
 cli.add_typer(parse_app, name="parse")
-
+cli.add_typer(imessage_app, name="ingest-imessage")
 # ---------------------------------------------------------------------------
 # Entry point for `python -m pke.cli.main`
 # ---------------------------------------------------------------------------
