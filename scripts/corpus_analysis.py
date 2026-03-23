@@ -93,33 +93,219 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 # ---------------------------------------------------------------------------
 STOPWORDS = {
     # Common English
-    "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-    "of", "with", "is", "it", "he", "she", "they", "we", "you", "that",
-    "this", "was", "are", "be", "have", "has", "had", "do", "did", "will",
-    "would", "could", "should", "not", "no", "so", "if", "as", "from", "by",
-    "up", "out", "about", "what", "which", "who", "my", "your", "his", "her",
-    "its", "our", "their", "me", "him", "us", "them", "just", "like", "get",
-    "got", "one", "can", "all", "more", "when", "there", "been", "into",
-    "than", "then", "now", "also", "some", "how", "any", "were", "said",
-    "yes", "yeah", "ok", "okay", "lol", "haha", "too", "over", "why",
-    "right", "going", "time", "good", "know", "think", "well", "even",
-    "back", "see", "really", "still", "much", "very", "way", "make", "take",
-    "come", "here", "after", "being", "same", "where", "while", "again",
-    "because", "these", "those", "both", "each", "few", "own", "other",
-    "such", "only", "before", "off", "down", "never", "always", "every",
-    "need", "want", "might", "look", "first", "last", "long", "great",
-    "little", "man", "things", "thing", "though", "put", "end", "does",
-    "old", "new", "since", "came", "let", "may", "give", "use", "found",
-    "tell", "asked", "show", "around",
+    "the",
+    "a",
+    "an",
+    "and",
+    "or",
+    "but",
+    "in",
+    "on",
+    "at",
+    "to",
+    "for",
+    "of",
+    "with",
+    "is",
+    "it",
+    "he",
+    "she",
+    "they",
+    "we",
+    "you",
+    "that",
+    "this",
+    "was",
+    "are",
+    "be",
+    "have",
+    "has",
+    "had",
+    "do",
+    "did",
+    "will",
+    "would",
+    "could",
+    "should",
+    "not",
+    "no",
+    "so",
+    "if",
+    "as",
+    "from",
+    "by",
+    "up",
+    "out",
+    "about",
+    "what",
+    "which",
+    "who",
+    "my",
+    "your",
+    "his",
+    "her",
+    "its",
+    "our",
+    "their",
+    "me",
+    "him",
+    "us",
+    "them",
+    "just",
+    "like",
+    "get",
+    "got",
+    "one",
+    "can",
+    "all",
+    "more",
+    "when",
+    "there",
+    "been",
+    "into",
+    "than",
+    "then",
+    "now",
+    "also",
+    "some",
+    "how",
+    "any",
+    "were",
+    "said",
+    "yes",
+    "yeah",
+    "ok",
+    "okay",
+    "lol",
+    "haha",
+    "too",
+    "over",
+    "why",
+    "right",
+    "going",
+    "time",
+    "good",
+    "know",
+    "think",
+    "well",
+    "even",
+    "back",
+    "see",
+    "really",
+    "still",
+    "much",
+    "very",
+    "way",
+    "make",
+    "take",
+    "come",
+    "here",
+    "after",
+    "being",
+    "same",
+    "where",
+    "while",
+    "again",
+    "because",
+    "these",
+    "those",
+    "both",
+    "each",
+    "few",
+    "own",
+    "other",
+    "such",
+    "only",
+    "before",
+    "off",
+    "down",
+    "never",
+    "always",
+    "every",
+    "need",
+    "want",
+    "might",
+    "look",
+    "first",
+    "last",
+    "long",
+    "great",
+    "little",
+    "man",
+    "things",
+    "thing",
+    "though",
+    "put",
+    "end",
+    "does",
+    "old",
+    "new",
+    "since",
+    "came",
+    "let",
+    "may",
+    "give",
+    "use",
+    "found",
+    "tell",
+    "asked",
+    "show",
+    "around",
     # Contractions — handled by regex but belt-and-suspenders
-    "it's", "i'm", "don't", "that's", "i've", "i'll", "we're", "they're",
-    "you're", "he's", "she's", "we've", "they've", "can't", "won't",
-    "didn't", "doesn't", "isn't", "aren't", "wasn't", "weren't", "i'd",
-    "im", "ive", "dont", "cant", "wont", "didnt", "doesnt", "thats", "ill",
+    "it's",
+    "i'm",
+    "don't",
+    "that's",
+    "i've",
+    "i'll",
+    "we're",
+    "they're",
+    "you're",
+    "he's",
+    "she's",
+    "we've",
+    "they've",
+    "can't",
+    "won't",
+    "didn't",
+    "doesn't",
+    "isn't",
+    "aren't",
+    "wasn't",
+    "weren't",
+    "i'd",
+    "im",
+    "ive",
+    "dont",
+    "cant",
+    "wont",
+    "didnt",
+    "doesnt",
+    "thats",
+    "ill",
     # URL fragments — appear even after URL stripping due to partial tokenization
-    "https", "http", "www", "com", "html", "php", "utm", "ref", "src",
-    "feature", "share", "watch", "youtu", "youtube", "reflink", "status",
-    "mobilewebshare", "dok", "shorts", "si", "fbclid", "amp",
+    "https",
+    "http",
+    "www",
+    "com",
+    "html",
+    "php",
+    "utm",
+    "ref",
+    "src",
+    "feature",
+    "share",
+    "watch",
+    "youtu",
+    "youtube",
+    "reflink",
+    "status",
+    "mobilewebshare",
+    "dok",
+    "shorts",
+    "si",
+    "fbclid",
+    "amp",
 }
 
 # ---------------------------------------------------------------------------
@@ -188,10 +374,7 @@ def fetch_messages(
         filter_thread_ids = [thread_id]
     elif thread_type:
         resp = (
-            client.table("imessage_threads")
-            .select("id")
-            .eq("thread_type", thread_type)
-            .execute()
+            client.table("imessage_threads").select("id").eq("thread_type", thread_type).execute()
         )
         filter_thread_ids = [r["id"] for r in (resp.data or [])]
         if not filter_thread_ids:
@@ -290,10 +473,7 @@ def clean_messages(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     The cleaned list is the basis for all eight analytical dimensions.
     """
-    return [
-        m for m in messages
-        if m.get("text", "").strip() and not is_reaction(m["text"].strip())
-    ]
+    return [m for m in messages if m.get("text", "").strip() and not is_reaction(m["text"].strip())]
 
 
 def strip_urls(text: str) -> str:
@@ -522,17 +702,11 @@ def dimension_2_group_dynamics(
             msg_count = len([line for line in text.split("\n") if line.strip()])
             burst_depth_by_starter[dominant].append(msg_count)
 
-    avg_burst_depth = {
-        s: round(sum(d) / len(d), 1)
-        for s, d in burst_depth_by_starter.items()
-        if d
-    }
+    avg_burst_depth = {s: round(sum(d) / len(d), 1) for s, d in burst_depth_by_starter.items() if d}
 
     # Response rate proxy
     response_rate = {
-        s: round(volume[s] / (total - volume[s]), 3)
-        for s in senders
-        if (total - volume[s]) > 0
+        s: round(volume[s] / (total - volume[s]), 3) for s in senders if (total - volume[s]) > 0
     }
 
     return {
@@ -543,9 +717,7 @@ def dimension_2_group_dynamics(
         "volume_pct": {s: round(volume[s] / total * 100, 1) for s in senders},
         "starter_count": dict(starters.most_common()),
         "starter_pct": {
-            s: round(starters[s] / total_bursts * 100, 1)
-            for s in senders
-            if total_bursts > 0
+            s: round(starters[s] / total_bursts * 100, 1) for s in senders if total_bursts > 0
         },
         "avg_burst_depth_when_starting": avg_burst_depth,
         "response_rate_proxy": response_rate,
@@ -659,12 +831,8 @@ def dimension_3_individual_profiles(
 
         profiles[sender] = {
             "message_count": len(sender_msgs),
-            "avg_message_length_words": (
-                round(sum(lengths) / len(lengths), 1) if lengths else 0
-            ),
-            "median_message_length_words": (
-                sorted(lengths)[len(lengths) // 2] if lengths else 0
-            ),
+            "avg_message_length_words": (round(sum(lengths) / len(lengths), 1) if lengths else 0),
+            "median_message_length_words": (sorted(lengths)[len(lengths) // 2] if lengths else 0),
             "short_message_rate": (
                 # Rate of messages 3 words or fewer — signals terse/reactive style
                 round(sum(1 for length in lengths if length <= 3) / len(lengths), 2)
@@ -673,17 +841,14 @@ def dimension_3_individual_profiles(
             ),
             "url_sharing_rate": (
                 # Fraction of messages containing a URL — signals link-sharing behaviour
-                round(
-                    sum(1 for t in texts if "http" in t.lower()) / len(texts), 2
-                )
+                round(sum(1 for t in texts if "http" in t.lower()) / len(texts), 2)
                 if texts
                 else 0
             ),
             "peak_hour_utc": peak_hour_utc,
             "peak_hour_est": (peak_hour_utc - 5) % 24 if peak_hour_utc is not None else None,
             "vocabulary_fingerprint": [
-                {"word": w, "count": c, "lift": ls}
-                for w, c, ls in fingerprint
+                {"word": w, "count": c, "lift": ls} for w, c, ls in fingerprint
             ],
             "total_unique_words": len(sw),
         }
@@ -741,9 +906,23 @@ def dimension_4_relationship_pairs(
 
     # Keywords that signal disagreement, challenge, or reframing
     pushback_words = {
-        "but", "actually", "wrong", "disagree", "nope", "not really",
-        "don't think", "doubt", "though", "however", "although",
-        "wait", "hold on", "except", "unless", "rather", "instead",
+        "but",
+        "actually",
+        "wrong",
+        "disagree",
+        "nope",
+        "not really",
+        "don't think",
+        "doubt",
+        "though",
+        "however",
+        "although",
+        "wait",
+        "hold on",
+        "except",
+        "unless",
+        "rather",
+        "instead",
     }
 
     pairs: Dict[str, Dict[str, Any]] = {}
@@ -758,10 +937,9 @@ def dimension_4_relationship_pairs(
                 prev = clean[idx - 1]
                 curr = clean[idx]
                 # A valid exchange: consecutive messages from these two senders
-                if (
-                    {prev["sender_name"], curr["sender_name"]} == {s1, s2}
-                    and prev["sender_name"] != curr["sender_name"]
-                ):
+                if {prev["sender_name"], curr["sender_name"]} == {s1, s2} and prev[
+                    "sender_name"
+                ] != curr["sender_name"]:
                     exchanges.append((prev, curr))
                     # Does the response contain a pushback signal?
                     if any(pb in curr["text"].lower() for pb in pushback_words):
@@ -875,14 +1053,10 @@ def dimension_5_core_themes(
     return {
         "top_words": [{"word": w, "count": c} for w, c in all_words.most_common(30)],
         "top_bigrams": [
-            {"bigram": b, "count": c}
-            for b, c in all_bigrams.most_common(20)
-            if c >= 3
+            {"bigram": b, "count": c} for b, c in all_bigrams.most_common(20) if c >= 3
         ],
         "url_count": len(urls_shared),
-        "top_domains": [
-            {"domain": d, "count": c} for d, c in domain_counter.most_common(15)
-        ],
+        "top_domains": [{"domain": d, "count": c} for d, c in domain_counter.most_common(15)],
         "messages_with_urls_pct": round(
             sum(1 for m in clean if "http" in m["text"].lower()) / len(clean) * 100,
             1,
@@ -935,27 +1109,88 @@ def dimension_6_emotional_register(
         return {}
 
     warmth_words = {
-        "love", "great", "amazing", "brilliant", "legend", "class", "nice",
-        "good", "well done", "proud", "miss", "thanks", "thank", "congrats",
-        "happy", "wonderful", "delighted", "glad", "fantastic", "beautiful",
-        "sweet", "kind", "generous", "thoughtful",
+        "love",
+        "great",
+        "amazing",
+        "brilliant",
+        "legend",
+        "class",
+        "nice",
+        "good",
+        "well done",
+        "proud",
+        "miss",
+        "thanks",
+        "thank",
+        "congrats",
+        "happy",
+        "wonderful",
+        "delighted",
+        "glad",
+        "fantastic",
+        "beautiful",
+        "sweet",
+        "kind",
+        "generous",
+        "thoughtful",
     }
     friction_words = {
-        "wrong", "stupid", "idiot", "rubbish", "terrible", "awful", "hate",
-        "worst", "disagree", "nonsense", "ridiculous", "absurd", "annoying",
-        "boring", "useless", "pathetic",
+        "wrong",
+        "stupid",
+        "idiot",
+        "rubbish",
+        "terrible",
+        "awful",
+        "hate",
+        "worst",
+        "disagree",
+        "nonsense",
+        "ridiculous",
+        "absurd",
+        "annoying",
+        "boring",
+        "useless",
+        "pathetic",
     }
     humour_signals = {
         # Explicit laughter markers and Irish/British humour vocabulary
-        "haha", "lol", "\U0001f602", "\U0001f923", "\U0001f605",
-        "hilarious", "funny", "jokes", "gas", "craic", "classic",
-        "legend", "brilliant", "priceless",
+        "haha",
+        "lol",
+        "\U0001f602",
+        "\U0001f923",
+        "\U0001f605",
+        "hilarious",
+        "funny",
+        "jokes",
+        "gas",
+        "craic",
+        "classic",
+        "legend",
+        "brilliant",
+        "priceless",
     }
     difficulty_words = {
         # Topics that signal the group is navigating something hard
-        "sorry", "tough", "hard", "difficult", "struggling", "worried",
-        "anxious", "stress", "sick", "ill", "cancer", "hospital", "died",
-        "death", "funeral", "grief", "sad", "upset", "problem", "trouble",
+        "sorry",
+        "tough",
+        "hard",
+        "difficult",
+        "struggling",
+        "worried",
+        "anxious",
+        "stress",
+        "sick",
+        "ill",
+        "cancer",
+        "hospital",
+        "died",
+        "death",
+        "funeral",
+        "grief",
+        "sad",
+        "upset",
+        "problem",
+        "trouble",
     }
 
     warmth_count = friction_count = humour_count = difficulty_count = 0
@@ -1058,9 +1293,7 @@ def dimension_7_temporal_patterns(
             "night_0_5": sum(hours[h] for h in range(0, 6)),
         },
         "yearly_volume": dict(sorted(years.items())),
-        "month_of_year_distribution": {
-            str(m): months_of_year[m] for m in range(1, 13)
-        },
+        "month_of_year_distribution": {str(m): months_of_year[m] for m in range(1, 13)},
     }
 
 
@@ -1120,9 +1353,20 @@ def dimension_8_group_self_awareness(
 
     # Phrases that signal the group talking about itself as a collective
     group_self_ref = [
-        "book club", "the group", "us lot", "you guys", "you lot",
-        "the lads", "the boys", "we should", "we need", "we must",
-        "remember when", "back in", "that time", "the day we",
+        "book club",
+        "the group",
+        "us lot",
+        "you guys",
+        "you lot",
+        "the lads",
+        "the boys",
+        "we should",
+        "we need",
+        "we must",
+        "remember when",
+        "back in",
+        "that time",
+        "the day we",
     ]
 
     self_ref_messages: List[Dict[str, str]] = []
@@ -1241,8 +1485,7 @@ def generate_report(
     not buried in Dimension 1 statistics where they might be missed.
     """
     thread_summary = "\n".join(
-        f"- {t['thread_name']} ({t['thread_type']}, {t['message_count']} messages)"
-        for t in threads
+        f"- {t['thread_name']} ({t['thread_type']}, {t['message_count']} messages)" for t in threads
     )
 
     lines = [
@@ -1416,17 +1659,13 @@ def main() -> None:
         for key, name in dim_names.items():
             print(f"  Interpreting {name}...")
             try:
-                interpreted[key] = interpret_dimension(
-                    name, dimensions[key], context, claude
-                )
+                interpreted[key] = interpret_dimension(name, dimensions[key], context, claude)
             except Exception as e:
                 print(f"  Warning: interpretation failed for {name}: {e}")
                 interpreted[key] = ""
 
     missing_years = d1.get("missing_years", [])
-    report = generate_report(
-        dimensions, interpreted, threads, run_timestamp, missing_years
-    )
+    report = generate_report(dimensions, interpreted, threads, run_timestamp, missing_years)
 
     output_path = OUTPUT_DIR / f"corpus_analysis_{run_timestamp}.md"
     output_path.write_text(report, encoding="utf-8")
