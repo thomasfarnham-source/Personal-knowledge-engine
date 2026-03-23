@@ -58,9 +58,10 @@ import re
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import anthropic
+from anthropic.types import TextBlock
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -92,219 +93,33 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 # ---------------------------------------------------------------------------
 STOPWORDS = {
     # Common English
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "but",
-    "in",
-    "on",
-    "at",
-    "to",
-    "for",
-    "of",
-    "with",
-    "is",
-    "it",
-    "he",
-    "she",
-    "they",
-    "we",
-    "you",
-    "that",
-    "this",
-    "was",
-    "are",
-    "be",
-    "have",
-    "has",
-    "had",
-    "do",
-    "did",
-    "will",
-    "would",
-    "could",
-    "should",
-    "not",
-    "no",
-    "so",
-    "if",
-    "as",
-    "from",
-    "by",
-    "up",
-    "out",
-    "about",
-    "what",
-    "which",
-    "who",
-    "my",
-    "your",
-    "his",
-    "her",
-    "its",
-    "our",
-    "their",
-    "me",
-    "him",
-    "us",
-    "them",
-    "just",
-    "like",
-    "get",
-    "got",
-    "one",
-    "can",
-    "all",
-    "more",
-    "when",
-    "there",
-    "been",
-    "into",
-    "than",
-    "then",
-    "now",
-    "also",
-    "some",
-    "how",
-    "any",
-    "were",
-    "said",
-    "yes",
-    "yeah",
-    "ok",
-    "okay",
-    "lol",
-    "haha",
-    "too",
-    "over",
-    "why",
-    "right",
-    "going",
-    "time",
-    "good",
-    "know",
-    "think",
-    "well",
-    "even",
-    "back",
-    "see",
-    "really",
-    "still",
-    "much",
-    "very",
-    "way",
-    "make",
-    "take",
-    "come",
-    "here",
-    "after",
-    "being",
-    "same",
-    "where",
-    "while",
-    "again",
-    "because",
-    "these",
-    "those",
-    "both",
-    "each",
-    "few",
-    "own",
-    "other",
-    "such",
-    "only",
-    "before",
-    "off",
-    "down",
-    "never",
-    "always",
-    "every",
-    "need",
-    "want",
-    "might",
-    "look",
-    "first",
-    "last",
-    "long",
-    "great",
-    "little",
-    "man",
-    "things",
-    "thing",
-    "though",
-    "put",
-    "end",
-    "does",
-    "old",
-    "new",
-    "since",
-    "came",
-    "let",
-    "may",
-    "give",
-    "use",
-    "found",
-    "tell",
-    "asked",
-    "show",
-    "around",
+    "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "is", "it", "he", "she", "they", "we", "you", "that",
+    "this", "was", "are", "be", "have", "has", "had", "do", "did", "will",
+    "would", "could", "should", "not", "no", "so", "if", "as", "from", "by",
+    "up", "out", "about", "what", "which", "who", "my", "your", "his", "her",
+    "its", "our", "their", "me", "him", "us", "them", "just", "like", "get",
+    "got", "one", "can", "all", "more", "when", "there", "been", "into",
+    "than", "then", "now", "also", "some", "how", "any", "were", "said",
+    "yes", "yeah", "ok", "okay", "lol", "haha", "too", "over", "why",
+    "right", "going", "time", "good", "know", "think", "well", "even",
+    "back", "see", "really", "still", "much", "very", "way", "make", "take",
+    "come", "here", "after", "being", "same", "where", "while", "again",
+    "because", "these", "those", "both", "each", "few", "own", "other",
+    "such", "only", "before", "off", "down", "never", "always", "every",
+    "need", "want", "might", "look", "first", "last", "long", "great",
+    "little", "man", "things", "thing", "though", "put", "end", "does",
+    "old", "new", "since", "came", "let", "may", "give", "use", "found",
+    "tell", "asked", "show", "around",
     # Contractions — handled by regex but belt-and-suspenders
-    "it's",
-    "i'm",
-    "don't",
-    "that's",
-    "i've",
-    "i'll",
-    "we're",
-    "they're",
-    "you're",
-    "he's",
-    "she's",
-    "we've",
-    "they've",
-    "can't",
-    "won't",
-    "didn't",
-    "doesn't",
-    "isn't",
-    "aren't",
-    "wasn't",
-    "weren't",
-    "i'd",
-    "im",
-    "ive",
-    "dont",
-    "cant",
-    "wont",
-    "didnt",
-    "doesnt",
-    "thats",
-    "ill",
+    "it's", "i'm", "don't", "that's", "i've", "i'll", "we're", "they're",
+    "you're", "he's", "she's", "we've", "they've", "can't", "won't",
+    "didn't", "doesn't", "isn't", "aren't", "wasn't", "weren't", "i'd",
+    "im", "ive", "dont", "cant", "wont", "didnt", "doesnt", "thats", "ill",
     # URL fragments — appear even after URL stripping due to partial tokenization
-    "https",
-    "http",
-    "www",
-    "com",
-    "html",
-    "php",
-    "utm",
-    "ref",
-    "src",
-    "feature",
-    "share",
-    "watch",
-    "youtu",
-    "youtube",
-    "reflink",
-    "status",
-    "mobilewebshare",
-    "dok",
-    "shorts",
-    "si",
-    "fbclid",
-    "amp",
+    "https", "http", "www", "com", "html", "php", "utm", "ref", "src",
+    "feature", "share", "watch", "youtu", "youtube", "reflink", "status",
+    "mobilewebshare", "dok", "shorts", "si", "fbclid", "amp",
 }
 
 # ---------------------------------------------------------------------------
@@ -333,7 +148,7 @@ URL_RE = re.compile(r"https?://\S+|www\.\S+")
 # ---------------------------------------------------------------------------
 
 
-def get_supabase_client():
+def get_supabase_client() -> Any:
     """
     Create and return a Supabase client using environment variables.
     Credentials are read from .env via load_dotenv() at module load time.
@@ -344,7 +159,7 @@ def get_supabase_client():
 
 
 def fetch_messages(
-    client,
+    client: Any,
     thread_type: Optional[str] = None,
     thread_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
@@ -368,12 +183,15 @@ def fetch_messages(
         id, thread_id, sender_name, timestamp, text, message_type, has_text
     """
     # Resolve thread ID filter — either direct or via thread_type lookup
-    filter_thread_ids = None
+    filter_thread_ids: Optional[List[str]] = None
     if thread_id:
         filter_thread_ids = [thread_id]
     elif thread_type:
         resp = (
-            client.table("imessage_threads").select("id").eq("thread_type", thread_type).execute()
+            client.table("imessage_threads")
+            .select("id")
+            .eq("thread_type", thread_type)
+            .execute()
         )
         filter_thread_ids = [r["id"] for r in (resp.data or [])]
         if not filter_thread_ids:
@@ -400,7 +218,7 @@ def fetch_messages(
     return all_rows
 
 
-def fetch_threads(client) -> List[Dict[str, Any]]:
+def fetch_threads(client: Any) -> List[Dict[str, Any]]:
     """
     Fetch all thread metadata from imessage_threads.
     Used for the report corpus summary and missing year detection.
@@ -410,7 +228,7 @@ def fetch_threads(client) -> List[Dict[str, Any]]:
 
 
 def fetch_bursts(
-    client,
+    client: Any,
     thread_type: Optional[str] = None,
     thread_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
@@ -472,7 +290,10 @@ def clean_messages(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     The cleaned list is the basis for all eight analytical dimensions.
     """
-    return [m for m in messages if m.get("text", "").strip() and not is_reaction(m["text"].strip())]
+    return [
+        m for m in messages
+        if m.get("text", "").strip() and not is_reaction(m["text"].strip())
+    ]
 
 
 def strip_urls(text: str) -> str:
@@ -564,7 +385,7 @@ def dimension_1_relationship_history(
     clean = clean_messages(messages)
 
     # Build monthly message counts
-    monthly: Counter = Counter()
+    monthly: Counter[str] = Counter()
     for m in clean:
         dt = parse_timestamp(m["timestamp"])
         monthly[dt.strftime("%Y-%m")] += 1
@@ -577,7 +398,7 @@ def dimension_1_relationship_history(
     first_year, first_mo = map(int, months[0].split("-"))
     last_year, last_mo = map(int, months[-1].split("-"))
 
-    all_months = []
+    all_months: List[str] = []
     y, mo = first_year, first_mo
     while (y, mo) <= (last_year, last_mo):
         all_months.append(f"{y:04d}-{mo:02d}")
@@ -586,31 +407,31 @@ def dimension_1_relationship_history(
             mo = 1
             y += 1
 
-    silent_months = [m for m in all_months if monthly.get(m, 0) == 0]
+    silent_months = [month for month in all_months if monthly.get(month, 0) == 0]
 
     # Identify consecutive silence periods (2+ months)
-    silence_periods = []
+    silence_periods: List[Tuple[str, str]] = []
     if silent_months:
         period_start = silent_months[0]
         prev = silent_months[0]
-        for m in silent_months[1:]:
+        for month in silent_months[1:]:
             py, pmo = map(int, prev.split("-"))
             next_exp = f"{py:04d}-{pmo+1:02d}" if pmo < 12 else f"{py+1:04d}-01"
-            if m == next_exp:
+            if month == next_exp:
                 # Consecutive — extend the current period
-                prev = m
+                prev = month
             else:
                 # Gap — close the current period and start a new one
                 if period_start != prev:
                     silence_periods.append((period_start, prev))
-                period_start = m
-                prev = m
+                period_start = month
+                prev = month
         # Close the final period
         if period_start != prev:
             silence_periods.append((period_start, prev))
 
     # Yearly rollup
-    yearly: Counter = Counter()
+    yearly: Counter[str] = Counter()
     for m in clean:
         dt = parse_timestamp(m["timestamp"])
         yearly[str(dt.year)] += 1
@@ -685,12 +506,12 @@ def dimension_2_group_dynamics(
         return {}
 
     senders = sorted({m["sender_name"] for m in clean})
-    volume: Counter = Counter(m["sender_name"] for m in clean)
+    volume: Counter[str] = Counter(m["sender_name"] for m in clean)
     total = len(clean)
     total_bursts = len(bursts)
 
     # Burst starters and depth
-    starters: Counter = Counter()
+    starters: Counter[str] = Counter()
     burst_depth_by_starter: Dict[str, List[int]] = defaultdict(list)
     for burst in bursts:
         dominant = burst.get("dominant_sender", "")
@@ -698,14 +519,20 @@ def dimension_2_group_dynamics(
             starters[dominant] += 1
             text = burst.get("text_combined", "")
             # Approximate message count from non-empty lines in text_combined
-            msg_count = len([l for l in text.split("\n") if l.strip()])
+            msg_count = len([line for line in text.split("\n") if line.strip()])
             burst_depth_by_starter[dominant].append(msg_count)
 
-    avg_burst_depth = {s: round(sum(d) / len(d), 1) for s, d in burst_depth_by_starter.items() if d}
+    avg_burst_depth = {
+        s: round(sum(d) / len(d), 1)
+        for s, d in burst_depth_by_starter.items()
+        if d
+    }
 
     # Response rate proxy
     response_rate = {
-        s: round(volume[s] / (total - volume[s]), 3) for s in senders if (total - volume[s]) > 0
+        s: round(volume[s] / (total - volume[s]), 3)
+        for s in senders
+        if (total - volume[s]) > 0
     }
 
     return {
@@ -716,7 +543,9 @@ def dimension_2_group_dynamics(
         "volume_pct": {s: round(volume[s] / total * 100, 1) for s in senders},
         "starter_count": dict(starters.most_common()),
         "starter_pct": {
-            s: round(starters[s] / total_bursts * 100, 1) for s in senders if total_bursts > 0
+            s: round(starters[s] / total_bursts * 100, 1)
+            for s in senders
+            if total_bursts > 0
         },
         "avg_burst_depth_when_starting": avg_burst_depth,
         "response_rate_proxy": response_rate,
@@ -775,12 +604,13 @@ def dimension_3_individual_profiles(
     senders = sorted({m["sender_name"] for m in clean})
 
     # Build corpus-wide word frequency — shared baseline for all lift calculations
-    corpus_words: Counter = Counter()
-    sender_words: Dict[str, Counter] = {}
+    # Using Counter[str] so mypy knows the key and value types precisely.
+    corpus_words: Counter[str] = Counter()
+    sender_words: Dict[str, Counter[str]] = {}
 
     for sender in senders:
         sender_msgs = [m for m in clean if m["sender_name"] == sender]
-        words = []
+        words: List[str] = []
         for m in sender_msgs:
             words.extend(tokenize(m["text"]))
         sender_words[sender] = Counter(words)
@@ -789,7 +619,7 @@ def dimension_3_individual_profiles(
 
     total_corpus_words = sum(corpus_words.values())
 
-    profiles = {}
+    profiles: Dict[str, Any] = {}
     for sender in senders:
         sender_msgs = [m for m in clean if m["sender_name"] == sender]
         texts = [m["text"] for m in sender_msgs]
@@ -800,8 +630,11 @@ def dimension_3_individual_profiles(
         sw = sender_words[sender]
         total_sender_words = sum(sw.values())
 
-        # Compute lift for each word and select the most distinctive
-        fingerprint = []
+        # Compute lift for each word and select the most distinctive.
+        # lift = (word_count_for_sender / sender_total_words)
+        #      / (word_count_in_corpus / corpus_total_words)
+        # Words with lift >= 2.0 are used at least twice the corpus rate.
+        fingerprint: List[Tuple[str, int, float]] = []
         if total_sender_words > 0 and total_corpus_words > 0:
             for word, count in sw.most_common(1000):
                 if count < 3:
@@ -811,9 +644,9 @@ def dimension_3_individual_profiles(
                 corpus_freq = corpus_words[word] / total_corpus_words
                 if corpus_freq == 0:
                     continue
-                lift = sender_freq / corpus_freq
-                if lift >= 2.0:
-                    fingerprint.append((word, count, round(lift, 2)))
+                lift_score = sender_freq / corpus_freq
+                if lift_score >= 2.0:
+                    fingerprint.append((word, count, round(lift_score, 2)))
 
             # Sort by lift descending — most distinctive words first
             fingerprint.sort(key=lambda x: x[2], reverse=True)
@@ -821,27 +654,27 @@ def dimension_3_individual_profiles(
 
         # Peak activity hour
         timestamps = [parse_timestamp(m["timestamp"]) for m in sender_msgs]
-        hour_dist: Counter = Counter(dt.hour for dt in timestamps)
+        hour_dist: Counter[int] = Counter(dt.hour for dt in timestamps)
         peak_hour_utc = max(hour_dist, key=lambda h: hour_dist[h]) if hour_dist else None
 
         profiles[sender] = {
             "message_count": len(sender_msgs),
-            "avg_message_length_words": round(sum(lengths) / len(lengths), 1) if lengths else 0,
-            "median_message_length_words": sorted(lengths)[len(lengths) // 2] if lengths else 0,
+            "avg_message_length_words": (
+                round(sum(lengths) / len(lengths), 1) if lengths else 0
+            ),
+            "median_message_length_words": (
+                sorted(lengths)[len(lengths) // 2] if lengths else 0
+            ),
             "short_message_rate": (
-                round(
-                    # Rate of messages 3 words or fewer — signals terse/reactive style
-                    sum(1 for l in lengths if l <= 3) / len(lengths),
-                    2,
-                )
+                # Rate of messages 3 words or fewer — signals terse/reactive style
+                round(sum(1 for length in lengths if length <= 3) / len(lengths), 2)
                 if lengths
                 else 0
             ),
             "url_sharing_rate": (
+                # Fraction of messages containing a URL — signals link-sharing behaviour
                 round(
-                    # Fraction of messages containing a URL — signals link-sharing behaviour
-                    sum(1 for t in texts if "http" in t.lower()) / len(texts),
-                    2,
+                    sum(1 for t in texts if "http" in t.lower()) / len(texts), 2
                 )
                 if texts
                 else 0
@@ -849,7 +682,8 @@ def dimension_3_individual_profiles(
             "peak_hour_utc": peak_hour_utc,
             "peak_hour_est": (peak_hour_utc - 5) % 24 if peak_hour_utc is not None else None,
             "vocabulary_fingerprint": [
-                {"word": w, "count": c, "lift": l} for w, c, l in fingerprint
+                {"word": w, "count": c, "lift": ls}
+                for w, c, ls in fingerprint
             ],
             "total_unique_words": len(sw),
         }
@@ -907,40 +741,27 @@ def dimension_4_relationship_pairs(
 
     # Keywords that signal disagreement, challenge, or reframing
     pushback_words = {
-        "but",
-        "actually",
-        "wrong",
-        "disagree",
-        "nope",
-        "not really",
-        "don't think",
-        "doubt",
-        "though",
-        "however",
-        "although",
-        "wait",
-        "hold on",
-        "except",
-        "unless",
-        "rather",
-        "instead",
+        "but", "actually", "wrong", "disagree", "nope", "not really",
+        "don't think", "doubt", "though", "however", "although",
+        "wait", "hold on", "except", "unless", "rather", "instead",
     }
 
-    pairs = {}
+    pairs: Dict[str, Dict[str, Any]] = {}
     for i in range(len(senders)):
         for j in range(i + 1, len(senders)):
             s1, s2 = senders[i], senders[j]
 
-            exchanges = []
+            exchanges: List[Tuple[Dict[str, Any], Dict[str, Any]]] = []
             pushbacks = 0
 
             for idx in range(1, len(clean)):
                 prev = clean[idx - 1]
                 curr = clean[idx]
                 # A valid exchange: consecutive messages from these two senders
-                if {prev["sender_name"], curr["sender_name"]} == {s1, s2} and prev[
-                    "sender_name"
-                ] != curr["sender_name"]:
+                if (
+                    {prev["sender_name"], curr["sender_name"]} == {s1, s2}
+                    and prev["sender_name"] != curr["sender_name"]
+                ):
                     exchanges.append((prev, curr))
                     # Does the response contain a pushback signal?
                     if any(pb in curr["text"].lower() for pb in pushback_words):
@@ -963,17 +784,21 @@ def dimension_4_relationship_pairs(
                 if idx < len(exchanges)
             ]
 
-            pairs[f"{s1} ↔ {s2}"] = {
+            pairs[f"{s1} \u2194 {s2}"] = {
                 "exchange_count": len(exchanges),
                 "pushback_rate": round(pushbacks / len(exchanges), 3),
                 "pushback_count": pushbacks,
                 "sample_exchanges": samples,
             }
 
-    # Sort by exchange count descending — most active pairs first
-    return {
-        "pairs": dict(sorted(pairs.items(), key=lambda x: x[1]["exchange_count"], reverse=True))
-    }
+    # Sort by exchange count descending — most active pairs first.
+    # Cast to int so mypy knows the sort key is comparable.
+    sorted_pairs = sorted(
+        pairs.items(),
+        key=lambda x: int(x[1]["exchange_count"]),
+        reverse=True,
+    )
+    return {"pairs": dict(sorted_pairs)}
 
 
 # ---------------------------------------------------------------------------
@@ -1020,8 +845,8 @@ def dimension_5_core_themes(
     if not clean:
         return {}
 
-    all_words: Counter = Counter()
-    all_bigrams: Counter = Counter()
+    all_words: Counter[str] = Counter()
+    all_bigrams: Counter[str] = Counter()
     urls_shared: List[str] = []
 
     for m in clean:
@@ -1041,7 +866,7 @@ def dimension_5_core_themes(
             all_bigrams[f"{words[i]} {words[i+1]}"] += 1
 
     # Extract domain from each URL
-    domain_counter: Counter = Counter()
+    domain_counter: Counter[str] = Counter()
     for url in urls_shared:
         match = re.search(r"https?://(?:www\.)?([^/\s]+)", url)
         if match:
@@ -1050,12 +875,17 @@ def dimension_5_core_themes(
     return {
         "top_words": [{"word": w, "count": c} for w, c in all_words.most_common(30)],
         "top_bigrams": [
-            {"bigram": b, "count": c} for b, c in all_bigrams.most_common(20) if c >= 3
+            {"bigram": b, "count": c}
+            for b, c in all_bigrams.most_common(20)
+            if c >= 3
         ],
         "url_count": len(urls_shared),
-        "top_domains": [{"domain": d, "count": c} for d, c in domain_counter.most_common(15)],
+        "top_domains": [
+            {"domain": d, "count": c} for d, c in domain_counter.most_common(15)
+        ],
         "messages_with_urls_pct": round(
-            sum(1 for m in clean if "http" in m["text"].lower()) / len(clean) * 100, 1
+            sum(1 for m in clean if "http" in m["text"].lower()) / len(clean) * 100,
+            1,
         ),
     }
 
@@ -1079,6 +909,13 @@ def dimension_5_core_themes(
 #     the rates and ratios, not the precision of any individual match.
 #     Validated against known corpus characteristics (the group is warm,
 #     intellectually combative, handles difficulty with humour-first).
+#
+# Sarcasm note:
+#     This group is highly sarcastic. Warmth keywords like "brilliant" and
+#     "legend" are frequently deployed ironically. The warmth/friction ratio
+#     likely overstates genuine warmth and understates friction as a result.
+#     The rates are useful for comparison across senders; the absolute values
+#     should be interpreted with the sarcasm register in mind.
 # ---------------------------------------------------------------------------
 
 
@@ -1098,93 +935,32 @@ def dimension_6_emotional_register(
         return {}
 
     warmth_words = {
-        "love",
-        "great",
-        "amazing",
-        "brilliant",
-        "legend",
-        "class",
-        "nice",
-        "good",
-        "well done",
-        "proud",
-        "miss",
-        "thanks",
-        "thank",
-        "congrats",
-        "happy",
-        "wonderful",
-        "delighted",
-        "glad",
-        "fantastic",
-        "beautiful",
-        "sweet",
-        "kind",
-        "generous",
-        "thoughtful",
+        "love", "great", "amazing", "brilliant", "legend", "class", "nice",
+        "good", "well done", "proud", "miss", "thanks", "thank", "congrats",
+        "happy", "wonderful", "delighted", "glad", "fantastic", "beautiful",
+        "sweet", "kind", "generous", "thoughtful",
     }
     friction_words = {
-        "wrong",
-        "stupid",
-        "idiot",
-        "rubbish",
-        "terrible",
-        "awful",
-        "hate",
-        "worst",
-        "disagree",
-        "nonsense",
-        "ridiculous",
-        "absurd",
-        "annoying",
-        "boring",
-        "useless",
-        "pathetic",
+        "wrong", "stupid", "idiot", "rubbish", "terrible", "awful", "hate",
+        "worst", "disagree", "nonsense", "ridiculous", "absurd", "annoying",
+        "boring", "useless", "pathetic",
     }
     humour_signals = {
         # Explicit laughter markers and Irish/British humour vocabulary
-        "haha",
-        "lol",
-        "😂",
-        "🤣",
-        "😅",
-        "hilarious",
-        "funny",
-        "jokes",
-        "gas",
-        "craic",
-        "classic",
-        "legend",
-        "brilliant",
-        "priceless",
+        "haha", "lol", "\U0001f602", "\U0001f923", "\U0001f605",
+        "hilarious", "funny", "jokes", "gas", "craic", "classic",
+        "legend", "brilliant", "priceless",
     }
     difficulty_words = {
         # Topics that signal the group is navigating something hard
-        "sorry",
-        "tough",
-        "hard",
-        "difficult",
-        "struggling",
-        "worried",
-        "anxious",
-        "stress",
-        "sick",
-        "ill",
-        "cancer",
-        "hospital",
-        "died",
-        "death",
-        "funeral",
-        "grief",
-        "sad",
-        "upset",
-        "problem",
-        "trouble",
+        "sorry", "tough", "hard", "difficult", "struggling", "worried",
+        "anxious", "stress", "sick", "ill", "cancer", "hospital", "died",
+        "death", "funeral", "grief", "sad", "upset", "problem", "trouble",
     }
 
     warmth_count = friction_count = humour_count = difficulty_count = 0
-    per_sender_warmth: Counter = Counter()
-    per_sender_humour: Counter = Counter()
+    per_sender_warmth: Counter[str] = Counter()
+    per_sender_humour: Counter[str] = Counter()
 
     for m in clean:
         tl = m["text"].lower()
@@ -1251,10 +1027,10 @@ def dimension_7_temporal_patterns(
     if not clean:
         return {}
 
-    hours: Counter = Counter()
-    days: Counter = Counter()
-    years: Counter = Counter()
-    months_of_year: Counter = Counter()
+    hours: Counter[int] = Counter()
+    days: Counter[str] = Counter()
+    years: Counter[str] = Counter()
+    months_of_year: Counter[int] = Counter()
     day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     for m in clean:
@@ -1282,7 +1058,9 @@ def dimension_7_temporal_patterns(
             "night_0_5": sum(hours[h] for h in range(0, 6)),
         },
         "yearly_volume": dict(sorted(years.items())),
-        "month_of_year_distribution": {str(m): months_of_year[m] for m in range(1, 13)},
+        "month_of_year_distribution": {
+            str(m): months_of_year[m] for m in range(1, 13)
+        },
     }
 
 
@@ -1330,7 +1108,7 @@ def dimension_8_group_self_awareness(
 
     # Build first-name lookup from full sender names
     first_names = {s.strip().split()[0].lower(): s for s in senders if s.strip()}
-    name_mentions: Dict[str, Counter] = {s: Counter() for s in senders}
+    name_mentions: Dict[str, Counter[str]] = {s: Counter() for s in senders}
 
     for m in clean:
         tl = m["text"].lower()
@@ -1342,23 +1120,12 @@ def dimension_8_group_self_awareness(
 
     # Phrases that signal the group talking about itself as a collective
     group_self_ref = [
-        "book club",
-        "the group",
-        "us lot",
-        "you guys",
-        "you lot",
-        "the lads",
-        "the boys",
-        "we should",
-        "we need",
-        "we must",
-        "remember when",
-        "back in",
-        "that time",
-        "the day we",
+        "book club", "the group", "us lot", "you guys", "you lot",
+        "the lads", "the boys", "we should", "we need", "we must",
+        "remember when", "back in", "that time", "the day we",
     ]
 
-    self_ref_messages = []
+    self_ref_messages: List[Dict[str, str]] = []
     for m in clean:
         tl = m["text"].lower()
         for phrase in group_self_ref:
@@ -1389,8 +1156,8 @@ def dimension_8_group_self_awareness(
 # ---------------------------------------------------------------------------
 # Claude API — interpreted findings
 #
-# Each dimension's statistics are passed to Claude with a system prompt
-# that frames the task: produce 3-5 sentences of plain-language findings
+# Each dimension's statistics are passed to Claude with a prompt that
+# frames the task: produce 3-5 sentences of plain-language findings
 # grounded in the actual numbers, useful for characterising the group's
 # voice in the Personality Skin system prompt.
 #
@@ -1439,7 +1206,10 @@ for readability."""
         max_tokens=400,
         messages=[{"role": "user", "content": prompt}],
     )
-    return message.content[0].text.strip()
+    # content[0] is always a TextBlock for standard non-tool responses
+    block = message.content[0]
+    assert isinstance(block, TextBlock)
+    return block.text.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -1471,7 +1241,8 @@ def generate_report(
     not buried in Dimension 1 statistics where they might be missed.
     """
     thread_summary = "\n".join(
-        f"- {t['thread_name']} ({t['thread_type']}, {t['message_count']} messages)" for t in threads
+        f"- {t['thread_name']} ({t['thread_type']}, {t['message_count']} messages)"
+        for t in threads
     )
 
     lines = [
@@ -1488,23 +1259,23 @@ def generate_report(
     if missing_years:
         lines += [
             f"**Data gaps:** No messages recorded for: {', '.join(missing_years)}. "
-            f"Conversation likely moved to bilateral threads or a different platform "
-            f"during these periods. This is a known corpus limitation — absence of "
-            f"messages in these years does not mean absence of relationship.",
+            "Conversation likely moved to bilateral threads or a different platform "
+            "during these periods. This is a known corpus limitation — absence of "
+            "messages in these years does not mean absence of relationship.",
             "",
         ]
 
     lines += ["---", ""]
 
     dim_titles = {
-        "dimension_1": "Dimension 1 — Relationship History",
-        "dimension_2": "Dimension 2 — Group Dynamics",
-        "dimension_3": "Dimension 3 — Individual Profiles",
-        "dimension_4": "Dimension 4 — Relationship Pairs",
-        "dimension_5": "Dimension 5 — Core Themes",
-        "dimension_6": "Dimension 6 — Emotional Register",
-        "dimension_7": "Dimension 7 — Temporal Patterns",
-        "dimension_8": "Dimension 8 — Group Self-Awareness",
+        "dimension_1": "Dimension 1 \u2014 Relationship History",
+        "dimension_2": "Dimension 2 \u2014 Group Dynamics",
+        "dimension_3": "Dimension 3 \u2014 Individual Profiles",
+        "dimension_4": "Dimension 4 \u2014 Relationship Pairs",
+        "dimension_5": "Dimension 5 \u2014 Core Themes",
+        "dimension_6": "Dimension 6 \u2014 Emotional Register",
+        "dimension_7": "Dimension 7 \u2014 Temporal Patterns",
+        "dimension_8": "Dimension 8 \u2014 Group Self-Awareness",
     }
 
     for key, title in dim_titles.items():
@@ -1535,10 +1306,12 @@ def generate_report(
 # ---------------------------------------------------------------------------
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
-        description="PKE Corpus Analysis Tool — produces an 8-dimension report "
-        "from the ingested iMessage corpus."
+        description=(
+            "PKE Corpus Analysis Tool — produces an 8-dimension report "
+            "from the ingested iMessage corpus."
+        )
     )
     parser.add_argument(
         "--thread-type",
@@ -1554,22 +1327,24 @@ def main():
     parser.add_argument(
         "--no-interpret",
         action="store_true",
-        help="Skip Claude API interpretation pass. Produces statistics only — "
-        "fast and free. Use for iterating on statistical output before "
-        "running the full interpretation pass.",
+        help=(
+            "Skip Claude API interpretation pass. Produces statistics only — "
+            "fast and free. Use for iterating on statistical output before "
+            "running the full interpretation pass."
+        ),
     )
     args = parser.parse_args()
 
     run_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
     print(f"PKE Corpus Analysis v2 — {run_timestamp}")
-    print(f"Connecting to Supabase...")
+    print("Connecting to Supabase...")
 
     supabase = get_supabase_client()
 
-    print(f"Fetching threads...")
+    print("Fetching threads...")
     threads = fetch_threads(supabase)
 
-    print(f"Fetching messages...")
+    print("Fetching messages...")
     messages = fetch_messages(
         supabase,
         thread_type=args.thread_type,
@@ -1577,7 +1352,7 @@ def main():
     )
     print(f"  {len(messages)} messages fetched")
 
-    print(f"Fetching bursts...")
+    print("Fetching bursts...")
     bursts = fetch_bursts(
         supabase,
         thread_type=args.thread_type,
@@ -1587,21 +1362,21 @@ def main():
 
     senders = sorted({m["sender_name"] for m in messages if m.get("sender_name")})
 
-    print(f"Running dimension 1 — Relationship History...")
+    print("Running dimension 1 — Relationship History...")
     d1 = dimension_1_relationship_history(messages, threads)
-    print(f"Running dimension 2 — Group Dynamics...")
+    print("Running dimension 2 — Group Dynamics...")
     d2 = dimension_2_group_dynamics(messages, bursts)
-    print(f"Running dimension 3 — Individual Profiles...")
+    print("Running dimension 3 — Individual Profiles...")
     d3 = dimension_3_individual_profiles(messages)
-    print(f"Running dimension 4 — Relationship Pairs...")
+    print("Running dimension 4 — Relationship Pairs...")
     d4 = dimension_4_relationship_pairs(messages)
-    print(f"Running dimension 5 — Core Themes...")
+    print("Running dimension 5 — Core Themes...")
     d5 = dimension_5_core_themes(messages)
-    print(f"Running dimension 6 — Emotional Register...")
+    print("Running dimension 6 — Emotional Register...")
     d6 = dimension_6_emotional_register(messages)
-    print(f"Running dimension 7 — Temporal Patterns...")
+    print("Running dimension 7 — Temporal Patterns...")
     d7 = dimension_7_temporal_patterns(messages)
-    print(f"Running dimension 8 — Group Self-Awareness...")
+    print("Running dimension 8 — Group Self-Awareness...")
     d8 = dimension_8_group_self_awareness(messages, senders)
 
     dimensions = {
@@ -1617,7 +1392,7 @@ def main():
 
     interpreted: Dict[str, str] = {}
     if not args.no_interpret:
-        print(f"Generating interpreted findings via Claude API...")
+        print("Generating interpreted findings via Claude API...")
         claude = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
         context = (
@@ -1641,19 +1416,23 @@ def main():
         for key, name in dim_names.items():
             print(f"  Interpreting {name}...")
             try:
-                interpreted[key] = interpret_dimension(name, dimensions[key], context, claude)
+                interpreted[key] = interpret_dimension(
+                    name, dimensions[key], context, claude
+                )
             except Exception as e:
                 print(f"  Warning: interpretation failed for {name}: {e}")
                 interpreted[key] = ""
 
     missing_years = d1.get("missing_years", [])
-    report = generate_report(dimensions, interpreted, threads, run_timestamp, missing_years)
+    report = generate_report(
+        dimensions, interpreted, threads, run_timestamp, missing_years
+    )
 
     output_path = OUTPUT_DIR / f"corpus_analysis_{run_timestamp}.md"
     output_path.write_text(report, encoding="utf-8")
 
     print(f"\nReport saved to: {output_path}")
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Messages analysed: {len(messages)}")
     print(f"  Bursts analysed:   {len(bursts)}")
     print(f"  Senders:           {', '.join(senders)}")
