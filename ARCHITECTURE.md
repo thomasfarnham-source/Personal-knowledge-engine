@@ -548,16 +548,34 @@ File structure:
 
 A custom Obsidian plugin that:
 1. Watches the active note for changes
-2. After a short debounce (~1000ms), sends current paragraph +
-   2-3 preceding lines to POST /query
+2. After a configurable ambient debounce, sends current paragraph +
+     2-3 preceding lines to POST /query
+     Debounce presets: immediate=3s, moment=15s (recommended), stop=30s
+     Debounce restarts on each keystroke and fires only after a genuine pause
 3. Renders top 3-5 reflections in a right sidebar panel
-4. Displays: date, note title, relevant passage (raw text)
-5. Never generates AI summaries — surfaces raw content only
+4. Displays: date, note title, relevant passage (raw text, truncated
+     to 1500 chars for panel readability)
+5. Never generates AI summaries by default — surfaces raw content first
+
+Plugin interaction architecture:
+- Reflection suppression state lives at plugin scope (not ItemView
+    scope) so suppression survives view recreation triggered by Obsidian
+    workspace/layout events
+- Sliding-window suppression policy (default 50 query cycles) reduces
+    repetitive resurfacing
+- Similarity score is hover-only (passive evaluation affordance, no
+    default numeric noise)
+- "Why?" explanation is on-demand only; uses Anthropic Haiku
+    (claude-haiku-4-5-20251001) with constrained short output
+- "Why?" is a retrieval evaluation aid, not an always-on narrator;
+    estimated marginal cost is ~ $0.002/call depending on pricing/tokens
+- Guardrail: generated commentary requires explicit user action
 
 Settings UI (human-framed):
-- Refresh speed (Immediately / After a moment / Only when I stop)
+- Refresh speed (Immediately — 3s / After a moment — 15s recommended /
+    Only when I stop — 30s)
 - Result count (3 / 5 / 7)
-- Notebook filter (All / current / multi-select)
+- Notebook filter (empty = all notebooks / enter notebook name to scope)
 - Recency preference (Favour older / Favour recent / No preference)
 - Note exclusion tag (default: #private)
 
@@ -696,7 +714,7 @@ Note: flat tests/ root files predate the unit/integration subfolder
 structure. Consolidation deferred to a housekeeping pass once the
 ingestion and parser test suites grow enough to warrant it.
 
-Test count as of milestone 8.9.8: 385 passing, 0 failing.
+Test count as of milestone 8.9.8: 464 passing, 0 failing.
 
 ---
 
