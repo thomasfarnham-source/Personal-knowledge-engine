@@ -21,29 +21,44 @@ IDENTITY_MAP: dict[str, str] = {
     "william.renahan@dpimc.com": "william.renahan",
     "william.renahan@virtus.com": "william.renahan",
     "william.renahan@gmail.com": "william.renahan",
+    "william.j.renahan@ssmb.com": "william.renahan",
     "wrenahan@lmus.leggmason.com": "william.renahan",
     "wrenahan@leggmason.com": "william.renahan",
     "williamrenahan@gmail.com": "william.renahan",
+    # Sarah Renahan (William's wife — separate person)
+    "saraherenahan@gmail.com": "saraherenahan",
+    "sarah.renahan@theworthycompany.com": "saraherenahan",
     # Patrick Mangan
     "pjmangan@gmail.com": "pjmangan",
     "pj.mangan@yahoo.com": "pjmangan",
-    # Thomas Farnham (owner — normalize case/domain variations)
+    # Bryan Mangan (Pat's brother — separate person)
+    "bryan.t.mangan@gmail.com": "bryan.t.mangan",
+    "btmangan@hotmail.com": "bryan.t.mangan",
+    # Christopher Mangan (Pat's relative — separate person)
+    "christophermangan@earthlink.net": "christophermangan",
+    "cwmangan@gmail.com": "cwmangan",
+    # Thomas Farnham (owner — all known addresses)
     "thomas.farnham@yahoo.com": "thomas.farnham",
-    "thomas.farnham@yahoo.com": "thomas.farnham",
+    "thomas.farnham@citi.com": "thomas.farnham",
+    "thomas.farnham@ubs.com": "thomas.farnham",
+    "tfarnham1.f6e3b75@m.evernote.com": "thomas.farnham",
     # Chris Zichello
     "czichello@gmail.com": "czichello",
     "christopher.zichello@verizon.net": "czichello",
+    "chriszichello@gmail.com": "czichello",
     # James Root
     "jcroot@gmail.com": "jcroot",
     # Family
     "nfarnham@gmail.com": "nfarnham",
     "farnhambn@gmail.com": "farnhambn",
+    "bnfarnham@yahoo.com": "farnhambn",
     "tfarnham@mtholyoke.edu": "tfarnham",
 }
 
 # Display names for canonical addresses
 DISPLAY_NAMES: dict[str, str] = {
     "william.renahan": "William Renahan",
+    "saraherenahan": "Sarah Renahan",
     "pjmangan": "Patrick Mangan",
     "thomas.farnham": "Thomas Farnham",
     "czichello": "Chris Zichello",
