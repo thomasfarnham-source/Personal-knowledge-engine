@@ -46,10 +46,7 @@ def main() -> None:
 
     # Count unembedded units
     count_resp = (
-        client.table("retrieval_units")
-        .select("id", count=None)
-        .is_("embedding", "null")
-        .execute()
+        client.table("retrieval_units").select("id", count=None).is_("embedding", "null").execute()
     )
     total = len(count_resp.data) if count_resp.data else 0
     print(f"Retrieval units needing embeddings: {total}")
