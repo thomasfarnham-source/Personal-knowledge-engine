@@ -399,6 +399,14 @@ Planned tables (milestone 9.x — iMessage Parser):
 - imessage_messages
 - imessage_bursts (primary retrieval target, with embedding column)
 
+Planned tables (milestone 9.13 — Yahoo Mail / Entity Layer):
+- contacts                — cross-channel identity registry
+- contact_identifiers     — multiple identifiers per contact
+  (phone, email, apple_id, display_name)
+
+These tables are not source-specific. They serve as the shared
+identity layer across all content channels. See Section 17.
+
 SQL migration scripts:
 - scripts/add_chunks_table.sql — chunks table schema
 - scripts/add_match_functions.sql — match_chunks and match_notes
@@ -601,6 +609,89 @@ Joplin user building a similar system. The pattern:
 
 is identical for every future parser. Only the parser changes.
 
+### Yahoo Mail Parser Design (milestone 9.13 — IN PROGRESS)
+
+Extraction method: IMAP via export.imap.mail.yahoo.com
+    Yahoo provides two IMAP endpoints. The standard server
+    (imap.mail.yahoo.com) caps folder visibility at 10,000 messages
+    and SEARCH results at ~1,000. The export server
+    (export.imap.mail.yahoo.com) removes these limits. Same
+    credentials, same app password, same port (993/SSL).
+
+    IMAP SEARCH is capped on both servers. FETCH by UID has no cap.
+    All extraction uses UID-based FETCH, never SEARCH.
+
+Authentication: Yahoo app password (not main account password)
+    Generated at login.yahoo.com/account/security → External connections.
+    Requires two-step verification enabled on Yahoo account.
+    Stored in .env as YAHOO_EMAIL and YAHOO_APP_PASSWORD.
+
+Two-pass extraction strategy:
+
+    Pass 1 — Header scan (indexing)
+        FETCH headers for all messages in all folders by UID.
+        Store in local SQLite index (working data, disposable).
+        Headers: From, To, CC, Date, Subject, Message-ID,
+        In-Reply-To, References.
+        Purpose: contact identification and volume analysis
+        before committing to full download.
+
+    Pass 2 — Selective download
+        Query header index for messages involving target contacts.
+        FETCH full RFC822 bodies for matched messages by UID.
+        Save to MBOX files in pke-data/yahoo-mail/.
+        MBOX files become the source of truth for the parser
+        (same role as iMazing CSV exports for iMessage).
+
+    Pass 3 — Parse and ingest
+        MBOX files → yahoo_mail_parser.py → ParsedNote contract
+        → orchestrator → Supabase.
+        Standard pipeline — identical flow to Joplin and iMessage.
+
+Source format: MBOX (standard mailbox format)
+    Python's built-in mailbox module parses MBOX natively.
+    Each email is a full RFC822 message with all headers and body.
+
+Unit of ingestion: email thread (grouped by In-Reply-To/References)
+    Individual emails within a thread are analogous to messages
+    within an iMessage burst. Thread grouping uses the References
+    and In-Reply-To headers, which form a reply chain.
+    Fallback: Subject-based threading for emails lacking these headers.
+
+HTML handling:
+    Most Yahoo Mail bodies are HTML. Same strip_html() approach as
+    Joplin archetype chunkers — strip tags, decode entities,
+    preserve prose content.
+
+Deduplication: Message-ID header (unique per email, RFC2822 standard).
+
+Privacy tier: Tier 3 (bilateral/relational), same as iMessage bilateral.
+
+Contact resolution:
+    Email addresses resolved against contacts + contact_identifiers
+    tables in Supabase (Entity Layer — see Section 17).
+    Multiple addresses per person supported (e.g. William Renahan
+    has both blackstone.com and dpimc.com addresses across different
+    employment periods).
+
+New database tables:
+    contacts              — cross-channel identity registry
+    contact_identifiers   — multiple identifiers per contact
+    (See Section 17 for schema — these tables serve all sources,
+    not just Yahoo Mail.)
+
+    No Yahoo-specific tables needed. Email content flows through
+    the existing chunks table via the ParsedNote contract, same
+    as all other sources.
+
+Known limitations:
+    - Export IMAP server caps Inbox at 100,000 visible messages
+    - IMAP SEARCH results capped at ~1,000 per query
+    - Work email replies (UBS, Citi, Barclays addresses) are not
+      in the Yahoo mailbox and are irrecoverable
+    - Pre-2006 email not present
+
+---
 ### Plain Text Is Always the Source of Truth
 The database is an index, never an archive. Re-ingestion from source
 files is always possible and always safe. The database should never
@@ -776,7 +867,53 @@ so no migration is needed when it arrives.
     later   relationship graph
 
 ---
+### Entity Layer — Implementation Seed (milestone 9.13)
 
+The Yahoo Mail parser is the first milestone that requires cross-channel
+identity resolution at build time, not just as a reserved field. The
+same person (e.g. William Renahan) appears with multiple email addresses
+across different employers, and must also be linkable to iMessage
+participant records.
+
+The contacts and contact_identifiers tables will be created in Supabase
+as part of milestone 9.13. Schema follows the Person/PersonIdentifier
+model defined in this section, scoped to the minimum viable structure:
+
+    contacts:
+        contact_id          UUID PRIMARY KEY
+        canonical_name      TEXT NOT NULL
+        created_at          TIMESTAMPTZ DEFAULT now()
+        notes               TEXT          -- human-added context
+
+    contact_identifiers:
+        identifier_id       UUID PRIMARY KEY
+        contact_id          UUID REFERENCES contacts(contact_id)
+        identifier_type     TEXT NOT NULL  -- "email" | "phone" | "apple_id" | "display_name"
+        identifier_value    TEXT NOT NULL
+        source              TEXT           -- "yahoo_mail" | "imessage" | "manual"
+        date_first_seen     TEXT
+        date_last_seen      TEXT
+        created_at          TIMESTAMPTZ DEFAULT now()
+        UNIQUE(identifier_type, identifier_value)
+
+    This schema is deliberately minimal. It will grow as the entity
+    layer matures, but the core principle is established: one contact,
+    many identifiers, across all channels.
+
+    iMessage participants (imessage_participants table) can be migrated
+    into this model when convenient — not a blocker for 9.13.
+
+Updated build sequence:
+    Now   — person_ids reserved in ParsedNote contract ✅
+    9.13  — contacts + contact_identifiers tables created in Supabase
+            Populated with target email contacts + known identifiers
+            Yahoo Mail parser resolves against these tables
+    Next  — iMessage participants migrated into contacts model
+    Later — Named entity recognition across Joplin journal corpus
+    Much  — Full cross-channel resolution, relationship graph
+    later
+
+---
 ## 18. Companion Layer Architecture (Planned)
 
 The third face of the PKE. A distilled voice derived from years
