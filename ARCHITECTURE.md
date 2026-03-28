@@ -740,6 +740,29 @@ Identity resolution (v1):
     Known limitation: numbers and names can change over time.
     Full Person/PersonIdentifier model deferred — see Section 17.
 
+### Conversation Model (milestone 9.13)
+
+A conversation is defined by its exact participant set, not by
+topic, thread, or time. Tom + Pat is one conversation spanning
+years. Tom + Pat + James is a different conversation.
+
+    Conversation — unique participant set (SHA256 hash of sorted list)
+    Thread — topical exchange within a conversation (References chain)
+    Burst — time-segmented cluster within a thread (4h gap threshold)
+
+When participants change (added or dropped), a new conversation
+is created. Linking across participant set changes is deferred
+to a future milestone.
+
+This model applies across channels. The Tom + Pat conversation
+exists in both email (2007-2026) and iMessage bilateral (2018-
+present). The Entity Layer (contacts table) is what links them
+through identifier resolution.
+
+Table: email_conversations
+    Keyed by participant_hash (SHA256 of sorted participant list).
+    Stores participant list, counts, date range.
+    One row per unique participant set.
 ---
 
 ## 16. Testing Philosophy
@@ -1065,3 +1088,55 @@ vision or milestone sequencing changes.
 WRITER_PORTRAIT_TEMPLATE.md captures the Observer context document
 structure and will be populated through corpus analysis + Thomas
 annotation.
+
+
+
+## 21. Unified Retrieval Architecture (milestone 9.13+)
+
+All content sources write retrievable content to a single table:
+retrieval_units. One embedding column, one vector search RPC, one
+place to tune retrieval quality.
+
+### The Problem
+The original match_chunks RPC used LEFT JOINs to search across
+chunks (Joplin) and imessage_bursts (iMessage). Every new source
+required a migration to the RPC function and added a join. At 5+
+sources this becomes fragile and slow.
+
+### The Solution
+A single retrieval_units table that every source writes to:
+
+    retrieval_units:
+        id              UUID
+        source_type     TEXT    — "joplin" | "imessage" | "email"
+        source_id       TEXT    — FK to source-specific table
+        body            TEXT    — the retrievable content
+        embedding       vector(1536)
+        title           TEXT
+        notebook        TEXT
+        created_at      TIMESTAMPTZ
+        participants    TEXT[]
+        privacy_tier    INTEGER
+        dominant_sender TEXT
+        thread_id       TEXT
+        thread_type     TEXT
+        metadata        JSONB
+
+Source-specific tables (imessage_bursts, email_conversations,
+email_messages, chunks) store structural metadata. The retrieval
+content lives in one place.
+
+### The RPC
+match_retrieval_units — simple vector search, no joins:
+    Takes: query_embedding, match_count, filter_notebook, max_privacy_tier
+    Returns: matching rows ranked by cosine similarity
+    Privacy tier filtering built in (default tier 2 excludes
+    bilateral/relational content unless explicitly requested)
+
+### Migration Path
+1. retrieval_units created (SQL migration written, milestone 9.13)
+2. Email ingestor writes to it first
+3. Backfill existing Joplin chunks and iMessage bursts
+4. match_chunks simplified or deprecated
+5. Future sources write to retrieval_units from day one
+6. Obsidian plugin updated to query match_retrieval_units

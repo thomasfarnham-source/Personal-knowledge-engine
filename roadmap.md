@@ -994,6 +994,21 @@ at scale, using the header index infrastructure built in milestone 9.13.
     This is a cleanup tool, not an email client. It deletes and filters.
     It does not move, archive, or organize emails. Keep it tight.
 
+**Unified retrieval architecture introduced (2026-03-28)**
+  retrieval_units table replaces the multi-join match_chunks pattern.
+  All sources write to one table. One search, one embedding column.
+  Email is the first source to use it. Backfill of existing Joplin
+  and iMessage content planned as follow-up.
+
+**Conversation model defined (2026-03-28)**
+  Conversation = exact participant set. Persistent across years and
+  topics. Email-specific tables (email_conversations, email_messages)
+  store structural metadata. Retrieval content in retrieval_units.
+
+**Identity resolution identified as blocker (2026-03-28)**
+  William Renahan has 5+ email addresses across employers. Pat has 2.
+  Thomas has case variations. Contacts + contact_identifiers must be
+  populated before ingestion to prevent conversation fragmentation
 
 ### Future Content Channels (not yet milestoned)
 
@@ -2146,6 +2161,20 @@ it just needs to be stated as an explicit constraint.
 Target milestone for resolution: before any plugin distribution
 or packaging work begins.
 
+**Unified Retrieval — Backfill Plan**
+
+Once retrieval_units is proven with email content, existing sources
+should be backfilled:
+  - Joplin chunks → retrieval_units (source_type="joplin")
+  - iMessage bursts → retrieval_units (source_type="imessage")
+  - match_chunks RPC simplified to query retrieval_units only
+  - Obsidian plugin updated to use match_retrieval_units
+
+This is not urgent — the existing match_chunks continues to work
+for Joplin and iMessage. But the backfill unifies all retrieval
+into one search and removes the LEFT JOIN pattern permanently.
+
+Target: after email ingestion is validated end-to-end.
 ---
 
 **Plugin Distribution — Milestone Placeholder**

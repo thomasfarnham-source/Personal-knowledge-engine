@@ -117,6 +117,14 @@ into the PKE knowledge base. Follows the same pluggable parser pattern
 as the Joplin and iMessage parsers:
     source files → parser → ParsedNote contract → ingest pipeline
 
+This milestone also introduces two architectural changes:
+  1. retrieval_units table — a unified retrieval surface that all
+     content sources write to. Replaces the pattern of extending
+     match_chunks with LEFT JOINs for each new source.
+  2. contacts + contact_identifiers tables — the Entity Layer seed,
+     providing cross-channel identity resolution.
+
+
 ### Design decisions made (2026-03-27)
 
 **Scope — contact-centric, not folder-centric**
@@ -268,16 +276,107 @@ All in scripts/yahoo/:
   yahoo_imap_list_from.py  — List emails from a specific contact
   yahoo_imap_census.py     — Full contact census across all folders
 
+### New infrastructure created (2026-03-28)
+
+**Parser: pke/parsers/yahoo_mail_parser.py**
+  Thread-aware parser that converts MBOX files into ParsedNote objects.
+  Pipeline: emails → threads (References chain) → bursts (4h gap) → ParsedNote
+  Key design: uses the last email per burst as the body, preserving the
+  full conversation context in quoted text rather than stripping quotes
+  and losing other participants' contributions.
+  Tested: 1,868 emails → 1,216 bursts, avg 5,734 chars per burst.
+
+**Ingestor: pke/ingestion/yahoo_mail_ingestor.py**
+  Bridges parser output to Supabase. Writes to three tables:
+    email_conversations — keyed by participant hash (sorted participant set)
+    email_messages — per-email metadata (Message-ID, headers)
+    retrieval_units — burst content + embedding (unified retrieval)
+  Dry run tested: 1,868 emails → 171 conversations, 1,216 bursts.
+
+**SQL Migration: scripts/add_retrieval_units_and_email_tables.sql**
+  Creates: retrieval_units, email_conversations, email_messages,
+  contacts, contact_identifiers, match_retrieval_units RPC.
+  NOT YET RUN against Supabase — pending identity resolution.
+
+**Thread analysis: scripts/yahoo/yahoo_thread_analysis.py**
+  Analyzed Pat's corpus: 900 threads, 90% content redundancy in
+  quoted replies. Informed the decision to preserve full conversation
+  bodies rather than strip quotes.
+
+**MBOX inspector: scripts/yahoo/yahoo_mbox_inspect.py**
+  Corpus structure: 1,840/1,868 have plain text, only 28 HTML-only,
+  31 attachments total, all multipart/alternative.
+
+### Key design decisions (2026-03-28)
+
+**Unified retrieval architecture (DECIDED)**
+  All content sources write to a single retrieval_units table.
+  One embedding column, one search RPC (match_retrieval_units),
+  one place to tune retrieval quality. Source-specific tables hold
+  structural metadata only. Replaces the pattern of extending
+  match_chunks with LEFT JOINs for each new source.
+
+  Migration path:
+    1. Create retrieval_units table (SQL migration written)
+    2. Email ingestor writes to it first
+    3. Backfill existing Joplin chunks and iMessage bursts
+    4. Simplify match_chunks RPC to query retrieval_units only
+    5. Future sources write to retrieval_units from day one
+
+**Conversation model (DECIDED)**
+  A conversation is defined by its exact participant set, not by
+  topic or thread. Tom + Pat is one conversation. Tom + Pat + James
+  is a different one. Conversations persist across years, across
+  topics, across silence gaps.
+
+  Hierarchy:
+    Conversation — unique participant set (hashed)
+    Thread — topical exchange within a conversation (References chain)
+    Burst — time-segmented cluster within a thread (4h gap)
+    Contribution — one person's new content at one point in time
+
+  When participants change (someone added/dropped), a new conversation
+  is created. Linking across participant set changes is deferred.
+
+**Full conversation body preservation (DECIDED)**
+  The parser preserves the full email body including quoted replies,
+  rather than stripping quotes. Rationale: the quoted text contains
+  other participants' contributions which are often the only record
+  of what they said (the sender's replies went to work email addresses
+  not in this mailbox). The last email per burst contains the complete
+  conversation snapshot.
+
+  Thread analysis confirmed 90% of email content is quoted text.
+  Stripping it produced fragments that lost conversational context.
+  Preserving it produces richer, more complete retrieval units.
+
+**Identity resolution needed before ingestion (BLOCKING)**
+  Dry run revealed William Renahan appears as 5+ different email
+  addresses across employers, creating duplicate conversations that
+  should be unified. Similarly pj.mangan vs pjmangan splits Pat.
+  thomas.farnham appears twice in some participant lists (case/domain
+  variation).
+
+  The contacts + contact_identifiers tables must be populated and
+  the parser must resolve identifiers before hashing participants.
+  Without this, 171 conversations would exist where ~40-50 should.
+
 ### Next actions
 
-1. Build Pass 2: selective downloader (fetch full bodies for target contacts → MBOX)
-2. Design contacts + contact_identifiers schema for Supabase (Entity Layer seed)
-3. Write pke/parsers/yahoo_mail_parser.py (MBOX → ParsedNote contract)
-4. Write pke/ingestion/yahoo_mail_ingestor.py
-5. Add CLI command: pke ingest-yahoo
-6. Tests — same structure as iMessage parser tests
-7. Run first ingestion pass against selected contacts
-8. Verify emails surfacing in Obsidian Reflections panel
+1. Populate contacts + contact_identifiers in Supabase with known
+   identifiers for target contacts (William's 5 addresses, Pat's 2,
+   Thomas's variations, Chris's variations)
+2. Add identifier resolution step to parser — normalize email
+   addresses through contacts table before participant hashing
+3. Run SQL migration against Supabase
+4. Run real ingestion for Pat's MBOX
+5. Generate embeddings for new retrieval_units
+6. Update match_chunks RPC or plugin to query retrieval_units
+7. Verify email bursts surfacing in Obsidian Reflections panel
+8. Update selective downloader to support multi-contact deduplicated
+   download
+9. Download remaining target contacts
+10. Full ingestion pass for all contacts
 
 ---
 
@@ -292,6 +391,18 @@ All in scripts/yahoo/:
 - Pre-2006 email not present (account may not have existed earlier)
 
 ---
+### Yahoo Mail — identity fragmentation (discovered 2026-03-28)
+  William Renahan: william.renahan@blackstone.com, william.renahan@dpimc.com,
+    wrenahan@lmus.leggmason.com, wrenahan@[other], williamrenahan@[gmail?],
+    william.renahan@virtus.com (discovered in 2014 email)
+  Pat Mangan: pjmangan@gmail.com, pj.mangan@yahoo.com
+  Thomas Farnham: thomas.farnham@yahoo.com, thomas.farnham@Yahoo.com (case),
+    thomas.farnham@ubs.com (work)
+  Chris Zichello: czichello@gmail.com, christopher.zichello@verizon.net
+
+  Resolution via contacts + contact_identifiers table required
+  before ingestion to prevent conversation fragmentation.
+
 
 ## Also update the Venv/Environment section — add:
 
