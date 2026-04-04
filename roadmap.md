@@ -228,10 +228,11 @@ that the chunker must handle:
 |----------------------|-------------|------------------------------------------|
 | Joplin notes         | ✅ Complete  | Sync-folder parser, canonical Stage 1   |
 | Obsidian notes       | 🔵 Planned  | Future primary writing surface          |
-| iMessage threads     | 🔵 Planned  | Specific contacts or groups             |
-| Yahoo Mail           | 🔵 Planned  | Select senders                          |
+| iMessage threads     | ✅ Complete  | iMazing CSV export, milestone 9.1       |
+| Yahoo Mail           | 🟡 Active   | IMAP export server, two-pass strategy   |
+| Content curation     | 🟡 Active   | RSS + NewsAPI, four-agent pipeline      |
 | Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser       |
-| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents          |
+| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents
 
 ### Obsidian
 - Source: local vault Markdown files
@@ -342,7 +343,16 @@ Deferred to next session:
 ---
 
 ### ✅ 8.9.8 — Obsidian Insight Plugin
-**Status: COMPLETE (2026-03-14)**
+**Status: ✅ COMPLETE — 2026-03-14**
+
+Post-launch improvements shipped 2026-03-27:
+- Passage truncation: 200 → 1,500 characters
+- Reflection suppression: sliding window (50 queries), state in plugin layer
+- Similarity score on hover (passive evaluation affordance)
+- "Why?" explanation on demand (Claude Haiku, ~$0.002/call)
+- Debounce: 500ms/1s/2.5s → 3s/15s/30s (writing-rhythm timing)
+- Auto-copy build step: npm run build now copies to Obsidian vault automatically
+- Anthropic API key field in settings
 
 The Obsidian plugin that connects the writing surface to the PKE
 retrieval API. The primary consumer-facing expression of the system.
@@ -639,7 +649,7 @@ to a full workflow.
 ---
 
 ### 🔵 9.1 — iMessage Parser
-**Status: NEXT — design complete, build ready**
+**Status: ✅ COMPLETE — 2026-03-22**
 
 Add iMessage as an ingestion source. Parses message threads from
 the iPhone backup SQLite database into the PKE ParsedNote contract.
@@ -822,13 +832,359 @@ Dependencies:
 
 
 
-### 🔵 9.13 — Yahoo Mail Parser
-**Status: FUTURE**
+# ROADMAP.md — Updates for Milestone 9.13
 
-Add Yahoo Mail as ingestion source. Select senders or folders.
-Source format (IMAP vs MBOX) TBD.
+## Replace the 9.13 section with the following:
+
+### 🔵 9.13 — Yahoo Mail Parser
+**Status: IN PROGRESS — 2026-03-27**
+Branch: feat/9.13-yahoo-mail-parser
+
+What this milestone builds:
+A parser that ingests personal email correspondence from Yahoo Mail
+into the PKE knowledge base. Follows the same pluggable parser pattern
+as Joplin and iMessage parsers:
+        source files → parser → ParsedNote contract → ingest pipeline
+
+This milestone also seeds the Entity Layer (Section 17 of ARCHITECTURE.md)
+by creating the contacts and contact_identifiers tables in Supabase —
+the first cross-channel identity registry in the system.
+
+Design decisions (2026-03-27):
+
+Scope — contact-centric, not folder-centric
+    Ingest by contact, tracking correspondence to and from specific people.
+    Not all email — selected correspondents only. Group emails supported.
+    UI for contact selection deferred — initial pass uses CLI argument.
+
+Privacy tier
+    Same as iMessage bilateral threads (Tier 3 — bilateral/relational).
+
+Export format — IMAP via Yahoo export server (DECIDED)
+    Yahoo has two IMAP servers:
+      Standard (imap.mail.yahoo.com): 10K message limit per folder. Not viable.
+      Export (export.imap.mail.yahoo.com): no limit. Full history to 2006.
+    Yahoo does NOT have a native bulk export feature.
+    IMAP SEARCH is capped on both servers (~1,000 results).
+    FETCH by UID has no cap — this is the extraction method.
+    Authentication via Yahoo app password (two-step verification required).
+
+Two-pass extraction strategy (DECIDED)
+    Pass 1 — Header scan → local SQLite index (COMPLETE)
+        187,320 headers indexed across 41 folders in 42 minutes.
+        Date range: 2006-09-04 to 2026-03-28.
+        Complete index of all emails for contact analysis.
+    Pass 2 — Selective download → MBOX files (NOT YET BUILT)
+        Query index for target contacts, fetch full bodies by UID.
+        ~1,500-2,500 emails instead of 187,000.
+    Pass 3 — Parse and ingest → Supabase (standard pipeline)
+        MBOX → yahoo_mail_parser.py → ParsedNote → orchestrator.
+
+Data storage
+    Header index: local SQLite (working data, disposable)
+    Contacts + identifiers: Supabase (permanent, cross-channel — Entity Layer seed)
+    Parsed content: Supabase via existing pipeline
+
+Deduplication: Message-ID header.
+HTML bodies: strip_html() same as Joplin chunkers.
+
+Key findings from header scan:
+    - 187,320 total messages across 41 folders, 20 years of history
+    - Top 20 senders entirely commercial (Groupon, eBay, newsletters)
+    - Real human correspondents identified by filtering commercial domains
+    - Pat Mangan: 1,868 total messages (235 inbound, 1,349 outbound), 2007-2026
+    - Book Club group (Pat, James, William, Chris) all present in email corpus
+    - Email corpus pre-dates iMessage by 11 years (2007 vs 2018)
+    - William Renahan has two email addresses across employers — validates
+      the multi-identifier contact model
+    - Significant inbound asymmetry explained by work email replies
+      (UBS, Citi, Barclays) going to corporate addresses, not Yahoo
+
+Target contacts for first ingestion pass:
+    Patrick Mangan, James Root, William Renahan, Chris Zichello,
+    Nicholas Farnham, Brian Farnham, Timothy Farnham,
+    plus 3-5 additional close correspondents
+
+Scripts created (in scripts/yahoo/):
+    yahoo_header_scanner.py   — Pass 1 header scan
+    yahoo_index_query.py      — Contact analysis queries
+    yahoo_imap_probe.py       — IMAP exploration
+    yahoo_imap_debug.py       — Search debugging
+    yahoo_imap_export_test.py — Server comparison
+    yahoo_imap_list_from.py   — Per-contact listing
+    yahoo_imap_census.py      — Cross-folder contact census
+
+Next actions:
+    1. Build Pass 2 selective downloader → MBOX
+    2. Design contacts + contact_identifiers in Supabase
+    3. Write yahoo_mail_parser.py (MBOX → ParsedNote)
+    4. Write yahoo_mail_ingestor.py + CLI
+    5. Tests
+    6. First ingestion pass
+    7. Verify in Obsidian Reflections panel
 
 ---
+
+## Update the Content Channels table:
+
+| Channel              | Status      | Notes                                   |
+|----------------------|-------------|------------------------------------------|
+| Joplin notes         | ✅ Complete  | Sync-folder parser, canonical Stage 1   |
+| Obsidian notes       | 🔵 Planned  | Future primary writing surface          |
+| iMessage threads     | ✅ Complete  | iMazing CSV export, milestone 9.1       |
+| Yahoo Mail           | 🟡 Active   | IMAP export server, two-pass strategy   |
+| Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser       |
+| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents          |
+
+### Yahoo Mail
+- Source: IMAP via export.imap.mail.yahoo.com (bypasses 10K limit)
+- Auth: Yahoo app password (two-step verification required)
+- Extraction: two-pass — header index (SQLite) then selective MBOX download
+- Scope: selected correspondents only, not full mailbox
+- 187,320 messages indexed, 20 years of history (2006-2026)
+- Parser follows same MBOX → ParsedNote contract → ingest pattern
+- Entity Layer seed: contacts + contact_identifiers tables in Supabase
+- HTML bodies stripped same as Joplin chunkers
+- Deduplication on Message-ID header
+
+---
+### 🔵 9.13 B — Yahoo Inbox Cleanup Agent
+**Status: DEFERRED — depends on 9.13 contacts table**
+
+A tool to identify and remove commercial noise from a Yahoo Mail inbox
+at scale, using the header index infrastructure built in milestone 9.13.
+
+**Why this matters:**
+    Yahoo Mail users with large inboxes (100K+) cannot effectively clean
+    up from the web UI. Third-party tools hit the same 10K IMAP cap.
+    The export IMAP server discovery (milestone 9.13) and the header
+    index approach solve the problem that makes cleanup hard.
+
+**What it builds:**
+    - Query engine over the header index to rank senders by volume
+    - Commercial sender identification (domain patterns, volume thresholds,
+      noreply/newsletter prefixes)
+    - Safety filter: never delete from senders in the contacts table
+      or who have bidirectional correspondence
+    - Dry-run mode: preview what would be deleted with counts and
+      sample subjects before committing
+    - Delete execution via standard IMAP server (imap.mail.yahoo.com)
+    - Yahoo filter/rule generation for high-volume commercial senders
+      to prevent backlog from rebuilding
+    - Simple interface — CLI first, potential web UI later
+
+**Technical approach:**
+    - Reuses yahoo_index.db from milestone 9.13 header scan
+    - Reuses contacts + contact_identifiers from Supabase for safety
+    - Deletions via standard IMAP (not export server): flag \Deleted + EXPUNGE
+    - Standard server's 10K window is sufficient — active junk is recent
+    - Deleting frees the 10K window, potentially exposing older messages
+
+**Commercial potential:**
+    Standalone tool opportunity — see VISION.md for full analysis.
+    The header-index-first approach and export server discovery are
+    genuine competitive advantages over existing tools like Mailstrom.
+    Natural freemium model: free scan/preview, paid for bulk deletion.
+    Build for personal use first, evaluate commercial viability after.
+
+**Dependencies:**
+    - 9.13 header scanner complete ✅
+    - 9.13 contacts table in Supabase (safety filter for deletions)
+
+**Scope boundary:**
+    This is a cleanup tool, not an email client. It deletes and filters.
+    It does not move, archive, or organize emails. Keep it tight.
+
+**Unified retrieval architecture introduced (2026-03-28)**
+  retrieval_units table replaces the multi-join match_chunks pattern.
+  All sources write to one table. One search, one embedding column.
+  Email is the first source to use it. Backfill of existing Joplin
+  and iMessage content planned as follow-up.
+
+**Conversation model defined (2026-03-28)**
+  Conversation = exact participant set. Persistent across years and
+  topics. Email-specific tables (email_conversations, email_messages)
+  store structural metadata. Retrieval content in retrieval_units.
+
+**Identity resolution identified as blocker (2026-03-28)**
+  William Renahan has 5+ email addresses across employers. Pat has 2.
+  Thomas has case variations. Contacts + contact_identifiers must be
+  populated before ingestion to prevent conversation fragmentation
+
+### 🔵 9.15 — Content Curation Agent
+**Status: FOUNDATION BUILT — 2026-03-29**
+Branch: main (scripts/content_agent/)
+
+What this milestone builds:
+A multi-agent content curation system that scans sources, applies
+editorial judgment, finds connections to personal history and reading,
+and delivers daily drops and weekly synthesis briefs to the Obsidian vault.
+
+Design decisions (2026-03-29):
+
+**Agent architecture — four agents in sequential pipeline (DECIDED)**
+
+    Scout → Editor → Connector → Composer
+
+    Scout: scans RSS feeds and NewsAPI. Follows a written mandate
+    (MANDATE.md). Applies no editorial judgment beyond basic relevance
+    filtering. Its job is coverage, not taste. Does NOT have access
+    to personal corpus — this is deliberate. Access to the corpus
+    would cause over-filtering toward what has already been written
+    about. The Scout should find things the writer hasn't seen yet.
+
+    Editor: filters the Scout's output using Claude API. Applies the
+    three-pillar mandate with kill criteria. Also monitors Scout
+    performance — tracking kill rates per source and pillar coverage
+    gaps. Reports anomalies to the Producer. The Editor is both
+    filter and monitor — the check on the Scout's autonomy.
+
+    Connector: queries the PKE Retrieval API (personal corpus) and
+    book database for adjacencies. Does not force connections —
+    silence is better than a stretch. When a connection exists, it
+    annotates the item. When it doesn't, the item stands on its own
+    as curation.
+
+    Composer: assembles two outputs:
+      Daily drop — 3-5 items, scannable in 5 minutes
+      Weekly synthesis — patterns, strongest connections, pillar
+      health, post seeds. Runs Sunday. Uses Claude for synthesis.
+
+    A fifth agent (Reviewer) was considered and deferred for v1.
+    The Editor's monitoring role provides sufficient governance
+    initially. Reviewer can be added if quality drift is observed.
+
+**Governance model (DECIDED)**
+
+    The Scout has autonomy within a written mandate (MANDATE.md).
+    The Editor functions as both filter and monitor.
+    The Producer reviews the Scout's raw output monthly to recalibrate
+    sources and mandate language.
+
+    "Ambition counteracting ambition." — This system practices what
+    the LinkedIn post preaches.
+
+    Key design principle: the mandate is stored outside the agents
+    as a document, not embedded in code. The Producer revises the
+    mandate; the Scout follows it. Same pattern as the fitness
+    system's rules-stored-outside-the-agents architecture.
+
+**The agent's role — connection-feeder, not connection-maker (DECIDED)**
+
+    The Federalist Papers / fitness system connection in the LinkedIn
+    post was not found by scanning sources. It came from a palimpsest
+    of memory and experience — the right pressure (building something
+    dependent on AI trust) activated a decades-old reading.
+
+    No RSS feed would have surfaced that connection. The agent cannot
+    replicate what the writer does. What it can do is set the table —
+    increase the density of relevant material so the probability of
+    a spark is higher. The agent is a connection-feeder. The writer
+    makes the leap.
+
+**Two modes on a spectrum (DECIDED)**
+
+    Mode 1 — Curation: what's happening in your world this week that's
+    worth knowing about. New developments, practitioner voices,
+    regulatory shifts, provocative dissent. The agent's job is
+    editorial judgment — filtering ruthlessly so what reaches the
+    writer is genuinely worth ten minutes of attention.
+
+    Mode 2 — Connection: something found that rhymes with something
+    the writer cares about. An article paired with a journal entry.
+    A news item adjacent to a book club book. The agent places items
+    next to each other and lets the writer see the connection or not.
+
+    Most days are mostly curation with a light touch of connection.
+    Occasionally a pairing surprises. The surprise is the value.
+
+**Cadence — daily lightweight + weekly synthesis (DECIDED)**
+
+    Daily: Scout → Editor → Connector → Composer produces a markdown
+    file in the Obsidian vault (Content Briefs/Daily Drop YYYY-MM-DD.md).
+    3-5 items, scannable in 5 minutes over coffee.
+
+    Weekly (Sunday): Composer does a second pass across the full week's
+    material. Produces a synthesis brief with: what's alive this week,
+    strongest items, surprising connections, pillar health assessment,
+    and a post seed if one exists. Delivered to
+    Content Briefs/Weekly Synthesis YYYY-WNN.md.
+
+**Sources — RSS + NewsAPI free tier (DECIDED)**
+
+    RSS feeds organized by pillar:
+      Practitioner: Risk.net, American Banker, MIT Sloan Management
+      Review, HBR Technology, Bank of England speeches, OCC newsroom
+      Reader: Aeon Magazine, The New Atlantis, London Review of Books,
+      ArXiv (cs.AI, cs.CL)
+      Builder: Anthropic blog, OpenAI blog, Simon Willison, Hacker
+      News (best), Allen AI blog
+
+    NewsAPI (free tier, 100 requests/day):
+      Targeted queries per pillar — "AI banking risk management",
+      "LLM enterprise governance", "AI leadership transformation",
+      "AI philosophy epistemology", "RAG vector embeddings",
+      "Claude Copilot Devin development"
+
+    Source configuration in scripts/content_agent/sources.json.
+    Sources will be refined based on Scout performance monitoring.
+
+**Delivery surface — Obsidian vault (DECIDED)**
+
+    No separate UI. Markdown files land in the Obsidian vault under
+    a Content Briefs folder. The writer opens Obsidian, scans the
+    daily drop, and can tag, annotate, or link items using Obsidian's
+    native capabilities.
+
+**Book database — books.json (IN PROGRESS)**
+
+    A structured list of book club books with thematic tags.
+    Format: JSON with title, author, year_read, themes, keywords,
+    core_idea, personal_note per book.
+    The Connector queries by theme, not by title.
+    Tom populates this over time — started with template 2026-03-29.
+    Sources for reconstruction: journals, Facebook book events,
+    memory.
+
+**Three content pillars (confirmed, unchanged from original spec)**
+
+    Pillar 1 — The Practitioner: AI in regulated enterprise, risk
+    technology, leadership through transformation
+    Pillar 2 — The Reader: intellectual history, philosophy, books
+    meeting AI
+    Pillar 3 — The Builder: hands-on AI development, agentic systems,
+    RAG, tooling
+
+Files created (in scripts/content_agent/):
+    MANDATE.md       — Scout constitution
+    README.md        — System documentation
+    sources.json     — RSS feeds and NewsAPI configuration
+    books.json       — Book database template
+    scout.py         — Raw material scanner
+    editor.py        — Editorial filter (Claude-powered)
+    connector.py     — PKE and book adjacency finder
+    composer.py      — Daily drop and weekly synthesis assembler
+    pipeline.py      — Full pipeline orchestrator
+
+Dependencies:
+    feedparser       — RSS parsing (pip install)
+    requests         — HTTP client (likely already installed)
+    NEWSAPI_KEY      — free tier API key in .env
+    ANTHROPIC_API_KEY — already configured
+    PKE Retrieval API — running at localhost:8000
+
+Next actions:
+    1. Sign up for NewsAPI free tier, add key to .env
+    2. Install feedparser in venv
+    3. Validate RSS feed URLs (run Scout with --dry-run)
+    4. Fix import paths if needed (pipeline.py imports)
+    5. Run Scout → Editor → Connector chain manually
+    6. Set Obsidian vault path and run full pipeline
+    7. Start populating books.json
+    8. After one week: run first weekly synthesis
+    9. After one month: Producer review of Scout raw output,
+       recalibrate mandate and sources
+
 
 ### Future Content Channels (not yet milestoned)
 
@@ -1417,6 +1773,18 @@ The journaling companion is the actual product.
 Foundation. All subsequent Companion milestones depend on this.
 
 **9.2 — Corpus Analysis Tool**
+Status: ✅ COMPLETE — 2026-03-23
+
+Key findings from first run (group chat, 13,602 messages):
+- Patrick starts 71% of conversations, 50% of all messages
+- Group is binary: either highly active or completely silent
+- Peak month January 2024 (1,185 msgs); near-silence 2019-2021 and 2025
+- WSJ/NYT primary external sources; YouTube dominant for music/video
+- Internal vocabulary: Major Mango, Billy Broadway, Tim Dillon, Uncle Joe
+- Warmth/friction ratio 4.7 — overstated due to high sarcasm register
+- William writes least but longest messages (16 words avg)
+- Patrick's vocabulary fingerprint is empty — his words ARE the corpus baseline
+
 Standalone analysis tool that processes any ingested message corpus
 and produces a structured report across eight analytical dimensions.
 Output is the raw material the producer uses to write the personality
@@ -1483,6 +1851,12 @@ Producer writes the first system_prompt based on corpus analysis.
 Listening sessions. Iterative refinement. Output: a PersonalitySkin
 configuration that produces responses that feel like the group.
 This is not a code milestone — it is a creative milestone.
+
+Sequencing note: 9.4 Companion Engine prototype is being built before
+9.3 is validated. The listening sessions that validate the Personality
+Skin require the generation loop to exist. Build 9.4 first, then use
+it to run listening sessions that inform and validate the 9.3 system
+prompt.
 
 Preliminary findings from 2026-03-14 manual analysis (starting material):
 
@@ -1963,6 +2337,20 @@ it just needs to be stated as an explicit constraint.
 Target milestone for resolution: before any plugin distribution
 or packaging work begins.
 
+**Unified Retrieval — Backfill Plan**
+
+Once retrieval_units is proven with email content, existing sources
+should be backfilled:
+  - Joplin chunks → retrieval_units (source_type="joplin")
+  - iMessage bursts → retrieval_units (source_type="imessage")
+  - match_chunks RPC simplified to query retrieval_units only
+  - Obsidian plugin updated to use match_retrieval_units
+
+This is not urgent — the existing match_chunks continues to work
+for Joplin and iMessage. But the backfill unifies all retrieval
+into one search and removes the LEFT JOIN pattern permanently.
+
+Target: after email ingestion is validated end-to-end.
 ---
 
 **Plugin Distribution — Milestone Placeholder**

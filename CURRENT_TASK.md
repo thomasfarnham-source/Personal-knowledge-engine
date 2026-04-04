@@ -1,359 +1,578 @@
 # CURRENT_TASK.md
-## Milestone 9.2 — Corpus Analysis Tool
-Last updated: 2026-03-22
 
-## Status: NEXT
-
-Branch: feat/9.2-corpus-analysis
+Last updated: 2026-03-27
 
 ---
 
-## Previous Milestone: 9.1 — iMessage Parser — COMPLETE ✅
-
-Completed 2026-03-22.
-
-### What shipped
-- ✅ Parser (imessage_parser.py) — 50 tests passing
-- ✅ Ingestor (imessage_ingestor.py) — 27 tests passing
-- ✅ CLI (ingest_imessage.py) — Typer, registered as pke ingest-imessage
-- ✅ Schema migration (add_imessage_tables.sql) — run against Supabase
-- ✅ SupabaseClient extended (upsert_rows, delete_where, fetch_unembedded_bursts, update_burst_embedding)
-- ✅ CLAUDE.md created at repo root
-- ✅ All four CSV threads ingested into Supabase:
-    Group chat:              13,560 messages, 964 bursts
-    Patrick bilateral:          963 messages, 276 bursts
-    Patrick + James + William:   42 messages,  38 bursts
-    Patrick + William + Glenn:    1 message,    1 burst
-    Total:                   14,566 messages, 1,279 bursts
-- ✅ embed_chunks.py extended to backfill iMessage burst embeddings
-- ✅ Embedding backfill run: 1,279 chunks + 1,279 bursts embedded
-- ✅ match_chunks RPC updated to return note_title and notebook for
-    all source types (LEFT JOINs + COALESCE for iMessage rows)
-- ✅ iMessage bursts verified surfacing in Obsidian Reflections panel
-- ✅ Hanging test fixed: fetch_unembedded_bursts mocked in all affected
-    tests; TEST MAINTENANCE NOTE added to test file
-- ✅ 464 tests passing
-- ✅ PR created and merged, branch deleted
-
-### Final Supabase state
-chunks table:
-    imessage: 1,279 rows, 1,279 with embedding ✅
-    joplin:     866 rows,   866 with embedding ✅
-
-imessage_threads: 4 rows
-imessage_participants: populated
-imessage_messages: 14,566 rows
-imessage_bursts: 1,279 rows, 1,279 with embedding ✅
-
-### Unresolved items carried forward
-- James, Chris, William bilateral threads not yet exported from iMazing
-  (only group chat + Patrick bilateral + two sub-groups ingested so far)
-- Local Platform Setup (Ollama + Llama 3) still pending — see section below
+## Active Branch: feat/9.13-yahoo-mail-parser
 
 ---
 
-## Milestone 9.2 — Corpus Analysis Tool
+## Previous Milestones — Completed
+
+### 9.1 — iMessage Parser ✅ (2026-03-22)
+
+What shipped:
+- Parser (imessage_parser.py) — 50 tests passing
+- Ingestor (imessage_ingestor.py) — 27 tests passing
+- CLI (ingest_imessage.py) — Typer, registered as pke ingest-imessage
+- Schema migration (add_imessage_tables.sql) — run against Supabase
+- SupabaseClient extended (upsert_rows, delete_where, fetch_unembedded_bursts,
+  update_burst_embedding)
+- All four CSV threads ingested into Supabase:
+  - Group chat: 13,560 messages, 964 bursts
+  - Patrick bilateral: 963 messages, 276 bursts
+  - Patrick + James + William: 42 messages, 38 bursts
+  - Patrick + William + Glenn: 1 message, 1 burst
+  - Total: 14,566 messages, 1,279 bursts
+- embed_chunks.py extended to backfill iMessage burst embeddings
+- Embedding backfill run: 1,279 chunks + 1,279 bursts embedded
+- match_chunks RPC updated for all source types (LEFT JOINs + COALESCE)
+- iMessage bursts verified surfacing in Obsidian Reflections panel
+- 464 tests passing
+- PR created and merged
+
+---
+
+### 9.2 — Corpus Analysis Tool ✅ (2026-03-23)
+
+What shipped:
+- scripts/corpus_analysis.py — eight-dimension analysis tool
+- scripts/corpus_analysis_reports/ — timestamped report outputs
+- Interpretation pass via Claude API (--no-interpret flag for fast iteration)
+- Vocabulary fingerprint using corpus-wide TF lift comparison
+- Burst and message fetch paginated (fixes silent 1000-row truncation)
+- URLs stripped before tokenizing
+
+The eight dimensions:
+1. Relationship History     — volume over time, silence periods, missing years
+2. Group Dynamics           — who starts conversations, who responds, who watches
+3. Individual Profiles      — each sender's vocabulary fingerprint and writing style
+4. Relationship Pairs       — per-pair exchange volume, pushback rates, sample exchanges
+5. Core Themes              — what the group actually talks about and shares externally
+6. Emotional Register       — warmth/friction ratio, humour patterns, difficulty handling
+7. Temporal Patterns        — when the group is active by hour, day, month, and year
+8. Group Self-Awareness     — how the group talks about itself and its own history
+
+Key findings from first full run (group chat, 13,602 messages):
+- Patrick starts 71% of conversations, 50% of all messages
+- Group is binary: either highly active or completely silent
+- Peak month January 2024 (1,185 msgs); near-silence 2019-2021 and 2025
+- WSJ/NYT primary external sources; YouTube dominant for music and video
+- Internal vocabulary: Major Mango, Billy Broadway, Tim Dillon, Uncle Joe
+- Warmth/friction ratio 4.7 — likely overstated, group is highly sarcastic
+- William writes least but longest messages (16 words avg vs 8-10 for others)
+- Patrick's vocabulary fingerprint is empty — his words ARE the corpus baseline
+
+Deferred:
+- Diff report on subsequent runs (noted in code, not yet implemented)
+- Tests for analysis functions (standalone script, not in test suite)
+
+---
+
+### Obsidian Plugin Improvements ✅ (2026-03-26/27)
+
+Completed outside a feature branch (committed directly to main in plugin repo).
+All changes are live and verified working.
+
+What shipped:
+- Passage truncation increased from 200 → 1,500 characters
+- Reflection suppression — sliding window (50 queries), state lives in
+  PKEInsightPlugin not PKEInsightView (survives view recreation)
+- Similarity score tooltip on hover over passage text
+- "Why?" explanation button — on-demand Claude Haiku call (~$0.002/click),
+  renders one-line semantic explanation inline below passage
+- Debounce intervals increased: immediate=3s, moment=15s, stop=30s
+- Anthropic API key field added to plugin settings
+- Auto-copy build step — esbuild.config.mjs now copies main.js and
+  styles.css to Obsidian vault after every production build
+- Plugin test harness scaffolded by Copilot (tests/ directory)
+
+Key architectural decision:
+  Suppression state belongs in PKEInsightPlugin (plugin layer), not
+  PKEInsightView (view layer). Obsidian can recreate ItemView instances
+  on workspace events — state in the view resets to zero. Plugin layer
+  state persists for the full plugin lifetime.
+
+Pending (deferred):
+- HTML stripping re-ingest — archetype_a.py updated with strip_html(),
+  but Joplin corpus not yet re-ingested. Run when convenient:
+    pke ingest run
+    python -m pke.cli.embed_chunks
+
+---
+
+
+---
+
+## Current Milestone: 9.13 — Yahoo Mail Parser
+
+Status: IN PROGRESS
+Branch: feat/9.13-yahoo-mail-parser
 
 ### What this milestone builds
 
-A standalone analysis tool that processes the ingested iMessage corpus
-and produces a structured report across eight analytical dimensions.
-This is the raw material the producer uses to write the Personality
-Skin system prompt for the Companion Engine.
+A parser that ingests personal email correspondence from Yahoo Mail
+into the PKE knowledge base. Follows the same pluggable parser pattern
+as the Joplin and iMessage parsers:
+    source files → parser → ParsedNote contract → ingest pipeline
 
-Design is fully specified in ROADMAP.md under "9.2 — Corpus Analysis Tool".
+This milestone also introduces two architectural changes:
+  1. retrieval_units table — a unified retrieval surface that all
+     content sources write to. Replaces the pattern of extending
+     match_chunks with LEFT JOINs for each new source.
+  2. contacts + contact_identifiers tables — the Entity Layer seed,
+     providing cross-channel identity resolution.
 
-### The Eight Dimensions
 
-1. Relationship History
-   Volume trajectory, gap analysis, periods of silence and what
-   preceded/followed them.
+### Design decisions made (2026-03-27)
 
-2. Group Dynamics
-   Starter rates, conversion rates, response rates between all pairs,
-   burst depth per starter, who watches vs participates.
+**Scope — contact-centric, not folder-centric**
+Ingest by contact, tracking correspondence to and from specific people.
+Not all email — selected correspondents only. Group emails (multiple
+recipients) are supported. UI for contact selection deferred to a
+later pass — initial pass uses config file or CLI argument to specify
+target senders.
 
-3. Individual Profiles
-   Vocabulary fingerprint, message length and cadence, humour
-   register, topic affinity, agreement vs pushback tendency.
+**Privacy tier**
+Same logic as iMessage bilateral threads (Tier 3 — bilateral/relational).
+Applied by default. No new privacy tier needed.
 
-4. Relationship Characterisation
-   Per-pair dynamics: volume, pushback rate, exchange samples,
-   nature of relationship. Who pursues, deflects, reframes.
+**Export format — IMAP via export server (DECIDED)**
 
-5. Core Themes
-   Topic clustering, recurring debates, shared references, how
-   current events enter the conversation, what the group avoids.
+  Yahoo provides two IMAP servers:
+    Standard: imap.mail.yahoo.com — caps at 10,000 messages per folder,
+              SEARCH results also capped. Not viable for historical corpus.
+    Export:   export.imap.mail.yahoo.com — bypasses the 10K limit.
+              Confirmed 100,000 messages visible in Inbox. Full history
+              back to 2006. Same credentials, same app password.
 
-6. Emotional Register
-   How the group handles difficulty, loss, illness. Warmth-to-friction
-   ratio. Humour as deflection vs connection.
+  IMAP SEARCH is capped on both servers (results capped at ~1,000).
+  FETCH by UID has no cap — this is the viable extraction method.
 
-7. Temporal Patterns
-   Time of day, day of week, seasonal variation, how the group has
-   changed over time in tone, volume, and topics.
+  Yahoo does NOT have a native bulk export feature. MBOX data export
+  (login.yahoo.com/account/request-data) was initially recommended
+  but Yahoo's own help pages confirm no export feature exists.
 
-8. Group Self-Awareness
-   How the group talks about itself, in-jokes referencing group
-   history, named recurring phenomena.
+  The MBOX export approach was rejected in favour of IMAP because:
+    - Full Inbox is 100K+ messages, most are commercial noise
+    - Only ~5-10 contacts are in scope for first ingestion pass
+    - IMAP allows selective download by contact
+    - No need to download and store the full mailbox
 
-### Output per dimension
-    Statistical summary  — objective, reproducible, updatable
-    Interpreted findings — plain language characterisation
-                           generated by a model reading the numbers
+**Two-pass extraction strategy (DECIDED)**
 
-### First session decisions
-- Standalone script or wired into the CLI?
-  Recommendation: standalone script first (scripts/corpus_analysis.py),
-  CLI registration after the output format is proven
-- Which corpus to run first?
-  Group chat (964 bursts, 13,560 messages) — most data, clearest signal
-- Output format: Markdown report saved to disk, one file per run
-  with timestamp. Diff report on subsequent runs showing what changed.
+  Pass 1 — Header scan (complete)
+    Connect to export.imap.mail.yahoo.com
+    FETCH headers only for ALL messages in ALL folders by UID
+    Store in local SQLite index: yahoo_index.db
+    Headers include: From, To, CC, Date, Subject, Message-ID,
+    In-Reply-To, References
+    Size: ~1-2KB per message. 187,320 headers indexed in 42 minutes.
+    Result: complete index of all emails for querying and contact analysis.
 
-### Dependencies
-- iMessage corpus ingested ✅
-- imessage_messages and imessage_bursts tables populated ✅
-- No new schema changes anticipated
+  Pass 2 — Selective download (not yet built)
+    Query the header index for messages involving target contacts
+    FETCH full RFC822 bodies for matched messages only by UID
+    Save to MBOX files per contact or per folder in pke-data/yahoo-mail/
+    Expected volume: ~1,500-2,500 emails instead of 187,000+
+
+  Pass 3 — Parse and ingest (follows existing pipeline pattern)
+    MBOX files → yahoo_mail_parser.py → ParsedNote contract → orchestrator
+    Same pattern as Joplin and iMessage. MBOX files are the source of truth.
+
+**Data storage architecture (DECIDED)**
+
+  Header index: local SQLite file (working/temporary data)
+    Path: C:\Users\thoma\Documents\dev\pke-data\yahoo-mail\yahoo_index.db
+    187,320 rows, all folders scanned. Queryable for contact analysis.
+    Disposable — can be rebuilt from IMAP at any time.
+
+  Contacts + identifiers: Supabase (permanent, cross-channel)
+    This is the seed of the Entity Layer (Section 17 of ARCHITECTURE.md).
+    Not Yahoo-specific — will serve as the cross-channel identity registry
+    for iMessage participants, email contacts, and future sources.
+    Schema design pending — next action after selective downloader.
+
+  Parsed email content: Supabase via existing ingestion pipeline
+    Same tables and flow as Joplin and iMessage content.
+
+**Deduplication**
+Group emails (Thomas + others on same thread) must not produce duplicate
+records. Deduplication keyed on Message-ID header (unique per email).
+
+**HTML email bodies**
+Most Yahoo Mail is HTML. Same strip_html() approach as Joplin archetype
+chunkers — strip tags, decode entities, preserve prose content.
+
+**Yahoo app password**
+Generated via login.yahoo.com/account/security → External connections
+→ Create app password. Requires two-step verification enabled.
+Stored in .env as YAHOO_EMAIL and YAHOO_APP_PASSWORD.
+
+### Header index findings (2026-03-27)
+
+Full scan completed: 187,320 headers across 41 folders.
+Date range: 2006-09-04 to 2026-03-28 (20 years of email).
+
+Folder breakdown (top folders):
+  Inbox                 100,000 (capped — actual count likely higher)
+  [Mailstrom]/Expired    51,545
+  Unroll.me              14,028
+  Unroll.me/Unsubscribed 12,658
+  Sent                    6,589
+  Named person folders:   Ger (158), family (20), kirsta (17), dad (2),
+                          Killian (1)
+
+Top 20 senders are entirely commercial (Groupon, eBay, Ann Taylor, etc).
+Real human correspondents identified by filtering out commercial domains.
+
+Key contacts identified for first ingestion pass:
+  Patrick Mangan    pjmangan@gmail.com           235 from, 1,868 total, 2007-2026
+  James Root        jcroot@gmail.com             115 from, 2011-2025
+  Brian Ferrier     ferrierscout@gmail.com       438 from, 2021-2025
+  Angela Page       page.angela@gmail.com        111 from, 2021-2024
+  Kate Elkington    kateelk@gmail.com            101 from, 2016-2025
+  David Port        dportmd@icloud.com            83 from, 2022-2026
+  William Renahan   william.renahan@blackstone.com  39 from, 2022-2025
+                    william.renahan@dpimc.com       18 from, 2017-2022
+  Chris Zichello    czichello@gmail.com           13 from, 2021-2025
+  Nicholas Farnham  nfarnham@gmail.com            35 from, 2011-2026
+  Brian Farnham     farnhambn@gmail.com           22 from, 2012-2026
+  Timothy Farnham   tfarnham@mtholyoke.edu        21 from, 2021-2023
+
+Notable: William Renahan has two email addresses (Blackstone and DPIMC)
+across different employment periods — validates the need for the
+contact_identifiers model with multiple identifiers per person.
+
+Notable: Pat's email corpus (1,868 messages, 2007-2026) pre-dates the
+iMessage corpus (2018-present) by over a decade. Combined with iMessage
+(13,560 group + 963 bilateral), total Pat touchpoints exceed 16,000
+across two channels spanning nearly 20 years.
+
+Notable: Significant asymmetry in Pat correspondence — 1,349 outbound
+(Sent) vs 235 inbound (Inbox). Likely explained by Pat replying to
+Tom's work email addresses (UBS, Citi, Barclays) rather than Yahoo.
+Work email corpus is irrecoverable (noted in Known Corpus Gaps).
+
+### ParsedNote field mapping (proposed)
+
+    From/To/CC     → participants (list[str])
+    Subject        → title (str)
+    Date           → created_at (str, ISO timestamp)
+    Body           → body (str, HTML stripped)
+    Message-ID     → metadata["message_id"] (deduplication key)
+    Thread-ID      → thread_id (str, groups replies via In-Reply-To/References)
+    Direction      → metadata["direction"] "sent" | "received"
+
+### Scripts created (2026-03-27)
+
+All in scripts/yahoo/:
+  yahoo_header_scanner.py  — Pass 1: IMAP header scan → SQLite index
+  yahoo_index_query.py     — Query the header index for contact analysis
+  yahoo_imap_probe.py      — Initial IMAP folder/contact probe
+  yahoo_imap_debug.py      — Targeted search debugging
+  yahoo_imap_export_test.py — Standard vs export server comparison
+  yahoo_imap_list_from.py  — List emails from a specific contact
+  yahoo_imap_census.py     — Full contact census across all folders
+
+### New infrastructure created (2026-03-28)
+
+**Parser: pke/parsers/yahoo_mail_parser.py**
+  Thread-aware parser that converts MBOX files into ParsedNote objects.
+  Pipeline: emails → threads (References chain) → bursts (4h gap) → ParsedNote
+  Key design: uses the last email per burst as the body, preserving the
+  full conversation context in quoted text rather than stripping quotes
+  and losing other participants' contributions.
+  Tested: 1,868 emails → 1,216 bursts, avg 5,734 chars per burst.
+
+**Ingestor: pke/ingestion/yahoo_mail_ingestor.py**
+  Bridges parser output to Supabase. Writes to three tables:
+    email_conversations — keyed by participant hash (sorted participant set)
+    email_messages — per-email metadata (Message-ID, headers)
+    retrieval_units — burst content + embedding (unified retrieval)
+  Dry run tested: 1,868 emails → 171 conversations, 1,216 bursts.
+
+**SQL Migration: scripts/add_retrieval_units_and_email_tables.sql**
+  Creates: retrieval_units, email_conversations, email_messages,
+  contacts, contact_identifiers, match_retrieval_units RPC.
+  NOT YET RUN against Supabase — pending identity resolution.
+
+**Thread analysis: scripts/yahoo/yahoo_thread_analysis.py**
+  Analyzed Pat's corpus: 900 threads, 90% content redundancy in
+  quoted replies. Informed the decision to preserve full conversation
+  bodies rather than strip quotes.
+
+**MBOX inspector: scripts/yahoo/yahoo_mbox_inspect.py**
+  Corpus structure: 1,840/1,868 have plain text, only 28 HTML-only,
+  31 attachments total, all multipart/alternative.
+
+### Key design decisions (2026-03-28)
+
+**Unified retrieval architecture (DECIDED)**
+  All content sources write to a single retrieval_units table.
+  One embedding column, one search RPC (match_retrieval_units),
+  one place to tune retrieval quality. Source-specific tables hold
+  structural metadata only. Replaces the pattern of extending
+  match_chunks with LEFT JOINs for each new source.
+
+  Migration path:
+    1. Create retrieval_units table (SQL migration written)
+    2. Email ingestor writes to it first
+    3. Backfill existing Joplin chunks and iMessage bursts
+    4. Simplify match_chunks RPC to query retrieval_units only
+    5. Future sources write to retrieval_units from day one
+
+**Conversation model (DECIDED)**
+  A conversation is defined by its exact participant set, not by
+  topic or thread. Tom + Pat is one conversation. Tom + Pat + James
+  is a different one. Conversations persist across years, across
+  topics, across silence gaps.
+
+  Hierarchy:
+    Conversation — unique participant set (hashed)
+    Thread — topical exchange within a conversation (References chain)
+    Burst — time-segmented cluster within a thread (4h gap)
+    Contribution — one person's new content at one point in time
+
+  When participants change (someone added/dropped), a new conversation
+  is created. Linking across participant set changes is deferred.
+
+**Full conversation body preservation (DECIDED)**
+  The parser preserves the full email body including quoted replies,
+  rather than stripping quotes. Rationale: the quoted text contains
+  other participants' contributions which are often the only record
+  of what they said (the sender's replies went to work email addresses
+  not in this mailbox). The last email per burst contains the complete
+  conversation snapshot.
+
+  Thread analysis confirmed 90% of email content is quoted text.
+  Stripping it produced fragments that lost conversational context.
+  Preserving it produces richer, more complete retrieval units.
+
+**Identity resolution needed before ingestion (BLOCKING)**
+  Dry run revealed William Renahan appears as 5+ different email
+  addresses across employers, creating duplicate conversations that
+  should be unified. Similarly pj.mangan vs pjmangan splits Pat.
+  thomas.farnham appears twice in some participant lists (case/domain
+  variation).
+
+  The contacts + contact_identifiers tables must be populated and
+  the parser must resolve identifiers before hashing participants.
+  Without this, 171 conversations would exist where ~40-50 should.
+
+### Next actions
+
+1. Populate contacts + contact_identifiers in Supabase with known
+   identifiers for target contacts (William's 5 addresses, Pat's 2,
+   Thomas's variations, Chris's variations)
+2. Add identifier resolution step to parser — normalize email
+   addresses through contacts table before participant hashing
+3. Run SQL migration against Supabase
+4. Run real ingestion for Pat's MBOX
+5. Generate embeddings for new retrieval_units
+6. Update match_chunks RPC or plugin to query retrieval_units
+7. Verify email bursts surfacing in Obsidian Reflections panel
+8. Update selective downloader to support multi-contact deduplicated
+   download
+9. Download remaining target contacts
+10. Full ingestion pass for all contacts
 
 ---
+### Parallel Track: 9.15 — Content Curation Agent
 
-## Parallel Task — Local Platform Setup
-**Priority: MEDIUM — do alongside or after 9.2**
+Status: FOUNDATION BUILT — 2026-03-29
+Location: scripts/content_agent/
 
-The goal is a fully sovereign, internet-independent PKE stack.
-Everything runs locally. No external dependencies required.
-This is both a privacy architecture and an emergency resilience plan.
+Four-agent pipeline (Scout → Editor → Connector → Composer) created.
+All code written. Not yet tested against live sources.
 
-### Step 1 — Ensure Joplin notes are locally available
+Remaining before first run:
+  1. Add NEWSAPI_KEY to .env (newsapi.org free tier)
+  2. pip install feedparser
+  3. Validate RSS feed URLs: python -m scripts.content_agent.scout --dry-run
+  4. Confirm import paths work from repo root
+  5. Set Obsidian vault path
+  6. First live daily run
 
-OneDrive may be configured for Files On-Demand — files stored
-in the cloud and only downloaded when opened. This must be
-changed so all files are always available offline.
+Book database (books.json) being populated in parallel — not a blocker
+for first pipeline run. Connector will skip book connections if
+books.json has no entries.
 
-In File Explorer:
-    Right-click the OneDrive icon in the system tray
-    → Settings → Account → Choose folders
-    Ensure the Joplin sync folder is set to always keep on device
+## Also update the Known Corpus Gaps section — add:
 
-Or right-click the Joplin sync folder in File Explorer:
-    → Always keep on this device
-
-Verify: files should show a green checkmark, not a cloud icon.
-
-Confirm the Joplin sync folder path:
-```powershell
-Get-ChildItem -Path "C:\Users\thoma\OneDrive" -Recurse -Filter "*.md" -ErrorAction SilentlyContinue | Select-Object -First 5 FullName
-```
-
-### Step 2 — Download and install Ollama
-
-Ollama manages local model downloads and runs them as a local
-API server — the same interface pattern as OpenAI and Anthropic.
-
-    1. Download from: https://ollama.com
-    2. Install — accept all defaults
-    3. Verify: ollama --version
-
-### Step 3 — Download Llama 3
-
-```powershell
-ollama pull llama3
-```
-
-This is a one-time download of approximately 4-8GB.
-After this it runs fully offline forever.
-
-Hardware note: check which variant is appropriate.
-    llama3          — 8B parameters, runs on most modern laptops
-    llama3:70b      — more capable, needs a GPU or powerful machine
-
-Check available RAM first:
-```powershell
-Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum
-```
-
-8B model needs ~8GB RAM minimum.
-70B model needs ~40GB RAM — likely needs GPU.
-Start with llama3 (8B) — can upgrade later.
-
-### Step 4 — Verify Ollama is working
-
-```powershell
-ollama serve
-```
-
-In a second terminal:
-```powershell
-ollama run llama3
-```
-
-Type a test message. If it responds, the local model is working.
-Exit with /bye
-
-### Step 5 — Migrate Supabase to sqlite-vec (deferred milestone)
-
-This is the final step to full local sovereignty.
-Supabase is the last external dependency — it holds the
-embeddings and indexed content. sqlite-vec replaces it.
-
-Deferred — see ROADMAP.md Cross-Cutting Concerns.
-But name it here as the completion step for the resilience plan.
-
-### Why This Matters
-
-In an offline or grid-down scenario the fully configured
-local stack provides:
-    - Full access to personal note corpus (Joplin sync folder)
-    - Semantic retrieval across the corpus (local sqlite-vec)
-    - Llama 3 reasoning and generation (Ollama)
-    - Obsidian writing environment (local app)
-    - PKE retrieval API (local FastAPI + uvicorn)
-    - Companion voice (Llama 3 as provider)
-    - General world knowledge (Llama 3 training data)
-
-Nothing requires internet. Nothing requires a subscription.
-Nothing requires any company to still be operating.
+### Yahoo Mail — known limitations
+- Inbox capped at 100,000 in export IMAP server (actual inbox likely larger)
+- IMAP SEARCH results capped at ~1,000 per query on export server
+- Work email addresses (UBS: thomas.farnham@ubs.com, Citi, Barclays)
+  received replies that are not in the Yahoo mailbox. These represent
+  the work-side of personal correspondence and are irrecoverable.
+- Pre-2006 email not present (account may not have existed earlier)
 
 ---
+### Yahoo Mail — identity fragmentation (discovered 2026-03-28)
+  William Renahan: william.renahan@blackstone.com, william.renahan@dpimc.com,
+    wrenahan@lmus.leggmason.com, wrenahan@[other], williamrenahan@[gmail?],
+    william.renahan@virtus.com (discovered in 2014 email)
+  Pat Mangan: pjmangan@gmail.com, pj.mangan@yahoo.com
+  Thomas Farnham: thomas.farnham@yahoo.com, thomas.farnham@Yahoo.com (case),
+    thomas.farnham@ubs.com (work)
+  Chris Zichello: czichello@gmail.com, christopher.zichello@verizon.net
 
-## Known Corpus Gaps
+  Resolution via contacts + contact_identifiers table required
+  before ingestion to prevent conversation fragmentation.
 
-A record of what is missing from the PKE corpus and why.
-The Observer Layer and Writer Portrait must be calibrated with
-awareness that the corpus is incomplete. Absence of evidence
-is not evidence of absence.
 
-### Irrecoverable
+## Also update the Venv/Environment section — add:
 
-**Hotmail (pre-~2005)**
-Early personal email. Dormant account, likely purged.
-Contains correspondence from college and early post-college years.
-Period: approximately late 1990s — early 2000s.
+### Yahoo Mail IMAP credentials
 
-**JP Morgan Chase corporate email**
-Professional correspondence from JPM years.
-Corporate IT retention policies almost certainly purged.
-Irrecoverable.
+Stored in .env:
+```
+# Yahoo Mail — IMAP access for PKE email parser (milestone 9.13)
+# App password generated at login.yahoo.com/account/security
+# Required: two-step verification enabled on Yahoo account
+YAHOO_EMAIL=thomas.farnham@yahoo.com
+YAHOO_APP_PASSWORD=[redacted]
+```
 
-**Other old addresses**
-Any additional personal email addresses from early internet era
-that are no longer accessible.
+Export IMAP server: export.imap.mail.yahoo.com (port 993, SSL)
+Standard IMAP server: imap.mail.yahoo.com (port 993, SSL) — 10K limit, not used
+### Deferred: Yahoo Inbox Cleanup Agent
 
-### Potentially Recoverable
+Noted in original 9.13 design as "Inbox cleanup agent — separate project,
+noted for future planning."
 
-**Early Patrick correspondence (email)**
-Patrick may have Thomas's early emails on his end if he has
-maintained the same address. Worth asking.
+Now actionable: the header index (yahoo_index.db, 187,320 messages) provides
+the targeting data needed to identify and remove commercial noise at scale.
 
-**Early James / other friends correspondence**
-Same principle. Key correspondents from the pre-iMessage era
-may have archived emails that Thomas sent them.
+Approach:
+  - Query the header index to identify bulk senders (>50 messages, commercial domains)
+  - Generate a delete list with sender, count, and sample subjects for review
+  - Dry-run mode: show what would be deleted, require explicit confirmation
+  - Execute via standard IMAP server (imap.mail.yahoo.com, not export server)
+  - IMAP DELETE flow: flag messages as \Deleted, then EXPUNGE
+  - Safety: never delete from senders who appear in the contacts table
+    or who have been part of bidirectional correspondence
+  - Separate pass: create Yahoo mail filters/rules for high-volume
+    commercial senders to prevent backlog from rebuilding
 
-**Gmail forwards**
-Anything forwarded from old addresses to Gmail would be in
-Google Takeout. Worth checking.
+Why standard IMAP server (not export):
+  The export server is designed for read-only bulk extraction.
+  The standard server sees the most recent 10K messages per folder,
+  which is where the active junk accumulates. Deleting from the
+  standard server frees up the visible window and may expose older
+  messages that were previously hidden by the 10K cap.
 
-### Known Gaps by Channel
-
-**iMessage — group chat**
-Near silence 2019-2021. Confirmed bridged by bilateral threads.
-Patrick bilateral thread active throughout this period.
-
-**iMessage — bilateral threads**
-Patrick thread starts December 2013. Pre-2013 record missing.
-James, Chris, William bilateral threads not yet exported from iMazing.
-Any sub-group threads (Thomas + Patrick + James etc) not yet exported.
-
-**Journal (Joplin)**
-1,489 notes ingested. Coverage likely uneven — some periods
-heavily journaled, others sparse. Corpus analysis will reveal
-temporal distribution.
-
-**Pre-digital record**
-Handwritten Moleskine journals — not yet digitized (milestone 9.11).
-These may cover the pre-digital gap more than any other source.
-
-### iMessage Export History Archive
-
-The source files are the archive. The database is the index.
-This is the same principle as the Joplin corpus — the database
-is always reconstructable from source files.
-
-**Immediate practice — date-stamped exports:**
-Keep every iMazing export permanently. Never overwrite.
-Name convention:
-    Messages - Patrick Mangan - 2026-03-15.csv
-    Messages - Patrick Mangan - 2027-01-10.csv
-
----
-
-## Test Maintenance — Known Rules
-
-### embed_chunks.py — source loop pattern
-embed_chunks.py contains one while-loop per source type:
-    - Joplin chunks   → fetch_unembedded_chunks()
-    - iMessage bursts → fetch_unembedded_bursts()
-
-Every time a new source loop is added (e.g. email → fetch_unembedded_emails),
-BOTH of the following must be updated in tests/unit/test_embed_chunks.py:
-
-    1. make_clients() helper — add the new fetch method with return_value=[]
-    2. Every test that builds supabase = MagicMock() directly — add
-       the same mock line manually
-
-Failure to do this causes a silent infinite loop: the unmocked method
-returns a MagicMock object (always truthy), so the while loop never
-exits. The test hangs for 3+ minutes with no error message.
-
-### match_chunks RPC — return type changes
-When match_chunks needs new output columns, Postgres requires DROP
-FUNCTION before CREATE OR REPLACE (cannot change return type in place).
-
-The canonical sequence in add_match_functions.sql:
-    DROP FUNCTION IF EXISTS match_chunks(vector, integer, text, integer);
-    CREATE OR REPLACE FUNCTION match_chunks(...) ...
-
-Safe to run — no table data is affected. The function definition is
-recreated immediately in the same statement batch.
-
-### match_chunks RPC — new source types
-When a new source is added to the chunks table (e.g. email), update
-match_chunks in add_match_functions.sql:
-    - Add a LEFT JOIN to the relevant source table
-    - Extend the COALESCE chain for note_title and notebook
-    - The retriever requires both fields on every row
-
+Status: DEFERRED — build after parser and ingestion are complete.
+Dependency: contacts table in Supabase (safety filter for delete targeting).
 ---
 
 ## Downstream Milestones
 
 ### 9.3 — Personality Skin v1
 Producer writes the first system_prompt based on corpus analysis output.
-Listening sessions. Iterative refinement.
-Depends on: 9.2 Corpus Analysis Tool complete.
+Status: DEFERRED pending 9.4 prototype.
+Rationale: need the Companion Engine generation loop to run listening
+sessions before the skin can be validated. Build 9.4 prototype first.
+Key note: group is highly sarcastic — sarcasm register must be named
+explicitly in the system prompt. Warmth keywords in corpus analysis
+are misfiring (brilliant, legend used ironically).
 
-### 9.4 — Companion Engine
-CompanionProvider protocol. Claude as starting provider.
-Retrieval-augmented generation against the group chat corpus.
-Depends on: 9.3 Personality Skin v1 complete.
+### 9.4 — Companion Engine (prototype first)
+Standalone script: scripts/test_companion.py
+- Takes journal excerpt as input
+- Retrieves top N bursts from imessage_bursts via PKE API
+- Assembles prompt with placeholder system prompt
+- Calls Claude API, prints response
+Status: NOT STARTED
 
 ### 9.5 — Companion Plugin Integration
-Wire Companion Engine into Obsidian plugin.
-Unprompted intervention model. Separate visual presence.
-Depends on: 9.4 Companion Engine complete.
+Wire Companion Engine into Obsidian plugin. Unprompted intervention
+model. Separate visual presence.
+Status: NOT STARTED
 
 ### 9.9 — Obsidian Parser + Migration
 Add Obsidian vault as ingestion source. Migrate Joplin corpus.
-Retire Joplin as active writing surface.
+Status: NOT STARTED
+
+### 9.11 — Handwritten Journal Digitization
+Moleskine journals. Pre-digital record.
+Status: NOT STARTED
+
+---
+
+## Final Supabase State (as of 9.1 close)
+
+- chunks table: imessage 1,279 rows ✅ / joplin 866 rows ✅
+- imessage_threads: 4 rows
+- imessage_participants: populated
+- imessage_messages: 14,566 rows
+- imessage_bursts: 1,279 rows, 1,279 with embedding ✅
+
+---
+
+## Known Corpus Gaps
+
+### Irrecoverable
+- Hotmail (pre-~2005) — dormant account, likely purged
+- JP Morgan Chase corporate email — corporate IT retention policies
+
+### Potentially Recoverable
+- Early Patrick correspondence (email) — Patrick may have archived
+- Early James / other friends — same principle
+- Gmail forwards — check Google Takeout
+
+### iMessage — not yet exported
+- James, Chris, William bilateral threads
+- Any sub-group threads (Thomas + Patrick + James etc)
+
+### Journal
+- 1,489 notes ingested. Coverage likely uneven by period.
+- Pre-digital Moleskine journals not yet digitized (milestone 9.11)
+
+---
+
+## Test Maintenance — Known Rules
+
+### embed_chunks.py — source loop pattern
+Every new source loop added requires updating TWO places in
+tests/unit/test_embed_chunks.py:
+1. make_clients() helper — add fetch method with return_value=[]
+2. Every test that builds supabase = MagicMock() directly
+Failure: silent infinite loop, test hangs 3+ minutes with no error.
+
+### match_chunks RPC — return type changes
+Requires DROP FUNCTION before CREATE OR REPLACE.
+Canonical sequence in add_match_functions.sql:
+  DROP FUNCTION IF EXISTS match_chunks(vector, integer, text, integer);
+  CREATE OR REPLACE FUNCTION match_chunks(...) ...
+
+### match_chunks RPC — new source types
+When a new source is added, update match_chunks:
+- Add LEFT JOIN to the relevant source table
+- Extend COALESCE chain for note_title and notebook
+
+---
+
+## Venv Activation (Windows PowerShell)
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+& "C:\Users\thoma\Documents\dev\Personal-knowledge-engine\venv\Scripts\Activate.ps1"
+```
+
+Note: venv is named `venv` not `.venv`.
 
 ---
 
 ## Previous Milestones
 
-- 8.9.8 — Obsidian Insight Plugin ✅ (2026-03-14)
-- 8.9.7 — Retrieval API ✅ (2026-03-08)
-- 8.9.6 — Chunking for Long Notes ✅ (2026-03-07)
-- 8.9.5 — Real Embeddings ✅ (2026-03-06)
 - 8.9.4 — Deterministic Ingestion Baseline ✅ (2026-03-03)
-- 9.1   — iMessage Parser ✅ (2026-03-22)
+- 8.9.5 — Real Embeddings ✅ (2026-03-06)
+- 8.9.6 — Chunking for Long Notes ✅ (2026-03-07)
+- 8.9.7 — Retrieval API ✅ (2026-03-08)
+- 8.9.8 — Obsidian Insight Plugin ✅ (2026-03-14)
+- 9.1 — iMessage Parser ✅ (2026-03-22)
+- 9.2 — Corpus Analysis Tool ✅ (2026-03-23)
+- Plugin improvements (suppression, Why?, tooltip, debounce) ✅ (2026-03-27)
