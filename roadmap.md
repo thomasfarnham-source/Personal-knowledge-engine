@@ -228,10 +228,11 @@ that the chunker must handle:
 |----------------------|-------------|------------------------------------------|
 | Joplin notes         | ✅ Complete  | Sync-folder parser, canonical Stage 1   |
 | Obsidian notes       | 🔵 Planned  | Future primary writing surface          |
-| iMessage threads     | 🔵 Planned  | Specific contacts or groups             |
-| Yahoo Mail           | 🔵 Planned  | Select senders                          |
+| iMessage threads     | ✅ Complete  | iMazing CSV export, milestone 9.1       |
+| Yahoo Mail           | 🟡 Active   | IMAP export server, two-pass strategy   |
+| Content curation     | 🟡 Active   | RSS + NewsAPI, four-agent pipeline      |
 | Handwritten journals | 🔵 Future   | Photo → vision model → PKE parser       |
-| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents          |
+| Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents
 
 ### Obsidian
 - Source: local vault Markdown files
@@ -1009,6 +1010,250 @@ at scale, using the header index infrastructure built in milestone 9.13.
   William Renahan has 5+ email addresses across employers. Pat has 2.
   Thomas has case variations. Contacts + contact_identifiers must be
   populated before ingestion to prevent conversation fragmentation
+
+### 🔵 9.15 — Content Curation Agent
+**Status: PIPELINE TESTED — 2026-04-04**
+Branch: main (scripts/content_agent/)
+
+What this milestone builds:
+A multi-agent content curation system that scans sources, applies
+editorial judgment, finds connections to personal history and reading,
+and delivers daily drops and weekly synthesis briefs to the Obsidian vault.
+
+Design decisions (2026-03-29):
+
+**Agent architecture — four agents in sequential pipeline (DECIDED)**
+
+    Scout → Editor → Connector → Composer
+
+    Scout: scans RSS feeds and NewsAPI. Follows a written mandate
+    (MANDATE.md). Applies no editorial judgment beyond basic relevance
+    filtering. Its job is coverage, not taste. Does NOT have access
+    to personal corpus — this is deliberate. Access to the corpus
+    would cause over-filtering toward what has already been written
+    about. The Scout should find things the writer hasn't seen yet.
+
+    Editor: filters the Scout's output using Claude API. Applies the
+    three-pillar mandate with kill criteria. Also monitors Scout
+    performance — tracking kill rates per source and pillar coverage
+    gaps. Reports anomalies to the Producer. The Editor is both
+    filter and monitor — the check on the Scout's autonomy.
+
+    Connector: queries the PKE Retrieval API (personal corpus) and
+    book database for adjacencies. Does not force connections —
+    silence is better than a stretch. When a connection exists, it
+    annotates the item. When it doesn't, the item stands on its own
+    as curation.
+
+    Composer: assembles two outputs:
+      Daily drop — 3-5 items, scannable in 5 minutes
+      Weekly synthesis — patterns, strongest connections, pillar
+      health, post seeds. Runs Sunday. Uses Claude for synthesis.
+
+    A fifth agent (Reviewer) was considered and deferred for v1.
+    The Editor's monitoring role provides sufficient governance
+    initially. Reviewer can be added if quality drift is observed.
+
+**Governance model (DECIDED)**
+
+    The Scout has autonomy within a written mandate (MANDATE.md).
+    The Editor functions as both filter and monitor.
+    The Producer reviews the Scout's raw output monthly to recalibrate
+    sources and mandate language.
+
+    "Ambition counteracting ambition." — This system practices what
+    the LinkedIn post preaches.
+
+    Key design principle: the mandate is stored outside the agents
+    as a document, not embedded in code. The Producer revises the
+    mandate; the Scout follows it. Same pattern as the fitness
+    system's rules-stored-outside-the-agents architecture.
+
+**The agent's role — connection-feeder, not connection-maker (DECIDED)**
+
+    The Federalist Papers / fitness system connection in the LinkedIn
+    post was not found by scanning sources. It came from a palimpsest
+    of memory and experience — the right pressure (building something
+    dependent on AI trust) activated a decades-old reading.
+
+    No RSS feed would have surfaced that connection. The agent cannot
+    replicate what the writer does. What it can do is set the table —
+    increase the density of relevant material so the probability of
+    a spark is higher. The agent is a connection-feeder. The writer
+    makes the leap.
+
+**Two modes on a spectrum (DECIDED)**
+
+    Mode 1 — Curation: what's happening in your world this week that's
+    worth knowing about. New developments, practitioner voices,
+    regulatory shifts, provocative dissent. The agent's job is
+    editorial judgment — filtering ruthlessly so what reaches the
+    writer is genuinely worth ten minutes of attention.
+
+    Mode 2 — Connection: something found that rhymes with something
+    the writer cares about. An article paired with a journal entry.
+    A news item adjacent to a book club book. The agent places items
+    next to each other and lets the writer see the connection or not.
+
+    Most days are mostly curation with a light touch of connection.
+    Occasionally a pairing surprises. The surprise is the value.
+
+**Cadence — daily lightweight + weekly synthesis (DECIDED)**
+
+    Daily: Scout → Editor → Connector → Composer produces a markdown
+    file in the Obsidian vault (Content Briefs/Daily Drop YYYY-MM-DD.md).
+    3-5 items, scannable in 5 minutes over coffee.
+
+    Weekly (Sunday): Composer does a second pass across the full week's
+    material. Produces a synthesis brief with: what's alive this week,
+    strongest items, surprising connections, pillar health assessment,
+    and a post seed if one exists. Delivered to
+    Content Briefs/Weekly Synthesis YYYY-WNN.md.
+
+**Sources — RSS + NewsAPI free tier (DECIDED)**
+
+    RSS feeds organized by pillar:
+      Practitioner: Risk.net, American Banker, MIT Sloan Management
+      Review, HBR Technology, Bank of England speeches, OCC newsroom
+      Reader: Aeon Magazine, The New Atlantis, London Review of Books,
+      ArXiv (cs.AI, cs.CL)
+      Builder: Anthropic blog, OpenAI blog, Simon Willison, Hacker
+      News (best), Allen AI blog
+
+    NewsAPI (free tier, 100 requests/day):
+      Targeted queries per pillar — "AI banking risk management",
+      "LLM enterprise governance", "AI leadership transformation",
+      "AI philosophy epistemology", "RAG vector embeddings",
+      "Claude Copilot Devin development"
+
+    Source configuration in scripts/content_agent/sources.json.
+    Sources will be refined based on Scout performance monitoring.
+
+**Delivery surface — Obsidian vault (DECIDED)**
+
+    No separate UI. Markdown files land in the Obsidian vault under
+    a Content Briefs folder. The writer opens Obsidian, scans the
+    daily drop, and can tag, annotate, or link items using Obsidian's
+    native capabilities.
+
+**Book database — books.json (IN PROGRESS)**
+
+    A structured list of book club books with thematic tags.
+    Format: JSON with title, author, year_read, themes, keywords,
+    core_idea, personal_note per book.
+    The Connector queries by theme, not by title.
+    Tom populates this over time — started with template 2026-03-29.
+    Sources for reconstruction: journals, Facebook book events,
+    memory.
+
+**Three content pillars (confirmed, unchanged from original spec)**
+
+    Pillar 1 — The Practitioner: AI in regulated enterprise, risk
+    technology, leadership through transformation
+    Pillar 2 — The Reader: intellectual history, philosophy, books
+    meeting AI
+    Pillar 3 — The Builder: hands-on AI development, agentic systems,
+    RAG, tooling
+
+Files created (in scripts/content_agent/):
+    MANDATE.md       — Scout constitution
+    README.md        — System documentation
+    sources.json     — RSS feeds and NewsAPI configuration
+    books.json       — Book database template
+    scout.py         — Raw material scanner
+    editor.py        — Editorial filter (Claude-powered)
+    connector.py     — PKE and book adjacency finder
+    composer.py      — Daily drop and weekly synthesis assembler
+    pipeline.py      — Full pipeline orchestrator
+
+Dependencies:
+    feedparser       — RSS parsing (pip install)
+    requests         — HTTP client (likely already installed)
+    NEWSAPI_KEY      — free tier API key in .env
+    ANTHROPIC_API_KEY — already configured
+    PKE Retrieval API — running at localhost:8000
+
+Next actions:
+    1. Make GitHub repo private (security — personal docs exposed)
+    2. Remove broken RSS feeds from sources.json:
+       - ArXiv cs.AI and cs.CL (SSL cert failure on Windows)
+       - Allen AI Blog (malformed XML)
+       - HBR (encoding mismatch — find working URL or remove)
+    3. Set up GitHub Actions workflow for daily automated run
+    4. Add API keys as GitHub Secrets (ANTHROPIC_API_KEY, NEWSAPI_KEY)
+    5. Configure output delivery to OneDrive for Obsidian sync
+    6. Install Obsidian Shell Commands plugin
+    7. Configure Obsidian commands:
+       - "Enrich today's brief" (Connector + PKE API, local)
+       - "Weekly synthesis" (Composer weekly mode, local)
+    8. Start populating books.json
+    9. Run daily for one week, then first weekly synthesis
+    10. Producer review of Scout raw output after 30 days
+
+---
+### 🔵 9.13 B — Yahoo Inbox Cleanup Agent
+**Status: DEFERRED — depends on 9.13 contacts table**
+
+A tool to identify and remove commercial noise from a Yahoo Mail inbox
+at scale, using the header index infrastructure built in milestone 9.13.
+
+**Why this matters:**
+    Yahoo Mail users with large inboxes (100K+) cannot effectively clean
+    up from the web UI. Third-party tools hit the same 10K IMAP cap.
+    The export IMAP server discovery (milestone 9.13) and the header
+    index approach solve the problem that makes cleanup hard.
+
+**What it builds:**
+    - Query engine over the header index to rank senders by volume
+    - Commercial sender identification (domain patterns, volume thresholds,
+      noreply/newsletter prefixes)
+    - Safety filter: never delete from senders in the contacts table
+      or who have bidirectional correspondence
+    - Dry-run mode: preview what would be deleted with counts and
+      sample subjects before committing
+    - Delete execution via standard IMAP server (imap.mail.yahoo.com)
+    - Yahoo filter/rule generation for high-volume commercial senders
+      to prevent backlog from rebuilding
+    - Simple interface — CLI first, potential web UI later
+
+**Technical approach:**
+    - Reuses yahoo_index.db from milestone 9.13 header scan
+    - Reuses contacts + contact_identifiers from Supabase for safety
+    - Deletions via standard IMAP (not export server): flag \Deleted + EXPUNGE
+    - Standard server's 10K window is sufficient — active junk is recent
+    - Deleting frees the 10K window, potentially exposing older messages
+
+**Commercial potential:**
+    Standalone tool opportunity — see VISION.md for full analysis.
+    The header-index-first approach and export server discovery are
+    genuine competitive advantages over existing tools like Mailstrom.
+    Natural freemium model: free scan/preview, paid for bulk deletion.
+    Build for personal use first, evaluate commercial viability after.
+
+**Dependencies:**
+    - 9.13 header scanner complete ✅
+    - 9.13 contacts table in Supabase (safety filter for deletions)
+
+**Scope boundary:**
+    This is a cleanup tool, not an email client. It deletes and filters.
+    It does not move, archive, or organize emails. Keep it tight.
+
+**Unified retrieval architecture introduced (2026-03-28)**
+  retrieval_units table replaces the multi-join match_chunks pattern.
+  All sources write to one table. One search, one embedding column.
+  Email is the first source to use it. Backfill of existing Joplin
+  and iMessage content planned as follow-up.
+
+**Conversation model defined (2026-03-28)**
+  Conversation = exact participant set. Persistent across years and
+  topics. Email-specific tables (email_conversations, email_messages)
+  store structural metadata. Retrieval content in retrieval_units.
+
+**Identity resolution identified as blocker (2026-03-28)**
+  William Renahan has 5+ email addresses across employers. Pat has 2.
+  Thomas has case variations. Contacts + contact_identifiers must be
+  populated before ingestion to prevent conversation fragmentation
+
 
 ### Future Content Channels (not yet milestoned)
 

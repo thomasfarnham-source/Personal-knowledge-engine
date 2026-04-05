@@ -1,0 +1,182 @@
+{
+  "filter_date": "2026-04-04",
+  "filter_timestamp": "2026-04-04T13:50:14.434285+00:00",
+  "items": [
+    {
+      "title": "US card networks accelerate bets on agentic AI",
+      "url": "https://www.americanbanker.com/payments/news/visa-mastercard-expand-agentic-ai-deployments",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T23:16:28+00:00",
+      "summary": "Visa has deployed advanced artificial intelligence to help solve payment disputes and expedite corporate bill pay; while Mastercard adds Hong Kong to its global agentic commerce network.",
+      "origin": "rss",
+      "item_hash": "720b399e068c84dd",
+      "editor_reason": "Visa and Mastercard's deployment of agentic AI in production payment systems shows enterprise AI operationalization in regulated finance with real implementation details.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Is the Three Lines Model Still Valid in the Agentic Era?",
+      "url": "https://www.corporatecomplianceinsights.com/is-three-lines-model-still-valid-agentic-era/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-30T16:00:51+00:00",
+      "summary": "Humans in the loop — actually empowered to act\nThe post Is the Three Lines Model Still Valid in the Agentic Era? appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "7da0d6ad20734317",
+      "editor_reason": "Examines how traditional governance frameworks like Three Lines Model adapt to agentic AI systems, directly relevant to AI governance in enterprise risk management.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Banking beyond the law",
+      "url": "https://aeon.co/essays/the-underground-bankers-who-reshape-the-flow-of-global-money?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-31T15:00:00+00:00",
+      "summary": "A centuries-old network of secret codes and shadowy brokers continues to outpace financial systems controlled by the state- by Miles KellermanRead on Aeon",
+      "origin": "rss",
+      "item_hash": "467a0c5747b54001",
+      "editor_reason": "Historical parallel between centuries-old shadow banking networks and modern financial systems offers intellectual framework for understanding regulatory challenges.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Gradient Labs gives every bank customer an AI account manager",
+      "url": "https://openai.com/index/gradient-labs",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-01T07:00:00+00:00",
+      "summary": "Gradient Labs uses GPT-4.1 and GPT-5.4 mini and nano to power AI agents that automate banking support workflows with low latency and high reliability.",
+      "origin": "rss",
+      "item_hash": "a0904673d8e83392",
+      "editor_reason": "Specific use case of GPT models automating banking support workflows with technical details about latency and reliability requirements in regulated finance.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Vulnerability Research Is Cooked",
+      "url": "https://simonwillison.net/2026/Apr/3/vulnerability-research-is-cooked/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T04:59:08+00:00",
+      "summary": "Vulnerability Research Is Cooked\nThomas Ptacek's take on the sudden and enormous impact the latest frontier models are having on the field of vulnerability research.\n\nWithin the next few months, coding agents will drastically alter both the practice and the economics of exploit development. Frontier model improvement won’t be a slow burn, but rather a step function. Substantial amounts of high-impact vulnerability research (maybe even most of it) will happen simply by pointing an agent at a sour",
+      "origin": "rss",
+      "item_hash": "3bda934596581d60",
+      "editor_reason": "Real practitioner assessment of how frontier models are drastically changing vulnerability research economics and practice from someone who's built exploit tools.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The cognitive impact of coding agents",
+      "url": "https://simonwillison.net/2026/Apr/3/cognitive-cost/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T04:57:04+00:00",
+      "summary": "A fun thing about recording a podcast with a professional like Lenny Rachitsky is that his team know how to slice the resulting video up into TikTok-sized short form vertical videos. Here's one he shared on Twitter today which ended up attracting over 1.1m views!\n\n\nThat was 48 seconds. Our full conversation lasted 1 hour 40 minutes.\n\n    Tags: ai-ethics, coding-agents, agentic-engineering, generative-ai, podcast-appearances, ai, llms, cognitive-debt",
+      "origin": "rss",
+      "item_hash": "e73a62b981d0af01",
+      "editor_reason": "Practitioner insights on cognitive impact of coding agents from someone clearly building with them, touching on AI-assisted development workflows.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Gemma 4: Byte for byte, the most capable open models",
+      "url": "https://simonwillison.net/2026/Apr/2/gemma-4/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T23:28:54+00:00",
+      "summary": "Gemma 4: Byte for byte, the most capable open models\nFour new vision-capable Apache 2.0 licensed reasoning LLMs from Google DeepMind, sized at 2B, 4B, 31B, plus a 26B-A4B Mixture-of-Experts.\nGoogle emphasize \"unprecedented level of intelligence-per-parameter\", providing yet more evidence that creating small useful models is one of the hottest areas of research right now.\nThey actually label the two smaller models as E2B and E4B for \"Effective\" parameter size. The system card explains:\n\nThe small",
+      "origin": "rss",
+      "item_hash": "e6b983b8027a4031",
+      "editor_reason": "Google's new Apache 2.0 open source models with vision capabilities and reasoning, providing practical implications for enterprise AI implementation.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "We replaced RAG with a virtual filesystem for our AI documentation assistant",
+      "url": "https://www.mintlify.com/blog/how-we-built-a-virtual-filesystem-for-our-assistant",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-02T23:24:29+00:00",
+      "summary": "Article URL: https://www.mintlify.com/blog/how-we-built-a-virtual-filesystem-for-our-assistant\nComments URL: https://news.ycombinator.com/item?id=47618223\nPoints: 334\n# Comments: 124",
+      "origin": "rss",
+      "item_hash": "2bf6934d3c5f87f8",
+      "editor_reason": "Team replaced RAG with virtual filesystem architecture for AI documentation assistant - practical engineering approach to improving AI system design.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-04",
+    "items_submitted": 133,
+    "items_surviving": 8,
+    "kill_rate": 0.94,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 9,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 5,
+      "Aeon Magazine": 6,
+      "Anthropic News": 1,
+      "Anthropic Research": 4,
+      "OpenAI Blog": 4,
+      "Simon Willison": 17,
+      "Hacker News - Best": 19,
+      "Business Insider": 13,
+      "Internet": 3,
+      "Slashdot.org": 3,
+      "TechRadar": 3,
+      "Abcnews.com": 1,
+      "Yahoo Entertainment": 2,
+      "Wealthmanagement.com": 1,
+      "Davidoks.blog": 1,
+      "Gizmodo.com": 5,
+      "Github.com": 3,
+      "Scientific American": 1,
+      "Hamel.dev": 1,
+      "Onecli.sh": 1,
+      "Help Net Security": 2,
+      "Harvard Business Review": 1,
+      "Openai.com": 1,
+      "The Verge": 2,
+      "NPR": 1,
+      "Arxiv.org": 1,
+      "Inside Higher Ed": 1,
+      "Nature.com": 2,
+      "CBC News": 1,
+      "Dazed": 1,
+      "Mariehaynes.com": 1,
+      "9to5Mac": 1,
+      "Railsreviews.com": 1,
+      "Lanes.sh": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 2,
+      "reader": 1,
+      "builder": 5
+    },
+    "notes": [
+      "Strong coverage today of agentic AI in production finance systems and governance challenges",
+      "Multiple practitioner voices documenting real implementation experiences vs theoretical frameworks",
+      "Good balance between enterprise AI operationalization and deeper architectural considerations",
+      "Historical/intellectual parallels to current AI challenges present but limited"
+    ]
+  }
+}

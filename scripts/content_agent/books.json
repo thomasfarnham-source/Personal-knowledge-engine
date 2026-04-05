@@ -1,0 +1,725 @@
+{
+  "description": "Book Club reading list with thematic tags for the Content Curation Agent Connector. The Connector queries this by theme, not by title. Personal notes to be added by Tom over time.",
+  "last_updated": "2026-04-05",
+  "books": [
+    {
+      "title": "The Federalist Papers",
+      "author": "Alexander Hamilton, James Madison, John Jay",
+      "year_read": "",
+      "themes": [
+        "governance",
+        "checks and balances",
+        "separation of powers",
+        "democracy",
+        "institutional design"
+      ],
+      "keywords": [
+        "constitution",
+        "republic",
+        "faction",
+        "ambition",
+        "federalism",
+        "political architecture"
+      ],
+      "core_idea": "A republic survives not by trusting individuals but by designing structures where ambition counteracts ambition.",
+      "personal_note": ""
+    },
+    {
+      "title": "Frankenstein",
+      "author": "Mary Shelley",
+      "year_read": "",
+      "themes": [
+        "creation",
+        "responsibility",
+        "artificial intelligence",
+        "hubris",
+        "consequences of technology"
+      ],
+      "keywords": [
+        "creator",
+        "creature",
+        "monster",
+        "science",
+        "ethics",
+        "abandonment",
+        "autonomy"
+      ],
+      "core_idea": "The creator's obligation does not end at the moment of creation — what you build has claims on you.",
+      "personal_note": ""
+    },
+    {
+      "title": "Discipline and Punish",
+      "author": "Michel Foucault",
+      "year_read": "",
+      "themes": [
+        "surveillance",
+        "power",
+        "institutional control",
+        "governance",
+        "behavioral regulation"
+      ],
+      "keywords": [
+        "panopticon",
+        "discipline",
+        "normalization",
+        "prison",
+        "observation",
+        "compliance",
+        "authority"
+      ],
+      "core_idea": "Power operates most effectively not through punishment but through the internalization of being watched.",
+      "personal_note": ""
+    },
+    {
+      "title": "Tenth of December",
+      "author": "George Saunders",
+      "year_read": "",
+      "themes": [
+        "empathy",
+        "moral imagination",
+        "late capitalism",
+        "human dignity",
+        "compassion"
+      ],
+      "keywords": [
+        "short stories",
+        "satire",
+        "class",
+        "kindness",
+        "consumerism",
+        "suffering"
+      ],
+      "core_idea": "The gap between how people present themselves and what they actually feel is where moral life happens.",
+      "personal_note": ""
+    },
+    {
+      "title": "Secondhand Time",
+      "author": "Svetlana Alexievich",
+      "year_read": "2025",
+      "themes": [
+        "systemic collapse",
+        "ideology",
+        "lived experience",
+        "transformation",
+        "institutional failure"
+      ],
+      "keywords": [
+        "Soviet Union",
+        "oral history",
+        "transition",
+        "identity",
+        "disillusionment",
+        "memory"
+      ],
+      "core_idea": "When the system you built your identity around collapses, the human cost is measured in stories, not statistics.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Shock Doctrine",
+      "author": "Naomi Klein",
+      "year_read": "",
+      "themes": [
+        "disruption",
+        "crisis exploitation",
+        "institutional change",
+        "power",
+        "transformation"
+      ],
+      "keywords": [
+        "disaster capitalism",
+        "crisis",
+        "deregulation",
+        "privatization",
+        "ideology",
+        "resilience"
+      ],
+      "core_idea": "Crisis is not just endured — it is exploited by those prepared to move when others are disoriented.",
+      "personal_note": ""
+    },
+    {
+      "title": "H is for Hawk",
+      "author": "Helen Macdonald",
+      "year_read": "",
+      "themes": [
+        "grief",
+        "nature",
+        "mastery",
+        "obsession",
+        "human-animal relationship"
+      ],
+      "keywords": [
+        "falconry",
+        "loss",
+        "wildness",
+        "control",
+        "healing",
+        "attention",
+        "craft"
+      ],
+      "core_idea": "The attempt to master something wild is also an attempt to master grief — and both resist control.",
+      "personal_note": ""
+    },
+    {
+      "title": "Bowling Alone",
+      "author": "Robert D. Putnam",
+      "year_read": "",
+      "themes": [
+        "social capital",
+        "community",
+        "institutional decline",
+        "civic engagement",
+        "isolation"
+      ],
+      "keywords": [
+        "trust",
+        "association",
+        "democracy",
+        "participation",
+        "networks",
+        "belonging",
+        "decline"
+      ],
+      "core_idea": "Democracy depends on social bonds formed outside politics — when those bonds erode, institutions follow.",
+      "personal_note": ""
+    },
+    {
+      "title": "Hyperobjects: Philosophy and Ecology after the End of the World",
+      "author": "Timothy Morton",
+      "year_read": "",
+      "themes": [
+        "scale",
+        "complexity",
+        "systems thinking",
+        "ecology",
+        "philosophy of technology"
+      ],
+      "keywords": [
+        "hyperobject",
+        "climate",
+        "nonlocality",
+        "viscosity",
+        "temporality",
+        "interconnection"
+      ],
+      "core_idea": "Some things are so massively distributed in time and space that they defeat human comprehension — but they are still real and demand response.",
+      "personal_note": ""
+    },
+    {
+      "title": "Groundwork of the Metaphysics of Morals",
+      "author": "Immanuel Kant",
+      "year_read": "",
+      "themes": [
+        "ethics",
+        "duty",
+        "moral reasoning",
+        "autonomy",
+        "universal principles"
+      ],
+      "keywords": [
+        "categorical imperative",
+        "duty",
+        "reason",
+        "will",
+        "moral law",
+        "dignity"
+      ],
+      "core_idea": "Act only according to principles you could will to be universal — morality is not about outcomes but about the rule behind the action.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Revolt of the Masses",
+      "author": "José Ortega y Gasset",
+      "year_read": "",
+      "themes": [
+        "democracy",
+        "expertise",
+        "populism",
+        "leadership",
+        "intellectual authority"
+      ],
+      "keywords": [
+        "mass society",
+        "specialization",
+        "mediocrity",
+        "elite",
+        "culture",
+        "complacency"
+      ],
+      "core_idea": "When the average person assumes the right to impose opinions without earning the knowledge behind them, civilization is in trouble.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Revolt of the Black Athlete",
+      "author": "Harry Edwards",
+      "year_read": "",
+      "themes": [
+        "resistance",
+        "institutional power",
+        "race",
+        "activism",
+        "systemic change"
+      ],
+      "keywords": [
+        "protest",
+        "sports",
+        "civil rights",
+        "exploitation",
+        "visibility",
+        "solidarity"
+      ],
+      "core_idea": "Athletic excellence does not exempt you from systemic injustice — it gives you a platform to expose it.",
+      "personal_note": ""
+    },
+    {
+      "title": "The City & The City",
+      "author": "China Miéville",
+      "year_read": "",
+      "themes": [
+        "perception",
+        "boundaries",
+        "governance",
+        "reality",
+        "willful ignorance"
+      ],
+      "keywords": [
+        "unseeing",
+        "borders",
+        "coexistence",
+        "enforcement",
+        "cognitive dissonance",
+        "surveillance"
+      ],
+      "core_idea": "Two cities occupy the same space but citizens are trained to unsee the other — the most powerful borders are the ones we enforce in our own minds.",
+      "personal_note": ""
+    },
+    {
+      "title": "1984",
+      "author": "George Orwell",
+      "year_read": "",
+      "themes": [
+        "surveillance",
+        "truth",
+        "power",
+        "language",
+        "institutional control"
+      ],
+      "keywords": [
+        "totalitarianism",
+        "doublethink",
+        "newspeak",
+        "propaganda",
+        "memory",
+        "autonomy",
+        "resistance"
+      ],
+      "core_idea": "The ultimate exercise of power is not to punish dissent but to make dissent unthinkable by controlling language and memory.",
+      "personal_note": ""
+    },
+    {
+      "title": "Three Guineas",
+      "author": "Virginia Woolf",
+      "year_read": "",
+      "themes": [
+        "power",
+        "gender",
+        "institutional critique",
+        "war",
+        "education"
+      ],
+      "keywords": [
+        "patriarchy",
+        "exclusion",
+        "professions",
+        "militarism",
+        "independence",
+        "outsider"
+      ],
+      "core_idea": "The institutions that wage war and the institutions that exclude women are the same institutions — the outsider's perspective is not marginal, it is essential.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Power of Nonviolent Resistance",
+      "author": "Mahatma Gandhi",
+      "year_read": "",
+      "themes": [
+        "resistance",
+        "ethics",
+        "power",
+        "leadership",
+        "systemic change"
+      ],
+      "keywords": [
+        "nonviolence",
+        "civil disobedience",
+        "satyagraha",
+        "moral authority",
+        "courage",
+        "justice"
+      ],
+      "core_idea": "The most powerful resistance is not the refusal to comply but the willingness to suffer the consequences of refusal — moral authority that force cannot answer.",
+      "personal_note": ""
+    },
+    {
+      "title": "Fahrenheit 451",
+      "author": "Ray Bradbury",
+      "year_read": "",
+      "themes": [
+        "censorship",
+        "knowledge",
+        "technology",
+        "conformity",
+        "intellectual freedom"
+      ],
+      "keywords": [
+        "books",
+        "burning",
+        "media",
+        "distraction",
+        "memory",
+        "resistance",
+        "attention"
+      ],
+      "core_idea": "Books are not burned by tyrants alone — they become irrelevant when people choose entertainment over thought.",
+      "personal_note": ""
+    },
+    {
+      "title": "Democracy and Education",
+      "author": "John Dewey",
+      "year_read": "",
+      "themes": [
+        "democracy",
+        "education",
+        "civic engagement",
+        "critical thinking",
+        "institutional design"
+      ],
+      "keywords": [
+        "pragmatism",
+        "experience",
+        "learning",
+        "participation",
+        "growth",
+        "community"
+      ],
+      "core_idea": "Democracy is not just a form of government — it is a mode of associated living that must be learned through practice, not inherited through institutions.",
+      "personal_note": ""
+    },
+    {
+      "title": "Antigone",
+      "author": "Sophocles",
+      "year_read": "",
+      "themes": [
+        "moral authority",
+        "governance",
+        "duty",
+        "resistance",
+        "conscience vs law"
+      ],
+      "keywords": [
+        "civil disobedience",
+        "law",
+        "family",
+        "state",
+        "justice",
+        "tragedy",
+        "obligation"
+      ],
+      "core_idea": "When the law of the state and the law of conscience conflict, the person who chooses conscience pays the price — but the state pays a higher one.",
+      "personal_note": ""
+    },
+    {
+      "title": "Eichmann in Jerusalem: A Report on the Banality of Evil",
+      "author": "Hannah Arendt",
+      "year_read": "",
+      "themes": [
+        "institutional evil",
+        "compliance",
+        "moral responsibility",
+        "bureaucracy",
+        "critical thinking"
+      ],
+      "keywords": [
+        "banality of evil",
+        "obedience",
+        "judgment",
+        "conscience",
+        "system",
+        "accountability"
+      ],
+      "core_idea": "The most dangerous evil is not radical but banal — ordinary people following procedures without thinking about what the procedures produce.",
+      "personal_note": ""
+    },
+    {
+      "title": "Ficciones (Selected Short Stories)",
+      "author": "Jorge Luis Borges",
+      "year_read": "",
+      "themes": [
+        "knowledge",
+        "infinity",
+        "reality",
+        "epistemology",
+        "systems"
+      ],
+      "keywords": [
+        "library",
+        "labyrinth",
+        "mirror",
+        "forking paths",
+        "paradox",
+        "information",
+        "universe"
+      ],
+      "core_idea": "Every system of knowledge is a labyrinth — the library contains everything, which is the same as containing nothing, unless you know how to search.",
+      "personal_note": "Especially The Library of Babel and The Garden of Forking Paths."
+    },
+    {
+      "title": "The New Jim Crow",
+      "author": "Michelle Alexander",
+      "year_read": "",
+      "themes": [
+        "systemic injustice",
+        "institutional design",
+        "race",
+        "governance",
+        "mass incarceration"
+      ],
+      "keywords": [
+        "prison",
+        "war on drugs",
+        "racial caste",
+        "inequality",
+        "legal system",
+        "discrimination"
+      ],
+      "core_idea": "The system was not broken — it was designed to produce these outcomes. Understanding that distinction is the beginning of change.",
+      "personal_note": ""
+    },
+    {
+      "title": "Anti-Intellectualism in American Life",
+      "author": "Richard Hofstadter",
+      "year_read": "",
+      "themes": [
+        "expertise",
+        "populism",
+        "democracy",
+        "intellectual authority",
+        "cultural conflict"
+      ],
+      "keywords": [
+        "anti-intellectualism",
+        "education",
+        "pragmatism",
+        "suspicion",
+        "elite",
+        "knowledge"
+      ],
+      "core_idea": "America has a recurring tension between the authority of expertise and the suspicion that expertise is itself a form of power — this tension shapes every institution.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Death and Life of Great American Cities",
+      "author": "Jane Jacobs",
+      "year_read": "",
+      "themes": [
+        "systems thinking",
+        "institutional critique",
+        "emergence",
+        "community",
+        "design"
+      ],
+      "keywords": [
+        "urban planning",
+        "sidewalks",
+        "diversity",
+        "complexity",
+        "organic order",
+        "neighborhoods"
+      ],
+      "core_idea": "Cities work not because they are planned but because they are complex — the sidewalk ballet of daily life produces order that no planner could design.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Book of the City of Ladies",
+      "author": "Christine de Pizan",
+      "year_read": "",
+      "themes": [
+        "institutional critique",
+        "gender",
+        "knowledge",
+        "authority",
+        "historical revisionism"
+      ],
+      "keywords": [
+        "women",
+        "history",
+        "virtue",
+        "canon",
+        "architecture",
+        "justice",
+        "narrative"
+      ],
+      "core_idea": "The canon is not neutral — it was constructed to exclude, and reconstruction requires building an alternative architecture of knowledge.",
+      "personal_note": ""
+    },
+    {
+      "title": "King Lear",
+      "author": "William Shakespeare",
+      "year_read": "",
+      "themes": [
+        "power",
+        "aging",
+        "judgment",
+        "loyalty",
+        "institutional collapse"
+      ],
+      "keywords": [
+        "authority",
+        "madness",
+        "succession",
+        "blindness",
+        "family",
+        "truth",
+        "folly"
+      ],
+      "core_idea": "The moment you surrender power without understanding what held it together, you discover that loyalty was conditional and truth was the thing you punished.",
+      "personal_note": ""
+    },
+    {
+      "title": "On Liberty",
+      "author": "John Stuart Mill",
+      "year_read": "",
+      "themes": [
+        "freedom",
+        "governance",
+        "individual rights",
+        "institutional limits",
+        "dissent"
+      ],
+      "keywords": [
+        "liberty",
+        "tyranny of majority",
+        "speech",
+        "autonomy",
+        "harm principle",
+        "tolerance"
+      ],
+      "core_idea": "The greatest threat to freedom is not the tyrant but the majority that silences dissent — protecting the unpopular opinion is what makes a free society function.",
+      "personal_note": ""
+    },
+    {
+      "title": "The Theory of the Leisure Class",
+      "author": "Thorstein Veblen",
+      "year_read": "",
+      "themes": [
+        "status",
+        "economics",
+        "institutional behavior",
+        "class",
+        "consumption"
+      ],
+      "keywords": [
+        "conspicuous consumption",
+        "waste",
+        "status",
+        "emulation",
+        "productivity",
+        "display"
+      ],
+      "core_idea": "Economic behavior is driven less by utility than by the need to signal status — consumption is a performance, not a necessity.",
+      "personal_note": ""
+    },
+    {
+      "title": "Notes from Underground",
+      "author": "Fyodor Dostoevsky",
+      "year_read": "",
+      "themes": [
+        "consciousness",
+        "rationality",
+        "free will",
+        "alienation",
+        "human nature"
+      ],
+      "keywords": [
+        "underground man",
+        "spite",
+        "reason",
+        "suffering",
+        "freedom",
+        "irrationality",
+        "rebellion"
+      ],
+      "core_idea": "Humans will act against their own interest purely to prove they are free — rationality cannot fully account for the perversity of consciousness.",
+      "personal_note": ""
+    },
+    {
+      "title": "Discourse on the Origin of Inequality (On the Nature of Pity)",
+      "author": "Jean-Jacques Rousseau",
+      "year_read": "",
+      "themes": [
+        "human nature",
+        "empathy",
+        "civilization",
+        "corruption",
+        "natural law"
+      ],
+      "keywords": [
+        "pity",
+        "compassion",
+        "natural man",
+        "inequality",
+        "society",
+        "self-love",
+        "moral sentiment"
+      ],
+      "core_idea": "Pity is the natural moral sentiment that precedes reason — civilization did not create compassion, it complicated it.",
+      "personal_note": ""
+    },
+    {
+      "title": "Nicomachean Ethics",
+      "author": "Aristotle",
+      "year_read": "",
+      "themes": [
+        "ethics",
+        "virtue",
+        "practical wisdom",
+        "character",
+        "human flourishing"
+      ],
+      "keywords": [
+        "eudaimonia",
+        "virtue",
+        "mean",
+        "habit",
+        "phronesis",
+        "justice",
+        "excellence"
+      ],
+      "core_idea": "Virtue is not a feeling or a theory — it is a habit built through practice. You become good by doing good, not by knowing what good is.",
+      "personal_note": ""
+    },
+    {
+      "title": "History of the Peloponnesian War",
+      "author": "Thucydides",
+      "year_read": "",
+      "themes": [
+        "power",
+        "governance",
+        "institutional failure",
+        "realism",
+        "decision-making under pressure"
+      ],
+      "keywords": [
+        "war",
+        "Athens",
+        "Sparta",
+        "empire",
+        "democracy",
+        "hubris",
+        "strategy",
+        "plague"
+      ],
+      "core_idea": "The strong do what they can and the weak suffer what they must — but the strong are also destroyed by their own overreach, which they never see coming.",
+      "personal_note": ""
+    }
+  ]
+}

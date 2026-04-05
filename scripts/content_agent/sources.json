@@ -1,0 +1,144 @@
+{
+  "rss_feeds": {
+    "practitioner": [
+      {
+        "name": "Risk.net - Risk Management",
+        "url": "https://www.risk.net/feeds/rss/category/risk-management",
+        "notes": "Risk management and financial technology — requires category-specific feed URL"
+      },
+      {
+        "name": "American Banker",
+        "url": "https://www.americanbanker.com/feed?rss=true",
+        "notes": "Banking industry, fintech, regulation"
+      },
+      {
+        "name": "MIT Sloan Management Review",
+        "url": "https://sloanreview.mit.edu/feed/",
+        "notes": "Management and technology leadership — WORKING"
+      },
+      {
+        "name": "Harvard Business Review",
+        "url": "https://hbr.org/rss/rss.cgi",
+        "notes": "Filter hard — lots of filler, but occasional gold"
+      },
+      {
+        "name": "Bank of England - Speeches",
+        "url": "https://www.bankofengland.co.uk/rss/speeches",
+        "notes": "Regulatory signals on AI and fintech — WORKING but 0 items in last 7 days is normal"
+      },
+      {
+        "name": "Enterprise Risk Magazine",
+        "url": "https://enterpriseriskmag.com/feed",
+        "notes": "IRM publication, enterprise risk management focus"
+      },
+      {
+        "name": "Corporate Compliance Insights",
+        "url": "https://www.corporatecomplianceinsights.com/feed/",
+        "notes": "ERM, compliance, governance — practitioner-oriented"
+      }
+    ],
+    "reader": [
+      {
+        "name": "Aeon Magazine",
+        "url": "https://aeon.co/feed.rss",
+        "notes": "Philosophy, science, ideas — high quality — WORKING"
+      },
+      {
+        "name": "The New Atlantis",
+        "url": "https://www.thenewatlantis.com/feed",
+        "notes": "Technology and society, serious essays — WORKING but 0 items may be normal (quarterly)"
+      },
+      {
+        "name": "London Review of Books",
+        "url": "https://www.lrb.co.uk/feeds/rss",
+        "notes": "Literary and intellectual criticism — WORKING but 0 items may be normal"
+      },
+      {
+        "name": "ArXiv - AI (cs.AI)",
+        "url": "http://rss.arxiv.org/rss/cs.AI",
+        "notes": "Academic AI papers — changed to http to avoid SSL cert issue"
+      },
+      {
+        "name": "ArXiv - Computation and Language",
+        "url": "http://rss.arxiv.org/rss/cs.CL",
+        "notes": "NLP and LLM research papers — changed to http to avoid SSL cert issue"
+      }
+    ],
+    "builder": [
+      {
+        "name": "Anthropic News",
+        "url": "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml",
+        "notes": "Community-maintained Anthropic news feed — updated hourly via GitHub Actions"
+      },
+      {
+        "name": "Anthropic Research",
+        "url": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml",
+        "notes": "Community-maintained Anthropic research feed"
+      },
+      {
+        "name": "OpenAI Blog",
+        "url": "https://openai.com/blog/rss.xml",
+        "notes": "Model releases, research, tooling — WORKING"
+      },
+      {
+        "name": "Simon Willison",
+        "url": "https://simonwillison.net/atom/everything/",
+        "notes": "Practitioner-developer, AI tooling, honest perspective — WORKING"
+      },
+      {
+        "name": "Hacker News - Best",
+        "url": "https://hnrss.org/best",
+        "notes": "Community-filtered tech content — needs hard filtering — WORKING"
+      },
+      {
+        "name": "Allen AI Blog",
+        "url": "https://blog.allenai.org/feed",
+        "notes": "Allen AI / Semantic Scholar — research tooling"
+      }
+    ]
+  },
+  "newsapi": {
+    "enabled": true,
+    "api_key_env": "NEWSAPI_KEY",
+    "queries": [
+      {
+        "name": "AI in banking",
+        "q": "artificial intelligence AND (banking OR financial services OR risk management)",
+        "pillar": "practitioner"
+      },
+      {
+        "name": "LLM enterprise",
+        "q": "LLM AND (enterprise OR production OR operationalize OR governance)",
+        "pillar": "practitioner"
+      },
+      {
+        "name": "AI leadership transformation",
+        "q": "AI AND (leadership OR transformation OR workforce OR team) AND (enterprise OR corporate)",
+        "pillar": "practitioner"
+      },
+      {
+        "name": "AI philosophy ethics",
+        "q": "artificial intelligence AND (philosophy OR epistemology OR ethics OR humanities)",
+        "pillar": "reader"
+      },
+      {
+        "name": "RAG vector embeddings",
+        "q": "RAG OR (vector AND embeddings) OR (agentic AND AI)",
+        "pillar": "builder"
+      },
+      {
+        "name": "AI developer tools",
+        "q": "(Claude OR Copilot OR Devin OR Cursor) AND (development OR coding OR engineering)",
+        "pillar": "builder"
+      }
+    ],
+    "language": "en",
+    "sort_by": "relevancy",
+    "page_size": 10
+  },
+  "scan_settings": {
+    "max_age_days": 7,
+    "rss_max_items_per_feed": 20,
+    "dedup_on": "url"
+  }
+}

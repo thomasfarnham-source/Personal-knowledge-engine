@@ -379,29 +379,76 @@ All in scripts/yahoo/:
 10. Full ingestion pass for all contacts
 
 ---
+### Parallel Track: 9.15 — Content Curation Agent
 
-## Also update the Known Corpus Gaps section — add:
+Status: FOUNDATION BUILT — 2026-03-29
+Location: scripts/content_agent/
 
-### Yahoo Mail — known limitations
-- Inbox capped at 100,000 in export IMAP server (actual inbox likely larger)
-- IMAP SEARCH results capped at ~1,000 per query on export server
-- Work email addresses (UBS: thomas.farnham@ubs.com, Citi, Barclays)
-  received replies that are not in the Yahoo mailbox. These represent
-  the work-side of personal correspondence and are irrecoverable.
-- Pre-2006 email not present (account may not have existed earlier)
+Four-agent pipeline (Scout → Editor → Connector → Composer) created.
+All code written. Not yet tested against live sources.
+
+Remaining before first run:
+  1. Add NEWSAPI_KEY to .env (newsapi.org free tier)
+  2. pip install feedparser
+  3. Validate RSS feed URLs: python -m scripts.content_agent.scout --dry-run
+  4. Confirm import paths work from repo root
+  5. Set Obsidian vault path
+  6. First live daily run
+### Parallel Track: 9.15 — Content Curation Agent
+
+Status: PIPELINE TESTED AND RUNNING — 2026-04-04
+Branch: feat/9.15-content-curation-agent
+Location: scripts/content_agent/
+
+Four-agent pipeline (Scout → Editor → Connector → Composer) tested
+end-to-end. First daily drop delivered to Obsidian vault on 2026-04-04.
+
+First run results (2026-04-04):
+  Scout: 133 items (78 RSS, 58 NewsAPI) from 11 working feeds
+  Editor: 8 items survived (94% kill rate)
+    - Practitioner: 2, Reader: 1, Builder: 5
+    - Editor notes: "Strong coverage of agentic AI in production
+      finance systems and governance challenges"
+  Connector: 8/8 items found personal corpus connections (24 total)
+  Composer: daily drop delivered to Obsidian vault
+
+Notable items from first run:
+  - "Is the Three Lines Model Still Valid in the Agentic Era?"
+    (Corporate Compliance Insights) — directly relevant to ERM work
+  - "Banking beyond the law" (Aeon) — historical parallel, Reader pillar
+  - "We replaced RAG with a virtual filesystem" (HN) — PKE-relevant
+
+Code fixes applied during testing:
+  - Added load_dotenv() to scout.py, editor.py, connector.py
+    (.env file not auto-loaded without explicit call)
+  - Fixed null summary crash in editor.py line 133:
+    item.get("summary", "")[:300] → (item.get("summary") or "")[:300]
+  - ArXiv feeds have SSL certificate issues on Windows — pending removal
+  - HBR feed has encoding mismatch — pending URL fix or removal
+  - Allen AI Blog feed has malformed XML — pending removal
+
+Deployment architecture (designed, not yet implemented):
+  Server (GitHub Actions, daily 6 AM):
+    Scout → Editor → Composer (without personal connections)
+    Output pushed to OneDrive → syncs to Obsidian vault
+    Requires: repo set to private, API keys in GitHub Secrets
+  Local (on demand from Obsidian):
+    "Enrich today's brief" → Connector runs locally, starts PKE API,
+    annotates daily drop with personal corpus connections
+    "Weekly synthesis" → Composer weekly mode against accumulated drops
+  Obsidian Shell Commands plugin for triggering local processes
+
+Remaining before automated deployment:
+  1. Make GitHub repo private (contains personal career/strategy docs)
+  2. Set up GitHub Actions workflow with cron schedule
+  3. Add ANTHROPIC_API_KEY and NEWSAPI_KEY as GitHub Secrets
+  4. Configure output push to OneDrive or repo
+  5. Install Obsidian Shell Commands plugin
+  6. Configure two Obsidian commands: Enrich + Weekly Synthesis
+  7. Remove broken feeds from sources.json (ArXiv, Allen AI, HBR)
+  8. Populate books.json over time
 
 ---
-### Yahoo Mail — identity fragmentation (discovered 2026-03-28)
-  William Renahan: william.renahan@blackstone.com, william.renahan@dpimc.com,
-    wrenahan@lmus.leggmason.com, wrenahan@[other], williamrenahan@[gmail?],
-    william.renahan@virtus.com (discovered in 2014 email)
-  Pat Mangan: pjmangan@gmail.com, pj.mangan@yahoo.com
-  Thomas Farnham: thomas.farnham@yahoo.com, thomas.farnham@Yahoo.com (case),
-    thomas.farnham@ubs.com (work)
-  Chris Zichello: czichello@gmail.com, christopher.zichello@verizon.net
-
-  Resolution via contacts + contact_identifiers table required
-  before ingestion to prevent conversation fragmentation.
 
 
 ## Also update the Venv/Environment section — add:

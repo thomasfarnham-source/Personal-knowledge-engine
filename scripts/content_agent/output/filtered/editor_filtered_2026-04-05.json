@@ -1,0 +1,165 @@
+{
+  "filter_date": "2026-04-05",
+  "filter_timestamp": "2026-04-05T12:22:43.270417+00:00",
+  "items": [
+    {
+      "title": "US card networks accelerate bets on agentic AI",
+      "url": "https://www.americanbanker.com/payments/news/visa-mastercard-expand-agentic-ai-deployments",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T23:16:28+00:00",
+      "summary": "Visa has deployed advanced artificial intelligence to help solve payment disputes and expedite corporate bill pay; while Mastercard adds Hong Kong to its global agentic commerce network.",
+      "origin": "rss",
+      "item_hash": "720b399e068c84dd",
+      "editor_reason": "Specific implementation of agentic AI in payment systems at major card networks - actual deployment details from Visa and Mastercard",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Is the Three Lines Model Still Valid in the Agentic Era?",
+      "url": "https://www.corporatecomplianceinsights.com/is-three-lines-model-still-valid-agentic-era/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-30T16:00:51+00:00",
+      "summary": "Humans in the loop — actually empowered to act\nThe post Is the Three Lines Model Still Valid in the Agentic Era? appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "7da0d6ad20734317",
+      "editor_reason": "Deep governance question about whether traditional risk frameworks survive the shift to autonomous AI agents",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Banking beyond the law",
+      "url": "https://aeon.co/essays/the-underground-bankers-who-reshape-the-flow-of-global-money?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-31T15:00:00+00:00",
+      "summary": "A centuries-old network of secret codes and shadowy brokers continues to outpace financial systems controlled by the state- by Miles KellermanRead on Aeon",
+      "origin": "rss",
+      "item_hash": "467a0c5747b54001",
+      "editor_reason": "Intellectual examination of shadow banking networks that operate outside state financial control - relevant to regulated finance practitioner",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Vulnerability Research Is Cooked",
+      "url": "https://simonwillison.net/2026/Apr/3/vulnerability-research-is-cooked/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T04:59:08+00:00",
+      "summary": "Vulnerability Research Is Cooked\nThomas Ptacek's take on the sudden and enormous impact the latest frontier models are having on the field of vulnerability research.\n\nWithin the next few months, coding agents will drastically alter both the practice and the economics of exploit development. Frontier model improvement won’t be a slow burn, but rather a step function. Substantial amounts of high-impact vulnerability research (maybe even most of it) will happen simply by pointing an agent at a sour",
+      "origin": "rss",
+      "item_hash": "3bda934596581d60",
+      "editor_reason": "Real vulnerability research acceleration by frontier models - practitioner experience with security implications in production systems",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Components of a Coding Agent",
+      "url": "https://magazine.sebastianraschka.com/p/components-of-a-coding-agent",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T18:16:33+00:00",
+      "summary": "Article URL: https://magazine.sebastianraschka.com/p/components-of-a-coding-agent\nComments URL: https://news.ycombinator.com/item?id=47638810\nPoints: 248\n# Comments: 78",
+      "origin": "rss",
+      "item_hash": "4b5942c9e4a3eb42",
+      "editor_reason": "Technical breakdown of coding agent architecture from practitioner perspective - actionable for enterprise AI builders",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Claude Code Found a Linux Vulnerability Hidden for 23 Years",
+      "url": "https://mtlynch.io/claude-code-found-linux-vulnerability/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T04:46:51+00:00",
+      "summary": "Article URL: https://mtlynch.io/claude-code-found-linux-vulnerability/\nComments URL: https://news.ycombinator.com/item?id=47633855\nPoints: 396\n# Comments: 249",
+      "origin": "rss",
+      "item_hash": "7ff8d2fb586abc72",
+      "editor_reason": "Concrete case study of AI-assisted vulnerability discovery with 23-year Linux bug - demonstrates practical security implications",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Functional programming accellerates agentic feature development",
+      "url": "https://cyrusradfar.com/thoughts/functional-programming-is-the-only-way-to-scale-with-ai",
+      "source_name": "Cyrusradfar.com",
+      "pillar": "builder",
+      "published": "2026-04-01T18:32:05Z",
+      "summary": "AI agents fail in production because of mutable state, hidden dependencies, and side effects the agent can't see. The fix is functional programming. SUPER and SPIRALS are the frameworks I use.",
+      "origin": "newsapi",
+      "item_hash": "dc5fa61ea790a13e",
+      "editor_reason": "Functional programming approaches to solving agentic AI production failures - specific technical framework from practitioner",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-05",
+    "items_submitted": 133,
+    "items_surviving": 7,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 9,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 5,
+      "Aeon Magazine": 6,
+      "Anthropic News": 1,
+      "Anthropic Research": 4,
+      "OpenAI Blog": 5,
+      "Simon Willison": 19,
+      "Hacker News - Best": 18,
+      "Business Insider": 11,
+      "Internet": 3,
+      "Slashdot.org": 3,
+      "TechRadar": 3,
+      "Abcnews.com": 1,
+      "Yahoo Entertainment": 3,
+      "Wealthmanagement.com": 1,
+      "Gizmodo.com": 5,
+      "Github.com": 3,
+      "Irregular.com": 1,
+      "Scientific American": 1,
+      "Onecli.sh": 1,
+      "Help Net Security": 2,
+      "The Verge": 3,
+      "Harvard Business Review": 1,
+      "Openai.com": 1,
+      "NPR": 1,
+      "Arxiv.org": 1,
+      "Inside Higher Ed": 1,
+      "Nature.com": 2,
+      "CBC News": 1,
+      "Dazed": 1,
+      "Mariehaynes.com": 1,
+      "Railsreviews.com": 1,
+      "Lanes.sh": 1,
+      "Cursor.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 2,
+      "reader": 1,
+      "builder": 4
+    },
+    "notes": [
+      "Strong day for agentic AI governance and implementation pieces",
+      "Good mix of technical depth and philosophical framing",
+      "Notable absence of regulatory AI guidance updates"
+    ]
+  }
+}
