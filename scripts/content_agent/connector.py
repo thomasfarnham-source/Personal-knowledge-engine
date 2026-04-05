@@ -5,15 +5,16 @@ Takes the Editor's filtered items and queries two sources for adjacency:
   1. PKE Retrieval API — personal journals, messages, email
   2. Book database — book club reading with thematic tags
 
-The Connector does not force connections. When there is no meaningful
-adjacency, the item stands on its own as curation. Silence is better
-than a stretch.
+Connections are evaluated and explained by Claude — not by keyword
+matching. The Connector does not force connections. When there is no
+meaningful adjacency, the item stands on its own as curation. Silence
+is better than a stretch.
 
 Usage:
-    python -m scripts.content_agent.connector
-    python -m scripts.content_agent.connector --input path/to/editor_filtered.json
-    python -m scripts.content_agent.connector --skip-pke
-    python -m scripts.content_agent.connector --skip-books
+    python scripts/content_agent/connector.py
+    python scripts/content_agent/connector.py --input path/to/editor_filtered.json
+    python scripts/content_agent/connector.py --skip-pke
+    python scripts/content_agent/connector.py --skip-books
 """
 
 import json
@@ -23,6 +24,7 @@ from pathlib import Path
 from dataclasses import dataclass, asdict
 from typing import Optional
 
+from dotenv import load_dotenv
 import requests
 
 logger = logging.getLogger(__name__)
@@ -91,10 +93,9 @@ def find_pke_connections(
     item: dict, pke_url: str, min_similarity: float = 0.35
 ) -> list[Connection]:
     """Find personal corpus connections for a curated item."""
-    # Query with the item's title + summary for semantic matching
     query_text = item["title"]
     if item.get("summary"):
-        query_text += " " + item["summary"][:200]
+        query_text += " " + (item.get("summary") or "")[:200]
 
     results = query_pke(query_text, pke_url)
     connections = []
@@ -118,7 +119,7 @@ def find_pke_connections(
 
 
 # ---------------------------------------------------------------------------
-# Book database queries
+# Book database — Claude-powered matching
 # ---------------------------------------------------------------------------
 
 
@@ -137,55 +138,162 @@ def load_book_database(path: Optional[Path] = None) -> list[dict]:
     return data.get("books", [])
 
 
-def find_book_connections(item: dict, books: list[dict]) -> list[Connection]:
-    """Find thematic connections between a curated item and the book database."""
+BOOK_MATCHING_PROMPT = """You are the Connector agent in a content curation system.
+You are given a set of curated articles and a library of books the reader has read.
+
+Your job is to identify genuine intellectual connections between articles and books.
+NOT word overlap. NOT surface-level theme matching. Genuine conceptual adjacency —
+the kind of connection a well-read person would make in conversation.
+
+Rules:
+- Only return connections you would confidently defend to an intelligent reader
+- "Power" appearing in both an article about payment networks and a book about
+  political philosophy is NOT a connection
+- A book about the panopticon connecting to an article about AI surveillance
+  in banking IS a connection — because both examine how governance architectures
+  make compliance self-enforcing
+- Quality over quantity — most articles will have zero or one book connection
+- If no genuine connection exists, return an empty list for that article
+- For each connection, write ONE sentence explaining the intellectual relationship
+
+Respond ONLY with valid JSON. No preamble, no markdown backticks.
+Format:
+{
+  "book_connections": [
+    {
+      "item_hash": "abc123...",
+      "connections": [
+        {
+          "book_title": "Discipline and Punish",
+          "book_author": "Michel Foucault",
+                    "explanation": "Both examine how governance architectures make compliance \
+self-enforcing — Foucault's panopticon and the Three Lines Model serve the same \
+structural function."
+        }
+      ]
+    }
+  ]
+}
+"""
+
+
+def find_book_connections_via_claude(items: list[dict], books: list[dict], api_key: str) -> dict:
+    """Use Claude to find genuine intellectual connections between articles and books."""
+    if not api_key:
+        logger.warning("No API key — skipping book connections")
+        return {"book_connections": []}
+
     if not books:
-        return []
+        return {"book_connections": []}
 
-    # Simple keyword matching against book themes
-    # This is v1 — future versions could use embeddings
-    item_text = (item.get("title", "") + " " + item.get("summary", "")).lower()
-    connections = []
+    # Prepare items for Claude — title, summary, editor reason
+    items_for_review = []
+    for item in items:
+        items_for_review.append(
+            {
+                "item_hash": item.get("item_hash", ""),
+                "title": item["title"],
+                "summary": (item.get("summary") or "")[:300],
+                "editor_reason": item.get("editor_reason", ""),
+            }
+        )
 
+    # Prepare books — title, author, core idea, themes
+    books_for_review = []
     for book in books:
-        themes = book.get("themes", [])
-        matching_themes = [t for t in themes if t.lower() in item_text]
+        books_for_review.append(
+            {
+                "title": book["title"],
+                "author": book.get("author", ""),
+                "core_idea": book.get("core_idea", ""),
+                "themes": book.get("themes", []),
+            }
+        )
 
-        if not matching_themes:
-            # Check for broader keyword overlap
-            keywords = book.get("keywords", [])
-            matching_themes = [k for k in keywords if k.lower() in item_text]
+    user_message = (
+        f"ARTICLES ({len(items_for_review)}):\n"
+        f"{json.dumps(items_for_review, indent=2)}\n\n"
+        f"BOOK LIBRARY ({len(books_for_review)} books):\n"
+        f"{json.dumps(books_for_review, indent=2)}"
+    )
 
-        if matching_themes:
-            connections.append(
+    try:
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            },
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 4096,
+                "system": BOOK_MATCHING_PROMPT,
+                "messages": [{"role": "user", "content": user_message}],
+            },
+            timeout=60,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        text = ""
+        for block in data.get("content", []):
+            if block.get("type") == "text":
+                text += block["text"]
+
+        text = text.strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1].rsplit("```", 1)[0]
+
+        return json.loads(text)
+
+    except (requests.RequestException, json.JSONDecodeError) as e:
+        logger.error(f"Book matching API call failed: {e}")
+        return {"book_connections": []}
+
+
+def apply_book_connections(items: list["ConnectedItem"], book_results: dict) -> None:
+    """Apply Claude's book connections to ConnectedItem objects."""
+    conn_map: dict[str, list[dict]] = {}
+    for entry in book_results.get("book_connections", []):
+        item_hash = entry.get("item_hash", "")
+        conn_map[item_hash] = entry.get("connections", [])
+
+    for item in items:
+        book_conns = conn_map.get(item.item_hash, [])
+        for bc in book_conns:
+            item.connections.append(
                 Connection(
                     source="books",
-                    matched_text=book.get("personal_note", book.get("core_idea", "")),
-                    title=f"{book['title']} by {book.get('author', 'Unknown')}",
-                    date=book.get("year_read"),
-                    relevance_note=f"Thematic overlap: {', '.join(matching_themes[:3])}",
+                    matched_text=bc.get("explanation", ""),
+                    title=f"{bc.get('book_title', '')} by {bc.get('book_author', '')}",
+                    date=None,
+                    relevance_note=bc.get("explanation", ""),
                 )
             )
-
-    return connections[:2]  # Cap at 2 book connections per item
+        item.connection_density = len(item.connections)
 
 
 # ---------------------------------------------------------------------------
-# Connection synthesis via Claude
+# Connection synthesis via Claude — PKE relevance notes
 # ---------------------------------------------------------------------------
 
 SYNTHESIS_SYSTEM_PROMPT = """You are the Connector agent in a content curation system.
-You have been given curated articles along with potential connections to personal
-journal entries, messages, and books from the reader's own history.
+You have been given curated articles along with matched passages from the reader's
+personal corpus — journal entries, messages, emails, and notes spanning years.
 
-Your job is to write a brief, natural relevance note for each connection — one
-sentence that describes WHY this personal content connects to the curated article.
+Your job is to write a brief, specific relevance note for each personal corpus
+connection — one sentence that explains WHY this personal content connects to
+the curated article. Be specific. Name what the note is about and how it relates.
 
-Do not force connections. If a connection is weak or coincidental, say so or
-mark it as "weak". The reader values genuine adjacency over manufactured insight.
-
-When a connection is strong — when the personal history illuminates the article
-or the article illuminates the personal history — name it clearly.
+Rules:
+- Be concrete: "Your 2017 notes on blockchain AML enforcement connect because
+  both examine how regulated systems fail when actors operate outside visibility"
+  is good.
+- Be honest: if the connection is weak or coincidental, mark keep as false.
+- Never force a connection. If the matched text has no meaningful relationship
+  to the article, discard it.
+- The reader is sharp and has no patience for vague connections.
 
 Respond ONLY with valid JSON. No preamble, no markdown backticks.
 Format:
@@ -196,7 +304,7 @@ Format:
       "connections": [
         {
           "index": 0,
-          "relevance_note": "Your 2019 journal entry about...",
+          "relevance_note": "Your 2017 notes on blockchain AML...",
           "keep": true
         }
       ]
@@ -207,9 +315,37 @@ Format:
 
 
 def synthesize_connections(items_with_connections: list[dict], api_key: str) -> dict:
-    """Use Claude to write relevance notes and filter weak connections."""
+    """Use Claude to write relevance notes and filter weak PKE connections."""
     if not api_key:
         logger.warning("No API key — skipping connection synthesis")
+        return {"annotated_connections": []}
+
+    # Build a focused payload — article info + matched texts
+    synthesis_payload = []
+    for item in items_with_connections:
+        pke_connections = []
+        for i, conn in enumerate(item.get("connections", [])):
+            if conn.get("source") == "pke":
+                pke_connections.append(
+                    {
+                        "index": i,
+                        "note_title": conn.get("title", ""),
+                        "date": conn.get("date"),
+                        "matched_text": conn.get("matched_text", "")[:300],
+                    }
+                )
+
+        if pke_connections:
+            synthesis_payload.append(
+                {
+                    "item_hash": item.get("item_hash", ""),
+                    "article_title": item.get("title", ""),
+                    "article_summary": (item.get("summary") or "")[:200],
+                    "pke_connections": pke_connections,
+                }
+            )
+
+    if not synthesis_payload:
         return {"annotated_connections": []}
 
     try:
@@ -224,7 +360,7 @@ def synthesize_connections(items_with_connections: list[dict], api_key: str) -> 
                 "model": "claude-sonnet-4-20250514",
                 "max_tokens": 4096,
                 "system": SYNTHESIS_SYSTEM_PROMPT,
-                "messages": [{"role": "user", "content": json.dumps(items_with_connections)}],
+                "messages": [{"role": "user", "content": json.dumps(synthesis_payload)}],
             },
             timeout=60,
         )
@@ -245,6 +381,38 @@ def synthesize_connections(items_with_connections: list[dict], api_key: str) -> 
     except (requests.RequestException, json.JSONDecodeError) as e:
         logger.error(f"Connection synthesis failed: {e}")
         return {"annotated_connections": []}
+
+
+def apply_synthesis(items: list["ConnectedItem"], synthesis: dict) -> None:
+    """Apply Claude's relevance notes to PKE connections and remove weak ones."""
+    synth_map: dict[str, list[dict]] = {}
+    for entry in synthesis.get("annotated_connections", []):
+        synth_map[entry.get("item_hash", "")] = entry.get("connections", [])
+
+    for item in items:
+        annotations = synth_map.get(item.item_hash, [])
+        if not annotations:
+            continue
+
+        ann_map = {a["index"]: a for a in annotations}
+        filtered_connections: list[Connection] = []
+
+        for i, conn in enumerate(item.connections):
+            if conn.source == "books":
+                # Book connections already have explanations from the matching step
+                filtered_connections.append(conn)
+            elif i in ann_map:
+                ann = ann_map[i]
+                if ann.get("keep", False):
+                    conn.relevance_note = ann.get("relevance_note", "")
+                    filtered_connections.append(conn)
+                # If keep is False, connection is dropped silently
+            else:
+                # No annotation for this connection — keep it but flag
+                filtered_connections.append(conn)
+
+        item.connections = filtered_connections
+        item.connection_density = len(filtered_connections)
 
 
 # ---------------------------------------------------------------------------
@@ -290,6 +458,8 @@ def run_connector(
     """Run the Connector on Editor output."""
     import os
 
+    load_dotenv()
+
     # Find latest Editor output
     if input_path is None:
         filtered_dir = Path(__file__).parent / "output" / "filtered"
@@ -311,24 +481,21 @@ def run_connector(
     if books:
         logger.info(f"Book database loaded: {len(books)} books")
 
-    # Find connections for each item
-    connected_items = []
-    for item in editor_items:
-        connections = []
+    # Get API key for Claude calls
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
-        # PKE connections
+    # ---------------------------------------------------------------------------
+    # Step 1: Find PKE corpus connections for each item
+    # ---------------------------------------------------------------------------
+    connected_items: list[ConnectedItem] = []
+    for item in editor_items:
+        connections: list[Connection] = []
+
         if not skip_pke:
             pke_conns = find_pke_connections(item, pke_url)
             connections.extend(pke_conns)
             if pke_conns:
                 logger.info(f"  PKE: {len(pke_conns)} connections for '{item['title'][:50]}'")
-
-        # Book connections
-        if not skip_books and books:
-            book_conns = find_book_connections(item, books)
-            connections.extend(book_conns)
-            if book_conns:
-                logger.info(f"  Books: {len(book_conns)} connections for '{item['title'][:50]}'")
 
         connected = ConnectedItem(
             title=item["title"],
@@ -346,29 +513,44 @@ def run_connector(
         )
         connected_items.append(connected)
 
-    # Synthesize relevance notes via Claude (if connections exist)
-    items_with_conns = [asdict(i) for i in connected_items if i.connections]
-    if items_with_conns:
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-        if api_key:
-            logger.info(f"Synthesizing {len(items_with_conns)} items with connections...")
-            synthesis = synthesize_connections(items_with_conns, api_key)
+    # ---------------------------------------------------------------------------
+    # Step 2: Synthesize PKE connections — get relevance notes from Claude
+    # ---------------------------------------------------------------------------
+    items_with_pke = [
+        asdict(i) for i in connected_items if any(c.source == "pke" for c in i.connections)
+    ]
+    if items_with_pke and api_key:
+        logger.info(f"Synthesizing PKE connections for {len(items_with_pke)} items...")
+        synthesis = synthesize_connections(items_with_pke, api_key)
+        apply_synthesis(connected_items, synthesis)
 
-            # Apply relevance notes back
-            synth_map = {a["item_hash"]: a for a in synthesis.get("annotated_connections", [])}
-            for item in connected_items:
-                if item.item_hash in synth_map:
-                    annotations = synth_map[item.item_hash]
-                    filtered_conns = []
-                    for ann in annotations.get("connections", []):
-                        idx = ann.get("index", 0)
-                        if ann.get("keep", True) and idx < len(item.connections):
-                            item.connections[idx].relevance_note = ann.get("relevance_note", "")
-                            filtered_conns.append(item.connections[idx])
-                    item.connections = filtered_conns
-                    item.connection_density = len(filtered_conns)
+        # Count surviving PKE connections
+        pke_kept = sum(1 for i in connected_items for c in i.connections if c.source == "pke")
+        pke_dropped = sum(
+            1
+            for entry in synthesis.get("annotated_connections", [])
+            for a in entry.get("connections", [])
+            if not a.get("keep", True)
+        )
+        logger.info(f"  PKE synthesis: {pke_kept} kept, {pke_dropped} dropped as weak")
 
+    # ---------------------------------------------------------------------------
+    # Step 3: Find book connections via Claude
+    # ---------------------------------------------------------------------------
+    if not skip_books and books and api_key:
+        logger.info("Finding book connections via Claude...")
+        book_results = find_book_connections_via_claude(editor_items, books, api_key)
+        apply_book_connections(connected_items, book_results)
+
+        book_count = sum(1 for i in connected_items for c in i.connections if c.source == "books")
+        items_with_books = sum(
+            1 for i in connected_items if any(c.source == "books" for c in i.connections)
+        )
+        logger.info(f"  Books: {book_count} connections across {items_with_books} items")
+
+    # ---------------------------------------------------------------------------
     # Summary
+    # ---------------------------------------------------------------------------
     with_connections = sum(1 for i in connected_items if i.connections)
     total_connections = sum(i.connection_density for i in connected_items)
     logger.info(

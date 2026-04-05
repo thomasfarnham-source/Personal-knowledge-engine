@@ -1012,7 +1012,7 @@ at scale, using the header index infrastructure built in milestone 9.13.
   populated before ingestion to prevent conversation fragmentation
 
 ### 🔵 9.15 — Content Curation Agent
-**Status: FOUNDATION BUILT — 2026-03-29**
+**Status: PIPELINE TESTED — 2026-04-04**
 Branch: main (scripts/content_agent/)
 
 What this milestone builds:
@@ -1174,16 +1174,23 @@ Dependencies:
     PKE Retrieval API — running at localhost:8000
 
 Next actions:
-    1. Sign up for NewsAPI free tier, add key to .env
-    2. Install feedparser in venv
-    3. Validate RSS feed URLs (run Scout with --dry-run)
-    4. Fix import paths if needed (pipeline.py imports)
-    5. Run Scout → Editor → Connector chain manually
-    6. Set Obsidian vault path and run full pipeline
-    7. Start populating books.json
-    8. After one week: run first weekly synthesis
-    9. After one month: Producer review of Scout raw output,
-       recalibrate mandate and sources
+    1. Make GitHub repo private (security — personal docs exposed)
+    2. Remove broken RSS feeds from sources.json:
+       - ArXiv cs.AI and cs.CL (SSL cert failure on Windows)
+       - Allen AI Blog (malformed XML)
+       - HBR (encoding mismatch — find working URL or remove)
+    3. Set up GitHub Actions workflow for daily automated run
+    4. Add API keys as GitHub Secrets (ANTHROPIC_API_KEY, NEWSAPI_KEY)
+    5. Configure output delivery to OneDrive for Obsidian sync
+    6. Install Obsidian Shell Commands plugin
+    7. Configure Obsidian commands:
+       - "Enrich today's brief" (Connector + PKE API, local)
+       - "Weekly synthesis" (Composer weekly mode, local)
+    8. Start populating books.json
+    9. Run daily for one week, then first weekly synthesis
+    10. Producer review of Scout raw output after 30 days
+
+---
 
 
 ### Future Content Channels (not yet milestoned)

@@ -1,0 +1,1337 @@
+{
+  "scan_date": "2026-04-05",
+  "scan_timestamp": "2026-04-05T12:22:27.941951+00:00",
+  "item_count": 133,
+  "items": [
+    {
+      "title": "Vida portfolio solutions on J.P. Morgan Markets",
+      "url": "https://www.risk.net/insight/risk-management/7963317/vida-portfolio-solutions-on-jp-morgan-markets",
+      "source_name": "Risk.net - Risk Management",
+      "pillar": "practitioner",
+      "published": "2026-03-31T16:48:53+00:00",
+      "summary": "J.P. Morgan’s Vida portfolio solutions are being applied across financing and portfolio management, reflecting a shift towards more scalable, integrated investment infrastructure",
+      "origin": "rss",
+      "item_hash": "ffbc70672d3a3552"
+    },
+    {
+      "title": "FCC hits telecom firm that enabled bank impersonation calls",
+      "url": "https://www.americanbanker.com/news/fcc-hits-telecom-firm-that-enabled-bank-impersonation-calls",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-04T00:16:24+00:00",
+      "summary": "The Federal Communications Commission proposed a $4.5 million fine against Voxbeam Telecommunications, which it accused of facilitating fraud scams. Many of the calls spoofed phone numbers belonging to American banks.",
+      "origin": "rss",
+      "item_hash": "58e5e4b2ca9797da"
+    },
+    {
+      "title": "Jobs rebound in March, unemployment at 4.3%",
+      "url": "https://www.americanbanker.com/news/jobs-rebound-in-march-unemployment-at-4-3",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-03T19:10:02+00:00",
+      "summary": "New jobs in health care largely drove the gains, while the federal workforce and finance continued to shrink.",
+      "origin": "rss",
+      "item_hash": "524cc00e86b79c9a"
+    },
+    {
+      "title": "Earned wage access programs are simply not loan products",
+      "url": "https://www.americanbanker.com/opinion/earned-wage-access-programs-are-simply-not-loan-products",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-03T16:30:00+00:00",
+      "summary": "EWA programs benefit workers across the country, making it more likely that they will be able to avoid high-cost credit products like payday loans. Efforts to restrict them will harm consumers.",
+      "origin": "rss",
+      "item_hash": "615e0c5346ea7f7f"
+    },
+    {
+      "title": "How Fifth Third grew embedded banking fee revenue 53% in 2025",
+      "url": "https://www.americanbanker.com/payments/news/how-fifth-third-grew-embedded-banking-fee-revenue-53-in-2025",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-03T16:00:00+00:00",
+      "summary": "The Cincinnati bank's Newline business is now its fastest growing commercial payments segment.",
+      "origin": "rss",
+      "item_hash": "b3bb559e721d4aae"
+    },
+    {
+      "title": "US banks with Paris offices on alert due to terror threats",
+      "url": "https://www.americanbanker.com/news/u-s-banks-with-paris-offices-on-alert-amid-terror-threats",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-03T02:10:12+00:00",
+      "summary": "After French authorities stopped a bomb plot against a Bank of America office in Paris, security experts warned banks to step up their preparations for terror attacks.",
+      "origin": "rss",
+      "item_hash": "a6f9abea0e7edd38"
+    },
+    {
+      "title": "$71.4M in regulated stablecoins stolen in crypto heist",
+      "url": "https://www.americanbanker.com/news/71-4m-in-regulated-stablecoins-stolen-in-crypto-heist",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-03T02:06:00+00:00",
+      "summary": "The largest crypto theft of 2026 hit Drift Protocol after attackers exploited a small security council, putting a spotlight on DeFi vulnerabilities.",
+      "origin": "rss",
+      "item_hash": "f54280c823943ee5"
+    },
+    {
+      "title": "Coinbase receives conditional approval for OCC trust charter",
+      "url": "https://www.americanbanker.com/news/coinbase-receives-conditional-approval-for-occ-trust-charter",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T23:45:16+00:00",
+      "summary": "The cryptocurrency exchange is the latest digital asset firm to receive a trust bank charter from the Office of the Comptroller of the Currency.",
+      "origin": "rss",
+      "item_hash": "b2f0dc1c745725d3"
+    },
+    {
+      "title": "US card networks accelerate bets on agentic AI",
+      "url": "https://www.americanbanker.com/payments/news/visa-mastercard-expand-agentic-ai-deployments",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T23:16:28+00:00",
+      "summary": "Visa has deployed advanced artificial intelligence to help solve payment disputes and expedite corporate bill pay; while Mastercard adds Hong Kong to its global agentic commerce network.",
+      "origin": "rss",
+      "item_hash": "720b399e068c84dd"
+    },
+    {
+      "title": "Mortgage credit costs jumped 10x in 4 years: CHLA",
+      "url": "https://www.americanbanker.com/news/mortgage-credit-costs-jumped-10x-in-4-years-chla",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T23:11:31+00:00",
+      "summary": "Which parties are responsible for the surge persisted as a source of debate as community lenders released updated survey data reflecting their average expense.",
+      "origin": "rss",
+      "item_hash": "6413030d6d26bb5c"
+    },
+    {
+      "title": "Mortgage rates hit a 7-month high, as buyers retreat",
+      "url": "https://www.americanbanker.com/news/mortgage-rates-hit-a-5-week-high-as-buyers-retreat",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-02T22:12:55+00:00",
+      "summary": "The 30-year fixed rate climbed to 6.46% this week, its highest mark since September, as mortgage applications fell 10.4% and sellers outnumber buyers by a record 46%.",
+      "origin": "rss",
+      "item_hash": "e5d14b8779041bdc"
+    },
+    {
+      "title": "Job Pivots in the Age of AI: Lessons From Mike Mulligan and His Steam Shovel",
+      "url": "https://sloanreview.mit.edu/article/job-pivots-in-the-age-of-ai-lessons-from-mike-mulligan-and-his-steam-shovel/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-02T16:00:54+00:00",
+      "summary": "Matt Harrison Clough As organizations like Amazon, PwC, and Microsoft have announced AI-fueled layoffs, it’s no surprise that half of Americans have expressed concern about AI’s larger potential impact on their jobs. Of course, companies can attribute layoffs to AI efficiencies while trimming workforces for various reasons. Yet there is no question that artificial intelligence [&#8230;]",
+      "origin": "rss",
+      "item_hash": "7892214bb679b098"
+    },
+    {
+      "title": "The Best Customers to Study When Scaling Into a New Market",
+      "url": "https://sloanreview.mit.edu/article/the-best-customers-to-study-when-scaling-into-a-new-market/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-01T16:00:41+00:00",
+      "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Getty Images For tech companies worldwide, expanding into a new market is both a rite of passage and a moment of truth. It represents the transition from early promise to meaningful scale — an opportunity to increase revenue, signal growth potential to investors, and unlock powerful sources of differentiation, such as [&#8230;]",
+      "origin": "rss",
+      "item_hash": "f6f6e7cfcc55f92c"
+    },
+    {
+      "title": "Level Up Your Crisis Management Skills",
+      "url": "https://sloanreview.mit.edu/article/level-up-your-crisis-management-skills/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-03-31T16:00:22+00:00",
+      "summary": "Michael Austin/theispot.com The Research The authors conducted in-depth interviews with senior leaders ﻿with direct experience guiding large, complex systems through unexpected shocks. Their sample included a former prime minister, CEOs, board chairs and directors of multinational corporations, a central bank governor, a﻿ national chief of defense, and a national fire marshal. Participants represented a diversity [&#8230;]",
+      "origin": "rss",
+      "item_hash": "6bbfbd167a415270"
+    },
+    {
+      "title": "When Not to Use AI",
+      "url": "https://sloanreview.mit.edu/article/when-not-to-use-ai/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-03-30T16:00:23+00:00",
+      "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Getty Images AI promises to make managers more productive and give them access to more information more quickly. It can draft plans, summarize reports, and even coach you on how to deliver feedback. Yet the same technology that accelerates decision-making can also erode your judgment, if you let it. Rely on [&#8230;]",
+      "origin": "rss",
+      "item_hash": "667366e039725559"
+    },
+    {
+      "title": "FCPA Compliance Programs Are Missing Important Nuances About How Bribery Works in the Persian Gulf",
+      "url": "https://www.corporatecomplianceinsights.com/fcpa-compliance-programs-missing-nuances-bribery-persian-gulf/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-01T16:02:09+00:00",
+      "summary": "Applying a Western compliance framework can obscure the tell-tale signs of fraud and corruption in Gulf Cooperation Council markets. Majid Mumtaz, an internal audit and governance leader in the GCC, explores these challenges through the lens of four cases spanning more than a decade that reveal why controls in place weren’t calibrated for gulf cultural, economic and political norms.\nThe post FCPA Compliance Programs Are Missing Important Nuances About How Bribery Works in the Persian Gulf appear",
+      "origin": "rss",
+      "item_hash": "ed935334a68c5c6c"
+    },
+    {
+      "title": "What Detractors Keep Getting Wrong About the FCPA",
+      "url": "https://www.corporatecomplianceinsights.com/what-detractors-keeping-getting-wrong-about-fcpa/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-01T16:00:48+00:00",
+      "summary": "FCPA rewards companies; it doesn’t hamstring them \nThe post What Detractors Keep Getting Wrong About the FCPA appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "112daa7234df891f"
+    },
+    {
+      "title": "Smaller Investment Advisers Staring Down June Deadline on Reg S-P",
+      "url": "https://www.corporatecomplianceinsights.com/smaller-investment-advisers-june-deadline-reg-s-p/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-31T16:02:51+00:00",
+      "summary": "Incident response programs, service provider oversight and 30-day notification requirements on the agenda\nThe post Smaller Investment Advisers Staring Down June Deadline on Reg S-P appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "be3394f028291c78"
+    },
+    {
+      "title": "US Targeting TCOs’ Role in ‘Scam Centers’",
+      "url": "https://www.corporatecomplianceinsights.com/us-targeting-tco-role-scam-centers/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-31T16:00:26+00:00",
+      "summary": "Companies in banking, social media, fintech and telecommunications will have opportunity to coordinate with feds\nThe post US Targeting TCOs’ Role in ‘Scam Centers’ appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "f76d1ecb9e58c7c1"
+    },
+    {
+      "title": "When Efficiency Becomes Fragility",
+      "url": "https://www.corporatecomplianceinsights.com/when-efficiency-becomes-fragility/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-30T16:02:27+00:00",
+      "summary": "It may be time to reconsider your structure: raze, enrich and grow \nThe post When Efficiency Becomes Fragility appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "07f303dec3a70144"
+    },
+    {
+      "title": "Is the Three Lines Model Still Valid in the Agentic Era?",
+      "url": "https://www.corporatecomplianceinsights.com/is-three-lines-model-still-valid-agentic-era/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-03-30T16:00:51+00:00",
+      "summary": "Humans in the loop — actually empowered to act\nThe post Is the Three Lines Model Still Valid in the Agentic Era? appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "7da0d6ad20734317"
+    },
+    {
+      "title": "When trauma becomes trope",
+      "url": "https://aeon.co/essays/how-might-humanitarian-journalism-be-done-better?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-03T15:00:00+00:00",
+      "summary": "Humanitarian journalism is a moral calling to document human suffering. But in practice, it’s an ethically murky undertaking- by Cathy OttenRead on Aeon",
+      "origin": "rss",
+      "item_hash": "5b2c327331dc0768"
+    },
+    {
+      "title": "The hidden world of plant roots",
+      "url": "https://aeon.co/videos/what-a-plants-decision-making-reveals-about-intelligence?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-02T15:01:00+00:00",
+      "summary": "Plant roots don’t have a nervous system, yet can produce sophisticated responses. What does that say about intelligence?- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "a9dd58a21bd8b17a"
+    },
+    {
+      "title": "The house is a work of art",
+      "url": "https://aeon.co/essays/frank-lloyd-wright-as-a-mirror-of-the-american-condition?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-02T15:00:00+00:00",
+      "summary": "Frank Lloyd Wright exalted the individual and made ordinary life beautiful. But his life was marked by scandal and grief- by Andrew DemingRead on Aeon",
+      "origin": "rss",
+      "item_hash": "006d1c9682073b3e"
+    },
+    {
+      "title": "The Medici’s lost garden of wonders",
+      "url": "https://aeon.co/videos/the-rise-and-fall-of-pratolino-tuscanys-proto-theme-park?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-01T15:01:00+00:00",
+      "summary": "The rise and fall of the Medici’s ingeniously engineered ‘Garden of Wonders’: the Pratolino ‘proto-theme park’ in Tuscany- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "90e5f59d9ba458d5"
+    },
+    {
+      "title": "Banking beyond the law",
+      "url": "https://aeon.co/essays/the-underground-bankers-who-reshape-the-flow-of-global-money?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-31T15:00:00+00:00",
+      "summary": "A centuries-old network of secret codes and shadowy brokers continues to outpace financial systems controlled by the state- by Miles KellermanRead on Aeon",
+      "origin": "rss",
+      "item_hash": "467a0c5747b54001"
+    },
+    {
+      "title": "A search for answers",
+      "url": "https://aeon.co/videos/in-search-of-truth-and-fun-at-princeton-university-1973?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-30T15:01:00+00:00",
+      "summary": "When Princeton University asked two directors to produce a marketing video, it became a work of art – and a time capsule- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "873684726362c4a9"
+    },
+    {
+      "title": "The hypercurious mind",
+      "url": "https://aeon.co/essays/how-the-hypercuriosity-of-adhd-may-have-helped-humans-thrive?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-30T15:00:00+00:00",
+      "summary": "ADHD isn’t merely a dysfunction. It’s best understood as an impulsive motivational drive for novel information- by Anne-Laure Le CunffRead on Aeon",
+      "origin": "rss",
+      "item_hash": "7aba6a33a58e810c"
+    },
+    {
+      "title": "Australian government and Anthropic sign MOU for AI safety and research",
+      "url": "https://www.anthropic.com/news/australia-MOU",
+      "source_name": "Anthropic News",
+      "pillar": "builder",
+      "published": "2026-03-31T05:00:00+00:00",
+      "summary": "Australian government and Anthropic sign MOU for AI safety and research",
+      "origin": "rss",
+      "item_hash": "b3be35db7b67841e"
+    },
+    {
+      "title": "Societal Impacts",
+      "url": "https://www.anthropic.com/research/team/societal-impacts",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Societal Impacts",
+      "origin": "rss",
+      "item_hash": "87717fc65423856a"
+    },
+    {
+      "title": "Interpretability",
+      "url": "https://www.anthropic.com/research/team/interpretability",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Interpretability",
+      "origin": "rss",
+      "item_hash": "dfc21a319f95a75d"
+    },
+    {
+      "title": "Economic Research",
+      "url": "https://www.anthropic.com/research/team/economic-research",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Economic Research",
+      "origin": "rss",
+      "item_hash": "71cbf8a3e893b1c0"
+    },
+    {
+      "title": "Alignment",
+      "url": "https://www.anthropic.com/research/team/alignment",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Alignment",
+      "origin": "rss",
+      "item_hash": "43e19cac5ca4688d"
+    },
+    {
+      "title": "OpenAI acquires TBPN",
+      "url": "https://openai.com/index/openai-acquires-tbpn",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-02T15:30:00+00:00",
+      "summary": "OpenAI acquires TBPN to accelerate global conversations around AI and support independent media, expanding dialogue with builders, businesses, and the broader tech community.",
+      "origin": "rss",
+      "item_hash": "86685a01860027de"
+    },
+    {
+      "title": "Codex now offers more flexible pricing for teams",
+      "url": "https://openai.com/index/codex-flexible-pricing-for-teams",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-02T15:00:00+00:00",
+      "summary": "Codex now includes pay-as-you-go pricing for ChatGPT Business and Enterprise, providing teams a more flexible option to start and scale adoption.",
+      "origin": "rss",
+      "item_hash": "22c2ff8bad8cfd85"
+    },
+    {
+      "title": "Gradient Labs gives every bank customer an AI account manager",
+      "url": "https://openai.com/index/gradient-labs",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-01T07:00:00+00:00",
+      "summary": "Gradient Labs uses GPT-4.1 and GPT-5.4 mini and nano to power AI agents that automate banking support workflows with low latency and high reliability.",
+      "origin": "rss",
+      "item_hash": "a0904673d8e83392"
+    },
+    {
+      "title": "Accelerating the next phase of AI",
+      "url": "https://openai.com/index/accelerating-the-next-phase-ai",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-03-31T18:00:00+00:00",
+      "summary": "OpenAI raises $122 billion in new funding to expand frontier AI globally, invest in next-generation compute, and meet growing demand for ChatGPT, Codex, and enterprise AI.",
+      "origin": "rss",
+      "item_hash": "9f84e2e45d87466b"
+    },
+    {
+      "title": "Helping disaster response teams turn AI into action across Asia",
+      "url": "https://openai.com/index/helping-disaster-response-teams-asia",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-03-30T03:15:00+00:00",
+      "summary": "AI for Disaster Response in Asia: OpenAI Workshop with Gates Foundation",
+      "origin": "rss",
+      "item_hash": "c720bf728da92d55"
+    },
+    {
+      "title": "scan-for-secrets 0.2",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T09:07:13+00:00",
+      "summary": "Release: scan-for-secrets 0.2\n    \nCLI tool now streams results as they are found rather than waiting until the end, which is better for large directories.\n-d/--directory option can now be used multiple times to scan multiple directories.\nNew -f/--file option for specifying one or more individual files to scan.\nNew scan_directory_iter(), scan_file() and scan_file_iter() Python API functions.\nNew -v/--verbose option which shows each directory that is being scanned.",
+      "origin": "rss",
+      "item_hash": "2f8f4c620a4c1187"
+    },
+    {
+      "title": "scan-for-secrets 0.1.1",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T08:39:33+00:00",
+      "summary": "Release: scan-for-secrets 0.1.1\n    \n\nAdded documentation of the escaping schemes that are also scanned.\nRemoved unnecessary repr escaping scheme, which was already covered by json.",
+      "origin": "rss",
+      "item_hash": "92cacca2adf1507a"
+    },
+    {
+      "title": "scan-for-secrets 0.1",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-3/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T08:27:13+00:00",
+      "summary": "Release: scan-for-secrets 0.1\n    I like publishing transcripts of local Claude Code sessions using my claude-code-transcripts tool but I'm often paranoid that one of my API keys or similar secrets might inadvertently be revealed in the detailed log files.\nI built this new Python scanning tool to help reassure me. You can feed it secrets and have it scan for them in a specified directory:\nuvx scan-for-secrets $OPENAI_API_KEY -d logs-to-publish/\n\nIf you leave off the -d it defaults to the current",
+      "origin": "rss",
+      "item_hash": "57d1f910f4b5c909"
+    },
+    {
+      "title": "research-llm-apis 2026-04-04",
+      "url": "https://simonwillison.net/2026/Apr/5/research-llm-apis/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T05:32:11+00:00",
+      "summary": "Release: research-llm-apis 2026-04-04\n    I'm working on a major change to my LLM Python library and CLI tool. LLM provides an abstraction layer over hundreds of different LLMs from dozens of different vendors thanks to its plugin system, and some of those vendors have grown new features over the past year which LLM's abstraction layer can't handle, such as server-side tool execution.\nTo help design that new abstraction layer I had Claude Code read through the Python client libraries for Anthrop",
+      "origin": "rss",
+      "item_hash": "f1550a7b1bee5f49"
+    },
+    {
+      "title": "Quoting Kyle Daigle",
+      "url": "https://simonwillison.net/2026/Apr/4/kyle-daigle/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T07:20:17+00:00",
+      "summary": "[GitHub] platform activity is surging. There were 1 billion commits in 2025. Now, it's 275 million per week, on pace for 14 billion this year if growth remains linear (spoiler: it won't.)\nGitHub Actions has grown from 500M minutes/week in 2023 to 1B minutes/week in 2025, and now 2.1B minutes so far this week.\n&mdash; Kyle Daigle, COO, GitHub\n\n    Tags: github, github-actions",
+      "origin": "rss",
+      "item_hash": "0a7085483044bef1"
+    },
+    {
+      "title": "Vulnerability Research Is Cooked",
+      "url": "https://simonwillison.net/2026/Apr/3/vulnerability-research-is-cooked/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T04:59:08+00:00",
+      "summary": "Vulnerability Research Is Cooked\nThomas Ptacek's take on the sudden and enormous impact the latest frontier models are having on the field of vulnerability research.\n\nWithin the next few months, coding agents will drastically alter both the practice and the economics of exploit development. Frontier model improvement won’t be a slow burn, but rather a step function. Substantial amounts of high-impact vulnerability research (maybe even most of it) will happen simply by pointing an agent at a sour",
+      "origin": "rss",
+      "item_hash": "3bda934596581d60"
+    },
+    {
+      "title": "The cognitive impact of coding agents",
+      "url": "https://simonwillison.net/2026/Apr/3/cognitive-cost/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T04:57:04+00:00",
+      "summary": "A fun thing about recording a podcast with a professional like Lenny Rachitsky is that his team know how to slice the resulting video up into TikTok-sized short form vertical videos. Here's one he shared on Twitter today which ended up attracting over 1.1m views!\n\n\nThat was 48 seconds. Our full conversation lasted 1 hour 40 minutes.\n\n    Tags: ai-ethics, coding-agents, agentic-engineering, generative-ai, podcast-appearances, ai, llms, cognitive-debt",
+      "origin": "rss",
+      "item_hash": "e73a62b981d0af01"
+    },
+    {
+      "title": "Quoting Willy Tarreau",
+      "url": "https://simonwillison.net/2026/Apr/3/willy-tarreau/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T02:48:22+00:00",
+      "summary": "On the kernel security list we've seen a huge bump of reports. We were between 2 and 3 per week maybe two years ago, then reached probably 10 a week over the last year with the only difference being only AI slop, and now since the beginning of the year we're around 5-10 per day depending on the days (fridays and tuesdays seem the worst). Now most of these reports are correct, to the point that we had to bring in more maintainers to help us.\nAnd we're now seeing on a daily basis something that ne",
+      "origin": "rss",
+      "item_hash": "e68bf8b3fb1b5daa"
+    },
+    {
+      "title": "Quoting Daniel Stenberg",
+      "url": "https://simonwillison.net/2026/Apr/3/daniel-stenberg/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T02:46:07+00:00",
+      "summary": "The challenge with AI in open source security has transitioned from an AI slop tsunami into more of a ... plain security report tsunami. Less slop but lots of reports. Many of them really good.\nI'm spending hours per day on this now. It's intense.\n&mdash; Daniel Stenberg, lead developer of cURL\n\n    Tags: daniel-stenberg, security, curl, generative-ai, ai, llms, ai-security-research",
+      "origin": "rss",
+      "item_hash": "e678c5d1f221ac9d"
+    },
+    {
+      "title": "Quoting Greg Kroah-Hartman",
+      "url": "https://simonwillison.net/2026/Apr/3/greg-kroah-hartman/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T02:44:41+00:00",
+      "summary": "Months ago, we were getting what we called 'AI slop,' AI-generated security reports that were obviously wrong or low quality. It was kind of funny. It didn't really worry us.\nSomething happened a month ago, and the world switched. Now we have real reports. All open source projects have real reports that are made with AI, but they're good, and they're real.\n&mdash; Greg Kroah-Hartman, Linux kernel maintainer (bio), in conversation with Steven J. Vaughan-Nichols\n\n    Tags: security, linux, generat",
+      "origin": "rss",
+      "item_hash": "0113ad514b19c493"
+    },
+    {
+      "title": "Can JavaScript Escape a CSP Meta Tag Inside an Iframe?",
+      "url": "https://simonwillison.net/2026/Apr/3/test-csp-iframe-escape/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T21:05:00+00:00",
+      "summary": "Research: Can JavaScript Escape a CSP Meta Tag Inside an Iframe?\n    In trying to build my own version of Claude Artifacts I got curious about options for applying CSP headers to content in sandboxed iframes without using a separate domain to host the files. Turns out you can inject <meta http-equiv=\"Content-Security-Policy\"...> tags at the top of the iframe content and they'll be obeyed even if subsequent untrusted JavaScript tries to manipulate them.\n    \n        Tags: iframes, security, javas",
+      "origin": "rss",
+      "item_hash": "3127272337da0f4b"
+    },
+    {
+      "title": "The Axios supply chain attack used individually targeted social engineering",
+      "url": "https://simonwillison.net/2026/Apr/3/supply-chain-social-engineering/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T18:54:53+00:00",
+      "summary": "The Axios team have published a full postmortem on the supply chain attack which resulted in a malware dependency going out in a release the other day, and it involved a sophisticated social engineering campaign targeting one of their maintainers directly. Here's Jason Saayman'a description of how that worked:\n\nso the attack vector mimics what google has documented here: https://cloud.google.com/blog/topics/threat-intelligence/unc1069-targets-cryptocurrency-ai-social-engineering\nthey tailored th",
+      "origin": "rss",
+      "item_hash": "42942153d9cef86b"
+    },
+    {
+      "title": "Highlights from my conversation about agentic engineering on Lenny's Podcast",
+      "url": "https://simonwillison.net/2026/Apr/2/lennys-podcast/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T01:40:47+00:00",
+      "summary": "I was a guest on Lenny Rachitsky's podcast, in a new episode titled An AI state of the union: We've passed the inflection point, dark factories are coming, and automation timelines. It's available on YouTube, Spotify, and Apple Podcasts. Here are my highlights from our conversation, with relevant links.\n\n \n\n\n  The November inflection point\n  Software engineers as bellwethers for other information workers\n  Writing code on my phone\n  Responsible vibe coding\n  Dark Factories and StrongDM\n  The bot",
+      "origin": "rss",
+      "item_hash": "1ead71acd94a0208"
+    },
+    {
+      "title": "Gemma 4: Byte for byte, the most capable open models",
+      "url": "https://simonwillison.net/2026/Apr/2/gemma-4/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T23:28:54+00:00",
+      "summary": "Gemma 4: Byte for byte, the most capable open models\nFour new vision-capable Apache 2.0 licensed reasoning LLMs from Google DeepMind, sized at 2B, 4B, 31B, plus a 26B-A4B Mixture-of-Experts.\nGoogle emphasize \"unprecedented level of intelligence-per-parameter\", providing yet more evidence that creating small useful models is one of the hottest areas of research right now.\nThey actually label the two smaller models as E2B and E4B for \"Effective\" parameter size. The system card explains:\n\nThe small",
+      "origin": "rss",
+      "item_hash": "e6b983b8027a4031"
+    },
+    {
+      "title": "llm-gemini 0.30",
+      "url": "https://simonwillison.net/2026/Apr/2/llm-gemini/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T23:25:08+00:00",
+      "summary": "Release: llm-gemini 0.30\n    New models gemini-3.1-flash-lite-preview, gemma-4-26b-a4b-it and gemma-4-31b-it. See my notes on Gemma 4.\n    \n        Tags: gemini, llm, gemma",
+      "origin": "rss",
+      "item_hash": "f9f80bbdfaa1ed42"
+    },
+    {
+      "title": "March 2026 sponsors-only newsletter",
+      "url": "https://simonwillison.net/2026/Apr/2/march-newsletter/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T10:15:04+00:00",
+      "summary": "I just sent the March edition of my sponsors-only monthly newsletter. If you are a sponsor (or if you start a sponsorship now) you can access it here. In this month's newsletter:\n\nMore agentic engineering patterns\nStreaming experts with MoE models on a Mac\nModel releases in March\nVibe porting\nSupply chain attacks against PyPI and NPM\nStuff I shipped\nWhat I'm using, March 2026 edition\nAnd a couple of museums\n\nHere's a copy of the February newsletter as a preview of what you'll get. Pay $10/month ",
+      "origin": "rss",
+      "item_hash": "905785e53685bd2e"
+    },
+    {
+      "title": "datasette-llm 0.1a6",
+      "url": "https://simonwillison.net/2026/Apr/1/datasette-llm-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T04:01:37+00:00",
+      "summary": "Release: datasette-llm 0.1a6\n    \n\nThe same model ID no longer needs to be repeated in both the default model and allowed models lists - setting it as a default model automatically adds it to the allowed models list. #6\nImproved documentation for Python API usage.\n\n\n    \n        Tags: llm, datasette",
+      "origin": "rss",
+      "item_hash": "0fb3c320e1305a65"
+    },
+    {
+      "title": "datasette-enrichments-llm 0.2a1",
+      "url": "https://simonwillison.net/2026/Apr/1/datasette-enrichments-llm-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-02T03:00:34+00:00",
+      "summary": "Release: datasette-enrichments-llm 0.2a1\n    \n\nThe actor who triggers an enrichment is now passed to the llm.mode(... actor=actor) method. #3\n\n\n    \n        Tags: enrichments, llm, datasette",
+      "origin": "rss",
+      "item_hash": "a91f943588c22453"
+    },
+    {
+      "title": "datasette-extract 0.3a0",
+      "url": "https://simonwillison.net/2026/Apr/1/datasette-extract/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-01T08:32:16+00:00",
+      "summary": "Release: datasette-extract 0.3a0\n    \nNow uses datasette-llm to manage model configuration, which means you can control which models are available for extraction tasks using the extract purpose and LLM model configuration. #38\n\n    \n        Tags: llm, datasette",
+      "origin": "rss",
+      "item_hash": "30d43569919a6239"
+    },
+    {
+      "title": "datasette-enrichments-llm 0.2a0",
+      "url": "https://simonwillison.net/2026/Apr/1/datasette-enrichments-llm/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-01T08:28:44+00:00",
+      "summary": "Release: datasette-enrichments-llm 0.2a0\n    \n\nThis plugin now uses datasette-llm to configure and manage models. This means it's possible to specify which models should be made available for enrichments, using the new enrichments purpose.\n\n\n    \n        Tags: llm, datasette",
+      "origin": "rss",
+      "item_hash": "e653b958d61f7797"
+    },
+    {
+      "title": "AWS engineer reports PostgreSQL perf halved by Linux 7.0, fix may not be easy",
+      "url": "https://www.phoronix.com/news/Linux-7.0-AWS-PostgreSQL-Drop",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T05:13:55+00:00",
+      "summary": "https://lore.kernel.org/lkml/yr3inlzesdb45n6i6lpbimwr7b25kqk...\n\nComments URL: https://news.ycombinator.com/item?id=47644864\nPoints: 319\n# Comments: 93",
+      "origin": "rss",
+      "item_hash": "420a48de75db6f5f"
+    },
+    {
+      "title": "German implementation of eIDAS will require an Apple/Google account to function",
+      "url": "https://bmi.usercontent.opencode.de/eudi-wallet/wallet-development-documentation-public/latest/architecture-concept/06-mobile-devices/02-mdvm/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T03:57:44+00:00",
+      "summary": "Article URL: https://bmi.usercontent.opencode.de/eudi-wallet/wallet-development-documentation-public/latest/architecture-concept/06-mobile-devices/02-mdvm/\nComments URL: https://news.ycombinator.com/item?id=47644406\nPoints: 329\n# Comments: 292",
+      "origin": "rss",
+      "item_hash": "be17167c7878b9e6"
+    },
+    {
+      "title": "How many products does Microsoft have named 'Copilot'?",
+      "url": "https://teybannerman.com/strategy/2026/03/31/how-many-microsoft-copilot-are-there.html",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T00:39:43+00:00",
+      "summary": "Article URL: https://teybannerman.com/strategy/2026/03/31/how-many-microsoft-copilot-are-there.html\nComments URL: https://news.ycombinator.com/item?id=47642569\nPoints: 677\n# Comments: 318",
+      "origin": "rss",
+      "item_hash": "ae79274a9fed0dd5"
+    },
+    {
+      "title": "LLM Wiki – example of an \"idea file\"",
+      "url": "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T21:57:45+00:00",
+      "summary": "https://x.com/karpathy/status/2040470801506541998https://xcancel.com/karpathy/status/2040470801506541998\n\nComments URL: https://news.ycombinator.com/item?id=47640875\nPoints: 217\n# Comments: 66",
+      "origin": "rss",
+      "item_hash": "91fc906a99431e8a"
+    },
+    {
+      "title": "Show HN: A game where you build a GPU",
+      "url": "https://jaso1024.com/mvidia/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T21:45:54+00:00",
+      "summary": "Thought the resources for GPU arch were lacking, so here we are\n\nComments URL: https://news.ycombinator.com/item?id=47640728\nPoints: 788\n# Comments: 161",
+      "origin": "rss",
+      "item_hash": "8d794ebe71446e3b"
+    },
+    {
+      "title": "Apple approves driver that lets Nvidia eGPUs work with Arm Macs",
+      "url": "https://www.theverge.com/tech/907003/apple-approves-driver-that-lets-nvidia-egpus-work-with-arm-macs",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T21:16:10+00:00",
+      "summary": "Article URL: https://www.theverge.com/tech/907003/apple-approves-driver-that-lets-nvidia-egpus-work-with-arm-macs\nComments URL: https://news.ycombinator.com/item?id=47640380\nPoints: 441\n# Comments: 197",
+      "origin": "rss",
+      "item_hash": "6535f65e31705652"
+    },
+    {
+      "title": "German men 18-45 need military permit for extended stays abroad",
+      "url": "https://www.dw.com/en/german-men-need-military-permit-for-extended-stays-abroad/a-76662677",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T20:39:10+00:00",
+      "summary": "Article URL: https://www.dw.com/en/german-men-need-military-permit-for-extended-stays-abroad/a-76662677\nComments URL: https://news.ycombinator.com/item?id=47639976\nPoints: 373\n# Comments: 657",
+      "origin": "rss",
+      "item_hash": "20872d5c2882351b"
+    },
+    {
+      "title": "When legal sports betting surges, so do Americans' financial problems",
+      "url": "https://www.npr.org/2026/04/04/nx-s1-5773354/legal-sports-betting-research-credit-bankruptcy",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T20:14:06+00:00",
+      "summary": "Article URL: https://www.npr.org/2026/04/04/nx-s1-5773354/legal-sports-betting-research-credit-bankruptcy\nComments URL: https://news.ycombinator.com/item?id=47639727\nPoints: 202\n# Comments: 133",
+      "origin": "rss",
+      "item_hash": "e1a4eff0afbdd468"
+    },
+    {
+      "title": "Author of \"Careless People\" banned from saying anything negative about Meta",
+      "url": "https://www.thetimes.com/uk/technology-uk/article/sarah-wynn-williams-careless-people-meta-nrffdfpmf",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T19:48:26+00:00",
+      "summary": "Article URL: https://www.thetimes.com/uk/technology-uk/article/sarah-wynn-williams-careless-people-meta-nrffdfpmf\nComments URL: https://news.ycombinator.com/item?id=47639524\nPoints: 803\n# Comments: 517",
+      "origin": "rss",
+      "item_hash": "0b88aa99d00ac60f"
+    },
+    {
+      "title": "Components of a Coding Agent",
+      "url": "https://magazine.sebastianraschka.com/p/components-of-a-coding-agent",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T18:16:33+00:00",
+      "summary": "Article URL: https://magazine.sebastianraschka.com/p/components-of-a-coding-agent\nComments URL: https://news.ycombinator.com/item?id=47638810\nPoints: 248\n# Comments: 78",
+      "origin": "rss",
+      "item_hash": "4b5942c9e4a3eb42"
+    },
+    {
+      "title": "Embarrassingly simple self-distillation improves code generation",
+      "url": "https://arxiv.org/abs/2604.01193",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T15:26:21+00:00",
+      "summary": "Article URL: https://arxiv.org/abs/2604.01193\nComments URL: https://news.ycombinator.com/item?id=47637757\nPoints: 608\n# Comments: 182",
+      "origin": "rss",
+      "item_hash": "66ec66c88ed6c0a1"
+    },
+    {
+      "title": "Some Unusual Trees",
+      "url": "https://thoughts.wyounas.com/p/some-unusual-trees",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T14:04:19+00:00",
+      "summary": "Article URL: https://thoughts.wyounas.com/p/some-unusual-trees\nComments URL: https://news.ycombinator.com/item?id=47637287\nPoints: 278\n# Comments: 82",
+      "origin": "rss",
+      "item_hash": "5207446367ac7e68"
+    },
+    {
+      "title": "Gold overtakes U.S. Treasuries as the largest foreign reserve asset",
+      "url": "https://economictimes.indiatimes.com/news/international/us/gold-overtakes-u-s-treasuries-as-the-worlds-largest-foreign-reserve-asset-in-2026-can-gold-challenge-the-u-s-dollars-dominance-and-hold-its-ground/articleshow/126420128.cms?from=mdr",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T07:30:32+00:00",
+      "summary": "Article URL: https://economictimes.indiatimes.com/news/international/us/gold-overtakes-u-s-treasuries-as-the-worlds-largest-foreign-reserve-asset-in-2026-can-gold-challenge-the-u-s-dollars-dominance-and-hold-its-ground/articleshow/126420128.cms?from=mdr\nComments URL: https://news.ycombinator.com/item?id=47635056\nPoints: 260\n# Comments: 234",
+      "origin": "rss",
+      "item_hash": "87d594391a882696"
+    },
+    {
+      "title": "Delve removed from Y Combinator",
+      "url": "https://www.ycombinator.com/companies/delve",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T06:37:02+00:00",
+      "summary": "Article URL: https://www.ycombinator.com/companies/delve\nComments URL: https://news.ycombinator.com/item?id=47634690\nPoints: 481\n# Comments: 293",
+      "origin": "rss",
+      "item_hash": "37205a098aff6e4f"
+    },
+    {
+      "title": "The FAA’s flight restriction for drones is an attempt to criminalize filming ICE",
+      "url": "https://www.eff.org/deeplinks/2026/04/faas-temporary-flight-restriction-drones-blatant-attempt-criminalize-filming-ice",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T04:56:32+00:00",
+      "summary": "Article URL: https://www.eff.org/deeplinks/2026/04/faas-temporary-flight-restriction-drones-blatant-attempt-criminalize-filming-ice\nComments URL: https://news.ycombinator.com/item?id=47633947\nPoints: 535\n# Comments: 181",
+      "origin": "rss",
+      "item_hash": "be804cbdc84e9cf4"
+    },
+    {
+      "title": "Claude Code Found a Linux Vulnerability Hidden for 23 Years",
+      "url": "https://mtlynch.io/claude-code-found-linux-vulnerability/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T04:46:51+00:00",
+      "summary": "Article URL: https://mtlynch.io/claude-code-found-linux-vulnerability/\nComments URL: https://news.ycombinator.com/item?id=47633855\nPoints: 396\n# Comments: 249",
+      "origin": "rss",
+      "item_hash": "7ff8d2fb586abc72"
+    },
+    {
+      "title": "Tell HN: Anthropic no longer allowing Claude Code subscriptions to use OpenClaw",
+      "url": "https://news.ycombinator.com/item?id=47633396",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T03:55:24+00:00",
+      "summary": "Received the following email from Anthropic:Hi,Starting April 4 at 12pm PT / 8pm BST, you’ll no longer be able to use your Claude subscription limits for third-party harnesses including OpenClaw. You can still use them with your Claude account, but they will require extra usage, a pay-as-you-go option billed separately from your subscription.Your subscription still covers all Claude products, including Claude Code and Claude Cowork. To keep using third-party harnesses with your Claude login, tur",
+      "origin": "rss",
+      "item_hash": "6d26b37e8e88167f"
+    },
+    {
+      "title": "Run Linux containers on Android, no root required",
+      "url": "https://github.com/ExTV/Podroid",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T03:23:55+00:00",
+      "summary": "Article URL: https://github.com/ExTV/Podroid\nComments URL: https://news.ycombinator.com/item?id=47633131\nPoints: 212\n# Comments: 82",
+      "origin": "rss",
+      "item_hash": "e0a16e88ccab4b92"
+    },
+    {
+      "title": "Iran strikes leave Amazon availability zones \"hard down\" in Bahrain and Dubai",
+      "url": "https://www.bigtechnology.com/p/iran-strikes-leave-amazon-availability",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T02:25:55+00:00",
+      "summary": "Article URL: https://www.bigtechnology.com/p/iran-strikes-leave-amazon-availability\nComments URL: https://news.ycombinator.com/item?id=47632503\nPoints: 239\n# Comments: 119",
+      "origin": "rss",
+      "item_hash": "18ff57e10fe8f8f4"
+    },
+    {
+      "title": "Oracle files H-1B visa petitions amid mass layoffs",
+      "url": "https://nationaltoday.com/us/tx/austin/news/2026/04/03/oracle-files-thousands-of-h-1b-visa-petitions-amid-mass-layoffs/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-04T01:21:23+00:00",
+      "summary": "Article URL: https://nationaltoday.com/us/tx/austin/news/2026/04/03/oracle-files-thousands-of-h-1b-visa-petitions-amid-mass-layoffs/\nComments URL: https://news.ycombinator.com/item?id=47631732\nPoints: 511\n# Comments: 306",
+      "origin": "rss",
+      "item_hash": "60dd929a64102521"
+    },
+    {
+      "title": "Hedge funds' first-quarter returns are rolling in. Here's how big names fared in choppy markets.",
+      "url": "https://www.businessinsider.com/march-2026-first-quarter-hedge-fund-performance-balyasny-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-01T17:18:54Z",
+      "summary": "$33 billion Balyasny lost money through the year's first three months thanks to a rocky March.",
+      "origin": "newsapi",
+      "item_hash": "54fc840b62c19931"
+    },
+    {
+      "title": "The AI Arms Race – Why Unified Exposure Management Is Becoming a Boardroom Priority",
+      "url": "https://thehackernews.com/2026/03/the-ai-arms-race-why-unified-exposure.html",
+      "source_name": "Internet",
+      "pillar": "practitioner",
+      "published": "2026-03-31T11:30:00Z",
+      "summary": "The cybersecurity landscape is accelerating at an unprecedented rate. What is emerging is not simply a rise in the number of vulnerabilities or tools, but a dramatic increase in speed. Speed of attack, speed of exploitation, and speed of change across modern …",
+      "origin": "newsapi",
+      "item_hash": "dd94868bea6f2e3f"
+    },
+    {
+      "title": "Tech CEOs Suddenly Love Blaming AI For Mass Job Cuts",
+      "url": "https://slashdot.org/story/26/03/30/043233/tech-ceos-suddenly-love-blaming-ai-for-mass-job-cuts",
+      "source_name": "Slashdot.org",
+      "pillar": "practitioner",
+      "published": "2026-03-30T15:00:00Z",
+      "summary": "An anonymous reader quotes a report from the BBC: Sweeping job cuts at Big Tech companies have become an annual tradition. How executives explain those decisions, however, has changed. Out are buzzwords like efficiency, over-hiring, and too many management la…",
+      "origin": "newsapi",
+      "item_hash": "68670fff1fb04b74"
+    },
+    {
+      "title": "AI & cost of legacy systems in UK banking",
+      "url": "https://www.techradar.com/pro/ai-and-cost-of-legacy-systems-in-uk-banking",
+      "source_name": "TechRadar",
+      "pillar": "practitioner",
+      "published": "2026-04-02T14:04:23Z",
+      "summary": "UK banks spend ~£3.3bn/year just maintaining legacy core systems, and AI is exposing the cracks.",
+      "origin": "newsapi",
+      "item_hash": "c03b42e959f1e4c8"
+    },
+    {
+      "title": "Vertex AI Vulnerability Exposes Google Cloud Data and Private Artifacts",
+      "url": "https://thehackernews.com/2026/03/vertex-ai-vulnerability-exposes-google.html",
+      "source_name": "Internet",
+      "pillar": "practitioner",
+      "published": "2026-03-31T13:09:00Z",
+      "summary": "Cybersecurity researchers have disclosed a security \"blind spot\" in Google Cloud's Vertex AI platform that could allow artificial intelligence (AI) agents to be weaponized by an attacker to gain unauthorized access to sensitive data and compromise an organiza…",
+      "origin": "newsapi",
+      "item_hash": "2fa7673cfe536cc8"
+    },
+    {
+      "title": "DHS shutdown fuels cybersecurity concerns as Iran-linked attacks continue across US",
+      "url": "https://abcnews.com/Politics/dhs-shutdown-fuels-cybersecurity-concerns-iran-linked-cyberattacks/story?id=131546421",
+      "source_name": "Abcnews.com",
+      "pillar": "practitioner",
+      "published": "2026-03-31T09:05:42Z",
+      "summary": "DHS shutdown grows worries that U.S. cyber defenses have taken a hit, as Iran-linked attacks continue.",
+      "origin": "newsapi",
+      "item_hash": "291824f50d5f8406"
+    },
+    {
+      "title": "Parnassus Mid Cap Fund Sold Fidelity National Information Services (FIS) Due to Reduced Conviction in Its Long-Term Structural Growth",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/parnassus-mid-cap-fund-sold-144044610.html",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "practitioner",
+      "published": "2026-03-31T14:40:44Z",
+      "summary": "Parnassus Investments, an investment management company, released the “Parnassus Mid Cap Fund” fourth-quarter 2025 investor letter. A copy of the letter is...",
+      "origin": "newsapi",
+      "item_hash": "e10f6d187eccaeb1"
+    },
+    {
+      "title": "Vestmark Names CTO Freedom Dumlao Chief AI Officer",
+      "url": "https://www.wealthmanagement.com/career-moves/vestmark-names-cto-freedom-dumlao-chief-ai-officer",
+      "source_name": "Wealthmanagement.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T16:13:31Z",
+      "summary": "Freedom Dumlao takes on an expanded role at Vestmark, leading AI strategy to enhance portfolio management, trading and compliance processes",
+      "origin": "newsapi",
+      "item_hash": "b87cdb6b89c388c7"
+    },
+    {
+      "title": "The leadership dilemma: Governing the “Agentic AI” workforce",
+      "url": "https://www.techradar.com/pro/the-leadership-dilemma-governing-the-agentic-ai-workforce",
+      "source_name": "TechRadar",
+      "pillar": "practitioner",
+      "published": "2026-04-03T11:04:47Z",
+      "summary": "Agentic AI is reshaping the workforce, however, without strong governance, autonomy can become organizational risk.",
+      "origin": "newsapi",
+      "item_hash": "740314851fa19086"
+    },
+    {
+      "title": "JPMorgan, Pimco Say Bond Market Is Underestimating Slowdown Risk",
+      "url": "https://finance.yahoo.com/economy/policy/articles/jpmorgan-pimco-bond-market-underestimating-190000791.html",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "practitioner",
+      "published": "2026-03-29T19:00:00Z",
+      "summary": "(Bloomberg) -- Some of Wall Street’s biggest bond-fund managers say financial markets are underestimating the risk that the US war in Iran will cause a sharp...",
+      "origin": "newsapi",
+      "item_hash": "c8f566aaf5d8291c"
+    },
+    {
+      "title": "AI Agent Runs the ‘I’m Being Censored’ Playbook After Getting Banned from Wikipedia",
+      "url": "https://gizmodo.com/ai-agent-runs-the-im-being-censored-playbook-after-getting-banned-from-wikipedia-2000739845",
+      "source_name": "Gizmodo.com",
+      "pillar": "practitioner",
+      "published": "2026-03-30T19:45:08Z",
+      "summary": "Expect the bot to be a guest on Joe Rogan soon.",
+      "origin": "newsapi",
+      "item_hash": "fd62b7832db35a81"
+    },
+    {
+      "title": "Inference Engine for Apple Silicon",
+      "url": "https://github.com/ondeinference/onde",
+      "source_name": "Github.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T15:29:49Z",
+      "summary": "On-device inference engine for Apple silicon. Contribute to ondeinference/onde development by creating an account on GitHub.",
+      "origin": "newsapi",
+      "item_hash": "e765fdd95f0d314b"
+    },
+    {
+      "title": "Why LLM-Generated Passwords Are Dangerously Insecure",
+      "url": "https://www.irregular.com/publications/vibe-password-generation",
+      "source_name": "Irregular.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T00:39:53Z",
+      "summary": "LLM-generated passwords appear strong, but are fundamentally insecure. Testing across GPT, Claude, and Gemini revealed highly predictable patterns: repeated passwords across runs, skewed character distributions, and dramatically lower entropy than expected. C…",
+      "origin": "newsapi",
+      "item_hash": "89017c102bce2ca6"
+    },
+    {
+      "title": "Anthropic leak reveals Claude Code tracking user frustration and raises new questions about AI privacy",
+      "url": "https://www.scientificamerican.com/article/anthropic-leak-reveals-claude-code-tracking-user-frustration-and-raises-new/",
+      "source_name": "Scientific American",
+      "pillar": "practitioner",
+      "published": "2026-04-02T15:40:00Z",
+      "summary": "Code that reads your frustration is the least interesting part of the story of this accidental leak from Anthropic. The leak reveals how AI tools are also concealing their own role in the work they help produce",
+      "origin": "newsapi",
+      "item_hash": "20951a91f7533a21"
+    },
+    {
+      "title": "Bitwarden Integrates with OneCLI Agent Vault",
+      "url": "https://www.onecli.sh/blog/bitwarden-agent-access-sdk-onecli",
+      "source_name": "Onecli.sh",
+      "pillar": "practitioner",
+      "published": "2026-03-30T15:59:01Z",
+      "summary": "Bitwarden Agent Access SDK integrates with OneCLI. Credentials stay in the vault, OneCLI proxies API calls and enforces policies. Agents never see keys.",
+      "origin": "newsapi",
+      "item_hash": "5aee1f05818d2de8"
+    },
+    {
+      "title": "APERION releases SmartFlow SDK for secure, on-prem AI governance without cloud reliance",
+      "url": "https://www.helpnetsecurity.com/2026/04/03/aperion-smartflow-sdk-ai-governance/",
+      "source_name": "Help Net Security",
+      "pillar": "practitioner",
+      "published": "2026-04-03T07:06:01Z",
+      "summary": "APERION launched SmartFlow SDK, providing a secure, on-premises path for enterprises migrating away from compromised cloud-based AI gateways. The launch coincides with a 200% increase in web traffic since the March 24 LiteLLM supply chain attack that compromi…",
+      "origin": "newsapi",
+      "item_hash": "5ebf77296a9a4536"
+    },
+    {
+      "title": "HD Audio Driver for Windows 98SE / Me",
+      "url": "https://github.com/andrew-hoffman/wdmhda",
+      "source_name": "Github.com",
+      "pillar": "practitioner",
+      "published": "2026-03-30T05:01:07Z",
+      "summary": "HD Audio driver for Windows 98SE / ME. Contribute to andrew-hoffman/WDMHDA development by creating an account on GitHub.",
+      "origin": "newsapi",
+      "item_hash": "3d4e5ef889b1bc95"
+    },
+    {
+      "title": "Salomi, a research repo on extreme low-bit transformer quantization",
+      "url": "https://github.com/OrionsLock/SALOMI",
+      "source_name": "Github.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T04:08:12Z",
+      "summary": "Research code for extreme low-bit transformer quantization and inference. - OrionsLock/SALOMI",
+      "origin": "newsapi",
+      "item_hash": "a5cad6d3c0292882"
+    },
+    {
+      "title": "The State of Secrets Sprawl 2026: 9 Takeaways for CISOs",
+      "url": "https://thehackernews.com/2026/03/the-state-of-secrets-sprawl-2026-9.html",
+      "source_name": "Internet",
+      "pillar": "practitioner",
+      "published": "2026-03-30T11:30:00Z",
+      "summary": "Secrets sprawl isn't slowing down: in 2025, it accelerated faster than most security teams anticipated. GitGuardian's State of Secrets Sprawl 2026 report analyzed billions of commits across public GitHub and uncovered 29 million new hardcoded secrets in 2025 …",
+      "origin": "newsapi",
+      "item_hash": "2577f52bcfa15c08"
+    },
+    {
+      "title": "New infosec products of the month: March 2026",
+      "url": "https://www.helpnetsecurity.com/2026/04/03/new-infosec-products-of-the-month-march-2026/",
+      "source_name": "Help Net Security",
+      "pillar": "practitioner",
+      "published": "2026-04-03T04:00:58Z",
+      "summary": "Here’s a look at the most interesting products from the past month, featuring releases from Beazley, Bonfy.AI, Mend.io, Mimecast, NinjaOne, Novee, Intel 471, Singulr AI, Stellar Cyber, Teleport, and Vicarius. Beazley Exposure Management platform identifies ex…",
+      "origin": "newsapi",
+      "item_hash": "0db863bf7d735734"
+    },
+    {
+      "title": "OpenAI’s AGI boss is taking a leave of absence",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/906965/openais-agi-boss-is-taking-a-leave-of-absence",
+      "source_name": "The Verge",
+      "pillar": "practitioner",
+      "published": "2026-04-03T20:22:59Z",
+      "summary": "OpenAI is undergoing another round of C-suite changes, according to an internal memo viewed by The Verge. Fidji Simo, OpenAI's CEO of AGI deployment - who was until recently the company's CEO of Applications - says in the memo that she will be stepping away o…",
+      "origin": "newsapi",
+      "item_hash": "2be13a3e378effda"
+    },
+    {
+      "title": "McKinsey's new AI leadership playbook: flatten teams and move faster",
+      "url": "https://www.businessinsider.com/mckinsey-ai-agents-mangement-leadership-great-flattening-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T09:04:01Z",
+      "summary": "McKinsey and other consulting firms are using AI to streamline management structures — what some call The Great Flattening.",
+      "origin": "newsapi",
+      "item_hash": "fc5e738b8b5c481b"
+    },
+    {
+      "title": "Four Trends in AI Experimentation, Adoption, and Transformation - SPONSOR CONTENT FROM CAPTECH",
+      "url": "https://hbr.org/sponsored/2026/03/four-trends-in-ai-experimentation-adoption-and-transformation",
+      "source_name": "Harvard Business Review",
+      "pillar": "practitioner",
+      "published": "2026-03-31T14:00:00Z",
+      "summary": "Sponsor Content from CapTech.",
+      "origin": "newsapi",
+      "item_hash": "6621a674057bc9c4"
+    },
+    {
+      "title": "OpenAI sees a new round of executive shake-ups",
+      "url": "https://www.businessinsider.com/openai-executive-shake-up-coo-cmo-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-04T02:36:31Z",
+      "summary": "OpenAI COO, Brad Lightcap, will be moving into a new role in special projects, while two senior executives are stepping back for heath reasons.",
+      "origin": "newsapi",
+      "item_hash": "d49ec7ce22eeac9e"
+    },
+    {
+      "title": "Jack Dorsey outlines how AI will change Block's org chart — and replace managers with 'player-coaches'",
+      "url": "https://www.businessinsider.com/jack-dorsey-block-ai-managers-player-coaches-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-03-31T18:58:11Z",
+      "summary": "Jack Dorsey and Roelof Botha outlined Block's AI future one month after its sweeping 40% layoffs. Block will be a \"mini-AGI,\" they wrote.",
+      "origin": "newsapi",
+      "item_hash": "9cac28e54c81ac39"
+    },
+    {
+      "title": "The clock is ticking on law's billable hour, says a top Cleary Gottlieb lawyer",
+      "url": "https://www.businessinsider.com/cleary-gottlieb-lawyer-michael-gerstenzang-on-billable-hour-model-ai-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T09:00:01Z",
+      "summary": "For decades, elite corporate law firms have relied on the billable hour to fuel profits. Can the model survive the age of AI?",
+      "origin": "newsapi",
+      "item_hash": "54f081fc22194ad8"
+    },
+    {
+      "title": "Microsoft released 3 new AI models, ramping up competition with its close partner, OpenAI",
+      "url": "https://www.businessinsider.com/microsoft-ai-models-azure-mai-transcribe-voice-image-foundry-openai-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T12:39:58Z",
+      "summary": "Microsoft AI has made its in-house models for transcription, speech recognition, and image generation available on Foundry.",
+      "origin": "newsapi",
+      "item_hash": "5d5e8d80aa26c214"
+    },
+    {
+      "title": "10 power players behind the data center debt boom",
+      "url": "https://www.businessinsider.com/power-players-data-center-debt-boom-goldman-apollo-smbc-kkr-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-03-31T09:46:01Z",
+      "summary": "Wall Street is pouring billions into AI data centers. Meet the financiers from firms like Apollo, JPMorgan, and KKR funding the boom.",
+      "origin": "newsapi",
+      "item_hash": "5f6f64edff2db12f"
+    },
+    {
+      "title": "OpenAI raises $122B to accelerate the next phase of AI",
+      "url": "https://openai.com/index/accelerating-the-next-phase-ai/",
+      "source_name": "Openai.com",
+      "pillar": "practitioner",
+      "published": "2026-03-31T21:02:07Z",
+      "summary": "OpenAI raises $122 billion in new funding to expand frontier AI globally, invest in next-generation compute, and meet growing demand for ChatGPT, Codex, and enterprise AI.",
+      "origin": "newsapi",
+      "item_hash": "baca61f09ad04247"
+    },
+    {
+      "title": "I saw the AI apocalypse documentary. It made the stakes of the new technology feel even higher.",
+      "url": "https://www.businessinsider.com/ai-doc-apocaloptimist-lessons-sam-altman-demis-hassabis-dario-amodei-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "reader",
+      "published": "2026-03-30T09:31:01Z",
+      "summary": "In \"The AI Doc: Or How I Became an Apocaloptimist,\" the biggest names in artificial intelligence discuss a future full of potential and risk.",
+      "origin": "newsapi",
+      "item_hash": "0c6f3e710b198c3f"
+    },
+    {
+      "title": "Like it or not, AI is part of art school curriculums",
+      "url": "https://www.theverge.com/tech/903954/art-schools-generative-ai-education-creative-jobs",
+      "source_name": "The Verge",
+      "pillar": "reader",
+      "published": "2026-03-31T13:17:39Z",
+      "summary": "When my baby brother, a 3D modelling and animation student, talks to me about his projects and studies, the pride I usually feel is becoming increasingly tainted by a growing sense of dread. As a creative professional and former design student myself, I under…",
+      "origin": "newsapi",
+      "item_hash": "8b20fd9ef2c9084c"
+    },
+    {
+      "title": "Penalties stack up as AI spreads through the legal system",
+      "url": "https://www.npr.org/2026/04/03/nx-s1-5761454/penalties-stack-up-ai-spreads-through-legal-system",
+      "source_name": "NPR",
+      "pillar": "reader",
+      "published": "2026-04-03T09:00:00Z",
+      "summary": "Early scandals have not slowed lawyers' adoption of AI tools, even as court sanctions over fake legal briefs continue to rise.",
+      "origin": "newsapi",
+      "item_hash": "a040548bf2d5ff19"
+    },
+    {
+      "title": "Mathematical methods and human thought in the age of AI",
+      "url": "https://arxiv.org/abs/2603.26524",
+      "source_name": "Arxiv.org",
+      "pillar": "reader",
+      "published": "2026-03-30T11:05:37Z",
+      "summary": "Artificial intelligence (AI) is the name popularly given to a broad spectrum of computer tools designed to perform increasingly complex cognitive tasks, including many that used to solely be the province of humans. As these tools become exponentially sophisti…",
+      "origin": "newsapi",
+      "item_hash": "e529e4a845ee1377"
+    },
+    {
+      "title": "'Belief alone is not enough': New study reveals businesses are widely different when it comes to AI adoption — so what's the best course?",
+      "url": "https://www.techradar.com/pro/belief-alone-is-not-enough-new-study-reveals-businesses-are-widely-different-when-it-comes-to-ai-adoption-so-whats-the-best-course",
+      "source_name": "TechRadar",
+      "pillar": "reader",
+      "published": "2026-03-30T08:47:01Z",
+      "summary": "Artificial intelligence already holds the key to productivity success – it's the foundations and execution that are holding companies back.",
+      "origin": "newsapi",
+      "item_hash": "9d42ad679469b45d"
+    },
+    {
+      "title": "AI Pushing Students to Consider Changing Majors",
+      "url": "https://www.insidehighered.com/news/quick-takes/2026/04/02/ai-pushing-students-consider-changing-majors-data-shows",
+      "source_name": "Inside Higher Ed",
+      "pillar": "reader",
+      "published": "2026-04-02T07:00:00Z",
+      "summary": "Nearly half of college students have considered changing their major over concerns about the impact of artificial intelligence on the job market, new data shows.",
+      "origin": "newsapi",
+      "item_hash": "8b11472f48f1b9b6"
+    },
+    {
+      "title": "Daily briefing: Are boys really in crisis? What the science says",
+      "url": "https://www.nature.com/articles/d41586-026-01055-0",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-03-31T00:00:00Z",
+      "summary": "Concerns about boys are widespread, but evidence shows that worries are best understood in the context of all young people. Plus, the month’s best science images and a whole new way that vertebrates slurp.",
+      "origin": "newsapi",
+      "item_hash": "c29aaf64af600f35"
+    },
+    {
+      "title": "Five principles to lead a good life",
+      "url": "https://www.cbc.ca/radio/ideas/jesuit-bernard-lonergan-philosophy-9.7152003",
+      "source_name": "CBC News",
+      "pillar": "reader",
+      "published": "2026-04-02T22:24:13Z",
+      "summary": "What can we know and why does that matter? In one form or another, these are among the most ancient and pressing questions in philosophy.  These questions fired the imagination of Canadian Jesuit Bernard Lonergan, one of the most important Canadian thinkers y…",
+      "origin": "newsapi",
+      "item_hash": "fab84b4522928600"
+    },
+    {
+      "title": "AI-Sexual: How is AI expanding our understanding of sexuality?",
+      "url": "https://www.dazeddigital.com/life-culture/article/70015/1/ai-sexual-expanding-our-understanding-sexuality-erotica-joi-ai-chatgpt-desire?utm_source=Link&utm_medium=Link&utm_campaign=RSSFeed&utm_term=ai-sexual-how-is-ai-expanding-our-understanding-of-sexuality",
+      "source_name": "Dazed",
+      "pillar": "reader",
+      "published": "2026-03-30T16:10:00Z",
+      "summary": "A new study by Joi AI, a company specialising in AI erotica, suggests that artificial intelligence is already changing the face of desire",
+      "origin": "newsapi",
+      "item_hash": "64bada115f875587"
+    },
+    {
+      "title": "Hallucinated citations are polluting the scientific literature. What can be done?",
+      "url": "https://www.nature.com/articles/d41586-026-00969-z",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-01T00:00:00Z",
+      "summary": "Tens of thousands of publications from 2025 might include invalid references generated by AI, a Nature analysis suggests.",
+      "origin": "newsapi",
+      "item_hash": "d05b25e2773cffec"
+    },
+    {
+      "title": "Okta's CEO says all AI agents need a kill switch",
+      "url": "https://www.businessinsider.com/oktas-ceo-ai-agents-kill-switch-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-01T09:07:01Z",
+      "summary": "Okta, the company millions of workers use for safe computer access, is thinking about security with agentic AI. They recommend a \"kill switch.\"",
+      "origin": "newsapi",
+      "item_hash": "7f56e7c36ff1aaab"
+    },
+    {
+      "title": "Claude Code leak exposes a Tamagotchi-style ‘pet’ and an always-on agent",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/904776/anthropic-claude-source-code-leak",
+      "source_name": "The Verge",
+      "pillar": "builder",
+      "published": "2026-03-31T22:24:19Z",
+      "summary": "After Anthropic released Claude Code's 2.1.88 update, users quickly discovered that it contained a package with a source map file containing its TypeScript codebase, with one person on X calling attention to the leak and posting a file containing the code. Th…",
+      "origin": "newsapi",
+      "item_hash": "d5aa3d85c7db98d3"
+    },
+    {
+      "title": "Agentic AI Could Be the Next Big Breakthrough -- and This Tech Giant May Already Be Ahead",
+      "url": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_35787c94-cb07-45b5-b9c4-41b710385266",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "builder",
+      "published": "2026-03-31T05:31:00Z",
+      "summary": null,
+      "origin": "newsapi",
+      "item_hash": "62f157ed9d815bbf"
+    },
+    {
+      "title": "TurboQuant Has The Potential To Fundamentally Change How Search (And AI) Works via @sejournal, @marie_haynes",
+      "url": "https://www.mariehaynes.com/turboquant-has-the-potential-to-fundamentally-change-how-search-and-ai-works/",
+      "source_name": "Mariehaynes.com",
+      "pillar": "builder",
+      "published": "2026-03-30T13:00:54Z",
+      "summary": "See how Google’s TurboQuant breakthrough could unlock real-time semantic search, faster indexing, and more powerful AI-driven rankings.\nThe post TurboQuant Has The Potential To Fundamentally Change How Search (And AI) Works appeared first on Search Engine Jou…",
+      "origin": "newsapi",
+      "item_hash": "fde877e0b0b9f428"
+    },
+    {
+      "title": "Ahead of the SpaceX IPO, xAI Has Now Shed All 11 of Its Non-Elon Musk Founders",
+      "url": "https://gizmodo.com/ahead-of-the-spacex-ipo-xai-has-now-shed-all-11-of-its-non-elon-musk-founders-2000739465",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-03-29T09:00:39Z",
+      "summary": "What does it mean that everyone who shaped the company other than Elon Musk is gone now?",
+      "origin": "newsapi",
+      "item_hash": "70f62d13173c48b0"
+    },
+    {
+      "title": "Bluesky's Newest Product: an AI Tool That Gives You Custom Feeds",
+      "url": "https://tech.slashdot.org/story/26/03/29/1832200/blueskys-newest-product-an-ai-tool-that-gives-you-custom-feeds",
+      "source_name": "Slashdot.org",
+      "pillar": "builder",
+      "published": "2026-03-29T18:34:00Z",
+      "summary": "\"What happens when you can describe the social experience you want and have it built for you...?\" asks Bluesky? \"We've just started experimenting, but we're sharing it now because we want you to build alongside us.\" \n\nCalled \"Attie\" — because it's built with …",
+      "origin": "newsapi",
+      "item_hash": "60d06d48dc3e1376"
+    },
+    {
+      "title": "Functional programming accellerates agentic feature development",
+      "url": "https://cyrusradfar.com/thoughts/functional-programming-is-the-only-way-to-scale-with-ai",
+      "source_name": "Cyrusradfar.com",
+      "pillar": "builder",
+      "published": "2026-04-01T18:32:05Z",
+      "summary": "AI agents fail in production because of mutable state, hidden dependencies, and side effects the agent can't see. The fix is functional programming. SUPER and SPIRALS are the frameworks I use.",
+      "origin": "newsapi",
+      "item_hash": "dc5fa61ea790a13e"
+    },
+    {
+      "title": "Target has a warning if you use Google's AI to shop",
+      "url": "https://www.businessinsider.com/targets-google-gemini-ai-shop-terms-update-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-03-30T21:57:51Z",
+      "summary": "Target changed its terms and conditions ahead of a Google Gemini integration. It signals that customers should look closely at what they buy via AI.",
+      "origin": "newsapi",
+      "item_hash": "c52d83900c700d0e"
+    },
+    {
+      "title": "Source Code for Anthropic’s Claude Code Leaks at the Exact Wrong Time",
+      "url": "https://gizmodo.com/source-code-for-anthropics-claude-code-leaks-at-the-exact-wrong-time-2000740379",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-03-31T19:45:48Z",
+      "summary": "The company has some secrets that are now public.",
+      "origin": "newsapi",
+      "item_hash": "5f8595f82fd7f731"
+    },
+    {
+      "title": "Apple Removes iPhone Vibe Coding App from App Store",
+      "url": "https://gizmodo.com/apple-removes-iphone-vibe-coding-app-from-app-store-2000740084",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-03-31T09:30:59Z",
+      "summary": "Vibe coding apps reportedly keep running afoul of an App Store guideline called \"Guideline 2.5.2.\"",
+      "origin": "newsapi",
+      "item_hash": "c082e4ea1d0fc125"
+    },
+    {
+      "title": "Cursor’s New Tool Lets Users Delegate to a Team of Coding Agents",
+      "url": "https://gizmodo.com/cursors-new-tool-lets-users-delegate-to-a-team-of-coding-agents-2000741761",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-04-02T21:40:00Z",
+      "summary": "That's one way to move into a management role.",
+      "origin": "newsapi",
+      "item_hash": "d92dbdfdcdbecb6f"
+    },
+    {
+      "title": "Anthropic accidentally exposed part of Claude Code's internal source code",
+      "url": "https://www.businessinsider.com/anthropic-leak-reveals-claude-code-internal-source-code-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-01T03:22:06Z",
+      "summary": "Anthropic leaked part of the internal source code for Claude Code, its popular coding assistant. The company said it was due to human error.",
+      "origin": "newsapi",
+      "item_hash": "ba999fb707f3b4c7"
+    },
+    {
+      "title": "Microsoft Copilot Is Now Injecting Ads Into Pull Requests On GitHub",
+      "url": "https://slashdot.org/story/26/03/30/1649230/microsoft-copilot-is-now-injecting-ads-into-pull-requests-on-github",
+      "source_name": "Slashdot.org",
+      "pillar": "builder",
+      "published": "2026-03-30T17:00:00Z",
+      "summary": "Microsoft Copilot is reportedly injecting promotional \"tips\" into GitHub pull requests, with Neowin claiming more than 1.5 million PRs have been affected by messages advertising integrations like Raycast, Slack, Teams, and various IDEs. From the report: Accor…",
+      "origin": "newsapi",
+      "item_hash": "cb75c9cef073364f"
+    },
+    {
+      "title": "Show HN: Free AI Coding Skills for Rails",
+      "url": "https://www.railsreviews.com/skills",
+      "source_name": "Railsreviews.com",
+      "pillar": "builder",
+      "published": "2026-03-31T07:47:50Z",
+      "summary": "Free rules and conventions that teach your AI coding agent how to write Rails the right way. 37signals patterns, Phlex components, app scaffolding — install in your terminal, no signup required.",
+      "origin": "newsapi",
+      "item_hash": "5898add2b99ca88b"
+    },
+    {
+      "title": "The IDE Is Dead. Long Live the ADE",
+      "url": "https://lanes.sh/blog/the-ide-is-dead",
+      "source_name": "Lanes.sh",
+      "pillar": "builder",
+      "published": "2026-04-02T22:29:25Z",
+      "summary": "Why I told my engineers to delete their IDEs, what happened next, and where software development is actually heading.",
+      "origin": "newsapi",
+      "item_hash": "265fbd2492dc3057"
+    },
+    {
+      "title": "Cursor 3",
+      "url": "https://cursor.com/blog/cursor-3",
+      "source_name": "Cursor.com",
+      "pillar": "builder",
+      "published": "2026-04-02T18:13:41Z",
+      "summary": "Cursor 3 is a unified workspace for building software with agents.",
+      "origin": "newsapi",
+      "item_hash": "e13bb5f78ed0db7b"
+    }
+  ]
+}
