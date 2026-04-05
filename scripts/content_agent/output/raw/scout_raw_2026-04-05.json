@@ -1,6 +1,6 @@
 {
   "scan_date": "2026-04-05",
-  "scan_timestamp": "2026-04-05T12:22:27.941951+00:00",
+  "scan_timestamp": "2026-04-05T14:07:14.254258+00:00",
   "item_count": 133,
   "items": [
     {
@@ -8,7 +8,7 @@
       "url": "https://www.risk.net/insight/risk-management/7963317/vida-portfolio-solutions-on-jp-morgan-markets",
       "source_name": "Risk.net - Risk Management",
       "pillar": "practitioner",
-      "published": "2026-03-31T16:48:53+00:00",
+      "published": "2026-03-31T11:48:53+00:00",
       "summary": "J.P. Morgan’s Vida portfolio solutions are being applied across financing and portfolio management, reflecting a shift towards more scalable, integrated investment infrastructure",
       "origin": "rss",
       "item_hash": "ffbc70672d3a3552"
@@ -18,7 +18,7 @@
       "url": "https://www.americanbanker.com/news/fcc-hits-telecom-firm-that-enabled-bank-impersonation-calls",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-04T00:16:24+00:00",
+      "published": "2026-04-03T19:16:24+00:00",
       "summary": "The Federal Communications Commission proposed a $4.5 million fine against Voxbeam Telecommunications, which it accused of facilitating fraud scams. Many of the calls spoofed phone numbers belonging to American banks.",
       "origin": "rss",
       "item_hash": "58e5e4b2ca9797da"
@@ -28,7 +28,7 @@
       "url": "https://www.americanbanker.com/news/jobs-rebound-in-march-unemployment-at-4-3",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-03T19:10:02+00:00",
+      "published": "2026-04-03T14:10:02+00:00",
       "summary": "New jobs in health care largely drove the gains, while the federal workforce and finance continued to shrink.",
       "origin": "rss",
       "item_hash": "524cc00e86b79c9a"
@@ -38,7 +38,7 @@
       "url": "https://www.americanbanker.com/opinion/earned-wage-access-programs-are-simply-not-loan-products",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-03T16:30:00+00:00",
+      "published": "2026-04-03T11:30:00+00:00",
       "summary": "EWA programs benefit workers across the country, making it more likely that they will be able to avoid high-cost credit products like payday loans. Efforts to restrict them will harm consumers.",
       "origin": "rss",
       "item_hash": "615e0c5346ea7f7f"
@@ -48,7 +48,7 @@
       "url": "https://www.americanbanker.com/payments/news/how-fifth-third-grew-embedded-banking-fee-revenue-53-in-2025",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-03T16:00:00+00:00",
+      "published": "2026-04-03T11:00:00+00:00",
       "summary": "The Cincinnati bank's Newline business is now its fastest growing commercial payments segment.",
       "origin": "rss",
       "item_hash": "b3bb559e721d4aae"
@@ -58,7 +58,7 @@
       "url": "https://www.americanbanker.com/news/u-s-banks-with-paris-offices-on-alert-amid-terror-threats",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-03T02:10:12+00:00",
+      "published": "2026-04-02T21:10:12+00:00",
       "summary": "After French authorities stopped a bomb plot against a Bank of America office in Paris, security experts warned banks to step up their preparations for terror attacks.",
       "origin": "rss",
       "item_hash": "a6f9abea0e7edd38"
@@ -68,7 +68,7 @@
       "url": "https://www.americanbanker.com/news/71-4m-in-regulated-stablecoins-stolen-in-crypto-heist",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-03T02:06:00+00:00",
+      "published": "2026-04-02T21:06:00+00:00",
       "summary": "The largest crypto theft of 2026 hit Drift Protocol after attackers exploited a small security council, putting a spotlight on DeFi vulnerabilities.",
       "origin": "rss",
       "item_hash": "f54280c823943ee5"
@@ -78,7 +78,7 @@
       "url": "https://www.americanbanker.com/news/coinbase-receives-conditional-approval-for-occ-trust-charter",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-02T23:45:16+00:00",
+      "published": "2026-04-02T18:45:16+00:00",
       "summary": "The cryptocurrency exchange is the latest digital asset firm to receive a trust bank charter from the Office of the Comptroller of the Currency.",
       "origin": "rss",
       "item_hash": "b2f0dc1c745725d3"
@@ -88,7 +88,7 @@
       "url": "https://www.americanbanker.com/payments/news/visa-mastercard-expand-agentic-ai-deployments",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-02T23:16:28+00:00",
+      "published": "2026-04-02T18:16:28+00:00",
       "summary": "Visa has deployed advanced artificial intelligence to help solve payment disputes and expedite corporate bill pay; while Mastercard adds Hong Kong to its global agentic commerce network.",
       "origin": "rss",
       "item_hash": "720b399e068c84dd"
@@ -98,7 +98,7 @@
       "url": "https://www.americanbanker.com/news/mortgage-credit-costs-jumped-10x-in-4-years-chla",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-02T23:11:31+00:00",
+      "published": "2026-04-02T18:11:31+00:00",
       "summary": "Which parties are responsible for the surge persisted as a source of debate as community lenders released updated survey data reflecting their average expense.",
       "origin": "rss",
       "item_hash": "6413030d6d26bb5c"
@@ -108,7 +108,7 @@
       "url": "https://www.americanbanker.com/news/mortgage-rates-hit-a-5-week-high-as-buyers-retreat",
       "source_name": "American Banker",
       "pillar": "practitioner",
-      "published": "2026-04-02T22:12:55+00:00",
+      "published": "2026-04-02T17:12:55+00:00",
       "summary": "The 30-year fixed rate climbed to 6.46% this week, its highest mark since September, as mortgage applications fell 10.4% and sellers outnumber buyers by a record 46%.",
       "origin": "rss",
       "item_hash": "e5d14b8779041bdc"
@@ -118,7 +118,7 @@
       "url": "https://sloanreview.mit.edu/article/job-pivots-in-the-age-of-ai-lessons-from-mike-mulligan-and-his-steam-shovel/",
       "source_name": "MIT Sloan Management Review",
       "pillar": "practitioner",
-      "published": "2026-04-02T16:00:54+00:00",
+      "published": "2026-04-02T11:00:54+00:00",
       "summary": "Matt Harrison Clough As organizations like Amazon, PwC, and Microsoft have announced AI-fueled layoffs, it’s no surprise that half of Americans have expressed concern about AI’s larger potential impact on their jobs. Of course, companies can attribute layoffs to AI efficiencies while trimming workforces for various reasons. Yet there is no question that artificial intelligence [&#8230;]",
       "origin": "rss",
       "item_hash": "7892214bb679b098"
@@ -128,7 +128,7 @@
       "url": "https://sloanreview.mit.edu/article/the-best-customers-to-study-when-scaling-into-a-new-market/",
       "source_name": "MIT Sloan Management Review",
       "pillar": "practitioner",
-      "published": "2026-04-01T16:00:41+00:00",
+      "published": "2026-04-01T11:00:41+00:00",
       "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Getty Images For tech companies worldwide, expanding into a new market is both a rite of passage and a moment of truth. It represents the transition from early promise to meaningful scale — an opportunity to increase revenue, signal growth potential to investors, and unlock powerful sources of differentiation, such as [&#8230;]",
       "origin": "rss",
       "item_hash": "f6f6e7cfcc55f92c"
@@ -138,7 +138,7 @@
       "url": "https://sloanreview.mit.edu/article/level-up-your-crisis-management-skills/",
       "source_name": "MIT Sloan Management Review",
       "pillar": "practitioner",
-      "published": "2026-03-31T16:00:22+00:00",
+      "published": "2026-03-31T11:00:22+00:00",
       "summary": "Michael Austin/theispot.com The Research The authors conducted in-depth interviews with senior leaders ﻿with direct experience guiding large, complex systems through unexpected shocks. Their sample included a former prime minister, CEOs, board chairs and directors of multinational corporations, a central bank governor, a﻿ national chief of defense, and a national fire marshal. Participants represented a diversity [&#8230;]",
       "origin": "rss",
       "item_hash": "6bbfbd167a415270"
@@ -148,7 +148,7 @@
       "url": "https://sloanreview.mit.edu/article/when-not-to-use-ai/",
       "source_name": "MIT Sloan Management Review",
       "pillar": "practitioner",
-      "published": "2026-03-30T16:00:23+00:00",
+      "published": "2026-03-30T11:00:23+00:00",
       "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Getty Images AI promises to make managers more productive and give them access to more information more quickly. It can draft plans, summarize reports, and even coach you on how to deliver feedback. Yet the same technology that accelerates decision-making can also erode your judgment, if you let it. Rely on [&#8230;]",
       "origin": "rss",
       "item_hash": "667366e039725559"
@@ -158,7 +158,7 @@
       "url": "https://www.corporatecomplianceinsights.com/fcpa-compliance-programs-missing-nuances-bribery-persian-gulf/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-04-01T16:02:09+00:00",
+      "published": "2026-04-01T11:02:09+00:00",
       "summary": "Applying a Western compliance framework can obscure the tell-tale signs of fraud and corruption in Gulf Cooperation Council markets. Majid Mumtaz, an internal audit and governance leader in the GCC, explores these challenges through the lens of four cases spanning more than a decade that reveal why controls in place weren’t calibrated for gulf cultural, economic and political norms.\nThe post FCPA Compliance Programs Are Missing Important Nuances About How Bribery Works in the Persian Gulf appear",
       "origin": "rss",
       "item_hash": "ed935334a68c5c6c"
@@ -168,7 +168,7 @@
       "url": "https://www.corporatecomplianceinsights.com/what-detractors-keeping-getting-wrong-about-fcpa/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-04-01T16:00:48+00:00",
+      "published": "2026-04-01T11:00:48+00:00",
       "summary": "FCPA rewards companies; it doesn’t hamstring them \nThe post What Detractors Keep Getting Wrong About the FCPA appeared first on Corporate Compliance Insights.",
       "origin": "rss",
       "item_hash": "112daa7234df891f"
@@ -178,7 +178,7 @@
       "url": "https://www.corporatecomplianceinsights.com/smaller-investment-advisers-june-deadline-reg-s-p/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-03-31T16:02:51+00:00",
+      "published": "2026-03-31T11:02:51+00:00",
       "summary": "Incident response programs, service provider oversight and 30-day notification requirements on the agenda\nThe post Smaller Investment Advisers Staring Down June Deadline on Reg S-P appeared first on Corporate Compliance Insights.",
       "origin": "rss",
       "item_hash": "be3394f028291c78"
@@ -188,7 +188,7 @@
       "url": "https://www.corporatecomplianceinsights.com/us-targeting-tco-role-scam-centers/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-03-31T16:00:26+00:00",
+      "published": "2026-03-31T11:00:26+00:00",
       "summary": "Companies in banking, social media, fintech and telecommunications will have opportunity to coordinate with feds\nThe post US Targeting TCOs’ Role in ‘Scam Centers’ appeared first on Corporate Compliance Insights.",
       "origin": "rss",
       "item_hash": "f76d1ecb9e58c7c1"
@@ -198,7 +198,7 @@
       "url": "https://www.corporatecomplianceinsights.com/when-efficiency-becomes-fragility/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-03-30T16:02:27+00:00",
+      "published": "2026-03-30T11:02:27+00:00",
       "summary": "It may be time to reconsider your structure: raze, enrich and grow \nThe post When Efficiency Becomes Fragility appeared first on Corporate Compliance Insights.",
       "origin": "rss",
       "item_hash": "07f303dec3a70144"
@@ -208,7 +208,7 @@
       "url": "https://www.corporatecomplianceinsights.com/is-three-lines-model-still-valid-agentic-era/",
       "source_name": "Corporate Compliance Insights",
       "pillar": "practitioner",
-      "published": "2026-03-30T16:00:51+00:00",
+      "published": "2026-03-30T11:00:51+00:00",
       "summary": "Humans in the loop — actually empowered to act\nThe post Is the Three Lines Model Still Valid in the Agentic Era? appeared first on Corporate Compliance Insights.",
       "origin": "rss",
       "item_hash": "7da0d6ad20734317"
@@ -218,7 +218,7 @@
       "url": "https://aeon.co/essays/how-might-humanitarian-journalism-be-done-better?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-04-03T15:00:00+00:00",
+      "published": "2026-04-03T10:00:00+00:00",
       "summary": "Humanitarian journalism is a moral calling to document human suffering. But in practice, it’s an ethically murky undertaking- by Cathy OttenRead on Aeon",
       "origin": "rss",
       "item_hash": "5b2c327331dc0768"
@@ -228,7 +228,7 @@
       "url": "https://aeon.co/videos/what-a-plants-decision-making-reveals-about-intelligence?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-04-02T15:01:00+00:00",
+      "published": "2026-04-02T10:01:00+00:00",
       "summary": "Plant roots don’t have a nervous system, yet can produce sophisticated responses. What does that say about intelligence?- by Aeon VideoWatch on Aeon",
       "origin": "rss",
       "item_hash": "a9dd58a21bd8b17a"
@@ -238,7 +238,7 @@
       "url": "https://aeon.co/essays/frank-lloyd-wright-as-a-mirror-of-the-american-condition?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-04-02T15:00:00+00:00",
+      "published": "2026-04-02T10:00:00+00:00",
       "summary": "Frank Lloyd Wright exalted the individual and made ordinary life beautiful. But his life was marked by scandal and grief- by Andrew DemingRead on Aeon",
       "origin": "rss",
       "item_hash": "006d1c9682073b3e"
@@ -248,7 +248,7 @@
       "url": "https://aeon.co/videos/the-rise-and-fall-of-pratolino-tuscanys-proto-theme-park?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-04-01T15:01:00+00:00",
+      "published": "2026-04-01T10:01:00+00:00",
       "summary": "The rise and fall of the Medici’s ingeniously engineered ‘Garden of Wonders’: the Pratolino ‘proto-theme park’ in Tuscany- by Aeon VideoWatch on Aeon",
       "origin": "rss",
       "item_hash": "90e5f59d9ba458d5"
@@ -258,7 +258,7 @@
       "url": "https://aeon.co/essays/the-underground-bankers-who-reshape-the-flow-of-global-money?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-03-31T15:00:00+00:00",
+      "published": "2026-03-31T10:00:00+00:00",
       "summary": "A centuries-old network of secret codes and shadowy brokers continues to outpace financial systems controlled by the state- by Miles KellermanRead on Aeon",
       "origin": "rss",
       "item_hash": "467a0c5747b54001"
@@ -268,7 +268,7 @@
       "url": "https://aeon.co/videos/in-search-of-truth-and-fun-at-princeton-university-1973?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-03-30T15:01:00+00:00",
+      "published": "2026-03-30T10:01:00+00:00",
       "summary": "When Princeton University asked two directors to produce a marketing video, it became a work of art – and a time capsule- by Aeon VideoWatch on Aeon",
       "origin": "rss",
       "item_hash": "873684726362c4a9"
@@ -278,7 +278,7 @@
       "url": "https://aeon.co/essays/how-the-hypercuriosity-of-adhd-may-have-helped-humans-thrive?utm_source=rss-feed",
       "source_name": "Aeon Magazine",
       "pillar": "reader",
-      "published": "2026-03-30T15:00:00+00:00",
+      "published": "2026-03-30T10:00:00+00:00",
       "summary": "ADHD isn’t merely a dysfunction. It’s best understood as an impulsive motivational drive for novel information- by Anne-Laure Le CunffRead on Aeon",
       "origin": "rss",
       "item_hash": "7aba6a33a58e810c"
@@ -288,7 +288,7 @@
       "url": "https://www.anthropic.com/news/australia-MOU",
       "source_name": "Anthropic News",
       "pillar": "builder",
-      "published": "2026-03-31T05:00:00+00:00",
+      "published": "2026-03-31T00:00:00+00:00",
       "summary": "Australian government and Anthropic sign MOU for AI safety and research",
       "origin": "rss",
       "item_hash": "b3be35db7b67841e"
@@ -338,7 +338,7 @@
       "url": "https://openai.com/index/openai-acquires-tbpn",
       "source_name": "OpenAI Blog",
       "pillar": "builder",
-      "published": "2026-04-02T15:30:00+00:00",
+      "published": "2026-04-02T10:30:00+00:00",
       "summary": "OpenAI acquires TBPN to accelerate global conversations around AI and support independent media, expanding dialogue with builders, businesses, and the broader tech community.",
       "origin": "rss",
       "item_hash": "86685a01860027de"
@@ -348,7 +348,7 @@
       "url": "https://openai.com/index/codex-flexible-pricing-for-teams",
       "source_name": "OpenAI Blog",
       "pillar": "builder",
-      "published": "2026-04-02T15:00:00+00:00",
+      "published": "2026-04-02T10:00:00+00:00",
       "summary": "Codex now includes pay-as-you-go pricing for ChatGPT Business and Enterprise, providing teams a more flexible option to start and scale adoption.",
       "origin": "rss",
       "item_hash": "22c2ff8bad8cfd85"
@@ -358,7 +358,7 @@
       "url": "https://openai.com/index/gradient-labs",
       "source_name": "OpenAI Blog",
       "pillar": "builder",
-      "published": "2026-04-01T07:00:00+00:00",
+      "published": "2026-04-01T02:00:00+00:00",
       "summary": "Gradient Labs uses GPT-4.1 and GPT-5.4 mini and nano to power AI agents that automate banking support workflows with low latency and high reliability.",
       "origin": "rss",
       "item_hash": "a0904673d8e83392"
@@ -368,7 +368,7 @@
       "url": "https://openai.com/index/accelerating-the-next-phase-ai",
       "source_name": "OpenAI Blog",
       "pillar": "builder",
-      "published": "2026-03-31T18:00:00+00:00",
+      "published": "2026-03-31T13:00:00+00:00",
       "summary": "OpenAI raises $122 billion in new funding to expand frontier AI globally, invest in next-generation compute, and meet growing demand for ChatGPT, Codex, and enterprise AI.",
       "origin": "rss",
       "item_hash": "9f84e2e45d87466b"
@@ -378,7 +378,7 @@
       "url": "https://openai.com/index/helping-disaster-response-teams-asia",
       "source_name": "OpenAI Blog",
       "pillar": "builder",
-      "published": "2026-03-30T03:15:00+00:00",
+      "published": "2026-03-29T22:15:00+00:00",
       "summary": "AI for Disaster Response in Asia: OpenAI Workshop with Gates Foundation",
       "origin": "rss",
       "item_hash": "c720bf728da92d55"
@@ -388,7 +388,7 @@
       "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-05T09:07:13+00:00",
+      "published": "2026-04-05T04:07:13+00:00",
       "summary": "Release: scan-for-secrets 0.2\n    \nCLI tool now streams results as they are found rather than waiting until the end, which is better for large directories.\n-d/--directory option can now be used multiple times to scan multiple directories.\nNew -f/--file option for specifying one or more individual files to scan.\nNew scan_directory_iter(), scan_file() and scan_file_iter() Python API functions.\nNew -v/--verbose option which shows each directory that is being scanned.",
       "origin": "rss",
       "item_hash": "2f8f4c620a4c1187"
@@ -398,7 +398,7 @@
       "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-2/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-05T08:39:33+00:00",
+      "published": "2026-04-05T03:39:33+00:00",
       "summary": "Release: scan-for-secrets 0.1.1\n    \n\nAdded documentation of the escaping schemes that are also scanned.\nRemoved unnecessary repr escaping scheme, which was already covered by json.",
       "origin": "rss",
       "item_hash": "92cacca2adf1507a"
@@ -408,7 +408,7 @@
       "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-3/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-05T08:27:13+00:00",
+      "published": "2026-04-05T03:27:13+00:00",
       "summary": "Release: scan-for-secrets 0.1\n    I like publishing transcripts of local Claude Code sessions using my claude-code-transcripts tool but I'm often paranoid that one of my API keys or similar secrets might inadvertently be revealed in the detailed log files.\nI built this new Python scanning tool to help reassure me. You can feed it secrets and have it scan for them in a specified directory:\nuvx scan-for-secrets $OPENAI_API_KEY -d logs-to-publish/\n\nIf you leave off the -d it defaults to the current",
       "origin": "rss",
       "item_hash": "57d1f910f4b5c909"
@@ -418,7 +418,7 @@
       "url": "https://simonwillison.net/2026/Apr/5/research-llm-apis/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-05T05:32:11+00:00",
+      "published": "2026-04-05T00:32:11+00:00",
       "summary": "Release: research-llm-apis 2026-04-04\n    I'm working on a major change to my LLM Python library and CLI tool. LLM provides an abstraction layer over hundreds of different LLMs from dozens of different vendors thanks to its plugin system, and some of those vendors have grown new features over the past year which LLM's abstraction layer can't handle, such as server-side tool execution.\nTo help design that new abstraction layer I had Claude Code read through the Python client libraries for Anthrop",
       "origin": "rss",
       "item_hash": "f1550a7b1bee5f49"
@@ -428,7 +428,7 @@
       "url": "https://simonwillison.net/2026/Apr/4/kyle-daigle/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T07:20:17+00:00",
+      "published": "2026-04-04T02:20:17+00:00",
       "summary": "[GitHub] platform activity is surging. There were 1 billion commits in 2025. Now, it's 275 million per week, on pace for 14 billion this year if growth remains linear (spoiler: it won't.)\nGitHub Actions has grown from 500M minutes/week in 2023 to 1B minutes/week in 2025, and now 2.1B minutes so far this week.\n&mdash; Kyle Daigle, COO, GitHub\n\n    Tags: github, github-actions",
       "origin": "rss",
       "item_hash": "0a7085483044bef1"
@@ -438,7 +438,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/vulnerability-research-is-cooked/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T04:59:08+00:00",
+      "published": "2026-04-03T23:59:08+00:00",
       "summary": "Vulnerability Research Is Cooked\nThomas Ptacek's take on the sudden and enormous impact the latest frontier models are having on the field of vulnerability research.\n\nWithin the next few months, coding agents will drastically alter both the practice and the economics of exploit development. Frontier model improvement won’t be a slow burn, but rather a step function. Substantial amounts of high-impact vulnerability research (maybe even most of it) will happen simply by pointing an agent at a sour",
       "origin": "rss",
       "item_hash": "3bda934596581d60"
@@ -448,7 +448,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/cognitive-cost/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T04:57:04+00:00",
+      "published": "2026-04-03T23:57:04+00:00",
       "summary": "A fun thing about recording a podcast with a professional like Lenny Rachitsky is that his team know how to slice the resulting video up into TikTok-sized short form vertical videos. Here's one he shared on Twitter today which ended up attracting over 1.1m views!\n\n\nThat was 48 seconds. Our full conversation lasted 1 hour 40 minutes.\n\n    Tags: ai-ethics, coding-agents, agentic-engineering, generative-ai, podcast-appearances, ai, llms, cognitive-debt",
       "origin": "rss",
       "item_hash": "e73a62b981d0af01"
@@ -458,7 +458,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/willy-tarreau/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T02:48:22+00:00",
+      "published": "2026-04-03T21:48:22+00:00",
       "summary": "On the kernel security list we've seen a huge bump of reports. We were between 2 and 3 per week maybe two years ago, then reached probably 10 a week over the last year with the only difference being only AI slop, and now since the beginning of the year we're around 5-10 per day depending on the days (fridays and tuesdays seem the worst). Now most of these reports are correct, to the point that we had to bring in more maintainers to help us.\nAnd we're now seeing on a daily basis something that ne",
       "origin": "rss",
       "item_hash": "e68bf8b3fb1b5daa"
@@ -468,7 +468,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/daniel-stenberg/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T02:46:07+00:00",
+      "published": "2026-04-03T21:46:07+00:00",
       "summary": "The challenge with AI in open source security has transitioned from an AI slop tsunami into more of a ... plain security report tsunami. Less slop but lots of reports. Many of them really good.\nI'm spending hours per day on this now. It's intense.\n&mdash; Daniel Stenberg, lead developer of cURL\n\n    Tags: daniel-stenberg, security, curl, generative-ai, ai, llms, ai-security-research",
       "origin": "rss",
       "item_hash": "e678c5d1f221ac9d"
@@ -478,7 +478,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/greg-kroah-hartman/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-04T02:44:41+00:00",
+      "published": "2026-04-03T21:44:41+00:00",
       "summary": "Months ago, we were getting what we called 'AI slop,' AI-generated security reports that were obviously wrong or low quality. It was kind of funny. It didn't really worry us.\nSomething happened a month ago, and the world switched. Now we have real reports. All open source projects have real reports that are made with AI, but they're good, and they're real.\n&mdash; Greg Kroah-Hartman, Linux kernel maintainer (bio), in conversation with Steven J. Vaughan-Nichols\n\n    Tags: security, linux, generat",
       "origin": "rss",
       "item_hash": "0113ad514b19c493"
@@ -488,7 +488,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/test-csp-iframe-escape/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-03T21:05:00+00:00",
+      "published": "2026-04-03T16:05:00+00:00",
       "summary": "Research: Can JavaScript Escape a CSP Meta Tag Inside an Iframe?\n    In trying to build my own version of Claude Artifacts I got curious about options for applying CSP headers to content in sandboxed iframes without using a separate domain to host the files. Turns out you can inject <meta http-equiv=\"Content-Security-Policy\"...> tags at the top of the iframe content and they'll be obeyed even if subsequent untrusted JavaScript tries to manipulate them.\n    \n        Tags: iframes, security, javas",
       "origin": "rss",
       "item_hash": "3127272337da0f4b"
@@ -498,7 +498,7 @@
       "url": "https://simonwillison.net/2026/Apr/3/supply-chain-social-engineering/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-03T18:54:53+00:00",
+      "published": "2026-04-03T13:54:53+00:00",
       "summary": "The Axios team have published a full postmortem on the supply chain attack which resulted in a malware dependency going out in a release the other day, and it involved a sophisticated social engineering campaign targeting one of their maintainers directly. Here's Jason Saayman'a description of how that worked:\n\nso the attack vector mimics what google has documented here: https://cloud.google.com/blog/topics/threat-intelligence/unc1069-targets-cryptocurrency-ai-social-engineering\nthey tailored th",
       "origin": "rss",
       "item_hash": "42942153d9cef86b"
@@ -508,7 +508,7 @@
       "url": "https://simonwillison.net/2026/Apr/2/lennys-podcast/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-03T01:40:47+00:00",
+      "published": "2026-04-02T20:40:47+00:00",
       "summary": "I was a guest on Lenny Rachitsky's podcast, in a new episode titled An AI state of the union: We've passed the inflection point, dark factories are coming, and automation timelines. It's available on YouTube, Spotify, and Apple Podcasts. Here are my highlights from our conversation, with relevant links.\n\n \n\n\n  The November inflection point\n  Software engineers as bellwethers for other information workers\n  Writing code on my phone\n  Responsible vibe coding\n  Dark Factories and StrongDM\n  The bot",
       "origin": "rss",
       "item_hash": "1ead71acd94a0208"
@@ -518,7 +518,7 @@
       "url": "https://simonwillison.net/2026/Apr/2/gemma-4/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-02T23:28:54+00:00",
+      "published": "2026-04-02T18:28:54+00:00",
       "summary": "Gemma 4: Byte for byte, the most capable open models\nFour new vision-capable Apache 2.0 licensed reasoning LLMs from Google DeepMind, sized at 2B, 4B, 31B, plus a 26B-A4B Mixture-of-Experts.\nGoogle emphasize \"unprecedented level of intelligence-per-parameter\", providing yet more evidence that creating small useful models is one of the hottest areas of research right now.\nThey actually label the two smaller models as E2B and E4B for \"Effective\" parameter size. The system card explains:\n\nThe small",
       "origin": "rss",
       "item_hash": "e6b983b8027a4031"
@@ -528,7 +528,7 @@
       "url": "https://simonwillison.net/2026/Apr/2/llm-gemini/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-02T23:25:08+00:00",
+      "published": "2026-04-02T18:25:08+00:00",
       "summary": "Release: llm-gemini 0.30\n    New models gemini-3.1-flash-lite-preview, gemma-4-26b-a4b-it and gemma-4-31b-it. See my notes on Gemma 4.\n    \n        Tags: gemini, llm, gemma",
       "origin": "rss",
       "item_hash": "f9f80bbdfaa1ed42"
@@ -538,7 +538,7 @@
       "url": "https://simonwillison.net/2026/Apr/2/march-newsletter/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-02T10:15:04+00:00",
+      "published": "2026-04-02T05:15:04+00:00",
       "summary": "I just sent the March edition of my sponsors-only monthly newsletter. If you are a sponsor (or if you start a sponsorship now) you can access it here. In this month's newsletter:\n\nMore agentic engineering patterns\nStreaming experts with MoE models on a Mac\nModel releases in March\nVibe porting\nSupply chain attacks against PyPI and NPM\nStuff I shipped\nWhat I'm using, March 2026 edition\nAnd a couple of museums\n\nHere's a copy of the February newsletter as a preview of what you'll get. Pay $10/month ",
       "origin": "rss",
       "item_hash": "905785e53685bd2e"
@@ -548,7 +548,7 @@
       "url": "https://simonwillison.net/2026/Apr/1/datasette-llm-2/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-02T04:01:37+00:00",
+      "published": "2026-04-01T23:01:37+00:00",
       "summary": "Release: datasette-llm 0.1a6\n    \n\nThe same model ID no longer needs to be repeated in both the default model and allowed models lists - setting it as a default model automatically adds it to the allowed models list. #6\nImproved documentation for Python API usage.\n\n\n    \n        Tags: llm, datasette",
       "origin": "rss",
       "item_hash": "0fb3c320e1305a65"
@@ -558,7 +558,7 @@
       "url": "https://simonwillison.net/2026/Apr/1/datasette-enrichments-llm-2/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-02T03:00:34+00:00",
+      "published": "2026-04-01T22:00:34+00:00",
       "summary": "Release: datasette-enrichments-llm 0.2a1\n    \n\nThe actor who triggers an enrichment is now passed to the llm.mode(... actor=actor) method. #3\n\n\n    \n        Tags: enrichments, llm, datasette",
       "origin": "rss",
       "item_hash": "a91f943588c22453"
@@ -568,7 +568,7 @@
       "url": "https://simonwillison.net/2026/Apr/1/datasette-extract/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-01T08:32:16+00:00",
+      "published": "2026-04-01T03:32:16+00:00",
       "summary": "Release: datasette-extract 0.3a0\n    \nNow uses datasette-llm to manage model configuration, which means you can control which models are available for extraction tasks using the extract purpose and LLM model configuration. #38\n\n    \n        Tags: llm, datasette",
       "origin": "rss",
       "item_hash": "30d43569919a6239"
@@ -578,18 +578,28 @@
       "url": "https://simonwillison.net/2026/Apr/1/datasette-enrichments-llm/#atom-everything",
       "source_name": "Simon Willison",
       "pillar": "builder",
-      "published": "2026-04-01T08:28:44+00:00",
+      "published": "2026-04-01T03:28:44+00:00",
       "summary": "Release: datasette-enrichments-llm 0.2a0\n    \n\nThis plugin now uses datasette-llm to configure and manage models. This means it's possible to specify which models should be made available for enrichments, using the new enrichments purpose.\n\n\n    \n        Tags: llm, datasette",
       "origin": "rss",
       "item_hash": "e653b958d61f7797"
+    },
+    {
+      "title": "The threat is comfortable drift toward not understanding what you're doing",
+      "url": "https://ergosphere.blog/posts/the-machines-are-fine/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T09:57:25+00:00",
+      "summary": "Article URL: https://ergosphere.blog/posts/the-machines-are-fine/\nComments URL: https://news.ycombinator.com/item?id=47647788\nPoints: 258\n# Comments: 175",
+      "origin": "rss",
+      "item_hash": "8836de03529ef9f9"
     },
     {
       "title": "AWS engineer reports PostgreSQL perf halved by Linux 7.0, fix may not be easy",
       "url": "https://www.phoronix.com/news/Linux-7.0-AWS-PostgreSQL-Drop",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-05T05:13:55+00:00",
-      "summary": "https://lore.kernel.org/lkml/yr3inlzesdb45n6i6lpbimwr7b25kqk...\n\nComments URL: https://news.ycombinator.com/item?id=47644864\nPoints: 319\n# Comments: 93",
+      "published": "2026-04-05T00:13:55+00:00",
+      "summary": "https://lore.kernel.org/lkml/yr3inlzesdb45n6i6lpbimwr7b25kqk...\n\nComments URL: https://news.ycombinator.com/item?id=47644864\nPoints: 339\n# Comments: 104",
       "origin": "rss",
       "item_hash": "420a48de75db6f5f"
     },
@@ -598,8 +608,8 @@
       "url": "https://bmi.usercontent.opencode.de/eudi-wallet/wallet-development-documentation-public/latest/architecture-concept/06-mobile-devices/02-mdvm/",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-05T03:57:44+00:00",
-      "summary": "Article URL: https://bmi.usercontent.opencode.de/eudi-wallet/wallet-development-documentation-public/latest/architecture-concept/06-mobile-devices/02-mdvm/\nComments URL: https://news.ycombinator.com/item?id=47644406\nPoints: 329\n# Comments: 292",
+      "published": "2026-04-04T22:57:44+00:00",
+      "summary": "Article URL: https://bmi.usercontent.opencode.de/eudi-wallet/wallet-development-documentation-public/latest/architecture-concept/06-mobile-devices/02-mdvm/\nComments URL: https://news.ycombinator.com/item?id=47644406\nPoints: 385\n# Comments: 344",
       "origin": "rss",
       "item_hash": "be17167c7878b9e6"
     },
@@ -608,8 +618,8 @@
       "url": "https://teybannerman.com/strategy/2026/03/31/how-many-microsoft-copilot-are-there.html",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-05T00:39:43+00:00",
-      "summary": "Article URL: https://teybannerman.com/strategy/2026/03/31/how-many-microsoft-copilot-are-there.html\nComments URL: https://news.ycombinator.com/item?id=47642569\nPoints: 677\n# Comments: 318",
+      "published": "2026-04-04T19:39:43+00:00",
+      "summary": "Article URL: https://teybannerman.com/strategy/2026/03/31/how-many-microsoft-copilot-are-there.html\nComments URL: https://news.ycombinator.com/item?id=47642569\nPoints: 708\n# Comments: 332",
       "origin": "rss",
       "item_hash": "ae79274a9fed0dd5"
     },
@@ -618,8 +628,8 @@
       "url": "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T21:57:45+00:00",
-      "summary": "https://x.com/karpathy/status/2040470801506541998https://xcancel.com/karpathy/status/2040470801506541998\n\nComments URL: https://news.ycombinator.com/item?id=47640875\nPoints: 217\n# Comments: 66",
+      "published": "2026-04-04T16:57:45+00:00",
+      "summary": "https://x.com/karpathy/status/2040470801506541998https://xcancel.com/karpathy/status/2040470801506541998\n\nComments URL: https://news.ycombinator.com/item?id=47640875\nPoints: 231\n# Comments: 75",
       "origin": "rss",
       "item_hash": "91fc906a99431e8a"
     },
@@ -628,8 +638,8 @@
       "url": "https://jaso1024.com/mvidia/",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T21:45:54+00:00",
-      "summary": "Thought the resources for GPU arch were lacking, so here we are\n\nComments URL: https://news.ycombinator.com/item?id=47640728\nPoints: 788\n# Comments: 161",
+      "published": "2026-04-04T16:45:54+00:00",
+      "summary": "Thought the resources for GPU arch were lacking, so here we are\n\nComments URL: https://news.ycombinator.com/item?id=47640728\nPoints: 822\n# Comments: 166",
       "origin": "rss",
       "item_hash": "8d794ebe71446e3b"
     },
@@ -638,8 +648,8 @@
       "url": "https://www.theverge.com/tech/907003/apple-approves-driver-that-lets-nvidia-egpus-work-with-arm-macs",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T21:16:10+00:00",
-      "summary": "Article URL: https://www.theverge.com/tech/907003/apple-approves-driver-that-lets-nvidia-egpus-work-with-arm-macs\nComments URL: https://news.ycombinator.com/item?id=47640380\nPoints: 441\n# Comments: 197",
+      "published": "2026-04-04T16:16:10+00:00",
+      "summary": "Article URL: https://www.theverge.com/tech/907003/apple-approves-driver-that-lets-nvidia-egpus-work-with-arm-macs\nComments URL: https://news.ycombinator.com/item?id=47640380\nPoints: 451\n# Comments: 204",
       "origin": "rss",
       "item_hash": "6535f65e31705652"
     },
@@ -648,8 +658,8 @@
       "url": "https://www.dw.com/en/german-men-need-military-permit-for-extended-stays-abroad/a-76662677",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T20:39:10+00:00",
-      "summary": "Article URL: https://www.dw.com/en/german-men-need-military-permit-for-extended-stays-abroad/a-76662677\nComments URL: https://news.ycombinator.com/item?id=47639976\nPoints: 373\n# Comments: 657",
+      "published": "2026-04-04T15:39:10+00:00",
+      "summary": "Article URL: https://www.dw.com/en/german-men-need-military-permit-for-extended-stays-abroad/a-76662677\nComments URL: https://news.ycombinator.com/item?id=47639976\nPoints: 378\n# Comments: 662",
       "origin": "rss",
       "item_hash": "20872d5c2882351b"
     },
@@ -658,8 +668,8 @@
       "url": "https://www.npr.org/2026/04/04/nx-s1-5773354/legal-sports-betting-research-credit-bankruptcy",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T20:14:06+00:00",
-      "summary": "Article URL: https://www.npr.org/2026/04/04/nx-s1-5773354/legal-sports-betting-research-credit-bankruptcy\nComments URL: https://news.ycombinator.com/item?id=47639727\nPoints: 202\n# Comments: 133",
+      "published": "2026-04-04T15:14:06+00:00",
+      "summary": "Article URL: https://www.npr.org/2026/04/04/nx-s1-5773354/legal-sports-betting-research-credit-bankruptcy\nComments URL: https://news.ycombinator.com/item?id=47639727\nPoints: 206\n# Comments: 135",
       "origin": "rss",
       "item_hash": "e1a4eff0afbdd468"
     },
@@ -668,8 +678,8 @@
       "url": "https://www.thetimes.com/uk/technology-uk/article/sarah-wynn-williams-careless-people-meta-nrffdfpmf",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T19:48:26+00:00",
-      "summary": "Article URL: https://www.thetimes.com/uk/technology-uk/article/sarah-wynn-williams-careless-people-meta-nrffdfpmf\nComments URL: https://news.ycombinator.com/item?id=47639524\nPoints: 803\n# Comments: 517",
+      "published": "2026-04-04T14:48:26+00:00",
+      "summary": "Article URL: https://www.thetimes.com/uk/technology-uk/article/sarah-wynn-williams-careless-people-meta-nrffdfpmf\nComments URL: https://news.ycombinator.com/item?id=47639524\nPoints: 807\n# Comments: 521",
       "origin": "rss",
       "item_hash": "0b88aa99d00ac60f"
     },
@@ -678,8 +688,8 @@
       "url": "https://magazine.sebastianraschka.com/p/components-of-a-coding-agent",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T18:16:33+00:00",
-      "summary": "Article URL: https://magazine.sebastianraschka.com/p/components-of-a-coding-agent\nComments URL: https://news.ycombinator.com/item?id=47638810\nPoints: 248\n# Comments: 78",
+      "published": "2026-04-04T13:16:33+00:00",
+      "summary": "Article URL: https://magazine.sebastianraschka.com/p/components-of-a-coding-agent\nComments URL: https://news.ycombinator.com/item?id=47638810\nPoints: 262\n# Comments: 80",
       "origin": "rss",
       "item_hash": "4b5942c9e4a3eb42"
     },
@@ -688,8 +698,8 @@
       "url": "https://arxiv.org/abs/2604.01193",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T15:26:21+00:00",
-      "summary": "Article URL: https://arxiv.org/abs/2604.01193\nComments URL: https://news.ycombinator.com/item?id=47637757\nPoints: 608\n# Comments: 182",
+      "published": "2026-04-04T10:26:21+00:00",
+      "summary": "Article URL: https://arxiv.org/abs/2604.01193\nComments URL: https://news.ycombinator.com/item?id=47637757\nPoints: 612\n# Comments: 184",
       "origin": "rss",
       "item_hash": "66ec66c88ed6c0a1"
     },
@@ -698,8 +708,8 @@
       "url": "https://thoughts.wyounas.com/p/some-unusual-trees",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T14:04:19+00:00",
-      "summary": "Article URL: https://thoughts.wyounas.com/p/some-unusual-trees\nComments URL: https://news.ycombinator.com/item?id=47637287\nPoints: 278\n# Comments: 82",
+      "published": "2026-04-04T09:04:19+00:00",
+      "summary": "Article URL: https://thoughts.wyounas.com/p/some-unusual-trees\nComments URL: https://news.ycombinator.com/item?id=47637287\nPoints: 279\n# Comments: 82",
       "origin": "rss",
       "item_hash": "5207446367ac7e68"
     },
@@ -708,7 +718,7 @@
       "url": "https://economictimes.indiatimes.com/news/international/us/gold-overtakes-u-s-treasuries-as-the-worlds-largest-foreign-reserve-asset-in-2026-can-gold-challenge-the-u-s-dollars-dominance-and-hold-its-ground/articleshow/126420128.cms?from=mdr",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T07:30:32+00:00",
+      "published": "2026-04-04T02:30:32+00:00",
       "summary": "Article URL: https://economictimes.indiatimes.com/news/international/us/gold-overtakes-u-s-treasuries-as-the-worlds-largest-foreign-reserve-asset-in-2026-can-gold-challenge-the-u-s-dollars-dominance-and-hold-its-ground/articleshow/126420128.cms?from=mdr\nComments URL: https://news.ycombinator.com/item?id=47635056\nPoints: 260\n# Comments: 234",
       "origin": "rss",
       "item_hash": "87d594391a882696"
@@ -718,8 +728,8 @@
       "url": "https://www.ycombinator.com/companies/delve",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T06:37:02+00:00",
-      "summary": "Article URL: https://www.ycombinator.com/companies/delve\nComments URL: https://news.ycombinator.com/item?id=47634690\nPoints: 481\n# Comments: 293",
+      "published": "2026-04-04T01:37:02+00:00",
+      "summary": "Article URL: https://www.ycombinator.com/companies/delve\nComments URL: https://news.ycombinator.com/item?id=47634690\nPoints: 481\n# Comments: 294",
       "origin": "rss",
       "item_hash": "37205a098aff6e4f"
     },
@@ -728,8 +738,8 @@
       "url": "https://www.eff.org/deeplinks/2026/04/faas-temporary-flight-restriction-drones-blatant-attempt-criminalize-filming-ice",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T04:56:32+00:00",
-      "summary": "Article URL: https://www.eff.org/deeplinks/2026/04/faas-temporary-flight-restriction-drones-blatant-attempt-criminalize-filming-ice\nComments URL: https://news.ycombinator.com/item?id=47633947\nPoints: 535\n# Comments: 181",
+      "published": "2026-04-03T23:56:32+00:00",
+      "summary": "Article URL: https://www.eff.org/deeplinks/2026/04/faas-temporary-flight-restriction-drones-blatant-attempt-criminalize-filming-ice\nComments URL: https://news.ycombinator.com/item?id=47633947\nPoints: 536\n# Comments: 181",
       "origin": "rss",
       "item_hash": "be804cbdc84e9cf4"
     },
@@ -738,8 +748,8 @@
       "url": "https://mtlynch.io/claude-code-found-linux-vulnerability/",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T04:46:51+00:00",
-      "summary": "Article URL: https://mtlynch.io/claude-code-found-linux-vulnerability/\nComments URL: https://news.ycombinator.com/item?id=47633855\nPoints: 396\n# Comments: 249",
+      "published": "2026-04-03T23:46:51+00:00",
+      "summary": "Article URL: https://mtlynch.io/claude-code-found-linux-vulnerability/\nComments URL: https://news.ycombinator.com/item?id=47633855\nPoints: 398\n# Comments: 252",
       "origin": "rss",
       "item_hash": "7ff8d2fb586abc72"
     },
@@ -748,7 +758,7 @@
       "url": "https://news.ycombinator.com/item?id=47633396",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T03:55:24+00:00",
+      "published": "2026-04-03T22:55:24+00:00",
       "summary": "Received the following email from Anthropic:Hi,Starting April 4 at 12pm PT / 8pm BST, you’ll no longer be able to use your Claude subscription limits for third-party harnesses including OpenClaw. You can still use them with your Claude account, but they will require extra usage, a pay-as-you-go option billed separately from your subscription.Your subscription still covers all Claude products, including Claude Code and Claude Cowork. To keep using third-party harnesses with your Claude login, tur",
       "origin": "rss",
       "item_hash": "6d26b37e8e88167f"
@@ -758,8 +768,8 @@
       "url": "https://github.com/ExTV/Podroid",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T03:23:55+00:00",
-      "summary": "Article URL: https://github.com/ExTV/Podroid\nComments URL: https://news.ycombinator.com/item?id=47633131\nPoints: 212\n# Comments: 82",
+      "published": "2026-04-03T22:23:55+00:00",
+      "summary": "Article URL: https://github.com/ExTV/Podroid\nComments URL: https://news.ycombinator.com/item?id=47633131\nPoints: 212\n# Comments: 83",
       "origin": "rss",
       "item_hash": "e0a16e88ccab4b92"
     },
@@ -768,20 +778,10 @@
       "url": "https://www.bigtechnology.com/p/iran-strikes-leave-amazon-availability",
       "source_name": "Hacker News - Best",
       "pillar": "builder",
-      "published": "2026-04-04T02:25:55+00:00",
-      "summary": "Article URL: https://www.bigtechnology.com/p/iran-strikes-leave-amazon-availability\nComments URL: https://news.ycombinator.com/item?id=47632503\nPoints: 239\n# Comments: 119",
+      "published": "2026-04-03T21:25:55+00:00",
+      "summary": "Article URL: https://www.bigtechnology.com/p/iran-strikes-leave-amazon-availability\nComments URL: https://news.ycombinator.com/item?id=47632503\nPoints: 239\n# Comments: 120",
       "origin": "rss",
       "item_hash": "18ff57e10fe8f8f4"
-    },
-    {
-      "title": "Oracle files H-1B visa petitions amid mass layoffs",
-      "url": "https://nationaltoday.com/us/tx/austin/news/2026/04/03/oracle-files-thousands-of-h-1b-visa-petitions-amid-mass-layoffs/",
-      "source_name": "Hacker News - Best",
-      "pillar": "builder",
-      "published": "2026-04-04T01:21:23+00:00",
-      "summary": "Article URL: https://nationaltoday.com/us/tx/austin/news/2026/04/03/oracle-files-thousands-of-h-1b-visa-petitions-amid-mass-layoffs/\nComments URL: https://news.ycombinator.com/item?id=47631732\nPoints: 511\n# Comments: 306",
-      "origin": "rss",
-      "item_hash": "60dd929a64102521"
     },
     {
       "title": "Hedge funds' first-quarter returns are rolling in. Here's how big names fared in choppy markets.",
