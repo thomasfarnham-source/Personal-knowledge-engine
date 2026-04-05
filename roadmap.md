@@ -1191,6 +1191,68 @@ Next actions:
     10. Producer review of Scout raw output after 30 days
 
 ---
+### 🔵 9.13 B — Yahoo Inbox Cleanup Agent
+**Status: DEFERRED — depends on 9.13 contacts table**
+
+A tool to identify and remove commercial noise from a Yahoo Mail inbox
+at scale, using the header index infrastructure built in milestone 9.13.
+
+**Why this matters:**
+    Yahoo Mail users with large inboxes (100K+) cannot effectively clean
+    up from the web UI. Third-party tools hit the same 10K IMAP cap.
+    The export IMAP server discovery (milestone 9.13) and the header
+    index approach solve the problem that makes cleanup hard.
+
+**What it builds:**
+    - Query engine over the header index to rank senders by volume
+    - Commercial sender identification (domain patterns, volume thresholds,
+      noreply/newsletter prefixes)
+    - Safety filter: never delete from senders in the contacts table
+      or who have bidirectional correspondence
+    - Dry-run mode: preview what would be deleted with counts and
+      sample subjects before committing
+    - Delete execution via standard IMAP server (imap.mail.yahoo.com)
+    - Yahoo filter/rule generation for high-volume commercial senders
+      to prevent backlog from rebuilding
+    - Simple interface — CLI first, potential web UI later
+
+**Technical approach:**
+    - Reuses yahoo_index.db from milestone 9.13 header scan
+    - Reuses contacts + contact_identifiers from Supabase for safety
+    - Deletions via standard IMAP (not export server): flag \Deleted + EXPUNGE
+    - Standard server's 10K window is sufficient — active junk is recent
+    - Deleting frees the 10K window, potentially exposing older messages
+
+**Commercial potential:**
+    Standalone tool opportunity — see VISION.md for full analysis.
+    The header-index-first approach and export server discovery are
+    genuine competitive advantages over existing tools like Mailstrom.
+    Natural freemium model: free scan/preview, paid for bulk deletion.
+    Build for personal use first, evaluate commercial viability after.
+
+**Dependencies:**
+    - 9.13 header scanner complete ✅
+    - 9.13 contacts table in Supabase (safety filter for deletions)
+
+**Scope boundary:**
+    This is a cleanup tool, not an email client. It deletes and filters.
+    It does not move, archive, or organize emails. Keep it tight.
+
+**Unified retrieval architecture introduced (2026-03-28)**
+  retrieval_units table replaces the multi-join match_chunks pattern.
+  All sources write to one table. One search, one embedding column.
+  Email is the first source to use it. Backfill of existing Joplin
+  and iMessage content planned as follow-up.
+
+**Conversation model defined (2026-03-28)**
+  Conversation = exact participant set. Persistent across years and
+  topics. Email-specific tables (email_conversations, email_messages)
+  store structural metadata. Retrieval content in retrieval_units.
+
+**Identity resolution identified as blocker (2026-03-28)**
+  William Renahan has 5+ email addresses across employers. Pat has 2.
+  Thomas has case variations. Contacts + contact_identifiers must be
+  populated before ingestion to prevent conversation fragmentation
 
 
 ### Future Content Channels (not yet milestoned)
