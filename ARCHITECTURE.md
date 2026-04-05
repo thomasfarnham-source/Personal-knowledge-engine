@@ -861,6 +861,32 @@ If any stage fails, the pipeline stops and reports which stage failed.
 # Security Updates for PKE Documents
 
 ---
+### Deployment Architecture (designed 2026-04-04)
+
+    Server layer (GitHub Actions):
+        Runs daily on cron schedule (6 AM EST)
+        Executes: Scout → Editor → Composer
+        No personal data involved — scans public sources,
+        calls Claude for filtering, produces markdown brief
+        Output: daily drop pushed to OneDrive via repo or API
+        API keys stored as GitHub Secrets (encrypted, not in code)
+
+    Local layer (Obsidian Shell Commands):
+        Triggered on demand by the Producer from Obsidian
+        Two commands:
+          "Enrich today's brief" — starts PKE API, runs Connector
+          against today's daily drop, annotates with personal
+          corpus connections, stops API
+          "Weekly synthesis" — runs Composer in weekly mode against
+          accumulated daily drops from the past 7 days
+
+    Separation principle:
+        Public internet scanning runs on server (always available)
+        Private corpus access runs locally (never leaves machine)
+        Daily drops accumulate automatically
+        Enrichment and synthesis happen on the Producer's schedule
+
+---
 
 ## 23. Content Curation Agent — Security Model
 
