@@ -1,0 +1,53 @@
+name: Content Agent — Daily Pipeline
+
+on:
+  schedule:
+    # Run daily at 11:00 UTC (6:00 AM EST / 7:00 AM EDT)
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  daily-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install feedparser requests python-dotenv
+
+      - name: Run Scout
+        env:
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+        run: python scripts/content_agent/scout.py
+
+      - name: Run Editor
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/content_agent/editor.py
+
+      - name: Run Composer (daily drop — no personal connections)
+        run: python scripts/content_agent/composer.py --daily
+
+      - name: Commit daily drop to repo
+        run: |
+          git config user.name "Content Agent"
+          git config user.email "content-agent@pke.local"
+
+          # Add output files
+          git add scripts/content_agent/output/briefs/
+          git add scripts/content_agent/output/raw/
+          git add scripts/content_agent/output/filtered/
+
+          # Commit only if there are changes
+          git diff --staged --quiet || git commit -m "Daily drop — $(date +%Y-%m-%d)"
+          git push
