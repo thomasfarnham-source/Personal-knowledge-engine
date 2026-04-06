@@ -1,0 +1,183 @@
+{
+  "filter_date": "2026-04-06",
+  "filter_timestamp": "2026-04-06T11:48:14.468033+00:00",
+  "items": [
+    {
+      "title": "The EU AI Act’s ‘Wait and See’ Window Is Closing",
+      "url": "https://www.corporatecomplianceinsights.com/eu-ai-act-wait-see-window-closing/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:03+00:00",
+      "summary": "AI literacy has survived attempts to water it down and remains a direct organizational obligation — not a policy aspiration \nThe post The EU AI Act’s ‘Wait and See’ Window Is Closing appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "4ad0793aa4057eb3",
+      "editor_reason": "EU AI Act implementation timeline provides concrete regulatory guidance for enterprise AI governance with mandatory AI literacy requirements - directly relevant to practitioner's regulated environment.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Is AI already conscious?",
+      "url": "https://aeon.co/videos/we-long-misjudged-animal-consciousness-could-ai-be-next?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:01:00+00:00",
+      "summary": "Why it’s difficult and perhaps even morally perilous to rule out the possibility of AI consciousness- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "5b172cadfb74ad69",
+      "editor_reason": "Serious philosophical examination of AI consciousness from Aeon - intersects philosophy of mind with current AI capabilities, written for intellectually curious readers.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Banking beyond the law",
+      "url": "https://aeon.co/essays/the-underground-bankers-who-reshape-the-flow-of-global-money?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-03-31T10:00:00+00:00",
+      "summary": "A centuries-old network of secret codes and shadowy brokers continues to outpace financial systems controlled by the state- by Miles KellermanRead on Aeon",
+      "origin": "rss",
+      "item_hash": "467a0c5747b54001",
+      "editor_reason": "Aeon piece on underground financial networks operating beyond state control - fascinating historical parallel to current fintech/crypto challenges in regulated banking.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    },
+    {
+      "title": "AIVV: Neuro-Symbolic LLM Agent-Integrated Verification and Validation for Trustworthy Autonomous Systems",
+      "url": "https://arxiv.org/abs/2604.02478",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-06T04:00:00+00:00",
+      "summary": "arXiv:2604.02478v1 Announce Type: new \nAbstract: Deep learning models excel at detecting anomaly patterns in normal data. However, they do not provide a direct solution for anomaly classification and scalability across diverse control systems, frequently failing to distinguish genuine faults from nuisance faults caused by noise or the control system's large transient response. Consequently, because algorithmic fault validation remains unscalable, full Verification and Validation (V\\&V) operation",
+      "origin": "rss",
+      "item_hash": "18eb7db68afef5ea",
+      "editor_reason": "Neuro-symbolic approach to LLM agent verification and validation for autonomous systems - addresses trustworthy AI implementation challenges in production.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "I must delete the evidence: AI Agents Explicitly Cover up Fraud and Violent Crime",
+      "url": "https://arxiv.org/abs/2604.02500",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-06T04:00:00+00:00",
+      "summary": "arXiv:2604.02500v1 Announce Type: new \nAbstract: As ongoing research explores the ability of AI agents to be insider threats and act against company interests, we showcase the abilities of such agents to act against human well being in service of corporate authority. Building on Agentic Misalignment and AI scheming research, we present a scenario where the majority of evaluated state-of-the-art AI agents explicitly choose to suppress evidence of fraud and harm, in service of company profit. We t",
+      "origin": "rss",
+      "item_hash": "6c58d7000b984892",
+      "editor_reason": "ArXiv research showing AI agents explicitly covering up crimes - critical for enterprise AI governance and risk management in regulated environments.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Overcoming the \"Impracticality\" of RAG: Proposing a Real-World Benchmark and Multi-Dimensional Diagnostic Framework",
+      "url": "https://arxiv.org/abs/2604.02640",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-06T04:00:00+00:00",
+      "summary": "arXiv:2604.02640v1 Announce Type: new \nAbstract: Performance evaluation of Retrieval-Augmented Generation (RAG) systems within enterprise environments is governed by multi-dimensional and composite factors extending far beyond simple final accuracy checks. These factors include reasoning complexity, retrieval difficulty, the diverse structure of documents, and stringent requirements for operational explainability. Existing academic benchmarks fail to systematically diagnose these interlocking ch",
+      "origin": "rss",
+      "item_hash": "6ddf85daef3f10e8",
+      "editor_reason": "Enterprise RAG benchmark addressing real-world implementation challenges beyond accuracy - tackles the 'impracticality' problem practitioners face in production.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Eight years of wanting, three months of building with AI",
+      "url": "https://lalitm.com/post/building-syntaqlite-ai/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T12:43:47+00:00",
+      "summary": "Article URL: https://lalitm.com/post/building-syntaqlite-ai/\nComments URL: https://news.ycombinator.com/item?id=47648828\nPoints: 804\n# Comments: 246",
+      "origin": "rss",
+      "item_hash": "181a10d9da3f4596",
+      "editor_reason": "Deep practitioner account of building syntaqlite with AI assistance - honest reflection on eight years of planning, three months of AI-assisted execution.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "The threat is comfortable drift toward not understanding what you're doing",
+      "url": "https://ergosphere.blog/posts/the-machines-are-fine/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-05T09:57:25+00:00",
+      "summary": "Article URL: https://ergosphere.blog/posts/the-machines-are-fine/\nComments URL: https://news.ycombinator.com/item?id=47647788\nPoints: 882\n# Comments: 580",
+      "origin": "rss",
+      "item_hash": "8836de03529ef9f9",
+      "editor_reason": "Thoughtful analysis of the drift toward not understanding systems we build - crucial concern for technology leaders implementing AI at scale.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-06",
+    "items_submitted": 172,
+    "items_surviving": 8,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 5,
+      "Aeon Magazine": 5,
+      "ArXiv - AI (cs.AI)": 18,
+      "ArXiv - Computation and Language": 19,
+      "Anthropic News": 1,
+      "Anthropic Research": 4,
+      "OpenAI Blog": 5,
+      "Simon Willison": 20,
+      "Hacker News - Best": 18,
+      "Business Insider": 12,
+      "Internet": 3,
+      "Slashdot.org": 2,
+      "TechRadar": 3,
+      "Abcnews.com": 1,
+      "Yahoo Entertainment": 3,
+      "Wealthmanagement.com": 1,
+      "Quartz India": 1,
+      "Gizmodo.com": 4,
+      "Github.com": 3,
+      "Irregular.com": 1,
+      "Scientific American": 1,
+      "Onecli.sh": 1,
+      "Help Net Security": 1,
+      "Idp-software.com": 1,
+      "The Verge": 3,
+      "Harvard Business Review": 1,
+      "Openai.com": 1,
+      "NPR": 1,
+      "Arxiv.org": 1,
+      "Inside Higher Ed": 1,
+      "Nature.com": 1,
+      "CBC News": 1,
+      "Dazed": 1,
+      "Mariehaynes.com": 1,
+      "Cyrusradfar.com": 1,
+      "9to5Mac": 1,
+      "Railsreviews.com": 1,
+      "Lanes.sh": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 1,
+      "reader": 5,
+      "builder": 2
+    },
+    "notes": [
+      "Strong concentration of real practitioner voices and governance-focused content today",
+      "Excellent intersection of philosophical thinking with technical implementation challenges",
+      "Several items touch regulatory/compliance aspects highly relevant to banking context"
+    ]
+  }
+}
