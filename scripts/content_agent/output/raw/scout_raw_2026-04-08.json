@@ -1,0 +1,1727 @@
+{
+  "scan_date": "2026-04-08",
+  "scan_timestamp": "2026-04-08T11:54:52.264472+00:00",
+  "item_count": 172,
+  "items": [
+    {
+      "title": "A 'blockchain dividend' awaits banks that update their ledger systems",
+      "url": "https://www.americanbanker.com/opinion/a-blockchain-dividend-awaits-banks-that-update-their-ledger-systems",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-08T11:30:00+00:00",
+      "summary": "Banks' core ledger systems are a sclerotic holdover from the past. The future belongs to the banks that set them aside and allow transactions to close in real time.",
+      "origin": "rss",
+      "item_hash": "2d10c5ece8e81f7d"
+    },
+    {
+      "title": "How AI is breaking the financial services learning curve",
+      "url": "https://www.americanbanker.com/payments/news/banks-struggle-with-ais-learning-curve",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-08T10:00:00+00:00",
+      "summary": "Emerging forms of artificial intelligence are moving so fast, traditional IT training isn't an easy fit. New research from American Banker shows how banks are handling training.",
+      "origin": "rss",
+      "item_hash": "9b4b3053f82df552"
+    },
+    {
+      "title": "Fed's Jefferson 'cautious' about labor market gains",
+      "url": "https://www.americanbanker.com/news/feds-jefferson-cautious-about-labor-market-gains",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-08T01:34:32+00:00",
+      "summary": "Federal Reserve Vice Chair Philip Jefferson said in a speech Tuesday that despite positive employment readings in recent months, he remains concerned that an economic shock could still threaten the labor market.",
+      "origin": "rss",
+      "item_hash": "422cc6c4f86779d4"
+    },
+    {
+      "title": "Santander, Webster name key business leaders ahead of merger",
+      "url": "https://www.americanbanker.com/news/santander-webster-name-key-business-leaders-ahead-of-merger",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T22:09:52+00:00",
+      "summary": "Santander U.S. and Webster Financial are doing integration work in advance of their pending merger, including naming business-line leaders, the banks said in separate notes.",
+      "origin": "rss",
+      "item_hash": "ad7b4a51774b4ab5"
+    },
+    {
+      "title": "FDIC proposes GENIUS regime, AML rollback and final debanking rule",
+      "url": "https://www.americanbanker.com/news/fdic-proposes-genius-regime-aml-rollback-and-final-debanking-rule",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T21:11:03+00:00",
+      "summary": "The FDIC board voted unanimously to issue a proposal putting a rebuttable ban on bank-issuers paying yield on stablecoins, another narrowing AML requirements and a third prohibiting examiners using reputational risk in exams, outside of operational or financial risks.",
+      "origin": "rss",
+      "item_hash": "4cc484499c605964"
+    },
+    {
+      "title": "Chime moves further up market with prime offering",
+      "url": "https://www.americanbanker.com/payments/news/chime-moves-further-up-market-with-prime-offering",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T19:52:21+00:00",
+      "summary": "The neobank is rolling out Chime Prime, a new membership service that rewards customers for making Chime their primary bank account.",
+      "origin": "rss",
+      "item_hash": "64082955c77e5675"
+    },
+    {
+      "title": "U.S. Bank signs on as NFL's bank and wealth management partner",
+      "url": "https://www.americanbanker.com/news/u-s-bank-signs-on-as-nfls-bank-and-wealth-management-partner",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T19:40:47+00:00",
+      "summary": "The Minneapolis-based company plans to leverage the arrangement to draw more attention to its growing list of national business lines, transcending its regional reputation.",
+      "origin": "rss",
+      "item_hash": "1e4694fa67f2590e"
+    },
+    {
+      "title": "Judge denies UBS request in dispute over Nazi-looted assets",
+      "url": "https://www.americanbanker.com/news/judge-denies-ubs-request-in-dispute-over-nazi-looted-assets",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T19:35:12+00:00",
+      "summary": "Swiss banking giant UBS tried to get a federal court to reject new allegations that Credit Suisse, which UBS acquired in 2023, had concealed Nazi-linked assets.",
+      "origin": "rss",
+      "item_hash": "425e3843d2b04476"
+    },
+    {
+      "title": "JPMorganChase CEO Dimon warns of flawed Basel proposal",
+      "url": "https://www.americanbanker.com/news/jpmorganchase-ceo-dimon-warns-of-flawed-basel-proposal",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T18:04:56+00:00",
+      "summary": "Jamie Dimon said the revised Basel III plan still overstates risk and penalizes the largest banks.",
+      "origin": "rss",
+      "item_hash": "61c7001ae017ea30"
+    },
+    {
+      "title": "Bolt lays off a third of its employees, citing AI",
+      "url": "https://www.americanbanker.com/news/bolt-lays-off-a-third-of-its-employees-citing-ai",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-07T16:15:36+00:00",
+      "summary": "The one-click checkout fintech, which launched its own \"super app\" last year, reduced its current workforce by about 30% last week.",
+      "origin": "rss",
+      "item_hash": "d829b36a16a9f1be"
+    },
+    {
+      "title": "Gain Consumer Insight With Generative AI",
+      "url": "https://sloanreview.mit.edu/article/gain-consumer-insight-with-generative-ai/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-08T11:00:30+00:00",
+      "summary": "Stuart Kinlough/Ikon Images Marketing leaders often face a dilemma: Deriving the insights they need in order to make confident decisions can cost tens of thousands of dollars and involve several months of data gathering and analysis, by which time market conditions may have shifted. Can generative AI fundamentally reshape this calculus? Drawing on recent research, [&#8230;]",
+      "origin": "rss",
+      "item_hash": "5fc068a7f8a507ba"
+    },
+    {
+      "title": "Disintegrating the Org Chart: ServiceNow’s Jacqui Canney",
+      "url": "https://sloanreview.mit.edu/audio/disintegrating-the-org-chart-servicenows-jacqui-canney/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:00:48+00:00",
+      "summary": "In this episode of the Me, Myself, and AI podcast, Sam Ransbotham is joined by Jacqui Canney, chief people and AI enablement officer at ServiceNow. Jacqui outlines how the software company has embedded AI agents into processes like employee onboarding to automate tasks, personalize experiences, and free up people’s time to focus on higher-value work. [&#8230;]",
+      "origin": "rss",
+      "item_hash": "93994a0d801de613"
+    },
+    {
+      "title": "How to Reap Compound Benefits From Generative AI",
+      "url": "https://sloanreview.mit.edu/article/how-to-reap-compound-benefits-from-generative-ai/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:55+00:00",
+      "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Minneapolis Institute of Art In domain after domain, AI has compressed work that used to be expensive — generating drafts, code, prototypes, and analyses. The marginal cost of a first attempt has dropped sharply. What remains expensive is what happens after the output arrives: evaluating what gets generated. That involves separating [&#8230;]",
+      "origin": "rss",
+      "item_hash": "b382680fbfa327fa"
+    },
+    {
+      "title": "Job Pivots in the Age of AI: Lessons From Mike Mulligan and His Steam Shovel",
+      "url": "https://sloanreview.mit.edu/article/job-pivots-in-the-age-of-ai-lessons-from-mike-mulligan-and-his-steam-shovel/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-02T11:00:54+00:00",
+      "summary": "Matt Harrison Clough As organizations like Amazon, PwC, and Microsoft have announced AI-fueled layoffs, it’s no surprise that half of Americans have expressed concern about AI’s larger potential impact on their jobs. Of course, companies can attribute layoffs to AI efficiencies while trimming workforces for various reasons. Yet there is no question that artificial intelligence [&#8230;]",
+      "origin": "rss",
+      "item_hash": "7892214bb679b098"
+    },
+    {
+      "title": "Pay Day: What States, Job Seekers & Workers Expect on Salary Transparency",
+      "url": "https://www.corporatecomplianceinsights.com/pay-day-states-job-seekers-expect-salary-transparency/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-08T11:00:52+00:00",
+      "summary": "Pay transparency laws continue to proliferate nationwide, creating a complex landscape of pay disclosure requirements, particularly for multistate employers. Rayner Mangum of Constangy, Brooks, Smith &#038; Prophete background and considerations for compliance, as well as practical recommendations for building a compliance framework.\nThe post Pay Day: What States, Job Seekers &#038; Workers Expect on Salary Transparency appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "5f630106be69b7af"
+    },
+    {
+      "title": "Why Black Colleagues Still Do Not Feel Safe Reporting Racial Discrimination at Work",
+      "url": "https://www.corporatecomplianceinsights.com/why-black-colleagues-do-not-feel-safe-reporting-discrimination/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:01:31+00:00",
+      "summary": "Lack of anti-Black racism claims does not necessarily mean your speak-up culture is working well\nThe post Why Black Colleagues Still Do Not Feel Safe Reporting Racial Discrimination at Work appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "d8f981318fba2184"
+    },
+    {
+      "title": "EU Inc.: Questions Remain, But a Step Forward for Europe",
+      "url": "https://www.corporatecomplianceinsights.com/eu-inc-questions-remain-step-forward-europe/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:00:22+00:00",
+      "summary": "Voluntary framework could still run into regional divergence \nThe post EU Inc.: Questions Remain, But a Step Forward for Europe appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "eaa12cabcdc04fdb"
+    },
+    {
+      "title": "Texas Is Using Consumer Protection Law to Police Chinese Supply Chain Ties",
+      "url": "https://www.corporatecomplianceinsights.com/texas-using-consumer-protection-law-police-chinese-supply-chain-ties/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:02:03+00:00",
+      "summary": "State’s law doesn't require proof of actual consumer harm — and the attorney general is using that low threshold to target companies with alleged Chinese affiliations \nThe post Texas Is Using Consumer Protection Law to Police Chinese Supply Chain Ties appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "3f39db793d8c790b"
+    },
+    {
+      "title": "The EU AI Act’s ‘Wait and See’ Window Is Closing",
+      "url": "https://www.corporatecomplianceinsights.com/eu-ai-act-wait-see-window-closing/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:03+00:00",
+      "summary": "AI literacy has survived attempts to water it down and remains a direct organizational obligation — not a policy aspiration \nThe post The EU AI Act’s ‘Wait and See’ Window Is Closing appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "4ad0793aa4057eb3"
+    },
+    {
+      "title": "Your opinion, please",
+      "url": "https://aeon.co/videos/a-vivid-portrait-of-montana-built-from-call-in-radio-clips?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-08T10:01:00+00:00",
+      "summary": "From poetry to politics, this radio show asked listeners to speak their minds. Decades later, their words still resonate- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "c9cd16403151580a"
+    },
+    {
+      "title": "Living without my self",
+      "url": "https://aeon.co/essays/robert-musil-gives-confidence-to-the-no-self-minority-like-me?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-07T10:00:00+00:00",
+      "summary": "Our culture valorises the big, coherent self: reading Robert Musil helps me embrace the beauty of my no-self existence- by Mette Leonard HøegRead on Aeon",
+      "origin": "rss",
+      "item_hash": "ae6a6e67ed3dd75f"
+    },
+    {
+      "title": "Is AI already conscious?",
+      "url": "https://aeon.co/videos/we-long-misjudged-animal-consciousness-could-ai-be-next?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:01:00+00:00",
+      "summary": "Why it’s difficult and perhaps even morally perilous to rule out the possibility of AI consciousness- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "5b172cadfb74ad69"
+    },
+    {
+      "title": "The antibiotic trap",
+      "url": "https://aeon.co/essays/antibiotic-resistance-in-india-has-consequences-everywhere?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:00:00+00:00",
+      "summary": "Easy access to desperately needed drugs has made India the global accelerant of our antimicrobial resistance crisis- by Assa Doron & Alex BroomRead on Aeon",
+      "origin": "rss",
+      "item_hash": "2bb169c0d0513ffb"
+    },
+    {
+      "title": "When trauma becomes trope",
+      "url": "https://aeon.co/essays/how-might-humanitarian-journalism-be-done-better?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-03T10:00:00+00:00",
+      "summary": "Humanitarian journalism is a moral calling to document human suffering. But in practice, it’s an ethically murky undertaking- by Cathy OttenRead on Aeon",
+      "origin": "rss",
+      "item_hash": "5b2c327331dc0768"
+    },
+    {
+      "title": "The hidden world of plant roots",
+      "url": "https://aeon.co/videos/what-a-plants-decision-making-reveals-about-intelligence?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-02T10:01:00+00:00",
+      "summary": "Plant roots don’t have a nervous system, yet can produce sophisticated responses. What does that say about intelligence?- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "a9dd58a21bd8b17a"
+    },
+    {
+      "title": "The house is a work of art",
+      "url": "https://aeon.co/essays/frank-lloyd-wright-as-a-mirror-of-the-american-condition?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-02T10:00:00+00:00",
+      "summary": "Frank Lloyd Wright exalted the individual and made ordinary life beautiful. But his life was marked by scandal and grief- by Andrew DemingRead on Aeon",
+      "origin": "rss",
+      "item_hash": "006d1c9682073b3e"
+    },
+    {
+      "title": "Pramana: Fine-Tuning Large Language Models for Epistemic Reasoning through Navya-Nyaya",
+      "url": "https://arxiv.org/abs/2604.04937",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04937v1 Announce Type: new \nAbstract: Large language models produce fluent text but struggle with systematic reasoning, often hallucinating confident but unfounded claims. When Apple researchers added irrelevant context to mathematical problems, LLM performance degraded by 65% Apple Machine Learning Research, exposing brittle pattern-matching beneath apparent reasoning. This epistemic gap, the inability to ground claims in traceable evidence, limits AI reliability in domains requiring",
+      "origin": "rss",
+      "item_hash": "cef204a045c9306e"
+    },
+    {
+      "title": "Operational Noncommutativity in Sequential Metacognitive Judgments",
+      "url": "https://arxiv.org/abs/2604.04938",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04938v1 Announce Type: new \nAbstract: Metacognition, understood as the monitoring and regulation of one's own cognitive processes, is inherently sequential: an agent evaluates an internal state, updates it, and may then re-evaluate under modified criteria. Order effects in cognition are well documented, yet it remains unclear whether such effects reflect classical state changes or reveal a deeper structural non-commutativity. We develop an operational framework that makes this distinc",
+      "origin": "rss",
+      "item_hash": "afe2e7e47909084b"
+    },
+    {
+      "title": "Proximity Measure of Information Object Features for Solving the Problem of Their Identification in Information Systems",
+      "url": "https://arxiv.org/abs/2604.04939",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04939v1 Announce Type: new \nAbstract: The paper considers a new quantitative-qualitative proximity measure for the features of information objects, where data enters a common information resource from several sources independently. The goal is to determine the possibility of their relation to the same physical object (observation object). The proposed measure accounts for the possibility of differences in individual feature values - both quantitative and qualitative - caused by existi",
+      "origin": "rss",
+      "item_hash": "83810098e37ee36e"
+    },
+    {
+      "title": "ReVEL: Multi-Turn Reflective LLM-Guided Heuristic Evolution via Structured Performance Feedback",
+      "url": "https://arxiv.org/abs/2604.04940",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04940v1 Announce Type: new \nAbstract: Designing effective heuristics for NP-hard combinatorial optimization problems remains a challenging and expertise-intensive task. Existing applications of large language models (LLMs) primarily rely on one-shot code synthesis, yielding brittle heuristics that underutilize the models' capacity for iterative reasoning. We propose ReVEL: Multi-Turn Reflective LLM-Guided Heuristic Evolution via Structured Performance Feedback, a hybrid framework that",
+      "origin": "rss",
+      "item_hash": "b332d7a0a6b9bc7a"
+    },
+    {
+      "title": "Algebraic Structure Discovery for Real World Combinatorial Optimisation Problems: A General Framework from Abstract Algebra to Quotient Space Learning",
+      "url": "https://arxiv.org/abs/2604.04941",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04941v1 Announce Type: new \nAbstract: Many combinatorial optimisation problems hide algebraic structures that, once exposed, shrink the search space and improve the chance of finding the global optimal solution. We present a general framework that (i) identifies algebraic structure, (ii) formalises operations, (iii) constructs quotient spaces that collapse redundant representations, and (iv) optimises directly over these reduced spaces. Across a broad family of rule-combination tasks ",
+      "origin": "rss",
+      "item_hash": "20d246c2f1317410"
+    },
+    {
+      "title": "PaperOrchestra: A Multi-Agent Framework for Automated AI Research Paper Writing",
+      "url": "https://arxiv.org/abs/2604.05018",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05018v1 Announce Type: new \nAbstract: Synthesizing unstructured research materials into manuscripts is an essential yet under-explored challenge in AI-driven scientific discovery. Existing autonomous writers are rigidly coupled to specific experimental pipelines, and produce superficial literature reviews. We introduce PaperOrchestra, a multi-agent framework for automated AI research paper writing. It flexibly transforms unconstrained pre-writing materials into submission-ready LaTeX ",
+      "origin": "rss",
+      "item_hash": "24df8e119f11ac7d"
+    },
+    {
+      "title": "Part-Level 3D Gaussian Vehicle Generation with Joint and Hinge Axis Estimation",
+      "url": "https://arxiv.org/abs/2604.05070",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05070v1 Announce Type: new \nAbstract: Simulation is essential for autonomous driving, yet current frameworks often model vehicles as rigid assets and fail to capture part-level articulation. With perception algorithms increasingly leveraging dynamics such as wheel steering or door opening, realistic simulation requires animatable vehicle representations. Existing CAD-based pipelines are limited by library coverage and fixed templates, preventing faithful reconstruction of in-the-wild ",
+      "origin": "rss",
+      "item_hash": "8ee4fadcada85997"
+    },
+    {
+      "title": "MMORF: A Multi-agent Framework for Designing Multi-objective Retrosynthesis Planning Systems",
+      "url": "https://arxiv.org/abs/2604.05075",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05075v1 Announce Type: new \nAbstract: Multi-objective retrosynthesis planning is a critical chemistry task requiring dynamic balancing of quality, safety, and cost objectives. Language model-based multi-agent systems (MAS) offer a promising approach for this task: leveraging interactions of specialized agents to incorporate multiple objectives into retrosynthesis planning. We present MMORF, a framework for constructing MAS for multi-objective retrosynthesis planning. MMORF features mo",
+      "origin": "rss",
+      "item_hash": "7921c661aa6a0b1c"
+    },
+    {
+      "title": "MedGemma 1.5 Technical Report",
+      "url": "https://arxiv.org/abs/2604.05081",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05081v1 Announce Type: new \nAbstract: We introduce MedGemma 1.5 4B, the latest model in the MedGemma collection. MedGemma 1.5 expands on MedGemma 1 by integrating additional capabilities: high-dimensional medical imaging (CT/MRI volumes and histopathology whole slide images), anatomical localization via bounding boxes, multi-timepoint chest X-ray analysis, and improved medical document understanding (lab reports, electronic health records). We detail the innovations required to enable",
+      "origin": "rss",
+      "item_hash": "4a3f1e8069a893d9"
+    },
+    {
+      "title": "Uncertainty-Guided Latent Diagnostic Trajectory Learning for Sequential Clinical Diagnosis",
+      "url": "https://arxiv.org/abs/2604.05116",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05116v1 Announce Type: new \nAbstract: Clinical diagnosis requires sequential evidence acquisition under uncertainty. However, most Large Language Model (LLM) based diagnostic systems assume fully observed patient information and therefore do not explicitly model how clinical evidence should be sequentially acquired over time. Even when diagnosis is formulated as a sequential decision process, it is still challenging to learn effective diagnostic trajectories. This is because the space",
+      "origin": "rss",
+      "item_hash": "31753857836df262"
+    },
+    {
+      "title": "Non-monotonic causal discovery with Kolmogorov-Arnold Fuzzy Cognitive Maps",
+      "url": "https://arxiv.org/abs/2604.05136",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05136v1 Announce Type: new \nAbstract: Fuzzy Cognitive Maps constitute a neuro-symbolic paradigm for modeling complex dynamic systems, widely adopted for their inherent interpretability and recurrent inference capabilities. However, the standard FCM formulation, characterized by scalar synaptic weights and monotonic activation functions, is fundamentally constrained in modeling non-monotonic causal dependencies, thereby limiting its efficacy in systems governed by saturation effects or",
+      "origin": "rss",
+      "item_hash": "4180dec84f12dbed"
+    },
+    {
+      "title": "A mathematical theory of evolution for self-designing AIs",
+      "url": "https://arxiv.org/abs/2604.05142",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05142v1 Announce Type: new \nAbstract: As artificial intelligence systems (AIs) become increasingly produced by recursive self-improvement, a form of evolution may emerge, in which the traits of AI systems are shaped by the success of earlier AIs in designing and propagating their descendants. There is a rich mathematical theory modeling how behavioral traits are shaped by biological evolution, but AI evolution will be radically different: biological DNA mutations are random and approx",
+      "origin": "rss",
+      "item_hash": "b499b6a11f9bd1de"
+    },
+    {
+      "title": "IntentScore: Intent-Conditioned Action Evaluation for Computer-Use Agents",
+      "url": "https://arxiv.org/abs/2604.05157",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05157v1 Announce Type: new \nAbstract: Computer-Use Agents (CUAs) leverage large language models to execute GUI operations on desktop environments, yet they generate actions without evaluating action quality, leading to irreversible errors that cascade through subsequent steps. We propose IntentScore, a plan-aware reward model that learns to score candidate actions from 398K offline GUI interaction steps spanning three operating systems. IntentScore trains with two complementary object",
+      "origin": "rss",
+      "item_hash": "2f3a7d487623eeba"
+    },
+    {
+      "title": "Bypassing the CSI Bottleneck: MARL-Driven Spatial Control for Reflector Arrays",
+      "url": "https://arxiv.org/abs/2604.05162",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05162v1 Announce Type: new \nAbstract: Reconfigurable Intelligent Surfaces (RIS) are pivotal for next-generation smart radio environments, yet their practical deployment is severely bottlenecked by the intractable computational overhead of Channel State Information (CSI) estimation. To bypass this fundamental physical-layer barrier, we propose an AI-native, data-driven paradigm that replaces complex channel modeling with spatial intelligence. This paper presents a fully autonomous Mult",
+      "origin": "rss",
+      "item_hash": "73c4dcb69d4b681e"
+    },
+    {
+      "title": "Learning to Focus: CSI-Free Hierarchical MARL for Reconfigurable Reflectors",
+      "url": "https://arxiv.org/abs/2604.05165",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05165v1 Announce Type: new \nAbstract: Reconfigurable Intelligent Surfaces (RIS) has a potential to engineer smart radio environments for next-generation millimeter-wave (mmWave) networks. However, the prohibitive computational overhead of Channel State Information (CSI) estimation and the dimensionality explosion inherent in centralized optimization severely hinder practical large-scale deployments. To overcome these bottlenecks, we introduce a ``CSI-free\" paradigm powered by a Hierar",
+      "origin": "rss",
+      "item_hash": "474bc5680644c6d0"
+    },
+    {
+      "title": "Instruction-Tuned LLMs for Parsing and Mining Unstructured Logs on Leadership HPC Systems",
+      "url": "https://arxiv.org/abs/2604.05168",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05168v1 Announce Type: new \nAbstract: Leadership-class HPC systems generate massive volumes of heterogeneous, largely unstructured system logs. Because these logs originate from diverse software, hardware, and runtime layers, they exhibit inconsistent formats, making structure extraction and pattern discovery extremely challenging. Therefore, robust log parsing and mining is critical to transform this raw telemetry into actionable insights that reveal operational patterns, diagnose an",
+      "origin": "rss",
+      "item_hash": "c50b419f516aa531"
+    },
+    {
+      "title": "ClawsBench: Evaluating Capability and Safety of LLM Productivity Agents in Simulated Workspaces",
+      "url": "https://arxiv.org/abs/2604.05172",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05172v1 Announce Type: new \nAbstract: Large language model (LLM) agents are increasingly deployed to automate productivity tasks (e.g., email, scheduling, document management), but evaluating them on live services is risky due to potentially irreversible changes. Existing benchmarks rely on simplified environments and fail to capture realistic, stateful, multi-service workflows. We introduce ClawsBench, a benchmark for evaluating and improving LLM agents in realistic productivity sett",
+      "origin": "rss",
+      "item_hash": "056294e05c3545c4"
+    },
+    {
+      "title": "Attribution Bias in Large Language Models",
+      "url": "https://arxiv.org/abs/2604.05224",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05224v1 Announce Type: new \nAbstract: As Large Language Models (LLMs) are increasingly used to support search and information retrieval, it is critical that they accurately attribute content to its original authors. In this work, we introduce AttriBench, the first fame- and demographically-balanced quote attribution benchmark dataset. Through explicitly balancing author fame and demographics, AttriBench enables controlled investigation of demographic bias in quote attribution. Using t",
+      "origin": "rss",
+      "item_hash": "98758bd160e68651"
+    },
+    {
+      "title": "From Governance Norms to Enforceable Controls: A Layered Translation Method for Runtime Guardrails in Agentic AI",
+      "url": "https://arxiv.org/abs/2604.05229",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05229v1 Announce Type: new \nAbstract: Agentic AI systems plan, use tools, maintain state, and produce multi-step trajectories with external effects. Those properties create a governance problem that differs materially from single-turn generative AI: important risks emerge dur- ing execution, not only at model development or deployment time. Governance standards such as ISO/IEC 42001, ISO/IEC 23894, ISO/IEC 42005, ISO/IEC 5338, ISO/IEC 38507, and the NIST AI Risk Management Framework a",
+      "origin": "rss",
+      "item_hash": "4347c4be16466393"
+    },
+    {
+      "title": "EAGLE: Edge-Aware Graph Learning for Proactive Delivery Delay Prediction in Smart Logistics Networks",
+      "url": "https://arxiv.org/abs/2604.05254",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05254v1 Announce Type: new \nAbstract: Modern logistics networks generate rich operational data streams at every warehouse node and transportation lane -- from order timestamps and routing records to shipping manifests -- yet predicting delivery delays remains predominantly reactive. Existing predictive approaches typically treat this problem either as a tabular classification task, ignoring network topology, or as a time-series anomaly detection task, overlooking the spatial dependenc",
+      "origin": "rss",
+      "item_hash": "e1a05406145653e3"
+    },
+    {
+      "title": "TDA-RC: Task-Driven Alignment for Knowledge-Based Reasoning Chains in Large Language Models",
+      "url": "https://arxiv.org/abs/2604.04942",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04942v1 Announce Type: new \nAbstract: Enhancing the reasoning capability of large language models (LLMs) remains a core challenge in natural language processing. The Chain-of-Thought (CoT) paradigm dominates practical applications for its single-round efficiency, yet its reasoning chains often exhibit logical gaps. While multi-round paradigms like Graph-of-Thoughts (GoT), Tree-of-Thoughts (ToT), and Atom of Thought (AoT) achieve strong performance and reveal effective reasoning struct",
+      "origin": "rss",
+      "item_hash": "e18b839845e76708"
+    },
+    {
+      "title": "The Illusion of Latent Generalization: Bi-directionality and the Reversal Curse",
+      "url": "https://arxiv.org/abs/2604.04943",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04943v1 Announce Type: new \nAbstract: The reversal curse describes a failure of autoregressive language models to retrieve a fact in reverse order (e.g., training on ``$A > B$'' but failing on ``$B < A$''). Recent work shows that objectives with bidirectional supervision (e.g., bidirectional attention or masking-based reconstruction for decoder-only models) can mitigate the reversal curse. We extend this evaluation to include a vanilla masked language modeling (MLM) objective and comp",
+      "origin": "rss",
+      "item_hash": "48f8d1392531898c"
+    },
+    {
+      "title": "Inclusion-of-Thoughts: Mitigating Preference Instability via Purifying the Decision Space",
+      "url": "https://arxiv.org/abs/2604.04944",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.04944v1 Announce Type: new \nAbstract: Multiple-choice questions (MCQs) are widely used to evaluate large language models (LLMs). However, LLMs remain vulnerable to the presence of plausible distractors. This often diverts attention toward irrelevant choices, resulting in unstable oscillation between correct and incorrect answers. In this paper, we propose Inclusion-of-Thoughts (IoT), a progressive self-filtering strategy that is designed to mitigate this cognitive load (i.e., instabil",
+      "origin": "rss",
+      "item_hash": "e316e4cd0721c51b"
+    },
+    {
+      "title": "Phase-Associative Memory: Sequence Modeling in Complex Hilbert Space",
+      "url": "https://arxiv.org/abs/2604.05030",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05030v1 Announce Type: new \nAbstract: We present Phase-Associative Memory (PAM), a recurrent sequence model in which all representations are complex-valued, associations accumulate in a matrix state $S_{t}$ $\\in$ $\\mathbb{C}^{d \\times d}$ via outer products, and retrieval operates through the conjugate inner product $K_t^* \\cdot Q_t / \\sqrt{d}$. At $\\sim$100M parameters on WikiText-103, PAM reaches validation perplexity 30.0, within $\\sim$10\\% of a matched transformer (27.1) trained u",
+      "origin": "rss",
+      "item_hash": "49a3e4a053957c9a"
+    },
+    {
+      "title": "This Treatment Works, Right? Evaluating LLM Sensitivity to Patient Question Framing in Medical QA",
+      "url": "https://arxiv.org/abs/2604.05051",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05051v1 Announce Type: new \nAbstract: Patients are increasingly turning to large language models (LLMs) with medical questions that are complex and difficult to articulate clearly. However, LLMs are sensitive to prompt phrasings and can be influenced by the way questions are worded. Ideally, LLMs should respond consistently regardless of phrasing, particularly when grounded in the same underlying evidence. We investigate this through a systematic evaluation in a controlled retrieval-a",
+      "origin": "rss",
+      "item_hash": "781ca8d6f58905ef"
+    },
+    {
+      "title": "Memory Dial: A Training Framework for Controllable Memorization in Language Models",
+      "url": "https://arxiv.org/abs/2604.05074",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05074v1 Announce Type: new \nAbstract: Memorization in language models is widely studied but remains difficult to isolate and control. Understanding when and what models memorize is essential for explaining their predictions, yet existing approaches are post-hoc: they can detect memorization in trained models, but cannot disentangle its effects from architecture, data, or optimization. We introduce Memory Dial, a training framework that makes memorization pressure an explicit, controll",
+      "origin": "rss",
+      "item_hash": "efe00721bf86cde2"
+    },
+    {
+      "title": "Beyond LLM-as-a-Judge: Deterministic Metrics for Multilingual Generative Text Evaluation",
+      "url": "https://arxiv.org/abs/2604.05083",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05083v1 Announce Type: new \nAbstract: While Large Language Models (LLMs) are increasingly adopted as automated judges for evaluating generated text, their outputs are often costly, and highly sensitive to prompt design, language, and aggregation strategies, severely, which limits reproducibility. To address these challenges, we propose \\textbf{\\textit{OmniScore}}, a family of complementary, deterministic learned metrics developed using small size ($<$1B) parameter models. OmniScore ap",
+      "origin": "rss",
+      "item_hash": "2461467dcb377da0"
+    },
+    {
+      "title": "Document Optimization for Black-Box Retrieval via Reinforcement Learning",
+      "url": "https://arxiv.org/abs/2604.05087",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05087v1 Announce Type: new \nAbstract: Document expansion is a classical technique for improving retrieval quality, and is attractive since it shifts computation offline, avoiding additional query-time processing. However, when applied to modern retrievers, it has been shown to degrade performance, often introducing noise that obfuscates the discriminative signal. We recast document expansion as a document optimization problem: a language model or a vision language model is fine-tuned ",
+      "origin": "rss",
+      "item_hash": "282883ccd3336910"
+    },
+    {
+      "title": "Multilingual Language Models Encode Script Over Linguistic Structure",
+      "url": "https://arxiv.org/abs/2604.05090",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05090v1 Announce Type: new \nAbstract: Multilingual language models (LMs) organize representations for typologically and orthographically diverse languages into a shared parameter space, yet the nature of this internal organization remains elusive. In this work, we investigate which linguistic properties - abstract language identity or surface-form cues - shape multilingual representations. Focusing on compact, distilled models where representational trade-offs are explicit, we analyze",
+      "origin": "rss",
+      "item_hash": "addc82c7f9b20897"
+    },
+    {
+      "title": "MegaTrain: Full Precision Training of 100B+ Parameter Large Language Models on a Single GPU",
+      "url": "https://arxiv.org/abs/2604.05091",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05091v1 Announce Type: new \nAbstract: We present MegaTrain, a memory-centric system that efficiently trains 100B+ parameter large language models at full precision on a single GPU. Unlike traditional GPU-centric systems, MegaTrain stores parameters and optimizer states in host memory (CPU memory) and treats GPUs as transient compute engines. For each layer, we stream parameters in and compute gradients out, minimizing persistent device state. To battle the CPU-GPU bandwidth bottleneck",
+      "origin": "rss",
+      "item_hash": "021968ccc515a304"
+    },
+    {
+      "title": "RAG or Learning? Understanding the Limits of LLM Adaptation under Continuous Knowledge Drift in the Real World",
+      "url": "https://arxiv.org/abs/2604.05096",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05096v1 Announce Type: new \nAbstract: Large language models (LLMs) acquire most of their knowledge during pretraining, which ties them to a fixed snapshot of the world and makes adaptation to continuously evolving knowledge challenging. As facts, entities, and events change over time, models may experience continuous knowledge drift, resulting not only in outdated predictions but also in temporally inconsistent reasoning. Although existing approaches, such as continual finetuning, kno",
+      "origin": "rss",
+      "item_hash": "bbee8c3333aada80"
+    },
+    {
+      "title": "$\\pi^2$: Structure-Originated Reasoning Data Improves Long-Context Reasoning Ability of Large Language Models",
+      "url": "https://arxiv.org/abs/2604.05114",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05114v1 Announce Type: new \nAbstract: We study a pipeline that curates reasoning data from initial structured data for improving long-context reasoning in large language models (LLMs). Our approach, $\\pi^2$, constructs high-quality reasoning data through rigorous QA curation: 1) extracting and expanding tables from Wikipedia, 2) from the collected tables and relevant context, generating realistic and multi-hop analytical reasoning questions whose answers are automatically determined a",
+      "origin": "rss",
+      "item_hash": "9ba4e456da8330e7"
+    },
+    {
+      "title": "SenseAI: A Human-in-the-Loop Dataset for RLHF-Aligned Financial Sentiment Reasoning",
+      "url": "https://arxiv.org/abs/2604.05135",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05135v1 Announce Type: new \nAbstract: We introduce SenseAI, a human-in-the-loop (HITL) validated financial sentiment dataset designed to capture not only model outputs but the full reasoning process behind them. Unlike existing resources, SenseAI incorporates reasoning chains, confidence scores, human correction signals, and real-world market outcomes, providing a structure aligned with Reinforcement Learning from Human Feedback (RLHF) paradigms.\n  The dataset consists of 1,439 labell",
+      "origin": "rss",
+      "item_hash": "687dca74c71afc27"
+    },
+    {
+      "title": "EvolveRouter: Co-Evolving Routing and Prompt for Multi-Agent Question Answering",
+      "url": "https://arxiv.org/abs/2604.05149",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05149v1 Announce Type: new \nAbstract: Large language model agents often exhibit complementary strengths, making routing a promising approach for multi-agent question answering. However, existing routing methods remain limited in two important ways: they typically optimize over a fixed pool of agents without improving the agents themselves, and they often rely on rigid collaboration schemes that cannot adapt the number of participating agents to the query. We propose EvolveRouter, a tr",
+      "origin": "rss",
+      "item_hash": "0d866dabd3a949dc"
+    },
+    {
+      "title": "Just Pass Twice: Efficient Token Classification with LLMs for Zero-Shot NER",
+      "url": "https://arxiv.org/abs/2604.05158",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05158v1 Announce Type: new \nAbstract: Large language models encode extensive world knowledge valuable for zero-shot named entity recognition. However, their causal attention mechanism, where tokens attend only to preceding context, prevents effective token classification when disambiguation requires future context. Existing approaches use LLMs generatively, prompting them to list entities or produce structured outputs, but suffer from slow autoregressive decoding, hallucinated entitie",
+      "origin": "rss",
+      "item_hash": "d3fa448737baa43c"
+    },
+    {
+      "title": "What Makes a Good Response? An Empirical Analysis of Quality in Qualitative Interviews",
+      "url": "https://arxiv.org/abs/2604.05163",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05163v1 Announce Type: new \nAbstract: Qualitative interviews provide essential insights into human experiences when they elicit high-quality responses. While qualitative and NLP researchers have proposed various measures of interview quality, these measures lack validation that high-scoring responses actually contribute to the study's goals. In this work, we identify, implement, and evaluate 10 proposed measures of interview response quality to determine which are actually predictive ",
+      "origin": "rss",
+      "item_hash": "4d7e3ff96a329ab8"
+    },
+    {
+      "title": "Gradient-Controlled Decoding: A Safety Guardrail for LLMs with Dual-Anchor Steering",
+      "url": "https://arxiv.org/abs/2604.05179",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05179v1 Announce Type: new \nAbstract: Large language models (LLMs) remain susceptible to jailbreak and direct prompt-injection attacks, yet the strongest defensive filters frequently over-refuse benign queries and degrade user experience. Previous work on jailbreak and prompt injection detection such as GradSafe, detects unsafe prompts with a single \"accept all\" anchor token, but its threshold is brittle and it offers no deterministic guarantee that harmful content will not be emitted",
+      "origin": "rss",
+      "item_hash": "16245c4232dafa0c"
+    },
+    {
+      "title": "Improving Clinical Trial Recruitment using Clinical Narratives and Large Language Models",
+      "url": "https://arxiv.org/abs/2604.05190",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05190v1 Announce Type: new \nAbstract: Screening patients for enrollment is a well-known, labor-intensive bottleneck that leads to under-enrollment and, ultimately, trial failures. Recent breakthroughs in large language models (LLMs) offer a promising opportunity to use artificial intelligence to improve screening. This study systematically explored both encoder- and decoder-based generative LLMs for screening clinical narratives to facilitate clinical trial recruitment. We examined bo",
+      "origin": "rss",
+      "item_hash": "f36c018e5241c53f"
+    },
+    {
+      "title": "Faster Superword Tokenization",
+      "url": "https://arxiv.org/abs/2604.05192",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05192v1 Announce Type: new \nAbstract: Byte Pair Encoding (BPE) is a widely used tokenization algorithm, whose tokens cannot extend across pre-tokenization boundaries, functionally limiting it to representing at most full words. The BoundlessBPE and SuperBPE algorithms extend and improve BPE by relaxing this limitation and allowing the formation of superwords, which are combinations of pretokens that form phrases. However, previous implementations were impractical to train: for example",
+      "origin": "rss",
+      "item_hash": "7dc88c98b7036d54"
+    },
+    {
+      "title": "XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts",
+      "url": "https://arxiv.org/abs/2604.05242",
+      "source_name": "ArXiv - Computation and Language",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05242v1 Announce Type: new \nAbstract: Multi-bit watermarking has emerged as a promising solution for embedding imperceptible binary messages into Large Language Model (LLM)-generated text, enabling reliable attribution and tracing of malicious usage of LLMs. Despite recent progress, existing methods still face key limitations: some become computationally infeasible for large messages, while others suffer from a poor trade-off between text quality and decoding accuracy. Moreover, the d",
+      "origin": "rss",
+      "item_hash": "6ab5ed92f58a5b13"
+    },
+    {
+      "title": "Anthropic expands partnership with Google and Broadcom for multiple gigawatts of next-generation compute",
+      "url": "https://www.anthropic.com/news/google-broadcom-partnership-compute",
+      "source_name": "Anthropic News",
+      "pillar": "builder",
+      "published": "2026-04-06T00:00:00+00:00",
+      "summary": "Anthropic expands partnership with Google and Broadcom for multiple gigawatts of next-generation compute",
+      "origin": "rss",
+      "item_hash": "8589c87e9bba394d"
+    },
+    {
+      "title": "Societal Impacts",
+      "url": "https://www.anthropic.com/research/team/societal-impacts",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Societal Impacts",
+      "origin": "rss",
+      "item_hash": "87717fc65423856a"
+    },
+    {
+      "title": "Interpretability",
+      "url": "https://www.anthropic.com/research/team/interpretability",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Interpretability",
+      "origin": "rss",
+      "item_hash": "dfc21a319f95a75d"
+    },
+    {
+      "title": "Economic Research",
+      "url": "https://www.anthropic.com/research/team/economic-research",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Economic Research",
+      "origin": "rss",
+      "item_hash": "71cbf8a3e893b1c0"
+    },
+    {
+      "title": "Alignment",
+      "url": "https://www.anthropic.com/research/team/alignment",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": null,
+      "summary": "Alignment",
+      "origin": "rss",
+      "item_hash": "43e19cac5ca4688d"
+    },
+    {
+      "title": "Apr 2, 2026InterpretabilityEmotion concepts and their function in a large language model",
+      "url": "https://www.anthropic.com/research/emotion-concepts-function",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": "2026-04-02T00:00:00+00:00",
+      "summary": "Apr 2, 2026InterpretabilityEmotion concepts and their function in a large language model",
+      "origin": "rss",
+      "item_hash": "2f22c4fbcfb394f6"
+    },
+    {
+      "title": "Announcing the OpenAI Safety Fellowship",
+      "url": "https://openai.com/index/introducing-openai-safety-fellowship",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-06T10:00:00+00:00",
+      "summary": "A pilot program to support independent safety and alignment research and develop the next generation of talent",
+      "origin": "rss",
+      "item_hash": "047e7bac94f5b9df"
+    },
+    {
+      "title": "Industrial policy for the Intelligence Age",
+      "url": "https://openai.com/index/industrial-policy-for-the-intelligence-age",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-06T02:30:00+00:00",
+      "summary": "Explore our ambitious, people-first industrial policy ideas for the AI era—focused on expanding opportunity, sharing prosperity, and building resilient institutions as advanced intelligence evolves.",
+      "origin": "rss",
+      "item_hash": "4dbb4daa381a06bf"
+    },
+    {
+      "title": "OpenAI acquires TBPN",
+      "url": "https://openai.com/index/openai-acquires-tbpn",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-02T10:30:00+00:00",
+      "summary": "OpenAI acquires TBPN to accelerate global conversations around AI and support independent media, expanding dialogue with builders, businesses, and the broader tech community.",
+      "origin": "rss",
+      "item_hash": "86685a01860027de"
+    },
+    {
+      "title": "Codex now offers more flexible pricing for teams",
+      "url": "https://openai.com/index/codex-flexible-pricing-for-teams",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-02T10:00:00+00:00",
+      "summary": "Codex now includes pay-as-you-go pricing for ChatGPT Business and Enterprise, providing teams a more flexible option to start and scale adoption.",
+      "origin": "rss",
+      "item_hash": "22c2ff8bad8cfd85"
+    },
+    {
+      "title": "GLM-5.1: Towards Long-Horizon Tasks",
+      "url": "https://simonwillison.net/2026/Apr/7/glm-51/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-07T21:25:14+00:00",
+      "summary": "GLM-5.1: Towards Long-Horizon Tasks\nChinese AI lab Z.ai's latest model is a giant 754B parameter 1.51TB (on Hugging Face) MIT-licensed monster - the same size as their previous GLM-5 release, and sharing the same paper.\nIt's available via OpenRouter so I asked it to draw me a pelican:\nllm install llm-openrouter\nllm -m openrouter/z-ai/glm-5.1 'Generate an SVG of a pelican on a bicycle'\n\nAnd something new happened... unprompted, the model decided to give me an HTML page that included both the SVG ",
+      "origin": "rss",
+      "item_hash": "a76d763a82ff4ac4"
+    },
+    {
+      "title": "Anthropic's Project Glasswing - restricting Claude Mythos to security researchers - sounds necessary to me",
+      "url": "https://simonwillison.net/2026/Apr/7/project-glasswing/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-07T20:52:54+00:00",
+      "summary": "Anthropic didn't release their latest model, Claude Mythos (system card PDF), today. They have instead made it available to a very restricted set of preview partners under their newly announced Project Glasswing.\nThe model is a general purpose model, similar to Claude Opus 4.6, but Anthropic claim that its cyber-security research abilities are strong enough that they need to give the software industry as a whole time to prepare.\n\nMythos Preview has already found thousands of high-severity vulner",
+      "origin": "rss",
+      "item_hash": "455223126134bacc"
+    },
+    {
+      "title": "SQLite WAL Mode Across Docker Containers Sharing a Volume",
+      "url": "https://simonwillison.net/2026/Apr/7/sqlite-wal-docker-containers/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-07T15:41:00+00:00",
+      "summary": "Research: SQLite WAL Mode Across Docker Containers Sharing a Volume\n    Inspired by this conversation on Hacker News about whether two SQLite processes in separate Docker containers that share the same volume might run into problems due to WAL shared memory. The answer is that everything works fine - Docker containers on the same host and filesystem share the same shared memory in a way that allows WAL to collaborate as it should.\n    \n        Tags: docker, sqlite",
+      "origin": "rss",
+      "item_hash": "651a729295435f0a"
+    },
+    {
+      "title": "Google AI Edge Gallery",
+      "url": "https://simonwillison.net/2026/Apr/6/google-ai-edge-gallery/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-06T05:18:26+00:00",
+      "summary": "Google AI Edge Gallery\nTerrible name, really great app: this is Google's official app for running their Gemma 4 models (the E2B and E4B sizes, plus some members of the Gemma 3 family) directly on your iPhone.\nIt works really well. The E2B model is a 2.54GB download and is both fast and genuinely useful.\nThe app also provides \"ask questions about images\" and audio transcription (up to 30s) with the two small Gemma 4 models, and has an interesting \"skills\" demo which demonstrates tool calling agai",
+      "origin": "rss",
+      "item_hash": "fb61e3effa86c887"
+    },
+    {
+      "title": "datasette-ports 0.2",
+      "url": "https://simonwillison.net/2026/Apr/6/datasette-ports-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-06T03:25:43+00:00",
+      "summary": "Release: datasette-ports 0.2\n    \n\nNo longer requires Datasette - running uvx datasette-ports now works as well.\nInstalling it as a Datasette plugin continues to provide the datasette ports command.\n\n\n    \n        Tags: datasette",
+      "origin": "rss",
+      "item_hash": "be6937f11e403998"
+    },
+    {
+      "title": "scan-for-secrets 0.3",
+      "url": "https://simonwillison.net/2026/Apr/6/scan-for-secrets/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-06T02:59:28+00:00",
+      "summary": "Release: scan-for-secrets 0.3\n    \n\nNew -r/--redact option which shows the list of matches, asks for confirmation and then replaces every match with REDACTED, taking escaping rules into account.\nNew Python function redact_file(file_path: str | Path, secrets: list[str], replacement: str = \"REDACTED\") -> int.\n\n\n    \n        Tags: projects",
+      "origin": "rss",
+      "item_hash": "c7bd3f49af3c0273"
+    },
+    {
+      "title": "Cleanup Claude Code Paste",
+      "url": "https://simonwillison.net/2026/Apr/6/cleanup-claude-code-paste/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-06T02:55:23+00:00",
+      "summary": "Tool: Cleanup Claude Code Paste\n    Super-niche tool this. I sometimes copy prompts out of the Claude Code terminal app and they come out with a bunch of weird additional whitespace. This tool cleans that up.\n\n    \n        Tags: tools, claude-code",
+      "origin": "rss",
+      "item_hash": "04c4f4fbc307f654"
+    },
+    {
+      "title": "datasette-ports 0.1",
+      "url": "https://simonwillison.net/2026/Apr/6/datasette-ports/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-06T00:23:55+00:00",
+      "summary": "Release: datasette-ports 0.1\n    Another example of README-driven development, this time solving a problem that might be unique to me.\nI often find myself running a bunch of different Datasette instances with different databases and different in-development plugins, spreads across dozens of different terminal windows - enough that I frequently lose them!\nNow I can run this:\ndatasette install datasette-ports\ndatasette ports\n\nAnd get a list of every running instance that looks something like this:",
+      "origin": "rss",
+      "item_hash": "fc529b367f17c03d"
+    },
+    {
+      "title": "Eight years of wanting, three months of building with AI",
+      "url": "https://simonwillison.net/2026/Apr/5/building-with-ai/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T23:54:18+00:00",
+      "summary": "Eight years of wanting, three months of building with AI\nLalit Maganti provides one of my favorite pieces of long-form writing on agentic engineering I've seen in ages.\nThey spent eight years thinking about and then three months building syntaqlite, which they describe as \"high-fidelity devtools that SQLite deserves\".\nThe goal was to provide fast, robust and comprehensive linting and verifying tools for SQLite, suitable for use in language servers and other development tools - a parser, formatte",
+      "origin": "rss",
+      "item_hash": "e0b38d6b592f972e"
+    },
+    {
+      "title": "Quoting Chengpeng Mou",
+      "url": "https://simonwillison.net/2026/Apr/5/chengpeng-mou/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T21:47:06+00:00",
+      "summary": "From anonymized U.S. ChatGPT data, we are seeing:\n\n~2M weekly messages on health insurance\n~600K weekly messages [classified as healthcare] from people living in “hospital deserts” (30 min drive to nearest hospital)\n7 out of 10 msgs happen outside clinic hours\n\n&mdash; Chengpeng Mou, Head of Business Finance, OpenAI\n\n    Tags: ai-ethics, generative-ai, openai, chatgpt, ai, llms",
+      "origin": "rss",
+      "item_hash": "25cf4a99fda80a4e"
+    },
+    {
+      "title": "Syntaqlite Playground",
+      "url": "https://simonwillison.net/2026/Apr/5/syntaqlite/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T19:32:59+00:00",
+      "summary": "Tool: Syntaqlite Playground\n    Lalit Maganti's syntaqlite is currently being discussed on Hacker News thanks to Eight years of wanting, three months of building with AI, a deep dive into how it was built.\nThis inspired me to revisit a research project I ran when Lalit first released it a couple of weeks ago, where I tried it out and then compiled it to a WebAssembly wheel so it could run in Pyodide in a browser (the library itself uses C and Rust).\nThis new playground loads up the Python librar",
+      "origin": "rss",
+      "item_hash": "c921197a00c86d00"
+    },
+    {
+      "title": "scan-for-secrets 0.2",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T04:07:13+00:00",
+      "summary": "Release: scan-for-secrets 0.2\n    \nCLI tool now streams results as they are found rather than waiting until the end, which is better for large directories.\n-d/--directory option can now be used multiple times to scan multiple directories.\nNew -f/--file option for specifying one or more individual files to scan.\nNew scan_directory_iter(), scan_file() and scan_file_iter() Python API functions.\nNew -v/--verbose option which shows each directory that is being scanned.",
+      "origin": "rss",
+      "item_hash": "2f8f4c620a4c1187"
+    },
+    {
+      "title": "scan-for-secrets 0.1.1",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T03:39:33+00:00",
+      "summary": "Release: scan-for-secrets 0.1.1\n    \n\nAdded documentation of the escaping schemes that are also scanned.\nRemoved unnecessary repr escaping scheme, which was already covered by json.",
+      "origin": "rss",
+      "item_hash": "92cacca2adf1507a"
+    },
+    {
+      "title": "scan-for-secrets 0.1",
+      "url": "https://simonwillison.net/2026/Apr/5/scan-for-secrets-3/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T03:27:13+00:00",
+      "summary": "Release: scan-for-secrets 0.1\n    I like publishing transcripts of local Claude Code sessions using my claude-code-transcripts tool but I'm often paranoid that one of my API keys or similar secrets might inadvertently be revealed in the detailed log files.\nI built this new Python scanning tool to help reassure me. You can feed it secrets and have it scan for them in a specified directory:\nuvx scan-for-secrets $OPENAI_API_KEY -d logs-to-publish/\n\nIf you leave off the -d it defaults to the current",
+      "origin": "rss",
+      "item_hash": "57d1f910f4b5c909"
+    },
+    {
+      "title": "research-llm-apis 2026-04-04",
+      "url": "https://simonwillison.net/2026/Apr/5/research-llm-apis/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T00:32:11+00:00",
+      "summary": "Release: research-llm-apis 2026-04-04\n    I'm working on a major change to my LLM Python library and CLI tool. LLM provides an abstraction layer over hundreds of different LLMs from dozens of different vendors thanks to its plugin system, and some of those vendors have grown new features over the past year which LLM's abstraction layer can't handle, such as server-side tool execution.\nTo help design that new abstraction layer I had Claude Code read through the Python client libraries for Anthrop",
+      "origin": "rss",
+      "item_hash": "f1550a7b1bee5f49"
+    },
+    {
+      "title": "Quoting Kyle Daigle",
+      "url": "https://simonwillison.net/2026/Apr/4/kyle-daigle/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-04T02:20:17+00:00",
+      "summary": "[GitHub] platform activity is surging. There were 1 billion commits in 2025. Now, it's 275 million per week, on pace for 14 billion this year if growth remains linear (spoiler: it won't.)\nGitHub Actions has grown from 500M minutes/week in 2023 to 1B minutes/week in 2025, and now 2.1B minutes so far this week.\n&mdash; Kyle Daigle, COO, GitHub\n\n    Tags: github, github-actions",
+      "origin": "rss",
+      "item_hash": "0a7085483044bef1"
+    },
+    {
+      "title": "Vulnerability Research Is Cooked",
+      "url": "https://simonwillison.net/2026/Apr/3/vulnerability-research-is-cooked/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T23:59:08+00:00",
+      "summary": "Vulnerability Research Is Cooked\nThomas Ptacek's take on the sudden and enormous impact the latest frontier models are having on the field of vulnerability research.\n\nWithin the next few months, coding agents will drastically alter both the practice and the economics of exploit development. Frontier model improvement won’t be a slow burn, but rather a step function. Substantial amounts of high-impact vulnerability research (maybe even most of it) will happen simply by pointing an agent at a sour",
+      "origin": "rss",
+      "item_hash": "3bda934596581d60"
+    },
+    {
+      "title": "The cognitive impact of coding agents",
+      "url": "https://simonwillison.net/2026/Apr/3/cognitive-cost/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T23:57:04+00:00",
+      "summary": "A fun thing about recording a podcast with a professional like Lenny Rachitsky is that his team know how to slice the resulting video up into TikTok-sized short form vertical videos. Here's one he shared on Twitter today which ended up attracting over 1.1m views!\n\n\nThat was 48 seconds. Our full conversation lasted 1 hour 40 minutes.\n\n    Tags: ai-ethics, coding-agents, agentic-engineering, generative-ai, podcast-appearances, ai, llms, cognitive-debt",
+      "origin": "rss",
+      "item_hash": "e73a62b981d0af01"
+    },
+    {
+      "title": "Quoting Willy Tarreau",
+      "url": "https://simonwillison.net/2026/Apr/3/willy-tarreau/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T21:48:22+00:00",
+      "summary": "On the kernel security list we've seen a huge bump of reports. We were between 2 and 3 per week maybe two years ago, then reached probably 10 a week over the last year with the only difference being only AI slop, and now since the beginning of the year we're around 5-10 per day depending on the days (fridays and tuesdays seem the worst). Now most of these reports are correct, to the point that we had to bring in more maintainers to help us.\nAnd we're now seeing on a daily basis something that ne",
+      "origin": "rss",
+      "item_hash": "e68bf8b3fb1b5daa"
+    },
+    {
+      "title": "Quoting Daniel Stenberg",
+      "url": "https://simonwillison.net/2026/Apr/3/daniel-stenberg/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-03T21:46:07+00:00",
+      "summary": "The challenge with AI in open source security has transitioned from an AI slop tsunami into more of a ... plain security report tsunami. Less slop but lots of reports. Many of them really good.\nI'm spending hours per day on this now. It's intense.\n&mdash; Daniel Stenberg, lead developer of cURL\n\n    Tags: daniel-stenberg, security, curl, generative-ai, ai, llms, ai-security-research",
+      "origin": "rss",
+      "item_hash": "e678c5d1f221ac9d"
+    },
+    {
+      "title": "Veracrypt Project Update",
+      "url": "https://sourceforge.net/p/veracrypt/discussion/general/thread/9620d7a4b3/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-08T07:23:39+00:00",
+      "summary": "Article URL: https://sourceforge.net/p/veracrypt/discussion/general/thread/9620d7a4b3/\nComments URL: https://news.ycombinator.com/item?id=47686549\nPoints: 395\n# Comments: 108",
+      "origin": "rss",
+      "item_hash": "6ed31ef9d7d168b0"
+    },
+    {
+      "title": "OpenAI says its new model GPT-2 is too dangerous to release (2019)",
+      "url": "https://slate.com/technology/2019/02/openai-gpt2-text-generating-algorithm-ai-dangerous.html",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-08T02:41:12+00:00",
+      "summary": "Article URL: https://slate.com/technology/2019/02/openai-gpt2-text-generating-algorithm-ai-dangerous.html\nComments URL: https://news.ycombinator.com/item?id=47684326\nPoints: 332\n# Comments: 95",
+      "origin": "rss",
+      "item_hash": "84ce14b4904e949a"
+    },
+    {
+      "title": "US and Iran agree to provisional ceasefire",
+      "url": "https://www.theguardian.com/us-news/2026/apr/07/trump-iran-war-ceasefire",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T22:41:02+00:00",
+      "summary": "https://www.reuters.com/world/iran-war-live-tehran-rejects-c...\n\nComments URL: https://news.ycombinator.com/item?id=47682276\nPoints: 510\n# Comments: 1497",
+      "origin": "rss",
+      "item_hash": "1418c50363090164"
+    },
+    {
+      "title": "S3 Files",
+      "url": "https://www.allthingsdistributed.com/2026/04/s3-files-and-the-changing-face-of-s3.html",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T19:44:01+00:00",
+      "summary": "https://aws.amazon.com/blogs/aws/launching-s3-files-making-s...\n\nComments URL: https://news.ycombinator.com/item?id=47680404\nPoints: 314\n# Comments: 92",
+      "origin": "rss",
+      "item_hash": "d3f29ee293c4fdc6"
+    },
+    {
+      "title": "System Card: Claude Mythos Preview [pdf]",
+      "url": "https://www-cdn.anthropic.com/53566bf5440a10affd749724787c8913a2ae0841.pdf",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T18:18:36+00:00",
+      "summary": "Related: Project Glasswing: Securing critical software for the AI era - https://news.ycombinator.com/item?id=47679121Assessing Claude Mythos Preview's cybersecurity capabilities - https://news.ycombinator.com/item?id=47679155\n\nComments URL: https://news.ycombinator.com/item?id=47679258\nPoints: 723\n# Comments: 521",
+      "origin": "rss",
+      "item_hash": "890d9234aeccdfe6"
+    },
+    {
+      "title": "Assessing Claude Mythos Preview's cybersecurity capabilities",
+      "url": "https://red.anthropic.com/2026/mythos-preview/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T18:11:31+00:00",
+      "summary": "Related: Project Glasswing: Securing critical software for the AI era - https://news.ycombinator.com/item?id=47679121System Card: Claude Mythos Preview [pdf] - https://news.ycombinator.com/item?id=47679258Also: Anthropic's Project Glasswing sounds necessary to me - https://news.ycombinator.com/item?id=47681241\n\nComments URL: https://news.ycombinator.com/item?id=47679155\nPoints: 288\n# Comments: 42",
+      "origin": "rss",
+      "item_hash": "b4a7c378a4015418"
+    },
+    {
+      "title": "Project Glasswing: Securing critical software for the AI era",
+      "url": "https://www.anthropic.com/glasswing",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T18:09:34+00:00",
+      "summary": "Related: Assessing Claude Mythos Preview's cybersecurity capabilities - https://news.ycombinator.com/item?id=47679155System Card: Claude Mythos Preview [pdf] - https://news.ycombinator.com/item?id=47679258Also: Anthropic's Project Glasswing sounds necessary to me - https://news.ycombinator.com/item?id=47681241\n\nComments URL: https://news.ycombinator.com/item?id=47679121\nPoints: 1321\n# Comments: 663",
+      "origin": "rss",
+      "item_hash": "b0e284183065467e"
+    },
+    {
+      "title": "Cambodia unveils statue to honour famous landmine-sniffing rat",
+      "url": "https://www.bbc.com/news/articles/c0rx7xzd10xo",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T17:23:43+00:00",
+      "summary": "Article URL: https://www.bbc.com/news/articles/c0rx7xzd10xo\nComments URL: https://news.ycombinator.com/item?id=47678573\nPoints: 406\n# Comments: 93",
+      "origin": "rss",
+      "item_hash": "ecedf8bcfb347017"
+    },
+    {
+      "title": "GLM-5.1: Towards Long-Horizon Tasks",
+      "url": "https://z.ai/blog/glm-5.1",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T16:32:15+00:00",
+      "summary": "Article URL: https://z.ai/blog/glm-5.1\nComments URL: https://news.ycombinator.com/item?id=47677853\nPoints: 543\n# Comments: 222",
+      "origin": "rss",
+      "item_hash": "5dc48731884521dd"
+    },
+    {
+      "title": "12k Tons of Dumped Orange Peel Grew into a Landscape Nobody Expected (2017)",
+      "url": "https://www.sciencealert.com/how-12-000-tonnes-of-dumped-orange-peel-produced-something-nobody-imagined",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T15:47:16+00:00",
+      "summary": "Article URL: https://www.sciencealert.com/how-12-000-tonnes-of-dumped-orange-peel-produced-something-nobody-imagined\nComments URL: https://news.ycombinator.com/item?id=47677142\nPoints: 292\n# Comments: 115",
+      "origin": "rss",
+      "item_hash": "cc6e6bf9be9e59a3"
+    },
+    {
+      "title": "Lunar Flyby",
+      "url": "https://www.nasa.gov/gallery/lunar-flyby/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T15:03:18+00:00",
+      "summary": "Article URL: https://www.nasa.gov/gallery/lunar-flyby/\nComments URL: https://news.ycombinator.com/item?id=47676509\nPoints: 753\n# Comments: 183",
+      "origin": "rss",
+      "item_hash": "f95454015d0f315e"
+    },
+    {
+      "title": "Cloudflare targets 2029 for full post-quantum security",
+      "url": "https://blog.cloudflare.com/post-quantum-roadmap/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T14:07:34+00:00",
+      "summary": "Article URL: https://blog.cloudflare.com/post-quantum-roadmap/\nComments URL: https://news.ycombinator.com/item?id=47675625\nPoints: 340\n# Comments: 103",
+      "origin": "rss",
+      "item_hash": "fb47d93f2cc47316"
+    },
+    {
+      "title": "Dropping Cloudflare for Bunny.net",
+      "url": "https://jola.dev/posts/dropping-cloudflare",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T13:23:05+00:00",
+      "summary": "Article URL: https://jola.dev/posts/dropping-cloudflare\nComments URL: https://news.ycombinator.com/item?id=47675013\nPoints: 397\n# Comments: 197",
+      "origin": "rss",
+      "item_hash": "e5e7fa55360aa7d3"
+    },
+    {
+      "title": "Show HN: Brutalist Concrete Laptop Stand (2024)",
+      "url": "https://sam-burns.com/posts/concrete-laptop-stand/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T11:07:44+00:00",
+      "summary": "Article URL: https://sam-burns.com/posts/concrete-laptop-stand/\nComments URL: https://news.ycombinator.com/item?id=47673360\nPoints: 755\n# Comments: 230",
+      "origin": "rss",
+      "item_hash": "c2c945377784d43c"
+    },
+    {
+      "title": "We found an undocumented bug in the Apollo 11 guidance computer code",
+      "url": "https://www.juxt.pro/blog/a-bug-on-the-dark-side-of-the-moon/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T10:25:12+00:00",
+      "summary": "Article URL: https://www.juxt.pro/blog/a-bug-on-the-dark-side-of-the-moon/\nComments URL: https://news.ycombinator.com/item?id=47673005\nPoints: 414\n# Comments: 194",
+      "origin": "rss",
+      "item_hash": "dcb5025562676b01"
+    },
+    {
+      "title": "Are We Idiocracy Yet?",
+      "url": "https://idiocracy.wtf/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T09:57:39+00:00",
+      "summary": "Article URL: https://idiocracy.wtf/\nComments URL: https://news.ycombinator.com/item?id=47672818\nPoints: 610\n# Comments: 529",
+      "origin": "rss",
+      "item_hash": "e93758063d30b600"
+    },
+    {
+      "title": "Every GPU That Mattered",
+      "url": "https://sheets.works/data-viz/every-gpu",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-07T08:38:17+00:00",
+      "summary": "Article URL: https://sheets.works/data-viz/every-gpu\nComments URL: https://news.ycombinator.com/item?id=47672295\nPoints: 315\n# Comments: 197",
+      "origin": "rss",
+      "item_hash": "b21526e10a042590"
+    },
+    {
+      "title": "Show HN: Ghost Pepper – Local hold-to-talk speech-to-text for macOS",
+      "url": "https://github.com/matthartman/ghost-pepper",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-06T19:50:16+00:00",
+      "summary": "I built this because I wanted to see how far I could get with a voice-to-text app that used 100% local models so no data left my computer. I've been using a ton for coding and emails. Experimenting with using it as a voice interface for my other agents too. 100% open-source MIT license, would love feedback, PRs, and ideas on where to take it.\n\nComments URL: https://news.ycombinator.com/item?id=47666024\nPoints: 459\n# Comments: 194",
+      "origin": "rss",
+      "item_hash": "3f355c952dd5f0bf"
+    },
+    {
+      "title": "The cult of vibe coding is dogfooding run amok",
+      "url": "https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-06T18:31:03+00:00",
+      "summary": "Article URL: https://bramcohen.com/p/the-cult-of-vibe-coding-is-insane\nComments URL: https://news.ycombinator.com/item?id=47664912\nPoints: 608\n# Comments: 505",
+      "origin": "rss",
+      "item_hash": "9cf9b311e3ef3feb"
+    },
+    {
+      "title": "Adobe modifies hosts file to detect whether Creative Cloud is installed",
+      "url": "https://www.osnews.com/story/144737/adobe-secretly-modifies-your-hosts-file-for-the-stupidest-reason/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-04-06T17:38:30+00:00",
+      "summary": "Article URL: https://www.osnews.com/story/144737/adobe-secretly-modifies-your-hosts-file-for-the-stupidest-reason/\nComments URL: https://news.ycombinator.com/item?id=47664205\nPoints: 331\n# Comments: 166",
+      "origin": "rss",
+      "item_hash": "f0feb986aab793c2"
+    },
+    {
+      "title": "Researchers share footage of AI-designed robots that can survive extreme conditions",
+      "url": "https://tech.yahoo.com/ai/articles/researchers-share-footage-ai-designed-073000745.html",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "practitioner",
+      "published": "2026-04-05T07:30:00Z",
+      "summary": "\"They can move freely in the wild and easily recover from major injuries.\"",
+      "origin": "newsapi",
+      "item_hash": "32d9d9b2fb277dea"
+    },
+    {
+      "title": "Hollywood studios reach a tentative agreement with writers union",
+      "url": "https://www.npr.org/2026/04/05/nx-s1-5774517/hollywood-studios-wga-tentative-agreement-writers-union",
+      "source_name": "NPR",
+      "pillar": "practitioner",
+      "published": "2026-04-05T21:09:10Z",
+      "summary": "The Writers Guild of America went on strike for months in 2023 in a dispute with Hollywood studios. This year the union announced a new four-year contract after just a few weeks of negotiations.",
+      "origin": "newsapi",
+      "item_hash": "4bc60ed50a3c9c88"
+    },
+    {
+      "title": "Hedge funds' first-quarter returns are rolling in. Here's how big names fared in choppy markets.",
+      "url": "https://www.businessinsider.com/march-2026-first-quarter-hedge-fund-performance-balyasny-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-01T17:18:54Z",
+      "summary": "$33 billion Balyasny lost money through the year's first three months thanks to a rocky March.",
+      "origin": "newsapi",
+      "item_hash": "54fc840b62c19931"
+    },
+    {
+      "title": "Inside Big Software's fight for its life",
+      "url": "https://www.businessinsider.com/salesforce-microsoft-stocks-down-ai-replacement-future-of-software-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-07T09:05:01Z",
+      "summary": "Salesforce and Microsoft envision an AI future in which businesses still need their platforms — they just use them differently.",
+      "origin": "newsapi",
+      "item_hash": "98f18f59cf545358"
+    },
+    {
+      "title": "The new investing edge might be hiding in firms' own data",
+      "url": "https://www.businessinsider.com/blackrock-balyasny-tapping-ai-search-internal-data-alpha-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-06T09:01:01Z",
+      "summary": "Asset managers like BlackRock and Balyasny believe AI could help harness their own internal data for market-beating insights.",
+      "origin": "newsapi",
+      "item_hash": "3a311510096ce37c"
+    },
+    {
+      "title": "Will 'AI-Assisted' Journalists Bring Errors and Retractions?",
+      "url": "https://news.slashdot.org/story/26/04/05/2119210/will-ai-assisted-journalists-bring-errors-and-retractions",
+      "source_name": "Slashdot.org",
+      "pillar": "practitioner",
+      "published": "2026-04-05T21:22:00Z",
+      "summary": "Meet the \"journalist\" who \"uploads press releases or analyst notes into AI tools and prompts them to spit out articles that he can edit and publish quickly,\" according to the Wall Street Journal. \n\n\"AI-assisted stories accounted for nearly 20% of Fortune's we…",
+      "origin": "newsapi",
+      "item_hash": "da5cbc38df8a677c"
+    },
+    {
+      "title": "AI & cost of legacy systems in UK banking",
+      "url": "https://www.techradar.com/pro/ai-and-cost-of-legacy-systems-in-uk-banking",
+      "source_name": "TechRadar",
+      "pillar": "practitioner",
+      "published": "2026-04-02T14:04:23Z",
+      "summary": "UK banks spend ~£3.3bn/year just maintaining legacy core systems, and AI is exposing the cracks.",
+      "origin": "newsapi",
+      "item_hash": "c03b42e959f1e4c8"
+    },
+    {
+      "title": "Vestmark Names CTO Freedom Dumlao Chief AI Officer",
+      "url": "https://www.wealthmanagement.com/career-moves/vestmark-names-cto-freedom-dumlao-chief-ai-officer",
+      "source_name": "Wealthmanagement.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T16:13:31Z",
+      "summary": "Freedom Dumlao takes on an expanded role at Vestmark, leading AI strategy to enhance portfolio management, trading and compliance processes",
+      "origin": "newsapi",
+      "item_hash": "b87cdb6b89c388c7"
+    },
+    {
+      "title": "The Federal Government Is Rushing Toward AI. Our Reporting Offers Three Cautionary Tales.",
+      "url": "http://www.propublica.org/article/federal-government-ai-cautionary-tales",
+      "source_name": "ProPublica",
+      "pillar": "practitioner",
+      "published": "2026-04-06T09:00:00Z",
+      "summary": "We’ve been reporting on cybersecurity for years. As President Donald Trump and his Cabinet say artificial intelligence will transform the nation, the messaging isn’t new. It follows a familiar pattern.",
+      "origin": "newsapi",
+      "item_hash": "037c55627be8b41f"
+    },
+    {
+      "title": "The leadership dilemma: Governing the “Agentic AI” workforce",
+      "url": "https://www.techradar.com/pro/the-leadership-dilemma-governing-the-agentic-ai-workforce",
+      "source_name": "TechRadar",
+      "pillar": "practitioner",
+      "published": "2026-04-03T11:04:47Z",
+      "summary": "Agentic AI is reshaping the workforce, however, without strong governance, autonomy can become organizational risk.",
+      "origin": "newsapi",
+      "item_hash": "740314851fa19086"
+    },
+    {
+      "title": "Inference Engine for Apple Silicon",
+      "url": "https://github.com/ondeinference/onde",
+      "source_name": "Github.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T15:29:49Z",
+      "summary": "On-device inference engine for Apple silicon. Contribute to ondeinference/onde development by creating an account on GitHub.",
+      "origin": "newsapi",
+      "item_hash": "e765fdd95f0d314b"
+    },
+    {
+      "title": "Why LLM-Generated Passwords Are Dangerously Insecure",
+      "url": "https://www.irregular.com/publications/vibe-password-generation",
+      "source_name": "Irregular.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T00:39:53Z",
+      "summary": "LLM-generated passwords appear strong, but are fundamentally insecure. Testing across GPT, Claude, and Gemini revealed highly predictable patterns: repeated passwords across runs, skewed character distributions, and dramatically lower entropy than expected. C…",
+      "origin": "newsapi",
+      "item_hash": "89017c102bce2ca6"
+    },
+    {
+      "title": "Anthropic leak reveals Claude Code tracking user frustration and raises new questions about AI privacy",
+      "url": "https://www.scientificamerican.com/article/anthropic-leak-reveals-claude-code-tracking-user-frustration-and-raises-new/",
+      "source_name": "Scientific American",
+      "pillar": "practitioner",
+      "published": "2026-04-02T15:40:00Z",
+      "summary": "Code that reads your frustration is the least interesting part of the story of this accidental leak from Anthropic. The leak reveals how AI tools are also concealing their own role in the work they help produce",
+      "origin": "newsapi",
+      "item_hash": "20951a91f7533a21"
+    },
+    {
+      "title": "APERION releases SmartFlow SDK for secure, on-prem AI governance without cloud reliance",
+      "url": "https://www.helpnetsecurity.com/2026/04/03/aperion-smartflow-sdk-ai-governance/",
+      "source_name": "Help Net Security",
+      "pillar": "practitioner",
+      "published": "2026-04-03T07:06:01Z",
+      "summary": "APERION launched SmartFlow SDK, providing a secure, on-premises path for enterprises migrating away from compromised cloud-based AI gateways. The launch coincides with a 200% increase in web traffic since the March 24 LiteLLM supply chain attack that compromi…",
+      "origin": "newsapi",
+      "item_hash": "5ebf77296a9a4536"
+    },
+    {
+      "title": "Unverified: What Practitioners Post About OCR, Agents, and Tables",
+      "url": "https://idp-software.com/news/idp-accuracy-reckoning-2026/",
+      "source_name": "Idp-software.com",
+      "pillar": "practitioner",
+      "published": "2026-04-05T06:12:30Z",
+      "summary": "Anonymous practitioners post about OCR accuracy, agent failures, table extraction, and DIY pipelines. None of it is verified. The patterns are consistent.",
+      "origin": "newsapi",
+      "item_hash": "1f48dac1ecdc69ed"
+    },
+    {
+      "title": "Salomi, a research repo on extreme low-bit transformer quantization",
+      "url": "https://github.com/OrionsLock/SALOMI",
+      "source_name": "Github.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T04:08:12Z",
+      "summary": "Research code for extreme low-bit transformer quantization and inference. - OrionsLock/SALOMI",
+      "origin": "newsapi",
+      "item_hash": "a5cad6d3c0292882"
+    },
+    {
+      "title": "New infosec products of the month: March 2026",
+      "url": "https://www.helpnetsecurity.com/2026/04/03/new-infosec-products-of-the-month-march-2026/",
+      "source_name": "Help Net Security",
+      "pillar": "practitioner",
+      "published": "2026-04-03T04:00:58Z",
+      "summary": "Here’s a look at the most interesting products from the past month, featuring releases from Beazley, Bonfy.AI, Mend.io, Mimecast, NinjaOne, Novee, Intel 471, Singulr AI, Stellar Cyber, Teleport, and Vicarius. Beazley Exposure Management platform identifies ex…",
+      "origin": "newsapi",
+      "item_hash": "0db863bf7d735734"
+    },
+    {
+      "title": "Armin Ronacher: Absurd In Production",
+      "url": "https://lucumr.pocoo.org/2026/4/4/absurd-in-production/",
+      "source_name": "Pocoo.org",
+      "pillar": "practitioner",
+      "published": "2026-04-04T00:00:00Z",
+      "summary": "Five months of durable execution with just Postgres.",
+      "origin": "newsapi",
+      "item_hash": "25e8b8191249a571"
+    },
+    {
+      "title": "Google battles Chinese open-weights models with Gemma 4",
+      "url": "https://www.theregister.com/2026/04/02/googles_gemma_4_open_weights/",
+      "source_name": "Theregister.com",
+      "pillar": "practitioner",
+      "published": "2026-04-02T21:15:41Z",
+      "summary": "Now with a more permissive license, multi-modality, and support for more than 140 languages\nGoogle on Thursday unleashed a wave of new open-weights Gemma models optimized for agentic AI and coding, under a more permissive Apache 2.0 license aimed at winning o…",
+      "origin": "newsapi",
+      "item_hash": "b287c681c0fcf734"
+    },
+    {
+      "title": "AI breakthrough cuts energy use by 100x while boosting accuracy",
+      "url": "https://www.sciencedaily.com/releases/2026/04/260405003952.htm",
+      "source_name": "Science Daily",
+      "pillar": "practitioner",
+      "published": "2026-04-06T01:23:54Z",
+      "summary": "AI is consuming staggering amounts of energy—already over 10% of U.S. electricity—and the demand is only accelerating. Now, researchers have unveiled a radically more efficient approach that could slash AI energy use by up to 100× while actually improving acc…",
+      "origin": "newsapi",
+      "item_hash": "960e6afbddda6a58"
+    },
+    {
+      "title": "OpenAI’s AGI boss is taking a leave of absence",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/906965/openais-agi-boss-is-taking-a-leave-of-absence",
+      "source_name": "The Verge",
+      "pillar": "practitioner",
+      "published": "2026-04-03T20:22:59Z",
+      "summary": "OpenAI is undergoing another round of C-suite changes, according to an internal memo viewed by The Verge. Fidji Simo, OpenAI's CEO of AGI deployment - who was until recently the company's CEO of Applications - says in the memo that she will be stepping away o…",
+      "origin": "newsapi",
+      "item_hash": "2be13a3e378effda"
+    },
+    {
+      "title": "McKinsey's new AI leadership playbook: flatten teams and move faster",
+      "url": "https://www.businessinsider.com/mckinsey-ai-agents-mangement-leadership-great-flattening-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T09:04:01Z",
+      "summary": "McKinsey and other consulting firms are using AI to streamline management structures — what some call The Great Flattening.",
+      "origin": "newsapi",
+      "item_hash": "fc5e738b8b5c481b"
+    },
+    {
+      "title": "Jamie Dimon says if you want to win competitive battles, you need small 'Navy SEAL' teams to move faster",
+      "url": "https://www.businessinsider.com/jamie-dimon-small-navy-seal-teams-shareholder-letter-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-06T10:10:01Z",
+      "summary": "Jamie Dimon shared management lessons in his annual letter to shareholders, including his advocacy for small, focused teams.",
+      "origin": "newsapi",
+      "item_hash": "576403cba3ac7389"
+    },
+    {
+      "title": "OpenAI sees a new round of executive shake-ups",
+      "url": "https://www.businessinsider.com/openai-executive-shake-up-coo-cmo-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-04T02:36:31Z",
+      "summary": "OpenAI COO, Brad Lightcap, will be moving into a new role in special projects, while two senior executives are stepping back for heath reasons.",
+      "origin": "newsapi",
+      "item_hash": "d49ec7ce22eeac9e"
+    },
+    {
+      "title": "A top US shipbuilder is exploring how AI and robots can do some of the hardest jobs on the production floor",
+      "url": "https://www.businessinsider.com/a-top-us-shipbuilder-is-exploring-physical-ai-in-shipbuilding-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-06T23:02:01Z",
+      "summary": "HII and GrayMatter Robotics announced plans to integrate physical AI into shipbuilding processes.",
+      "origin": "newsapi",
+      "item_hash": "642c8382dda6d7e0"
+    },
+    {
+      "title": "The clock is ticking on law's billable hour, says a top Cleary Gottlieb lawyer",
+      "url": "https://www.businessinsider.com/cleary-gottlieb-lawyer-michael-gerstenzang-on-billable-hour-model-ai-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T09:00:01Z",
+      "summary": "For decades, elite corporate law firms have relied on the billable hour to fuel profits. Can the model survive the age of AI?",
+      "origin": "newsapi",
+      "item_hash": "54f081fc22194ad8"
+    },
+    {
+      "title": "Jamie Dimon warns high taxes could push people out of New York — but Wall Street isn't leaving yet",
+      "url": "https://www.businessinsider.com/jamie-dimon-jpmorgan-new-york-texas-headquarters-mamdani-taxes-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-06T19:26:34Z",
+      "summary": "Dimon warned taxes could push companies and employees out of the state, though demand for NYC office space rose in the first quarter of the year.",
+      "origin": "newsapi",
+      "item_hash": "0de571f6f9e3c8da"
+    },
+    {
+      "title": "Cisco CEO Chuck Robbins wants data centers in space",
+      "url": "https://www.theverge.com/podcast/906727/cisco-ceo-chuck-robbins-data-centers-space-ai-elon-musk-interview",
+      "source_name": "The Verge",
+      "pillar": "practitioner",
+      "published": "2026-04-06T15:12:46Z",
+      "summary": "Today, I’m talking with Chuck Robbins, CEO of Cisco. Cisco is one of those big companies that everyone has heard of but that most of us don’t have to interact with very much; it’s not really a consumer brand. But all of us are in some way using Cisco’s produc…",
+      "origin": "newsapi",
+      "item_hash": "707d19eea1dccb45"
+    },
+    {
+      "title": "Microsoft released 3 new AI models, ramping up competition with its close partner, OpenAI",
+      "url": "https://www.businessinsider.com/microsoft-ai-models-azure-mai-transcribe-voice-image-foundry-openai-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-03T12:39:58Z",
+      "summary": "Microsoft AI has made its in-house models for transcription, speech recognition, and image generation available on Foundry.",
+      "origin": "newsapi",
+      "item_hash": "5d5e8d80aa26c214"
+    },
+    {
+      "title": "Meta salaries revealed: How much the social media giant pays engineers, AI researchers, and more",
+      "url": "https://www.businessinsider.com/meta-salaries-revealed-how-much-engineers-researchers-made-in-2025-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "practitioner",
+      "published": "2026-04-06T09:00:01Z",
+      "summary": "See how much Meta paid in 2025, with software engineers earning as much as $450,000. Salary data shows pay ranges across over 5,000 roles.",
+      "origin": "newsapi",
+      "item_hash": "77b3d7cf952ad0eb"
+    },
+    {
+      "title": "Penalties stack up as AI spreads through the legal system",
+      "url": "https://www.npr.org/2026/04/03/nx-s1-5761454/penalties-stack-up-ai-spreads-through-legal-system",
+      "source_name": "NPR",
+      "pillar": "reader",
+      "published": "2026-04-03T09:00:00Z",
+      "summary": "Early scandals have not slowed lawyers' adoption of AI tools, even as court sanctions over fake legal briefs continue to rise.",
+      "origin": "newsapi",
+      "item_hash": "a040548bf2d5ff19"
+    },
+    {
+      "title": "'Existential-alarm bell bad': Mike Rowe says there’s an apocalyptic number of people not getting into the trades",
+      "url": "https://finance.yahoo.com/economy/articles/existential-alarm-bell-bad-mike-111500195.html",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "reader",
+      "published": "2026-04-05T11:15:00Z",
+      "summary": "The Dirty Jobs host says America could find itself without enough skilled workers to keep critical infrastructure and manufacturing running.",
+      "origin": "newsapi",
+      "item_hash": "279eca83757c6c78"
+    },
+    {
+      "title": "AI Pushing Students to Consider Changing Majors",
+      "url": "https://www.insidehighered.com/news/quick-takes/2026/04/02/ai-pushing-students-consider-changing-majors-data-shows",
+      "source_name": "Inside Higher Ed",
+      "pillar": "reader",
+      "published": "2026-04-02T07:00:00Z",
+      "summary": "Nearly half of college students have considered changing their major over concerns about the impact of artificial intelligence on the job market, new data shows.",
+      "origin": "newsapi",
+      "item_hash": "8b11472f48f1b9b6"
+    },
+    {
+      "title": "‘Yes, we can’: a blueprint for a clean economy and healthy society",
+      "url": "https://www.nature.com/articles/d41586-026-01026-5",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-06T00:00:00Z",
+      "summary": "As oil and gas markets face crisis, an influential economist sets out a path to a more efficient, prosperous and sustainable world.",
+      "origin": "newsapi",
+      "item_hash": "a01a87b98c7c62f6"
+    },
+    {
+      "title": "Consumer Protection Group Unveils Student AI Bill of Rights",
+      "url": "https://www.insidehighered.com/news/quick-takes/2026/04/06/consumer-protection-group-unveils-student-ai-bill-rights",
+      "source_name": "Inside Higher Ed",
+      "pillar": "reader",
+      "published": "2026-04-06T07:00:00Z",
+      "summary": "As more higher education institutions adopt artificial intelligence tools, consumer protection advocates are asking colleges and universities to adopt a student bill of rights declaring that “students are not merely data points or test subjects for emerging t…",
+      "origin": "newsapi",
+      "item_hash": "58903509628f0da9"
+    },
+    {
+      "title": "Engaging the head and the heart: why scientists turn to poetry",
+      "url": "https://www.nature.com/articles/d41586-026-01028-3",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-06T00:00:00Z",
+      "summary": "Some researchers use verse to visualize complex problems or translate the wonders of science for wider audiences.",
+      "origin": "newsapi",
+      "item_hash": "ad3e2f771a1b19dd"
+    },
+    {
+      "title": "Five principles to lead a good life",
+      "url": "https://www.cbc.ca/radio/ideas/jesuit-bernard-lonergan-philosophy-9.7152003",
+      "source_name": "CBC News",
+      "pillar": "reader",
+      "published": "2026-04-02T22:24:13Z",
+      "summary": "What can we know and why does that matter? In one form or another, these are among the most ancient and pressing questions in philosophy.  These questions fired the imagination of Canadian Jesuit Bernard Lonergan, one of the most important Canadian thinkers y…",
+      "origin": "newsapi",
+      "item_hash": "fab84b4522928600"
+    },
+    {
+      "title": "Hallucinated citations are polluting the scientific literature. What can be done?",
+      "url": "https://www.nature.com/articles/d41586-026-00969-z",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-01T00:00:00Z",
+      "summary": "Tens of thousands of publications from 2025 might include invalid references generated by AI, a Nature analysis suggests.",
+      "origin": "newsapi",
+      "item_hash": "d05b25e2773cffec"
+    },
+    {
+      "title": "The AGI Awakening: AI’s accelerated evolution and the dawn of a new era",
+      "url": "https://www.naturalnews.com/2026-04-02-the-agi-awakening-artificial-intelligence-accelerated-evolution.html",
+      "source_name": "Naturalnews.com",
+      "pillar": "reader",
+      "published": "2026-04-02T06:00:00Z",
+      "summary": "Artificial intelligence (AI) has shifted from narrow task-based systems to reasoning, creative and self-improving intelligence at a double-exponential pace, with models like GPT-4o and Claude 3.5 Sonnet nearing human-like cognition. Governments and Big Tech (…",
+      "origin": "newsapi",
+      "item_hash": "ff48a6a0408ae4fb"
+    },
+    {
+      "title": "The Technocracy Movement of the 1930s",
+      "url": "https://donotresearch.substack.com/p/welcome-to-the-technocracy",
+      "source_name": "Substack.com",
+      "pillar": "reader",
+      "published": "2026-04-03T02:29:22Z",
+      "summary": "The dreams of a forgotten movement from the 1930s live on",
+      "origin": "newsapi",
+      "item_hash": "edc93ed751da511e"
+    },
+    {
+      "title": "Okta's CEO says all AI agents need a kill switch",
+      "url": "https://www.businessinsider.com/oktas-ceo-ai-agents-kill-switch-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-01T09:07:01Z",
+      "summary": "Okta, the company millions of workers use for safe computer access, is thinking about security with agentic AI. They recommend a \"kill switch.\"",
+      "origin": "newsapi",
+      "item_hash": "7f56e7c36ff1aaab"
+    },
+    {
+      "title": "'Rizz and autizz': Inside the bananas quest to reboot San Francisco's flaccid dating scene",
+      "url": "https://www.businessinsider.com/san-francisco-dating-apps-ai-matchmakers-technology-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-05T08:11:01Z",
+      "summary": "$100,000 bounties, agentic matchmaking, and rizz keyboards: Can San Francisco's dating culture ruined by technology be saved by more of it?",
+      "origin": "newsapi",
+      "item_hash": "8c13c9b82baf62a4"
+    },
+    {
+      "title": "Cybersecurity unicorn Torq is in talks to acquire this AI startup for $50 million",
+      "url": "https://www.businessinsider.com/torq-cybersecurity-acquire-jit-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-07T11:00:01Z",
+      "summary": "Cybersecurity unicorn Torq, which refers to itself as the \"Cursor of security operations,\" is in advanced talks to acquire Boston-based Jit.",
+      "origin": "newsapi",
+      "item_hash": "5712fd11e65fcdaa"
+    },
+    {
+      "title": "Functional programming accellerates agentic feature development",
+      "url": "https://cyrusradfar.com/thoughts/functional-programming-is-the-only-way-to-scale-with-ai",
+      "source_name": "Cyrusradfar.com",
+      "pillar": "builder",
+      "published": "2026-04-01T18:32:05Z",
+      "summary": "AI agents fail in production because of mutable state, hidden dependencies, and side effects the agent can't see. The fix is functional programming. SUPER and SPIRALS are the frameworks I use.",
+      "origin": "newsapi",
+      "item_hash": "dc5fa61ea790a13e"
+    },
+    {
+      "title": "Samsung's Call Screening may hit the Galaxy S25, but there's more you should know",
+      "url": "https://www.androidcentral.com/phones/samsung-galaxy/samsungs-ai-call-screening-may-hit-the-galaxy-s25-but-theres-more-you-should-know",
+      "source_name": "Android Central",
+      "pillar": "builder",
+      "published": "2026-04-06T18:33:00Z",
+      "summary": "An AI calling feature could arrive for the Galaxy S25, but this isn't cut and dry, as some reports said otherwise.",
+      "origin": "newsapi",
+      "item_hash": "c117c0e6578b01f3"
+    },
+    {
+      "title": "A new scorecard shows which software companies will win or lose in AI",
+      "url": "https://www.businessinsider.com/alixpartners-scorecard-shows-which-software-companies-win-lose-ai-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-06T09:00:02Z",
+      "summary": "AlixPartners' AI Disruption Score reveals SaaS facing a structural reset, impacting private equity as AI commoditizes software sectors.",
+      "origin": "newsapi",
+      "item_hash": "401d4f7a560ca2f0"
+    },
+    {
+      "title": "AI agents over SSH from your phone. Starting to think this is where dev is going",
+      "url": "https://onepilotapp.com",
+      "source_name": "Onepilotapp.com",
+      "pillar": "builder",
+      "published": "2026-04-06T20:00:03Z",
+      "summary": "The mobile-first agentic IDE. SSH into any server, deploy AI agents, manage everything — from your iPhone. Free to get started.",
+      "origin": "newsapi",
+      "item_hash": "3d5e988343052944"
+    },
+    {
+      "title": "Apex Protocol – An open MCP-based standard for AI agent trading",
+      "url": "https://apexstandard.org/",
+      "source_name": "Apexstandard.org",
+      "pillar": "builder",
+      "published": "2026-04-06T00:50:32Z",
+      "summary": "The open MCP-based specification for how AI agents communicate with financial brokers, exchanges, dealers, and other execution venues. FIX for the agentic era.",
+      "origin": "newsapi",
+      "item_hash": "3f6a77cd34b4f1fc"
+    },
+    {
+      "title": "Apple App Store Experiences Surge in New Apps Amid Vibe Coding Boom",
+      "url": "https://gizmodo.com/apple-app-store-experiences-surge-in-new-apps-amid-vibe-coding-boom-2000742653",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-04-06T10:00:39Z",
+      "summary": "After years of gradual declines, the App Store finally saw a huge jump in new apps this past year.",
+      "origin": "newsapi",
+      "item_hash": "5492d8da566b4da5"
+    },
+    {
+      "title": "Cursor’s New Tool Lets Users Delegate to a Team of Coding Agents",
+      "url": "https://gizmodo.com/cursors-new-tool-lets-users-delegate-to-a-team-of-coding-agents-2000741761",
+      "source_name": "Gizmodo.com",
+      "pillar": "builder",
+      "published": "2026-04-02T21:40:00Z",
+      "summary": "That's one way to move into a management role.",
+      "origin": "newsapi",
+      "item_hash": "d92dbdfdcdbecb6f"
+    },
+    {
+      "title": "Anthropic accidentally exposed part of Claude Code's internal source code",
+      "url": "https://www.businessinsider.com/anthropic-leak-reveals-claude-code-internal-source-code-2026-3",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-01T03:22:06Z",
+      "summary": "Anthropic leaked part of the internal source code for Claude Code, its popular coding assistant. The company said it was due to human error.",
+      "origin": "newsapi",
+      "item_hash": "ba999fb707f3b4c7"
+    },
+    {
+      "title": "The next big job in tech may be the 'product engineer'",
+      "url": "https://www.businessinsider.com/ai-jobs-product-engineers-managers-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-06T09:09:01Z",
+      "summary": "As engineers ramp up their efficiency using AI, product managers now have to manage more. A new hybrid role has arrived: the product engineer.",
+      "origin": "newsapi",
+      "item_hash": "c6e3acab297985a1"
+    },
+    {
+      "title": "The IDE Is Dead. Long Live the ADE",
+      "url": "https://lanes.sh/blog/the-ide-is-dead",
+      "source_name": "Lanes.sh",
+      "pillar": "builder",
+      "published": "2026-04-02T22:29:25Z",
+      "summary": "Why I told my engineers to delete their IDEs, what happened next, and where software development is actually heading.",
+      "origin": "newsapi",
+      "item_hash": "265fbd2492dc3057"
+    },
+    {
+      "title": "Cursor 3",
+      "url": "https://cursor.com/blog/cursor-3",
+      "source_name": "Cursor.com",
+      "pillar": "builder",
+      "published": "2026-04-02T18:13:41Z",
+      "summary": "Cursor 3 is a unified workspace for building software with agents.",
+      "origin": "newsapi",
+      "item_hash": "e13bb5f78ed0db7b"
+    },
+    {
+      "title": "Forget Cursor and Claude Code, Google Antigravity is the perfect example of vibe coding",
+      "url": "https://www.xda-developers.com/forget-cursor-claude-code-google-antigravity-perfect-example-vibe-coding/",
+      "source_name": "XDA Developers",
+      "pillar": "builder",
+      "published": "2026-04-02T19:00:21Z",
+      "summary": "Stop coding, start commanding.",
+      "origin": "newsapi",
+      "item_hash": "d571b4fbf3410a4b"
+    },
+    {
+      "title": "Anthropic Announces Claude Subscribers Must Now Pay Extra to Use OpenClaw",
+      "url": "https://slashdot.org/story/26/04/04/1919236/anthropic-announces-claude-subscribers-must-now-pay-extra-to-use-openclaw",
+      "source_name": "Slashdot.org",
+      "pillar": "builder",
+      "published": "2026-04-04T19:34:00Z",
+      "summary": "Anthropic's making a big and sudden change — and connecting its Claude AI to third-party agentic tools \"is about to get a lot more expensive,\" writes the Verge:\n\n Beginning April 4th at 3PM ET, users will \"no longer be able to use your Claude subscription lim…",
+      "origin": "newsapi",
+      "item_hash": "d33a8877875d86a2"
+    }
+  ]
+}
