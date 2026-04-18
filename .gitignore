@@ -76,5 +76,15 @@ scripts/reset_ingestion_tables.sql
 # Diagnostic/read-only scripts are safe to commit if desired
 # scripts/inspect_schema.sql
 
+# -------------------------------------------------------------------
+# Content agent — local-only output
+# Connected files are produced by local enrichment runs (Connector
+# requires PKE API which isn't available in CI). Raw scout output
+# is ephemeral (30-day retention per ARCHITECTURE.md).
+# -------------------------------------------------------------------
+scripts/content_agent/output/connected/
+scripts/content_agent/output/raw/
+scripts/content_agent/output/briefs/
+
 # Personal files - never commit
 vision.md
