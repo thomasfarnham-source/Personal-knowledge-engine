@@ -379,77 +379,102 @@ All in scripts/yahoo/:
 10. Full ingestion pass for all contacts
 
 ---
+
 ### Parallel Track: 9.15 — Content Curation Agent
 
-Status: FOUNDATION BUILT — 2026-03-29
+Status: DEPLOYED — 2026-04-05
+Branch: merged to main
 Location: scripts/content_agent/
 
-Four-agent pipeline (Scout → Editor → Connector → Composer) created.
-All code written. Not yet tested against live sources.
+Four-agent pipeline (Scout → Editor → Connector → Composer) deployed
+and running on GitHub Actions. Daily drops committed to repo automatically
+at 6:00 AM EST.
 
-Remaining before first run:
-  1. Add NEWSAPI_KEY to .env (newsapi.org free tier)
-  2. pip install feedparser
-  3. Validate RSS feed URLs: python -m scripts.content_agent.scout --dry-run
-  4. Confirm import paths work from repo root
-  5. Set Obsidian vault path
-  6. First live daily run
-### Parallel Track: 9.15 — Content Curation Agent
-
-Status: PIPELINE TESTED AND RUNNING — 2026-04-04
-Branch: feat/9.15-content-curation-agent
-Location: scripts/content_agent/
-
-Four-agent pipeline (Scout → Editor → Connector → Composer) tested
-end-to-end. First daily drop delivered to Obsidian vault on 2026-04-04.
-
-First run results (2026-04-04):
-  Scout: 133 items (78 RSS, 58 NewsAPI) from 11 working feeds
-  Editor: 8 items survived (94% kill rate)
-    - Practitioner: 2, Reader: 1, Builder: 5
-    - Editor notes: "Strong coverage of agentic AI in production
-      finance systems and governance challenges"
-  Connector: 8/8 items found personal corpus connections (24 total)
+Pipeline results (2026-04-05):
+  Scout: 133 items (78 RSS, 7 working feeds + NewsAPI 6 queries)
+  Editor: 7 items survived (95% kill rate)
+  Connector (redesigned 2026-04-05):
+    - PKE synthesis: 10 connections kept, 11 dropped as weak
+    - Book matching: 6 genuine connections across 5 items
+    - Total: 16 meaningful connections (down from 30 false positives)
   Composer: daily drop delivered to Obsidian vault
 
-Notable items from first run:
-  - "Is the Three Lines Model Still Valid in the Agentic Era?"
-    (Corporate Compliance Insights) — directly relevant to ERM work
-  - "Banking beyond the law" (Aeon) — historical parallel, Reader pillar
-  - "We replaced RAG with a virtual filesystem" (HN) — PKE-relevant
+Connector redesign (2026-04-05):
+  Previous: keyword matching for books, no PKE relevance notes
+  Current: three-step Claude-powered pipeline:
+    Step 1 — Find PKE candidates (semantic similarity, unchanged)
+    Step 2 — Synthesize PKE connections via Claude (explain or discard)
+    Step 3 — Find book connections via Claude (conceptual, not keyword)
+  Result: eliminated false positives like Antigone matching "state"
+  in a programming article. Connections now include one-sentence
+  explanations of the intellectual relationship.
 
-Code fixes applied during testing:
-  - Added load_dotenv() to scout.py, editor.py, connector.py
-    (.env file not auto-loaded without explicit call)
-  - Fixed null summary crash in editor.py line 133:
-    item.get("summary", "")[:300] → (item.get("summary") or "")[:300]
-  - ArXiv feeds have SSL certificate issues on Windows — pending removal
-  - HBR feed has encoding mismatch — pending URL fix or removal
-  - Allen AI Blog feed has malformed XML — pending removal
+Book database populated (2026-04-05):
+  32 books with thematic tags, keywords, and core ideas.
+  Includes: Federalist Papers, Frankenstein, Foucault, Borges,
+  Arendt, Orwell, Aristotle, Thucydides, Dostoevsky, and 23 others.
+  The Connector queries by conceptual adjacency, not keyword overlap.
 
-Deployment architecture (designed, not yet implemented):
-  Server (GitHub Actions, daily 6 AM):
-    Scout → Editor → Composer (without personal connections)
-    Output pushed to OneDrive → syncs to Obsidian vault
-    Requires: repo set to private, API keys in GitHub Secrets
-  Local (on demand from Obsidian):
-    "Enrich today's brief" → Connector runs locally, starts PKE API,
-    annotates daily drop with personal corpus connections
-    "Weekly synthesis" → Composer weekly mode against accumulated drops
-  Obsidian Shell Commands plugin for triggering local processes
+GitHub Actions deployment (2026-04-05):
+  Workflow: .github/workflows/content-agent-daily.yml
+  Schedule: daily at 11:00 UTC (6:00 AM EST)
+  Steps: Scout → Editor → Composer → commit to repo
+  Secrets: NEWSAPI_KEY and ANTHROPIC_API_KEY stored in GitHub Secrets
+  Permissions: contents: write for commit step
+  Manual trigger: available via workflow_dispatch
+  Note: Connector skipped in automated run — no PKE API on GitHub
+  servers. Personal corpus enrichment runs locally on demand.
 
-Remaining before automated deployment:
-  1. Make GitHub repo private (contains personal career/strategy docs)
-  2. Set up GitHub Actions workflow with cron schedule
-  3. Add ANTHROPIC_API_KEY and NEWSAPI_KEY as GitHub Secrets
-  4. Configure output push to OneDrive or repo
-  5. Install Obsidian Shell Commands plugin
-  6. Configure two Obsidian commands: Enrich + Weekly Synthesis
-  7. Remove broken feeds from sources.json (ArXiv, Allen AI, HBR)
-  8. Populate books.json over time
+CI fix (2026-04-05):
+  Added types-requests to mypy install step in ci.yml to resolve
+  Library stubs not installed errors on GitHub runners.
+
+Remaining:
+  Completed (2026-04-05 session 2):
+  - Obsidian Shell Commands plugin installed and configured
+  - Four commands: Start API, Stop API, Enrich, Weekly Synthesis
+  - API auto-starts on Obsidian launch, auto-stops on quit
+  - Content Briefs folder sorted newest-first
+  - Tagging workflow: #post-seed + [[Daily Drop]] wiki links
+
+Remaining:
+  1. Automate PKE Reflections plugin restart after API start
+  2. Scout dedup across days (backlog — ~10 line change to Scout)
+  3. Continue populating books.json
+  4. Run daily for 4 weeks — validation period
+  5. Producer review of Scout raw output after 30 days
+  6. Future: Microsoft Graph API / OneDrive delivery (Option 2)
+  7. Delete unused start_pke_api.bat from repo
+---
+### Reflections Panel Redesign ✅ (2026-04-09)
+Branch: merged to main (pke-obsidian-plugin repo)
+Spec: specs/REFLECTIONS_PANEL_REDESIGN_SPEC.md
+
+Progressive disclosure card layout replacing flat passage list.
+
+What shipped:
+  - Collapsed view: source icon + note title + date + extractive
+    sentence + Claude Haiku one-line summary (async, cached)
+  - Expanded view: full passage + section title + similarity score +
+    action buttons (open note, thumbs up/down, link at cursor, dismiss)
+  - Source-colored left borders: blue (journal), green (iMessage),
+    amber (email)
+  - Extractive sentence: word overlap scoring picks most relevant
+    sentence from passage, not first sentence
+  - Claude summaries: generated via Obsidian requestUrl (CORS fix),
+    cached per session to prevent duplicate API calls
+  - iMessage formatting: speaker labels on separate lines, multi-word
+    names kept together, empty attachment-only lines removed
+  - Attachment artifacts ([attachment.jpg] etc) stripped from display
+  - Dedup: two-pass — by note_id (highest score), then by matched_text
+    prefix (first 200 chars) across different notes
+  - Date display: "Mon YYYY" for older, "DD Mon" for recent, "undated"
+    for missing entry_timestamp
+  - 8 unit tests for suppression and dedup logic (suppression.test.ts)
+
+Cost: ~$1.50-3.00/month for Claude Haiku summaries during daily writing
 
 ---
-
 
 ## Also update the Venv/Environment section — add:
 
@@ -591,6 +616,89 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 Note: venv is named `venv` not `.venv`.
+---
+
+## Backlog
+
+### Plugin repo backlog (pke-obsidian-plugin)
+
+1. **CI workflow for plugin repo** — add .github/workflows/ci.yml
+   with npm build and npm test on push. Same hygiene standard as
+   pipeline repo. Currently no automated checks on push.
+
+2. **DOM element-by-element rendering for iMessage** — replace
+   innerHTML approach with DOM construction for speaker label
+   bolding. Security hardening for community plugin distribution.
+   Current approach is safe for personal corpus but not for
+   untrusted content.
+
+3. **Automated PKE plugin restart on Obsidian start** — plugin
+   needs manual restart after API auto-starts. Investigate
+   Obsidian API for programmatic plugin reload.
+
+4. **Add created_at fallback for dates** — retrieval API should
+   return note-level created_at as fallback when entry_timestamp
+   is null. Requires Python change in PKE pipeline repo
+   (retriever.py query response) and TypeScript change in plugin
+   (date rendering logic). Currently shows "undated" for notes
+   without entry_timestamp.
+
+5. **Joplin deep links** — "Open note" button should construct
+   joplin://x-callback-url/openNote?id={note_id} for Joplin
+   sources. Future Obsidian sources use obsidian:// protocol.
+   iMessage/email sources: button hidden or disabled.
+
+6. **Code review process** — establish periodic review sessions
+   for plugin and pipeline codebases. Spec checklist should
+   include runtime environment considerations (e.g. CORS in
+   Electron) to prevent integration bugs.
+
+7. **UI testing with Playwright + Electron** — prototype automated
+   UI testing for the Obsidian plugin. Learn and evaluate, not
+   build immediately. Transferable enterprise skill.
+
+### Pipeline repo backlog (Personal-knowledge-engine)
+
+8. **Scout dedup across days** — load previous day's scout output
+   JSON, add URL hashes to seen set before dedup. Prevents same
+   article appearing in consecutive daily drops. ~10 line change.
+
+9. **Data layer cleanup** — investigate duplicate journal content
+   across different note_ids in Supabase. Same passage text
+   appearing under different note_ids causes panel duplicates
+   even with note_id dedup.
+
+10. **Delete unused start_pke_api.bat** — replaced by Obsidian
+    Shell Commands inline command.
+
+### Design items (not yet implementation-ready)
+
+11. **Journal influence on Editor** — weekly script extracts 3-5
+    thematic phrases from recent journal entries via PKE API +
+    Claude. Editor prompt reads these as context signal. Calibrates
+    editorial judgment toward live themes without creating a filter
+    bubble. Scout stays blind to corpus.
+
+12. **Scout Directives (vault-as-control-surface)** — a single
+    Obsidian note (Scout Directives.md) that the Scout reads on
+    each run. Three sections: Research Topics (temporary NewsAPI
+    queries), Add Sources (new RSS feeds), Remove Sources. No code
+    changes needed to adjust the Scout's behavior. Architectural
+    principle: vault-as-control-surface.
+
+13. **Books architecture transition** — replace books.json with
+    a Book Club Library.md note in Obsidian vault. Obsidian parser
+    (9.9) ingests it into PKE corpus. Connector queries PKE API
+    for book connections instead of reading static JSON. Books
+    become part of the corpus, not a separate system. Depends on
+    9.9 Obsidian parser.
+
+14. **Microsoft Graph API / OneDrive delivery** — push daily drops
+    directly to user's OneDrive folder via Graph API. OAuth app
+    registration, refresh token management, file upload logic.
+    Eliminates git pull requirement. Enterprise integration pattern.
+    The delivery step is isolated in the Composer — single-layer
+    swap from git commit to API push.
 
 ---
 

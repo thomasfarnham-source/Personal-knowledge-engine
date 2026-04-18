@@ -183,9 +183,15 @@ def compose_weekly(vault_path: Optional[Path] = None, output_dir: Optional[Path]
     """Compose the weekly synthesis from the week's daily outputs."""
     import os
 
-    # Gather the week's connected items
+    # Gather the week's items — prefer connected (has PKE/book annotations),
+    # fall back to editor-filtered (curation without personal connections).
+    # The GitHub Actions daily pipeline skips the Connector (no PKE API in CI),
+    # so connected files only exist after local enrichment runs. The weekly
+    # synthesis should still work from editor-filtered output alone.
     connected_dir = Path(__file__).parent / "output" / "connected"
+    filtered_dir = Path(__file__).parent / "output" / "filtered"
     week_items = []
+    source_used = None
     today = datetime.now()
 
     for days_back in range(7):
@@ -195,13 +201,36 @@ def compose_weekly(vault_path: Optional[Path] = None, output_dir: Optional[Path]
         if json_file.exists():
             with open(json_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            week_items.extend(data.get("items", []))
+            items = data.get("items", [])
+            if items:
+                week_items.extend(items)
+                if source_used is None:
+                    source_used = "connected"
+
+    # Fallback: if no connected items, try editor-filtered output
+    if not week_items:
+        logger.info("No connected items found — falling back to editor-filtered output")
+        for days_back in range(7):
+            date = today - timedelta(days=days_back)
+            date_str = date.strftime("%Y-%m-%d")
+            json_file = filtered_dir / f"editor_filtered_{date_str}.json"
+            if json_file.exists():
+                with open(json_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                items = data.get("items", [])
+                if items:
+                    week_items.extend(items)
+                    if source_used is None:
+                        source_used = "filtered"
 
     if not week_items:
-        logger.warning("No connected items found for this week")
+        logger.warning(
+            "No items found for this week in connected or filtered output. "
+            "Check that the daily pipeline (Scout → Editor) is running successfully."
+        )
         return Path()
 
-    logger.info(f"Weekly synthesis: {len(week_items)} items across the week")
+    logger.info(f"Weekly synthesis: {len(week_items)} items from {source_used} output")
 
     # Call Claude for synthesis
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -218,7 +247,7 @@ def compose_weekly(vault_path: Optional[Path] = None, output_dir: Optional[Path]
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 4096,
                 "system": WEEKLY_SYNTHESIS_PROMPT,
                 "messages": [

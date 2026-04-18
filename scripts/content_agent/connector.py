@@ -226,7 +226,7 @@ def find_book_connections_via_claude(items: list[dict], books: list[dict], api_k
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 4096,
                 "system": BOOK_MATCHING_PROMPT,
                 "messages": [{"role": "user", "content": user_message}],
@@ -357,7 +357,7 @@ def synthesize_connections(items_with_connections: list[dict], api_key: str) -> 
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 4096,
                 "system": SYNTHESIS_SYSTEM_PROMPT,
                 "messages": [{"role": "user", "content": json.dumps(synthesis_payload)}],

@@ -426,6 +426,111 @@ Planned tables (milestone 9.x — iMessage Parser):
 - imessage_messages
 - imessage_bursts (primary retrieval target, with embedding column)
 
+## 14. Writing Environment Architecture
+
+### Obsidian Operational Workflow (configured 2026-04-05)
+
+The Obsidian Shell Commands plugin (v0.23.0) provides four operational
+commands triggered from the command palette (Ctrl+P → "Shell commands:
+Execute"):
+
+**Start Reflections API**
+    Starts the PKE Retrieval API in a separate command prompt window.
+    The API runs at localhost:8000 until the window is closed or the
+    stop command is executed.
+    Command: start cmd /k "cd /d C:\Users\thoma\Documents\dev\
+    Personal-knowledge-engine && call venv\Scripts\activate.bat &&
+    python -m uvicorn pke.api.main:app --host 127.0.0.1 --port 8000"
+    Event: fires automatically on Obsidian start.
+    Note: the PKE Reflections plugin must be restarted after the API
+    starts. Automated restart not yet implemented — manual for now
+    (disable/enable in Community plugins settings).
+
+**Stop Reflections API**
+    Kills the API process running on port 8000.
+    Command: for /f "tokens=5" %a in ('netstat -aon | findstr :8000
+    | findstr LISTENING') do taskkill /PID %a /F
+    Event: fires automatically on Obsidian quit.
+
+**Enrich today's brief**
+    Pulls latest daily drop from GitHub (committed by automated
+    GitHub Actions pipeline), starts PKE API, runs Connector to
+    add personal corpus and book connections, regenerates the daily
+    drop with connections, stops API.
+    Batch file: enrich_daily_brief.bat in repo root.
+
+**Weekly synthesis**
+    Pulls latest daily drops, runs Composer in weekly mode against
+    the accumulated drops from the past 7 days. Produces a synthesis
+    brief with themes, strongest items, surprising connections,
+    pillar health, and post seeds.
+    Batch file: weekly_synthesis.bat in repo root.
+
+Lifecycle:
+    Open Obsidian → API starts automatically → Reflections panel live
+    (after manual plugin restart) → write with Reflections → when
+    ready, Ctrl+P → Enrich today's brief → daily drop appears with
+    personal connections → on Sunday, Ctrl+P → Weekly synthesis →
+    weekly brief appears → close Obsidian → API stops automatically.
+
+Content Briefs folder:
+    Location: Obsidian vault/Content Briefs/
+    Files: Daily Drop YYYY-MM-DD.md, Weekly Synthesis YYYY-WNN.md
+    Sort: by filename Z-A (newest first)
+    Tagging: use #post-seed on items worth developing into posts,
+    use [[Daily Drop YYYY-MM-DD]] wiki links from journal notes
+    to reference source material.
+
+Pending:
+    - Automate PKE Reflections plugin restart after API start
+    - Scout dedup across days (prevent same article appearing in
+      consecutive daily drops)
+
+### Reflections Panel — Progressive Disclosure (redesigned 2026-04-09)
+
+Each reflection renders as a card with collapsed and expanded states.
+
+Collapsed (default — three lines):
+    Line 1: source icon + note title (40 char max) + date
+    Line 2: extractive sentence (highest word-overlap sentence, 100 chars)
+    Line 3: Claude Haiku summary (why this passage connects to current writing)
+
+Expanded (click to reveal):
+    Full passage (1,500 chars max, scrollable)
+    Section title and similarity score
+    Action buttons: Open note, thumbs up/down, link at cursor, dismiss
+
+Source icons and border colors:
+    📓 blue   — Joplin journal entries (default)
+    💬 green  — iMessage conversations
+    ✉️ amber  — email (future, after retrieval_units backfill)
+
+Extractive sentence algorithm:
+    Split passage into sentences. Score each by word overlap with
+    the current query. Return highest-scoring sentence truncated
+    to 100 characters. Pure function, no API call, zero latency.
+
+Claude summary:
+    Generated async via Claude Haiku (~$0.002/call) for every result.
+    Cards render immediately with extractive sentences; summaries
+    appear a moment later. Session cache prevents duplicate API calls
+    for the same query/passage pair. Uses Obsidian's requestUrl
+    (not fetch) to bypass Electron CORS restrictions.
+
+iMessage formatting:
+    Speaker labels (e.g. "Patrick Mangan:") placed on separate lines.
+    Multi-word names kept as single unit. Attachment-only lines removed.
+    white-space: pre-wrap applied to iMessage passages only.
+
+Dedup:
+    Two-pass deduplication in suppression.ts:
+    Pass 1: group by note_id, keep highest similarity score
+    Pass 2: group by first 200 chars of matched_text across notes,
+    keep highest score. Prevents duplicate content from different
+    note_ids showing in panel.
+
+---
+
 (Part 3)
 ## 15. Multi-Source Architecture (Planned)
 
@@ -885,6 +990,62 @@ If any stage fails, the pipeline stops and reports which stage failed.
         Private corpus access runs locally (never leaves machine)
         Daily drops accumulate automatically
         Enrichment and synthesis happen on the Producer's schedule
+
+---
+### Connector — Claude-Powered Matching (redesigned 2026-04-05)
+
+The Connector's original keyword matching for books produced false
+positives — "state" in Antigone matching "state" in a programming
+article. The redesigned Connector uses Claude for all matching
+and synthesis.
+
+Three-step pipeline inside the Connector:
+
+    Step 1 — PKE candidate retrieval
+        Semantic similarity query against PKE Retrieval API.
+        Returns top 3 matches per article. Unchanged from v1.
+
+    Step 2 — PKE synthesis (Claude)
+        Articles + matched corpus passages sent to Claude.
+        Claude writes a one-sentence explanation for each
+        connection or marks it as weak (keep: false).
+        Weak connections are dropped silently.
+        Prompt demands specificity: "Your 2017 blockchain AML
+        notes connect because both examine how enforcement fails
+        when actors operate outside the system's visibility."
+
+    Step 3 — Book matching (Claude)
+        All surviving articles + full book database (32 books
+        with core_idea and themes) sent to Claude in one call.
+        Claude identifies genuine intellectual connections —
+        conceptual adjacency, not word overlap.
+        Returns only connections it would confidently defend
+        to a well-read person. Most articles get zero or one
+        book connection. Silence is better than a stretch.
+
+Cost: two additional Claude API calls per day (~$0.01-0.02).
+
+### Delivery Architecture — Future Option 2
+
+The current delivery model commits daily drops to the GitHub repo.
+The user pulls locally to sync to their Obsidian vault.
+
+Future Option 2: push directly to user's cloud storage via
+Microsoft Graph API (OneDrive). Eliminates git pull requirement.
+Requires OAuth app registration, refresh token management, and
+file upload logic. This is the delivery model that scales to
+other users — they won't have a git repo.
+
+The delivery step is isolated in the Composer. Replacing git
+commit with OneDrive API push is a single-layer swap. Same
+pattern as EmbeddingClient and CompanionProvider — isolate the
+thing that changes behind a clean boundary.
+
+    Delivery layer:
+        v1: git commit (current — deployed)
+        v2: Microsoft Graph API → OneDrive (planned)
+        v3: Dropbox API (future option)
+        v4: iCloud (future option)
 
 ---
 

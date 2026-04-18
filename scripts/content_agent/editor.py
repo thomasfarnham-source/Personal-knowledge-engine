@@ -154,7 +154,7 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-sonnet-4-6",
                 "max_tokens": 4096,
                 "system": EDITOR_SYSTEM_PROMPT,
                 "messages": [{"role": "user", "content": user_message}],

@@ -425,6 +425,17 @@ Navigation / deep links — reflection panel links non-functional
     until Joplin → Obsidian migration is complete (milestone 9.9).
     Expected dependency, not a bug.
 
+  **Scout dedup across days**
+  The Scout scans the same RSS feeds daily. Articles stay in feeds
+  for about a week, so the same article can appear in consecutive
+  daily drops. Fix: on each run, load the previous day's scout
+  output JSON and add those URL hashes to the seen set before
+  deduplication. ~10 line change to scout.py in the deduplicate()
+  or run_scout() function. Low priority, quality-of-life improvement.
+
+**Reflections Panel Redesign — COMPLETE (2026-04-09)**
+Progressive disclosure cards with Claude-powered summaries.
+Full spec: pke-obsidian-plugin/specs/REFLECTIONS_PANEL_REDESIGN_SPEC.md
 ---
 
 ### 🔵 8.9.9 — Insight Generation
@@ -1012,7 +1023,7 @@ at scale, using the header index infrastructure built in milestone 9.13.
   populated before ingestion to prevent conversation fragmentation
 
 ### 🔵 9.15 — Content Curation Agent
-**Status: PIPELINE TESTED — 2026-04-04**
+**Status: DEPLOYED — 2026-04-05**
 Branch: main (scripts/content_agent/)
 
 What this milestone builds:
@@ -1174,22 +1185,24 @@ Dependencies:
     PKE Retrieval API — running at localhost:8000
 
 Next actions:
-    1. Make GitHub repo private (security — personal docs exposed)
-    2. Remove broken RSS feeds from sources.json:
-       - ArXiv cs.AI and cs.CL (SSL cert failure on Windows)
-       - Allen AI Blog (malformed XML)
-       - HBR (encoding mismatch — find working URL or remove)
-    3. Set up GitHub Actions workflow for daily automated run
-    4. Add API keys as GitHub Secrets (ANTHROPIC_API_KEY, NEWSAPI_KEY)
-    5. Configure output delivery to OneDrive for Obsidian sync
-    6. Install Obsidian Shell Commands plugin
-    7. Configure Obsidian commands:
-       - "Enrich today's brief" (Connector + PKE API, local)
-       - "Weekly synthesis" (Composer weekly mode, local)
-    8. Start populating books.json
-    9. Run daily for one week, then first weekly synthesis
-    10. Producer review of Scout raw output after 30 days
+    1. Automate PKE Reflections plugin restart after API start
+    2. Scout dedup across days (prevent duplicate articles in
+       consecutive daily drops — ~10 line change to Scout)
+    3. Continue populating books.json over time
+    4. Run daily for 4 weeks — validation period begins 2026-04-05
+    5. Producer review of Scout raw output after 30 days
+    6. Future: Microsoft Graph API / OneDrive delivery (Option 2)
 
+Obsidian operational workflow (configured 2026-04-05):
+  Shell Commands plugin provides four commands via Ctrl+P:
+    - Start Reflections API (auto on Obsidian start)
+    - Stop Reflections API (auto on Obsidian quit)
+    - Enrich today's brief (git pull + Connector + Composer)
+    - Weekly synthesis (Composer weekly mode)
+  Content Briefs folder sorted newest-first.
+  Tagging: #post-seed for items to develop, [[Daily Drop YYYY-MM-DD]]
+  for wiki links from journal notes.
+  Pending: automated PKE plugin restart, Scout dedup across days.
 ---
 ### 🔵 9.13 B — Yahoo Inbox Cleanup Agent
 **Status: DEFERRED — depends on 9.13 contacts table**
