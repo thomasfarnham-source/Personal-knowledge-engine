@@ -1,0 +1,176 @@
+{
+  "filter_date": "2026-04-10",
+  "filter_timestamp": "2026-04-10T11:48:11.494719+00:00",
+  "items": [
+    {
+      "title": "﻿Rethink ﻿Responsibility in the Age of AI",
+      "url": "https://sloanreview.mit.edu/article/rethink-responsibility-in-the-age-of-ai/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-09T11:00:22+00:00",
+      "summary": "Mark Airs/Ikon Images Early one morning in 2018, a self-driving Uber vehicle fatally struck a pedestrian in Tempe, Arizona. The world had questions: Who was responsible? Was it the safety driver behind the wheel? The engineers who designed the algorithms? Uber’s leadership? Or the regulators who had allowed autonomous-vehicle testing? The inability to name a [&#8230;]",
+      "origin": "rss",
+      "item_hash": "b9bac37910de0d92",
+      "editor_reason": "Direct exploration of AI responsibility frameworks with practical grounding in real system failures, connecting philosophical considerations with operational realities.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Disintegrating the Org Chart: ServiceNow’s Jacqui Canney",
+      "url": "https://sloanreview.mit.edu/audio/disintegrating-the-org-chart-servicenows-jacqui-canney/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:00:48+00:00",
+      "summary": "In this episode of the Me, Myself, and AI podcast, Sam Ransbotham is joined by Jacqui Canney, chief people and AI enablement officer at ServiceNow. Jacqui outlines how the software company has embedded AI agents into processes like employee onboarding to automate tasks, personalize experiences, and free up people’s time to focus on higher-value work. [&#8230;]",
+      "origin": "rss",
+      "item_hash": "93994a0d801de613",
+      "editor_reason": "ServiceNow executive discussing concrete implementation of AI agents in enterprise processes like employee onboarding - practitioner voice with operational details.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The EU AI Act’s ‘Wait and See’ Window Is Closing",
+      "url": "https://www.corporatecomplianceinsights.com/eu-ai-act-wait-see-window-closing/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:03+00:00",
+      "summary": "AI literacy has survived attempts to water it down and remains a direct organizational obligation — not a policy aspiration \nThe post The EU AI Act’s ‘Wait and See’ Window Is Closing appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "4ad0793aa4057eb3",
+      "editor_reason": "EU AI Act compliance moving from aspiration to direct organizational obligation - critical regulatory guidance for enterprise AI implementation.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Patterns without desires",
+      "url": "https://aeon.co/essays/could-ai-replace-human-art-experts-in-attributing-paintings?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-10T10:00:00+00:00",
+      "summary": "The art expert is the fulcrum of all value and significance in the museum and auction world. Could AI supplant them?- by Noah CharneyRead on Aeon",
+      "origin": "rss",
+      "item_hash": "26a3e4c04b8b7d4b",
+      "editor_reason": "Thoughtful analysis of AI's potential to supplant human expertise in art valuation, engaging with questions of judgment, pattern recognition, and institutional authority.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Is AI already conscious?",
+      "url": "https://aeon.co/videos/we-long-misjudged-animal-consciousness-could-ai-be-next?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:01:00+00:00",
+      "summary": "Why it’s difficult and perhaps even morally perilous to rule out the possibility of AI consciousness- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "5b172cadfb74ad69",
+      "editor_reason": "Direct philosophical examination of AI consciousness possibility and the moral implications of dismissing it - core epistemological questions for AI practitioners.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Blind Refusal: Language Models Refuse to Help Users Evade Unjust, Absurd, and Illegitimate Rules",
+      "url": "https://arxiv.org/abs/2604.06233",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-10T04:00:00+00:00",
+      "summary": "arXiv:2604.06233v1 Announce Type: new \nAbstract: Safety-trained language models routinely refuse requests for help circumventing rules. But not all rules deserve compliance. When users ask for help evading rules imposed by an illegitimate authority, rules that are deeply unjust or absurd in their content or application, or rules that admit of justified exceptions, refusal is a failure of moral reasoning. We introduce empirical results documenting this pattern of refusal that we call blind refusa",
+      "origin": "rss",
+      "item_hash": "e3b4f07b82a1994d",
+      "editor_reason": "Research on language model refusal behavior when asked to circumvent unjust rules - critical for understanding AI governance and alignment in practice.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Anthropic's Project Glasswing - restricting Claude Mythos to security researchers - sounds necessary to me",
+      "url": "https://simonwillison.net/2026/Apr/7/project-glasswing/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-07T20:52:54+00:00",
+      "summary": "Anthropic didn't release their latest model, Claude Mythos (system card PDF), today. They have instead made it available to a very restricted set of preview partners under their newly announced Project Glasswing.\nThe model is a general purpose model, similar to Claude Opus 4.6, but Anthropic claim that its cyber-security research abilities are strong enough that they need to give the software industry as a whole time to prepare.\n\nMythos Preview has already found thousands of high-severity vulner",
+      "origin": "rss",
+      "item_hash": "455223126134bacc",
+      "editor_reason": "Analysis of Anthropic's restricted release of Claude Mythos due to cybersecurity capabilities - practitioner perspective on responsible AI deployment and governance.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Article: Building Hierarchical Agentic RAG Systems: Multi-Modal Reasoning with Autonomous Error Recovery",
+      "url": "https://www.infoq.com/articles/building-hierarchical-agentic-rag-systems/",
+      "source_name": "InfoQ.com",
+      "pillar": "practitioner",
+      "published": "2026-04-09T09:00:00Z",
+      "summary": "In this article, the author explores how hierarchical agentic RAG systems coordinate specialized workers through structured orchestration to improve accuracy, reliability, and explainability in complex enterprise analytics workflows. The article uses Protocol…",
+      "origin": "newsapi",
+      "item_hash": "bd533e3e9626e632",
+      "editor_reason": "Technical deep dive into hierarchical agentic RAG systems with error recovery - directly relevant to enterprise AI system design and reliability.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-10",
+    "items_submitted": 177,
+    "items_surviving": 8,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "American Banker": 10,
+      "MIT Sloan Management Review": 2,
+      "Corporate Compliance Insights": 6,
+      "Aeon Magazine": 5,
+      "ArXiv - AI (cs.AI)": 19,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 2,
+      "Anthropic Research": 5,
+      "OpenAI Blog": 6,
+      "Simon Willison": 19,
+      "Hacker News - Best": 20,
+      "Gizmodo.com": 4,
+      "Yahoo Entertainment": 2,
+      "NPR": 2,
+      "Business Insider": 18,
+      "Slashdot.org": 3,
+      "ProPublica": 1,
+      "TechRadar": 2,
+      "Internet": 2,
+      "Help Net Security": 2,
+      "Idp-software.com": 1,
+      "Oreilly.com": 2,
+      "Pocoo.org": 1,
+      "Science Daily": 1,
+      "The Verge": 2,
+      "Android Central": 2,
+      "Nature.com": 4,
+      "Inside Higher Ed": 1,
+      "Substack.com": 1,
+      "Screen Rant": 1,
+      "Geeky Gadgets": 1,
+      "Wired": 1,
+      "Onepilotapp.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 4,
+      "reader": 3,
+      "builder": 1
+    },
+    "notes": [
+      "Strong coverage today across all three pillars with multiple cross-pillar items",
+      "Notable practical AI governance content from both regulatory (EU AI Act) and industry (Anthropic restrictions) perspectives",
+      "Good balance of philosophical depth (consciousness, responsibility) and technical implementation (agentic systems, ServiceNow)",
+      "ServiceNow executive interview particularly valuable as practitioner voice with concrete enterprise deployment experience"
+    ]
+  }
+}

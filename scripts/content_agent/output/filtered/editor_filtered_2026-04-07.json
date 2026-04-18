@@ -1,0 +1,174 @@
+{
+  "filter_date": "2026-04-07",
+  "filter_timestamp": "2026-04-07T11:53:46.573175+00:00",
+  "items": [
+    {
+      "title": "More than half of US bankers say AI is a priority",
+      "url": "https://www.americanbanker.com/news/exclusive-research-banks-were-broadly-gung-ho-on-ai-in-2025",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-06T16:59:54+00:00",
+      "summary": "American Banker's 2026 AI Talent Shift survey finds that most institutions upped spending on artificial intelligence by at least 10% over the last year.",
+      "origin": "rss",
+      "item_hash": "4a5899f1a511e63d",
+      "editor_reason": "Survey data on AI spending and priorities at US banks provides concrete practitioner insight into enterprise AI adoption patterns.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Disintegrating the Org Chart: ServiceNow’s Jacqui Canney",
+      "url": "https://sloanreview.mit.edu/audio/disintegrating-the-org-chart-servicenows-jacqui-canney/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:00:48+00:00",
+      "summary": "In this episode of the Me, Myself, and AI podcast, Sam Ransbotham is joined by Jacqui Canney, chief people and AI enablement officer at ServiceNow. Jacqui outlines how the software company has embedded AI agents into processes like employee onboarding to automate tasks, personalize experiences, and free up people’s time to focus on higher-value work. [&#8230;]",
+      "origin": "rss",
+      "item_hash": "93994a0d801de613",
+      "editor_reason": "ServiceNow's chief people and AI enablement officer discussing AI agents embedded in enterprise processes like employee onboarding - directly relevant to enterprise AI implementation.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The EU AI Act’s ‘Wait and See’ Window Is Closing",
+      "url": "https://www.corporatecomplianceinsights.com/eu-ai-act-wait-see-window-closing/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:03+00:00",
+      "summary": "AI literacy has survived attempts to water it down and remains a direct organizational obligation — not a policy aspiration \nThe post The EU AI Act’s ‘Wait and See’ Window Is Closing appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "4ad0793aa4057eb3",
+      "editor_reason": "EU AI Act compliance becoming a direct organizational obligation touches regulatory guidance on AI and governance requirements for practitioners.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Is AI already conscious?",
+      "url": "https://aeon.co/videos/we-long-misjudged-animal-consciousness-could-ai-be-next?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:01:00+00:00",
+      "summary": "Why it’s difficult and perhaps even morally perilous to rule out the possibility of AI consciousness- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "5b172cadfb74ad69",
+      "editor_reason": "Serious philosophical examination of AI consciousness from Aeon, engaging with moral and epistemic questions around machine consciousness.",
+      "cross_pillar": [],
+      "strength": "strong"
+    },
+    {
+      "title": "To Throw a Stone with Six Birds: On Agents and Agenthood",
+      "url": "https://arxiv.org/abs/2604.03239",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-07T04:00:00+00:00",
+      "summary": "arXiv:2604.03239v1 Announce Type: new \nAbstract: Six Birds Theory (SBT) treats macroscopic objects as induced closures rather than primitives. Empirical discussions of agency often conflate persistence (being an object) with control (making a counterfactual difference), which makes agency claims difficult to test and easy to spoof. We give a type-correct account of agency within SBT: a theory induces a layer with an explicit interface and ledgered constraints; an agent is a maintained theory obj",
+      "origin": "rss",
+      "item_hash": "536d60e9ed1ce085",
+      "editor_reason": "Six Birds Theory treating objects as induced closures rather than primitives offers sophisticated philosophical framework for understanding agency and control.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Hume's Representational Conditions for Causal Judgment: What Bayesian Formalization Abstracted Away",
+      "url": "https://arxiv.org/abs/2604.03387",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-07T04:00:00+00:00",
+      "summary": "arXiv:2604.03387v1 Announce Type: new \nAbstract: Hume's account of causal judgment presupposes three representational conditions: experiential grounding (ideas must trace to impressions), structured retrieval (association must operate through organized networks exceeding pairwise connection), and vivacity transfer (inference must produce felt conviction, not merely updated probability). This paper extracts these conditions from Hume's texts and argues that they are integral to his causal psychol",
+      "origin": "rss",
+      "item_hash": "77e996bd1df89839",
+      "editor_reason": "Scholarly analysis of Hume's causal judgment theory and what Bayesian formalization abstracts away - deep philosophical engagement with AI epistemology.",
+      "cross_pillar": [],
+      "strength": "strong"
+    },
+    {
+      "title": "ActionNex: A Virtual Outage Manager for Cloud",
+      "url": "https://arxiv.org/abs/2604.03512",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-07T04:00:00+00:00",
+      "summary": "arXiv:2604.03512v1 Announce Type: new \nAbstract: Outage management in large-scale cloud operations remains heavily manual, requiring rapid triage, cross-team coordination, and experience-driven decisions under partial observability. We present \\textbf{ActionNex}, a production-grade agentic system that supports end-to-end outage assistance, including real-time updates, knowledge distillation, and role- and stage-conditioned next-best action recommendations. ActionNex ingests multimodal operationa",
+      "origin": "rss",
+      "item_hash": "3bc38e5a12e272a5",
+      "editor_reason": "ActionNex is a production-grade agentic system for cloud outage management - real enterprise implementation of agentic AI in critical infrastructure.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Eight years of wanting, three months of building with AI",
+      "url": "https://simonwillison.net/2026/Apr/5/building-with-ai/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T23:54:18+00:00",
+      "summary": "Eight years of wanting, three months of building with AI\nLalit Maganti provides one of my favorite pieces of long-form writing on agentic engineering I've seen in ages.\nThey spent eight years thinking about and then three months building syntaqlite, which they describe as \"high-fidelity devtools that SQLite deserves\".\nThe goal was to provide fast, robust and comprehensive linting and verifying tools for SQLite, suitable for use in language servers and other development tools - a parser, formatte",
+      "origin": "rss",
+      "item_hash": "e0b38d6b592f972e",
+      "editor_reason": "Deep practitioner account of building syntaqlite with AI assistance over three months, showing real project experience with AI-assisted development.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-07",
+    "items_submitted": 173,
+    "items_surviving": 8,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "American Banker": 9,
+      "MIT Sloan Management Review": 3,
+      "Corporate Compliance Insights": 5,
+      "Aeon Magazine": 6,
+      "ArXiv - AI (cs.AI)": 17,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 1,
+      "Anthropic Research": 4,
+      "OpenAI Blog": 6,
+      "Simon Willison": 19,
+      "Hacker News - Best": 20,
+      "Yahoo Entertainment": 4,
+      "NPR": 2,
+      "Business Insider": 15,
+      "Internet": 2,
+      "Slashdot.org": 1,
+      "TechRadar": 1,
+      "Abcnews.com": 1,
+      "Github.com": 2,
+      "Irregular.com": 1,
+      "Scientific American": 1,
+      "Help Net Security": 2,
+      "Idp-software.com": 1,
+      "Pocoo.org": 1,
+      "Theregister.com": 1,
+      "Science Daily": 1,
+      "The Verge": 3,
+      "Harvard Business Review": 1,
+      "Inside Higher Ed": 2,
+      "Nature.com": 4,
+      "CBC News": 1,
+      "Cyrusradfar.com": 1,
+      "9to5Mac": 1,
+      "Apexstandard.org": 1,
+      "Gizmodo.com": 4,
+      "Railsreviews.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 3,
+      "reader": 4,
+      "builder": 1
+    },
+    "notes": [
+      "Strong coverage across all three pillars today",
+      "ServiceNow executive perspective particularly valuable for enterprise AI implementation",
+      "Philosophical content from Aeon and ArXiv showing serious intellectual engagement with AI",
+      "Good practitioner content on regulatory compliance and real production systems",
+      "Simon Willison's syntaqlite piece is excellent example of builder-practitioner crossover"
+    ]
+  }
+}

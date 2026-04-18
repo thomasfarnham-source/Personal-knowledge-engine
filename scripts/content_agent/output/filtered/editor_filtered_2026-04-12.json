@@ -1,0 +1,51 @@
+{
+  "filter_date": "2026-04-12",
+  "filter_timestamp": "2026-04-12T11:33:27.499541+00:00",
+  "items": [],
+  "report": {
+    "scan_date": "2026-04-12",
+    "items_submitted": 151,
+    "items_surviving": 0,
+    "kill_rate": 1.0,
+    "kills_by_source": {
+      "American Banker": 10,
+      "MIT Sloan Management Review": 5,
+      "Corporate Compliance Insights": 8,
+      "Aeon Magazine": 7,
+      "Anthropic News": 2,
+      "Anthropic Research": 5,
+      "OpenAI Blog": 20,
+      "Simon Willison": 19,
+      "Hacker News - Best": 20,
+      "Gizmodo.com": 4,
+      "Yahoo Entertainment": 2,
+      "NPR": 1,
+      "Business Insider": 19,
+      "Scientific American": 1,
+      "Slashdot.org": 2,
+      "ProPublica": 1,
+      "Internet": 2,
+      "Hackaday": 1,
+      "Idp-software.com": 1,
+      "Oreilly.com": 2,
+      "TechRadar": 1,
+      "XDA Developers": 1,
+      "Nishantsoni.com": 1,
+      "Science Daily": 1,
+      "InfoQ.com": 1,
+      "Android Central": 1,
+      "Deadline": 1,
+      "PetaPixel": 1,
+      "CBC News": 1,
+      "CNA": 1,
+      "Nature.com": 3,
+      "Inside Higher Ed": 1,
+      "Wired": 1,
+      "The Verge": 4
+    },
+    "pillar_coverage": {},
+    "notes": [
+      "API error: 400 Client Error: Bad Request for url: https://api.anthropic.com/v1/messages"
+    ]
+  }
+}

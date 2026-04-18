@@ -1,0 +1,178 @@
+{
+  "filter_date": "2026-04-08",
+  "filter_timestamp": "2026-04-08T11:55:10.103978+00:00",
+  "items": [
+    {
+      "title": "How AI is breaking the financial services learning curve",
+      "url": "https://www.americanbanker.com/payments/news/banks-struggle-with-ais-learning-curve",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-04-08T10:00:00+00:00",
+      "summary": "Emerging forms of artificial intelligence are moving so fast, traditional IT training isn't an easy fit. New research from American Banker shows how banks are handling training.",
+      "origin": "rss",
+      "item_hash": "9b4b3053f82df552",
+      "editor_reason": "Addresses practical training challenges for AI implementation in regulated finance, offering research-backed insights on enterprise adaptation.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Disintegrating the Org Chart: ServiceNow’s Jacqui Canney",
+      "url": "https://sloanreview.mit.edu/audio/disintegrating-the-org-chart-servicenows-jacqui-canney/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-07T11:00:48+00:00",
+      "summary": "In this episode of the Me, Myself, and AI podcast, Sam Ransbotham is joined by Jacqui Canney, chief people and AI enablement officer at ServiceNow. Jacqui outlines how the software company has embedded AI agents into processes like employee onboarding to automate tasks, personalize experiences, and free up people’s time to focus on higher-value work. [&#8230;]",
+      "origin": "rss",
+      "item_hash": "93994a0d801de613",
+      "editor_reason": "ServiceNow's Chief People and AI Enablement Officer discusses embedding AI agents in enterprise processes like onboarding - direct practitioner experience.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "How to Reap Compound Benefits From Generative AI",
+      "url": "https://sloanreview.mit.edu/article/how-to-reap-compound-benefits-from-generative-ai/",
+      "source_name": "MIT Sloan Management Review",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:55+00:00",
+      "summary": "Carolyn Geason-Beissel/MIT SMR &#124; Minneapolis Institute of Art In domain after domain, AI has compressed work that used to be expensive — generating drafts, code, prototypes, and analyses. The marginal cost of a first attempt has dropped sharply. What remains expensive is what happens after the output arrives: evaluating what gets generated. That involves separating [&#8230;]",
+      "origin": "rss",
+      "item_hash": "b382680fbfa327fa",
+      "editor_reason": "Focuses on compound benefits from generative AI after initial implementation - addresses post-deployment optimization in enterprise contexts.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "The EU AI Act’s ‘Wait and See’ Window Is Closing",
+      "url": "https://www.corporatecomplianceinsights.com/eu-ai-act-wait-see-window-closing/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-04-06T11:00:03+00:00",
+      "summary": "AI literacy has survived attempts to water it down and remains a direct organizational obligation — not a policy aspiration \nThe post The EU AI Act’s ‘Wait and See’ Window Is Closing appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "4ad0793aa4057eb3",
+      "editor_reason": "EU AI Act compliance requirements shifting from 'wait and see' to direct organizational obligations - critical for regulated enterprises.",
+      "cross_pillar": [],
+      "strength": "strong"
+    },
+    {
+      "title": "Is AI already conscious?",
+      "url": "https://aeon.co/videos/we-long-misjudged-animal-consciousness-could-ai-be-next?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-06T10:01:00+00:00",
+      "summary": "Why it’s difficult and perhaps even morally perilous to rule out the possibility of AI consciousness- by Aeon VideoWatch on Aeon",
+      "origin": "rss",
+      "item_hash": "5b172cadfb74ad69",
+      "editor_reason": "Video essay examining AI consciousness through philosophical lens - engages with fundamental questions about machine intelligence and moral implications.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "From Governance Norms to Enforceable Controls: A Layered Translation Method for Runtime Guardrails in Agentic AI",
+      "url": "https://arxiv.org/abs/2604.05229",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-04-08T04:00:00+00:00",
+      "summary": "arXiv:2604.05229v1 Announce Type: new \nAbstract: Agentic AI systems plan, use tools, maintain state, and produce multi-step trajectories with external effects. Those properties create a governance problem that differs materially from single-turn generative AI: important risks emerge dur- ing execution, not only at model development or deployment time. Governance standards such as ISO/IEC 42001, ISO/IEC 23894, ISO/IEC 42005, ISO/IEC 5338, ISO/IEC 38507, and the NIST AI Risk Management Framework a",
+      "origin": "rss",
+      "item_hash": "4347c4be16466393",
+      "editor_reason": "Addresses governance translation from norms to enforceable controls for agentic AI - critical for enterprise risk management and operational deployment.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Anthropic's Project Glasswing - restricting Claude Mythos to security researchers - sounds necessary to me",
+      "url": "https://simonwillison.net/2026/Apr/7/project-glasswing/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-07T20:52:54+00:00",
+      "summary": "Anthropic didn't release their latest model, Claude Mythos (system card PDF), today. They have instead made it available to a very restricted set of preview partners under their newly announced Project Glasswing.\nThe model is a general purpose model, similar to Claude Opus 4.6, but Anthropic claim that its cyber-security research abilities are strong enough that they need to give the software industry as a whole time to prepare.\n\nMythos Preview has already found thousands of high-severity vulner",
+      "origin": "rss",
+      "item_hash": "455223126134bacc",
+      "editor_reason": "Anthropic's restricted release of Claude Mythos to security researchers through Project Glasswing - demonstrates responsible AI governance in practice.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Eight years of wanting, three months of building with AI",
+      "url": "https://simonwillison.net/2026/Apr/5/building-with-ai/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-05T23:54:18+00:00",
+      "summary": "Eight years of wanting, three months of building with AI\nLalit Maganti provides one of my favorite pieces of long-form writing on agentic engineering I've seen in ages.\nThey spent eight years thinking about and then three months building syntaqlite, which they describe as \"high-fidelity devtools that SQLite deserves\".\nThe goal was to provide fast, robust and comprehensive linting and verifying tools for SQLite, suitable for use in language servers and other development tools - a parser, formatte",
+      "origin": "rss",
+      "item_hash": "e0b38d6b592f972e",
+      "editor_reason": "Deep reflection on eight years of wanting vs three months of building with AI assistance - practitioner perspective on agentic engineering workflows.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-04-08",
+    "items_submitted": 172,
+    "items_surviving": 8,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "American Banker": 9,
+      "MIT Sloan Management Review": 2,
+      "Corporate Compliance Insights": 4,
+      "Aeon Magazine": 6,
+      "ArXiv - AI (cs.AI)": 19,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 1,
+      "Anthropic Research": 5,
+      "OpenAI Blog": 4,
+      "Simon Willison": 18,
+      "Hacker News - Best": 20,
+      "Yahoo Entertainment": 2,
+      "NPR": 2,
+      "Business Insider": 17,
+      "Slashdot.org": 2,
+      "TechRadar": 2,
+      "Wealthmanagement.com": 1,
+      "ProPublica": 1,
+      "Github.com": 2,
+      "Irregular.com": 1,
+      "Scientific American": 1,
+      "Help Net Security": 2,
+      "Idp-software.com": 1,
+      "Pocoo.org": 1,
+      "Theregister.com": 1,
+      "Science Daily": 1,
+      "The Verge": 2,
+      "Inside Higher Ed": 2,
+      "Nature.com": 3,
+      "CBC News": 1,
+      "Naturalnews.com": 1,
+      "Substack.com": 1,
+      "Cyrusradfar.com": 1,
+      "Android Central": 1,
+      "Onepilotapp.com": 1,
+      "Apexstandard.org": 1,
+      "Gizmodo.com": 2,
+      "Lanes.sh": 1,
+      "Cursor.com": 1,
+      "XDA Developers": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 4,
+      "reader": 2,
+      "builder": 2
+    },
+    "notes": [
+      "Strong cross-pillar coverage today with AI governance, enterprise implementation, and philosophical considerations",
+      "Notable practitioner voices from ServiceNow leadership and Anthropic's security research program",
+      "Good balance of regulatory compliance (EU AI Act), technical implementation (agentic systems), and philosophical depth (AI consciousness)"
+    ]
+  }
+}
