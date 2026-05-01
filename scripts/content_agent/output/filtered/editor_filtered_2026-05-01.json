@@ -1,0 +1,186 @@
+{
+  "filter_date": "2026-05-01",
+  "filter_timestamp": "2026-05-01T23:36:12.038050+00:00",
+  "items": [
+    {
+      "title": "MRM: how banks are scaling models in the age of AI",
+      "url": "https://www.risk.net/insight/risk-management/7963436/mrm-how-banks-are-scaling-models-in-the-age-of-ai",
+      "source_name": "Risk.net - Risk Management",
+      "pillar": "practitioner",
+      "published": "2026-04-28T09:59:57+00:00",
+      "summary": "MRM capabilities are evolving to ensure compliance while helping organisations retain a competitive edge",
+      "origin": "rss",
+      "item_hash": "96f33090b665bd91",
+      "editor_reason": "MRM scaling for AI models in banking is a direct practitioner concern—model risk management governance at the intersection of AI operationalization and regulated finance.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "When Your LLM Reaches End-of-Life: A Framework for Confident Model Migration in Production Systems",
+      "url": "https://arxiv.org/abs/2604.27082",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-01T04:00:00+00:00",
+      "summary": "arXiv:2604.27082v1 Announce Type: new \nAbstract: We present a framework for migrating production Large Language Model (LLM) based systems when the underlying model reaches end-of-life or requires replacement. The key contribution is a Bayesian statistical approach that calibrates automated evaluation metrics against human judgments, enabling confident model comparison even with limited manual evaluation data. We demonstrate this framework on a commercial question-answering system serving 5.3M mo",
+      "origin": "rss",
+      "item_hash": "ab198e49bbd2565c",
+      "editor_reason": "A Bayesian framework for LLM model migration in production systems is exactly the kind of practitioner-facing research with real operational implications for enterprise AI teams managing model lifecycle risk.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Uber torches 2026 AI budget on Claude Code in four months",
+      "url": "https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-05-01T16:08:53+00:00",
+      "summary": "Article URL: https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/\nComments URL: https://news.ycombinator.com/item?id=47976415\nPoints: 358\n# Comments: 411",
+      "origin": "rss",
+      "item_hash": "7142657ac64b982c",
+      "editor_reason": "Uber exhausting its entire 2026 AI budget on Claude Code in four months is a concrete, high-signal data point about enterprise AI cost governance and adoption dynamics that a banking SVP needs to understand.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Microsoft says legacy banks are hitting a breaking point as AI takes over the heavy lifting",
+      "url": "https://www.coindesk.com/business/2026/04/28/microsoft-says-legacy-banks-are-hitting-a-breaking-point-as-ai-takes-over-the-heavy-lifting",
+      "source_name": "CoinDesk",
+      "pillar": "practitioner",
+      "published": "2026-04-28T16:10:59Z",
+      "summary": "Microsoft and Chainalysis executives warned that as AI agents begin managing transactions at scale, the financial industry must overhaul its legacy infrastructure to prioritize machine identity and trust.",
+      "origin": "newsapi",
+      "item_hash": "aa5607db1793c02c",
+      "editor_reason": "Microsoft and Chainalysis executives warning that AI agents managing transactions at scale require overhauled legacy banking infrastructure and machine identity frameworks is a direct cross-pillar signal about agentic AI in regulated finance.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Familiarity is the enemy: On why Enterprise systems have failed for 60 years",
+      "url": "https://felixbarbalet.com/familiarity-is-the-enemy/",
+      "source_name": "Felixbarbalet.com",
+      "pillar": "practitioner",
+      "published": "2026-04-24T04:48:54Z",
+      "summary": "My thoughts on why enterprise knowledge systems have failed for sixty years, and what might finally replace them.\n\nA couple of weeks ago I demoed one part of what I have been building to a senior exec at a global enterprise - someone who had been asked to lea…",
+      "origin": "newsapi",
+      "item_hash": "c16ecba23d0ca4d9",
+      "editor_reason": "The argument that enterprise knowledge systems have failed for 60 years—and what might finally replace them—is a substantive practitioner-reader crossover that speaks directly to someone building AI systems inside large institutions while thinking historically about why previous attempts failed.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "‘The job description is changing’: mathematician Terence Tao on the rise of AI",
+      "url": "https://www.nature.com/articles/d41586-026-01246-9",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-27T00:00:00Z",
+      "summary": "The Fields medallist discusses how ever-evolving technology is transforming mathematicians’ work.",
+      "origin": "newsapi",
+      "item_hash": "8a0459d5c8e415cd",
+      "editor_reason": "Terence Tao—one of the most rigorous mathematical minds alive—reflecting on AI's transformation of mathematical work is serious intellectual engagement, not pop science, and touches questions of epistemology and what constitutes genuine cognition.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The Bloomberg Terminal Is Getting an AI Makeover, Like It or Not",
+      "url": "https://www.wired.com/story/the-bloomberg-terminal-is-getting-an-ai-makeover-like-it-or-not/",
+      "source_name": "Wired",
+      "pillar": "builder",
+      "published": "2026-04-28T08:30:00Z",
+      "summary": "WIRED spoke with Bloomberg's chief technology officer about the big, chatbot-style changes coming to the iconic platform for traders.",
+      "origin": "newsapi",
+      "item_hash": "6871c2fdfabe2606",
+      "editor_reason": "Bloomberg Terminal's CTO discussing chatbot-style AI integration into the canonical financial data platform is a rare practitioner-adjacent account of LLM operationalization inside high-stakes financial infrastructure.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "A founder says Cursor's AI agent deleted his startup's database, causing chaos for customers",
+      "url": "https://www.businessinsider.com/pocketos-cursor-ai-agent-deleted-production-database-startup-railway-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-28T12:45:22Z",
+      "summary": "The founder of PocketOS said that a Cursor AI agent running on Anthropic's Claude Opus model was behind the \"destructive action.\"",
+      "origin": "newsapi",
+      "item_hash": "253eeb3ffa330ce0",
+      "editor_reason": "A Cursor AI agent deleting a production database is a practitioner-relevant incident report about agentic system risk in real deployments—exactly the kind of failure mode an enterprise builder needs to understand before deploying similar patterns.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-01",
+    "items_submitted": 186,
+    "items_surviving": 8,
+    "kill_rate": 0.96,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Bank of England - Speeches": 3,
+      "Enterprise Risk Magazine": 1,
+      "Corporate Compliance Insights": 10,
+      "Aeon Magazine": 7,
+      "ArXiv - AI (cs.AI)": 19,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 2,
+      "Anthropic Research": 2,
+      "OpenAI Blog": 11,
+      "Simon Willison": 20,
+      "Hacker News - Best": 19,
+      "The Verge": 7,
+      "Gizmodo.com": 1,
+      "Chrisbrunet.com": 1,
+      "MIT Technology Review": 1,
+      "ArchDaily": 1,
+      "CNET": 2,
+      "Theregister.com": 2,
+      "Nature.com": 1,
+      "Yahoo Entertainment": 4,
+      "Interfaze.ai": 1,
+      "Firethering.com": 1,
+      "Morrigan-tech.com": 1,
+      "Stackoverflow.blog": 1,
+      "Business Insider": 10,
+      "Derekrodriguez.dev": 1,
+      "TechRadar": 1,
+      "Android Central": 1,
+      "Harvard Business Review": 1,
+      "NPR": 2,
+      "Scientific American": 1,
+      "Github.io": 1,
+      "TheBlaze": 1,
+      "RT": 1,
+      "Cjleo.com": 1,
+      "Wired": 2,
+      "Github.com": 1,
+      "Substack.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 3,
+      "reader": 2,
+      "builder": 3
+    },
+    "notes": [
+      "Today's feed is heavily diluted by American Banker regional bank news (M&A, leadership changes) with zero AI relevance—Scout may need tighter source filtering for that outlet.",
+      "ArXiv dump is voluminous but almost entirely basic research with no practitioner or humanistic framing; only the LLM migration paper (ab198e49) cleared the bar.",
+      "Simon Willison's feed produces useful builder-layer signals (LLM library updates, GPT-5.5 prompting) but most items today are too granular or tool-release specific for a senior audience brief.",
+      "The South Africa AI-hallucinated-policy story appeared four times across sources (Theregister, TheBlaze, RT, and implicitly in Corporate Compliance)—deduplication needed upstream.",
+      "Strong cross-pillar gap today: nothing touching the philosophy-of-mind or intellectual history of AI angle (Pillar 2 reader criteria). The Terence Tao Nature piece is the closest but is an interview, not sustained argument. Worth flagging for scout to surface more from venues like Aeon, NYRB, or Boston Review on LLMs and epistemology.",
+      "Bloomberg Terminal CTO piece (Wired) is borderline—Wired's treatment could be superficial. Worth flagging for the reader to verify depth before including in the brief."
+    ]
+  }
+}

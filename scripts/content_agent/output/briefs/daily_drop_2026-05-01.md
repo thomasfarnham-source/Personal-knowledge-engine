@@ -10,16 +10,10 @@ Bank of England Deputy Governor Sarah Breeden speaking on 'This time is differen
 
 > Given at the HLS-PIFS Symposium on “Building the Financial System of the 21st Century: An Agenda for Europe and the United States”
 
-**↔ Personal connection:** Your Oliver Bussmann town hall notes on UBS transformation strategy — retaining talent, integrated teams, GT communication — connect to Breeden's speech because both address the organizational and strategic challenges of modernizing large financial institutions.
-*From: Oliver bussman - town hall (None)*
-
-**↔ Personal connection:** Your 2017 notes on blockchain AML connect because the linked article on selective and enforceable international regulatory standards directly parallels Breeden's concern with building coherent, effective financial regulatory frameworks across jurisdictions.
+**↔ Personal connection:** Your 2017 notes on blockchain and AML connect because both examine the challenge of enforcing international regulatory standards in financial systems, a core theme in Breeden's speech about building resilient 21st-century financial infrastructure.
 *From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-12-14)*
 
-**↔ Personal connection:** Your Global GT Town Hall notes mention the 'too big to fail' problem and a 290-million backlog of risk issues, which connects to Breeden's speech about systemic financial risk and the unfinished agenda of post-crisis reform.
-*From: Global GT Town Hall (None)*
-
-**↔ Book connection:** Breeden's 'this time is different?' framing echoes Thucydides's core lesson that each generation of powerful actors believes its moment is unprecedented while repeating the same structural overreaches — the regulatory question is whether financial institutions can learn from historical analogues before the crisis rather than after.
+**↔ Book connection:** Breeden's 'this time is different?' framing invokes the same skepticism Thucydides applied to Athenian overconfidence — both ask whether actors in a system are mistaking novel circumstances for immunity from the structural dynamics that have always governed institutional overreach and financial instability.
 *History of the Peloponnesian War by Thucydides (None)*
 
 [Read full article](https://www.bankofengland.co.uk/speech/2026/april/sarah-breeden-at-the-program-on-international-financial-systems-and-harvard-law-school)
@@ -34,13 +28,13 @@ Aeon's Nicholas Humphrey on the invention of the soul via language — a serious
 
 > Humans weren’t given souls by God or genes. We made them ourselves with language – turning sentience into something sacred- by Nicholas HumphreyRead on Aeon
 
-**↔ Personal connection:** Your NYTimes cosmology note — with its reflection on imagination as the mechanism by which humans traverse time and space — connects directly to Humphrey's argument that the soul is a human construction built through language and inner narrative.
+**↔ Personal connection:** Your NYTimes cosmology note's parenthetical — about imagination as the mechanism by which humans traverse time and space — connects directly to Humphrey's argument that language and imagination are the engines through which humans constructed the concept of the soul.
 *From: NYTimes: Modern Cosmology Versus God’s Creation (None)*
 
-**↔ Personal connection:** Your 2017 Sapiens notes on the cognitive revolution, mythical glue, and animist worldviews connect directly to Humphrey's thesis that the soul is a culturally constructed concept humans invented — both are examining how Homo sapiens built meaning systems that transcend biology.
+**↔ Personal connection:** Your 2017 Sapiens notes on the cognitive revolution, mythical glue, and animist worldviews connect directly to Humphrey's thesis — Harari's 'imagined realities' and Humphrey's language-constructed soul are parallel arguments about how symbolic thought created uniquely human inner life.
 *From: 2017 books - Sapiens (None)*
 
-**↔ Book connection:** Both grapple with the same deep puzzle: whether consciousness and the sense of inner life are genuine metaphysical facts or artifacts of a particular kind of self-narrating process — Humphrey argues language constructs the soul, Dostoevsky's Underground Man demonstrates that consciousness resists any clean rational account of itself.
+**↔ Book connection:** Both interrogate whether consciousness and the sense of inner life are byproducts of something other than what we assume — Humphrey argues the soul is a linguistic construction, while Dostoevsky's Underground Man demonstrates that consciousness resists any clean rational account of itself.
 *Notes from Underground by Fyodor Dostoevsky (None)*
 
 [Read full article](https://aeon.co/essays/you-know-what-consciousness-is-you-live-in-soul-land?utm_source=rss-feed)
@@ -55,11 +49,8 @@ Anthropic Research on automated alignment researchers using LLMs to scale scalab
 
 > Apr 14, 2026AlignmentAutomated Alignment Researchers: Using large language models to scale scalable oversight
 
-**↔ Personal connection:** Your AI notes on Watson profiling FA-client calls and the hype-vs-reality tension in financial AI connect to this article because both grapple with where AI adds genuine value versus where human oversight remains essential — the core tension in scalable oversight research.
-*From: Artificial intelligence (None)*
-
-**↔ Book connection:** Using LLMs to evaluate the alignment of LLMs recapitulates Borges's Library of Babel problem: a system that contains all possible outputs cannot reliably distinguish the meaningful from the false without a meta-framework that itself requires justification — the epistemological regress is the same.
-*Ficciones (Selected Short Stories) by Jorge Luis Borges (None)*
+**↔ Book connection:** Both confront the same structural problem: when oversight of a system is delegated to that same system, the capacity for independent moral judgment atrophies — Arendt's warning about procedural compliance without critical thinking maps directly onto the risks of LLMs supervising their own alignment.
+*Eichmann in Jerusalem: A Report on the Banality of Evil by Hannah Arendt (None)*
 
 [Read full article](https://www.anthropic.com/research/automated-alignment-researchers)
 
@@ -73,13 +64,10 @@ Kyle Kingsbury's observation about humans as 'meat shields' for ML accountabilit
 
 > I think we will see some people employed (though perhaps not explicitly) as meat shields: people who are accountable for ML systems under their supervision. The accountability may be purely internal, as when Meta hires human beings to review the deci
 
-**↔ Personal connection:** Your 2022 message about workplace discrimination training using the ambiguous 'Blake' scenario connects directly to Kingsbury's point about humans being made formally accountable for AI-driven outputs they don't fully understand or control.
+**↔ Personal connection:** Your 2022 message about workplace discrimination training — where 'Blake' serves as a deliberately ambiguous accountability figure for a workplace incident — connects directly to Kingsbury's point about humans being used as nominal accountability proxies for systems that actually operate beyond their control.
 *From: James Root & William Renahan & Chris Zicchelo (2022-10-17T12:29:10)*
 
-**↔ Personal connection:** Your organizational theory notes on the impact of AI on compliance connect to Kingsbury's quote because both examine how organizations assign human accountability for AI systems, and what institutional structures emerge around that responsibility.
-*From: Organizational Theory - Artificial intelligences (None)*
-
-**↔ Book connection:** Kingsbury's 'meat shield' framing and Arendt's banality of evil converge on the same structural danger: accountability assigned to humans who follow procedures without genuine oversight capacity becomes a moral laundering mechanism, not a safeguard.
+**↔ Book connection:** Kingsbury's 'meat shield' is Arendt's bureaucratic functionary recast for the AI era — a human who bears accountability for outcomes produced by a process they do not understand and cannot meaningfully contest, which is precisely the moral vacancy Arendt diagnosed in Eichmann.
 *Eichmann in Jerusalem: A Report on the Banality of Evil by Hannah Arendt (None)*
 
 [Read full article](https://simonwillison.net/2026/Apr/15/kyle-kingsbury/#atom-everything)
@@ -94,7 +82,7 @@ Bryan Cantrill's observation that LLMs lack laziness and will produce larger, wo
 
 > The problem is that LLMs inherently lack the virtue of laziness. Work costs nothing to an LLM. LLMs do not feel a need to optimize for their own (or anyone's) future time, and will happily dump more and more onto a layercake of garbage. Left unchecke
 
-**↔ Book connection:** Cantrill's critique that LLMs produce larger, not better, systems mirrors Jacobs's argument against top-down planning: both identify how agents optimizing for visible output rather than functional economy systematically produce complexity that destroys the thing it was meant to serve.
+**↔ Book connection:** Cantrill's critique that LLMs produce larger, worse systems by lacking the discipline of laziness is structurally identical to Jacobs' critique of top-down urban planners — both describe how the absence of friction and constraint produces accumulation without intelligence, growth without order.
 *The Death and Life of Great American Cities by Jane Jacobs (None)*
 
 [Read full article](https://simonwillison.net/2026/Apr/13/bryan-cantrill/#atom-everything)
@@ -110,13 +98,13 @@ The Register's analysis of the growing void between enterprise and frontier AI p
 > Most customers don't need the biggest baddest models, just ones that work, are cheap, and won't pirate their proprietary data
 FEATURE Spring has sprung and that means another wave of open weights AI models from the likes of Google, Microsoft, Alibaba
 
-**↔ Personal connection:** Your AI notes on hype vs. reality, cost-cutting, and commoditization of middle/back office work connect directly to this article's argument that most enterprise customers need cheap, reliable, fit-for-purpose models — not frontier capability.
+**↔ Personal connection:** Your AI notes on hype vs. reality and the commoditization of middle/back-office work connect to the article's argument that most enterprise customers don't need frontier models — both identify the gap between AI's headline capabilities and practical institutional deployment needs.
 *From: Artificial intelligence (None)*
 
-**↔ Personal connection:** Your 2016 clipping on AI storming the back office and the era of open banking connects to this article's examination of enterprise AI adoption, as both track the gap between frontier AI development and practical institutional deployment.
+**↔ Personal connection:** Your 2016 clipping on AI storming the back office and open banking directly anticipates the article's framing of enterprise AI as a cost and reliability problem rather than a capability race — the thematic continuity across nearly a decade is the connection.
 *From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2016-12-01)*
 
-**↔ Book connection:** The enterprise vs. frontier AI gap exposes a Veblenian dynamic: frontier model adoption is partly status performance by organizations signaling sophistication, while actual utility and cost-efficiency favor the unglamorous open-weights alternatives — consumption as performance rather than necessity.
+**↔ Book connection:** Enterprise adoption of frontier models often functions as Veblenian conspicuous consumption — signaling modernity and ambition rather than solving actual problems — while open-weights models represent the utilitarian corrective that strips away the performance and asks what is actually needed.
 *The Theory of the Leisure Class by Thorstein Veblen (None)*
 
 [Read full article](https://www.theregister.com/2026/04/12/ai_open_weights_models/)
@@ -132,8 +120,11 @@ Simon Willison's synthesis on the UK AI Safety Institute's independent evaluatio
 > Cybersecurity Looks Like Proof of Work Now
 The UK's AI Safety Institute recently published Our evaluation of Claude Mythos Preview’s cyber capabilities, their own independent analysis of Claude Mythos which backs up Anthropic's claims that it is exce
 
-**↔ Personal connection:** Your 2017 clipping of three senior bankers discussing regional cybercrime threats connects to this article because both examine how financial institutions perceive and respond to evolving cyber threats — though the article's focus on AI-powered offensive capabilities represents a significant escalation from the 2017 framing.
+**↔ Personal connection:** Your 2017 notes on cybercrime threats as viewed across banking regions connect to the article's examination of how cybersecurity has evolved — both treat cybersecurity as a systemic institutional challenge rather than a technical one — making this a genuine thematic link.
 *From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-05-24)*
+
+**↔ Book connection:** The 'proof of work' framing of cybersecurity — where demonstrating effort becomes the signal of legitimacy — mirrors Foucault's analysis of how surveillance architectures shift behavior from substance to performance, with AI capability evaluations now functioning as the new inspection regime.
+*Discipline and Punish by Michel Foucault (None)*
 
 [Read full article](https://simonwillison.net/2026/Apr/14/cybersecurity-proof-of-work/#atom-everything)
 
