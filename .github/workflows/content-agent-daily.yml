@@ -47,7 +47,6 @@ jobs:
 
           # Add output files
           git add scripts/content_agent/output/briefs/
-          git add scripts/content_agent/output/raw/
           git add scripts/content_agent/output/filtered/
 
           # Commit only if there are changes
