@@ -77,14 +77,16 @@ scripts/reset_ingestion_tables.sql
 # scripts/inspect_schema.sql
 
 # -------------------------------------------------------------------
-# Content agent — local-only output
-# Connected files are produced by local enrichment runs (Connector
-# requires PKE API which isn't available in CI). Raw scout output
-# is ephemeral (30-day retention per ARCHITECTURE.md).
+# Content agent output
+# raw/ — ephemeral Scout scan data, 30-day retention, no value in repo
+# connected/ — contains personal corpus snippets from local enrichment,
+#              sensitive, never commit
+# filtered/ and briefs/ are committed — public source content only,
+# needed for GitHub Actions daily delivery pipeline
 # -------------------------------------------------------------------
-scripts/content_agent/output/connected/
 scripts/content_agent/output/raw/
-scripts/content_agent/output/briefs/
+scripts/content_agent/output/connected/
+
 
 # Personal files - never commit
 vision.md

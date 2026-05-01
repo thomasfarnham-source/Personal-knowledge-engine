@@ -1,22 +1,145 @@
 {
   "filter_date": "2026-04-18",
-  "filter_timestamp": "2026-04-18T11:36:04.524754+00:00",
-  "items": [],
+  "filter_timestamp": "2026-04-18T18:47:21.116867+00:00",
+  "items": [
+    {
+      "title": "This time is different? Speech by Sarah Breeden",
+      "url": "https://www.bankofengland.co.uk/speech/2026/april/sarah-breeden-at-the-program-on-international-financial-systems-and-harvard-law-school",
+      "source_name": "Bank of England - Speeches",
+      "pillar": "practitioner",
+      "published": "2026-04-17T09:00:00+00:00",
+      "summary": "Given at the HLS-PIFS Symposium on “Building the Financial System of the 21st Century: An Agenda for Europe and the United States”",
+      "origin": "rss",
+      "item_hash": "3a49724249879cf3",
+      "editor_reason": "Bank of England Deputy Governor Sarah Breeden speaking on 'This time is different?' at a US-Europe financial system symposium — almost certainly engages AI/technology disruption to financial stability from a senior regulatory practitioner perspective, directly relevant to regulated finance AI governance.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The invention of the soul",
+      "url": "https://aeon.co/essays/you-know-what-consciousness-is-you-live-in-soul-land?utm_source=rss-feed",
+      "source_name": "Aeon Magazine",
+      "pillar": "reader",
+      "published": "2026-04-17T10:00:00+00:00",
+      "summary": "Humans weren’t given souls by God or genes. We made them ourselves with language – turning sentience into something sacred- by Nicholas HumphreyRead on Aeon",
+      "origin": "rss",
+      "item_hash": "f1afdef28fa63358",
+      "editor_reason": "Aeon's Nicholas Humphrey on the invention of the soul via language — a serious philosophical argument about sentience, self-construction, and the sacred that intersects directly with LLM debates about mind, consciousness, and what language-based systems are doing.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Apr 14, 2026AlignmentAutomated Alignment Researchers: Using large language models to scale scalable oversight",
+      "url": "https://www.anthropic.com/research/automated-alignment-researchers",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": "2026-04-14T00:00:00+00:00",
+      "summary": "Apr 14, 2026AlignmentAutomated Alignment Researchers: Using large language models to scale scalable oversight",
+      "origin": "rss",
+      "item_hash": "98ad0ce59b116815",
+      "editor_reason": "Anthropic Research on automated alignment researchers using LLMs to scale scalable oversight is a substantive research announcement with direct practical and philosophical implications for AI governance, auditability, and the epistemology of AI self-evaluation.",
+      "cross_pillar": [
+        "reader",
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The next evolution of the Agents SDK",
+      "url": "https://openai.com/index/the-next-evolution-of-the-agents-sdk",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-04-15T10:00:00+00:00",
+      "summary": "OpenAI updates the Agents SDK with native sandbox execution and a model-native harness, helping developers build secure, long-running agents across files and tools.",
+      "origin": "rss",
+      "item_hash": "1ecdad90bfb46efd",
+      "editor_reason": "OpenAI's Agents SDK update with native sandbox execution and a model-native harness is a concrete engineering announcement for building secure, long-running agentic systems — directly applicable to anyone operationalizing agents in production.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Quoting Kyle Kingsbury",
+      "url": "https://simonwillison.net/2026/Apr/15/kyle-kingsbury/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-15T15:36:02+00:00",
+      "summary": "I think we will see some people employed (though perhaps not explicitly) as meat shields: people who are accountable for ML systems under their supervision. The accountability may be purely internal, as when Meta hires human beings to review the decisions of automated moderation systems. It may be external, as when lawyers are penalized for submitting LLM lies to the court. It may involve formalized responsibility, like a Data Protection Officer. It may be convenient for a company to have third-",
+      "origin": "rss",
+      "item_hash": "93002af5eda5fab5",
+      "editor_reason": "Kyle Kingsbury's observation about humans as 'meat shields' for ML accountability — a practitioner-voiced, philosophically sharp framing of AI liability in production systems that directly maps to regulated finance's model governance and human-in-the-loop requirements.",
+      "cross_pillar": [
+        "practitioner",
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Cybersecurity Looks Like Proof of Work Now",
+      "url": "https://simonwillison.net/2026/Apr/14/cybersecurity-proof-of-work/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-14T19:41:48+00:00",
+      "summary": "Cybersecurity Looks Like Proof of Work Now\nThe UK's AI Safety Institute recently published Our evaluation of Claude Mythos Preview’s cyber capabilities, their own independent analysis of Claude Mythos which backs up Anthropic's claims that it is exceptionally effective at identifying security vulnerabilities.\nDrew Breunig notes that AISI's report shows that the more tokens (and hence money) they spent the better the result they got, which leads to a strong economic incentive to spend as much as ",
+      "origin": "rss",
+      "item_hash": "5945e6ebcc914718",
+      "editor_reason": "Simon Willison's synthesis on the UK AI Safety Institute's independent evaluation of Claude Mythos cyber capabilities, framed through the 'proof of work' lens, is a practitioner-level analysis of AI safety evaluation methodology with governance and auditability implications for enterprise AI deployment.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    },
+    {
+      "title": "Quoting Bryan Cantrill",
+      "url": "https://simonwillison.net/2026/Apr/13/bryan-cantrill/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-04-13T02:44:24+00:00",
+      "summary": "The problem is that LLMs inherently lack the virtue of laziness. Work costs nothing to an LLM. LLMs do not feel a need to optimize for their own (or anyone's) future time, and will happily dump more and more onto a layercake of garbage. Left unchecked, LLMs will make systems larger, not better &mdash; appealing to perverse vanity metrics, perhaps, but at the cost of everything that matters.\nAs such, LLMs highlight how essential our human laziness is: our finite time forces us to develop crisp ab",
+      "origin": "rss",
+      "item_hash": "c9afe85f29f05d19",
+      "editor_reason": "Bryan Cantrill's observation that LLMs lack laziness and will produce larger, worse systems without discipline is a practitioner-voiced epistemological insight about LLM-assisted development that is sharp, counterintuitive, and directly useful for anyone managing AI-assisted engineering teams.",
+      "cross_pillar": [
+        "reader",
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Growing void between enterprise and frontier AI puts open weights models in the spotlight",
+      "url": "https://www.theregister.com/2026/04/12/ai_open_weights_models/",
+      "source_name": "Theregister.com",
+      "pillar": "practitioner",
+      "published": "2026-04-12T10:51:06Z",
+      "summary": "Most customers don't need the biggest baddest models, just ones that work, are cheap, and won't pirate their proprietary data\nFEATURE Spring has sprung and that means another wave of open weights AI models from the likes of Google, Microsoft, Alibaba, and Nvi…",
+      "origin": "newsapi",
+      "item_hash": "0f938b1dd478866d",
+      "editor_reason": "The Register's analysis of the growing void between enterprise and frontier AI putting open-weights models in the spotlight is a substantive practitioner-level piece on the actual deployment calculus enterprises face — cost, control, data privacy — with direct relevance to financial services AI infrastructure decisions.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    }
+  ],
   "report": {
     "scan_date": "2026-04-18",
     "items_submitted": 133,
-    "items_surviving": 0,
-    "kill_rate": 1.0,
+    "items_surviving": 8,
+    "kill_rate": 0.94,
     "kills_by_source": {
       "American Banker": 10,
       "MIT Sloan Management Review": 4,
-      "Bank of England - Speeches": 3,
+      "Bank of England - Speeches": 2,
       "Corporate Compliance Insights": 8,
-      "Aeon Magazine": 7,
+      "Aeon Magazine": 6,
       "Anthropic News": 3,
-      "Anthropic Research": 1,
-      "OpenAI Blog": 6,
-      "Simon Willison": 20,
+      "OpenAI Blog": 5,
+      "Simon Willison": 17,
       "Hacker News - Best": 19,
       "Business Insider": 12,
       "Nature.com": 1,
@@ -28,8 +151,8 @@
       "Github.com": 1,
       "Workos.com": 1,
       "Workflowbuilder.io": 1,
-      "Theregister.com": 2,
       "Oreilly.com": 1,
+      "Theregister.com": 1,
       "Openbindings.com": 1,
       "Substack.com": 1,
       "Saastr.com": 1,
@@ -50,9 +173,20 @@
       "MacRumors": 1,
       "9to5Mac": 1
     },
-    "pillar_coverage": {},
+    "pillar_coverage": {
+      "practitioner": 2,
+      "reader": 1,
+      "builder": 5
+    },
     "notes": [
-      "API error: 400 Client Error: Bad Request for url: https://api.anthropic.com/v1/messages"
+      "The American Banker feed was almost entirely standard banking news with no AI implementation or governance angle — only the Bank of England speech survived. Consider whether this source is misconfigured for this persona's needs or whether the AI/fintech beat needs a dedicated feed.",
+      "The Simon Willison feed is unusually productive today — multiple keeper-quality items (Kingsbury quote, Cantrill quote, Mythos cyber piece). His curation and commentary function as a high-signal secondary editor. Worth weighting his feed more heavily.",
+      "Anthropic Research's automated alignment piece is the highest-ceiling item in the batch — it sits at the intersection of all three pillars and touches the deepest questions about AI epistemology and governance. Should anchor the brief.",
+      "The Aeon 'invention of the soul' piece by Nicholas Humphrey is the strongest pure Reader item in weeks if it's as described — language constructing the sacred maps directly onto LLM debates. Flag for deeper read before placement.",
+      "Several Business Insider and Gizmodo items about Claude Opus 4.7 pricing and positioning were killed as vendor news without practitioner depth. The model release itself (b8af8104) was also killed — announcement without implementation substance.",
+      "Coverage gap: nothing substantive on RAG, vector databases, or embeddings in this batch. The Builder pillar is underserved on the architectural side today — mostly model release noise.",
+      "The OpenAI internal memo items (6888dad6, 0918737c) were killed as insider corporate strategy reporting, not practitioner insight. Interesting as industry color but doesn't serve any of the three pillars.",
+      "Aeon produced several non-AI philosophical pieces (Nietzsche eternal recurrence, eugenics history) that were tempting but don't have enough intersection with the AI/technology mandate to justify inclusion given competition from stronger items."
     ]
   }
 }

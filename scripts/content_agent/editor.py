@@ -155,11 +155,11 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
             },
             json={
                 "model": "claude-sonnet-4-6",
-                "max_tokens": 4096,
+                "max_tokens": 8192,
                 "system": EDITOR_SYSTEM_PROMPT,
                 "messages": [{"role": "user", "content": user_message}],
             },
-            timeout=60,
+            timeout=120,
         )
         response.raise_for_status()
         data = response.json()

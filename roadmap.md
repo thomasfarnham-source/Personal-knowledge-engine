@@ -2622,3 +2622,74 @@ vault lives and how the parser accesses it.
 Flat tests/ root contains older test files alongside the unit/
 and integration/ subfolders. Consolidation into subfolders deferred
 until ingestion and parser tests grow enough to warrant it.
+
+##  Engineering Work to support RMF i.e Metrics / montioring
+### C.1 PKE Backlog - Monitoring
+
+- **Retrieval logging with `source_type` filtering**
+  *Justification:* Metric 1.1.a target state; required for 1.1.b
+  *Priority:* High
+
+- **Retrieval filter implementation with governance tagging**
+  *Justification:* Metric 1.1.b (Non‑Compensable)
+  *Priority:* High
+
+- **Ingestion validation log enhancement**
+  *Justification:* Metric 1.4.a
+  *Priority:* Medium
+
+- **Model verification log format**
+  *Justification:* Metric 1.3.b
+  *Priority:* Medium
+
+- **Publication log**
+  *Justification:* Metric 3.1.a
+  *Priority:* Low
+
+- **Organizational Signal Agent**
+  *Justification:* Metric 2.3.a
+  *Priority:* Medium
+
+---
+
+### C.2 RMF Tool Backlog (Future System)
+
+- **Unified memory write audit capture**
+  *Justification:* Metric 1.2.a
+  *Priority:* High
+
+- **Agent exposure review interface**
+  *Justification:* Metric 2.3.a
+  *Priority:* Medium
+
+- **RAG state tracking + history**
+  *Justification:* All metrics
+  *Priority:* High
+
+- **Threshold management**
+  *Justification:* Policy 3 §3.8
+  *Priority:* Medium
+
+- **Breach workflow**
+  *Justification:* Policy 2 §2.7
+  *Priority:* High
+
+- **Evidence log generation**
+  *Justification:* Policy 2 §2.6
+  *Priority:* High
+
+- **Session‑end review capture**
+  *Justification:* Metrics 1.2.a, 1.2.b
+  *Priority:* Medium
+
+**Design Constraint:** RMF Tool must be low‑AI.
+
+---
+
+### C.3 Personal Practices
+
+- Weekly governance check‑in (≈15 minutes)
+- `MICRO_CONTROLS.md` register
+- Decision log
+- Challenge log
+- Weekly throughput target declaration

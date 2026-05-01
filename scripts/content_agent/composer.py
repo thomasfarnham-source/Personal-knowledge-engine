@@ -182,6 +182,8 @@ Respond in markdown format (not JSON).
 def compose_weekly(vault_path: Optional[Path] = None, output_dir: Optional[Path] = None) -> Path:
     """Compose the weekly synthesis from the week's daily outputs."""
     import os
+    from dotenv import load_dotenv
+    load_dotenv()
 
     # Gather the week's items — prefer connected (has PKE/book annotations),
     # fall back to editor-filtered (curation without personal connections).
