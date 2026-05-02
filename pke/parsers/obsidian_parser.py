@@ -179,10 +179,20 @@ def build_parsed_note(
     mtime_iso = datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc).isoformat()
 
     created_at_value = frontmatter_dict.get("created_at")
-    created_at = str(created_at_value) if created_at_value is not None else mtime_iso
+    if isinstance(created_at_value, datetime):
+        created_at = created_at_value.isoformat()
+    elif created_at_value is not None:
+        created_at = str(created_at_value)
+    else:
+        created_at = mtime_iso
 
     updated_at_value = frontmatter_dict.get("updated_at")
-    updated_at = str(updated_at_value) if updated_at_value is not None else mtime_iso
+    if isinstance(updated_at_value, datetime):
+        updated_at = updated_at_value.isoformat()
+    elif updated_at_value is not None:
+        updated_at = str(updated_at_value)
+    else:
+        updated_at = mtime_iso
 
     # Hardcoded label for Reflections panel grouping, consistent with Joplin
     # parser pattern. See milestone 9.9 build log for rationale.
