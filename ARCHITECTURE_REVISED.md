@@ -1,5 +1,5 @@
 # Personal Knowledge Engine — System Architecture
-Last updated: 2026-04-18
+Last updated:  2026-05-02
 
 This document defines the architecture, contracts, and sequencing of the
 Personal Knowledge Engine (PKE). It is the authoritative reference for all
@@ -1158,20 +1158,228 @@ one of them is a client implementation change only — the pipeline,
 retrieval logic, and plugin are untouched.
 
 
-## 20. Collaboration Workflow
 
-Development follows a three-step loop:
 
-1. **Design** (Thomas + Claude)
-2. **Implement** (VS Code Copilot)
-3. **Review** (Thomas + Claude)
+---
 
-All decisions are recorded in `CURRENT_TASK.md`.
+## 20. Development Governance — The Three-Branch Model
 
-- `ARCHITECTURE.md` is the authoritative reference and must be updated whenever a structural decision changes.
-- `ROADMAP.md` captures strategic direction and must be updated when vision or milestone sequencing changes.
-- `WRITER_PORTRAIT_TEMPLATE.md` captures the Observer context document structure and will be populated through corpus analysis + Thomas annotation.
+Last updated: 2026-05-02
 
+PKE is built by a producer working with two AI roles operating under
+separation of duties. This is not a workflow note — it is a structural
+commitment that shapes how every milestone moves from design to merge.
+The same governance philosophy that PKE encodes for AI agents (see the
+sister Risk Management Framework project) is applied here to the
+development of PKE itself.
+
+### The three roles
+
+**The Producer (human)**
+
+All architectural and design decisions. Owns the vision, the roadmap,
+and the milestone scope. Sets the design contract before code is
+written. Approves merges. The producer is never automated and cannot
+be replaced by either AI role.
+
+**The Architect (Claude Opus)**
+
+Scoping, design analysis, tradeoff evaluation, milestone specification,
+and code review. Maintains coherence across the project documents
+(ARCHITECTURE.md, ROADMAP.md, CURRENT_TASK.md, VISION.md, and
+WRITER_PORTRAIT_TEMPLATE.md). Catches drift between specification and
+implementation. Has read access to the repository via public URL fetch
+but does not commit code or comment on pull requests directly — review
+output is delivered to the producer, who acts on it.
+
+**The Builder (Sonnet / GitHub Copilot)**
+
+Implementation of designs already specified by the architect and
+approved by the producer. Writes code, tests, and configuration
+following established repository patterns. Has direct repository
+access through the development environment. Does not make design
+decisions — when ambiguity arises during implementation, the question
+returns to the producer, who decides whether to resolve directly or
+escalate to the architect.
+
+### Separation of duties
+
+The roles are deliberately non-overlapping:
+
+- The architect does not write production code.
+- The builder does not make architectural decisions.
+- Neither AI role has unilateral authority — every change passes
+  through the producer.
+- Implementation pull requests are reviewed by the architect before
+  merge, providing a second AI perspective independent of the builder
+  that wrote the code.
+
+This is the same separation-of-powers pattern that PKE encodes for
+multi-agent AI systems generally: ambition counteracting ambition,
+no single source of truth, rules stored outside the agents in
+structured documents (ARCHITECTURE.md, ROADMAP.md, CURRENT_TASK.md).
+
+### Review checkpoints
+
+Each milestone passes through two architect review gates before merge:
+
+**Checkpoint 1 — Mid-milestone review**
+
+After foundational work is committed to the milestone branch, before
+dependent work begins. Catches design drift early, when corrections
+are still cheap. For a parser milestone this is typically after the
+parser and its tests are committed but before the ingestor and CLI
+are built on top.
+
+**Checkpoint 2 — Pre-merge review**
+
+After the full milestone is committed to the branch, before the pull
+request merges to main. Final verification that the implementation
+matches the specification, that tests are real, and that no
+regressions have been introduced in shared modules.
+
+### What review covers
+
+Each review is structured the same way to maintain discipline:
+
+- **Specification conformance** — does the code do what the milestone
+  spec says it should do? Any deviations are flagged with rationale,
+  not auto-approved.
+- **Pattern adherence** — does the code match the established patterns
+  in the repository? New patterns require explicit justification.
+- **Test quality** — are tests exercising real behavior with realistic
+  inputs, or just hitting code paths? Edge cases covered?
+- **Cross-cutting concerns** — pre-commit hooks, type hints,
+  cross-platform paths, dependency additions, no accidental
+  modifications to shared modules.
+- **Pushback list** — explicit, named items that should change before
+  merge. Not advisory.
+
+### Limits of the control
+
+This governance pattern provides meaningful detection but is not
+infallible:
+
+- The architect reviews via repository fetch, not via direct PR
+  comments. Review output is delivered to the producer, who must
+  act on it. The architect cannot block a merge directly.
+- The architect's repository access is read-only and depends on
+  public visibility or shared file content during the conversation.
+- The producer remains the single point of accountability for what
+  enters main. Both AI roles are advisory in the literal sense.
+
+These limits are intentional. The point of the model is detection
+over enforcement, applied through multiple independent perspectives.
+It is not designed to remove the producer from the loop — it is
+designed to ensure the producer has good information when making
+the call.
+
+### Workflow mechanics
+
+The three-branch model runs on a specific operational workflow.
+This subsection captures the mechanics so they apply consistently
+across milestones.
+
+**Branch model**
+
+One feature branch per milestone, cut from `main`. Branch naming
+convention: `feat/<milestone-id>-<short-name>`. For example,
+`feat/9.9-obsidian-parser`. All work for the milestone happens
+on this branch. The branch is what gets reviewed at both
+checkpoints. The branch is what merges to `main` at milestone
+close via pull request.
+
+No sub-branches per phase. The milestone branch is already
+scoped to one unit of work — splitting it further adds
+bureaucracy without adding control.
+
+**Commit pattern**
+
+The builder commits incrementally as work is produced — typically
+one commit per meaningful unit (vault scanner, frontmatter reader,
+syntax stripper, test file, and so on). Frequent small commits are
+preferred over large rollup commits because they make architect
+review tractable and preserve `git bisect` utility for future
+regression hunting.
+
+The producer commits any fixes made in response to architect
+review. Author attribution does not matter for governance —
+all commits land on the branch and are reviewable.
+
+The architect never commits code. The architect is read-only.
+
+**Checkpoint 1 — Mid-milestone review mechanics**
+
+1. Builder completes the foundational work, runs the milestone's
+   validation gate, commits, and pushes the branch to GitHub.
+2. Producer flags the review in the architect chat session.
+3. Architect fetches the branch diff via repository fetch
+   (compares the milestone branch against `main`).
+4. Architect reviews against the structured criteria in this
+   section (specification conformance, pattern adherence, test
+   quality, cross-cutting concerns, pushback list) and delivers
+   the review as a chat message.
+5. Producer decides how to act on the review — request builder
+   changes, push direct fixes, or accept and authorize the next
+   phase.
+6. Builder begins the next phase only after producer authorization.
+
+**Checkpoint 2 — Pre-merge review mechanics**
+
+1. Builder completes the full milestone, validates end-to-end,
+   commits, and pushes.
+2. Producer opens a pull request from the milestone branch to
+   `main` but does not merge it.
+3. Producer flags the review in the architect chat session,
+   typically by sharing the PR URL.
+4. Architect fetches the PR diff and reviews the full milestone
+   against the spec.
+5. Architect delivers the review as a chat message.
+6. Producer makes any final adjustments, then merges the PR.
+
+**Repository visibility requirement**
+
+The architect's review depends on read access to the repository
+through public URL fetch. While a milestone is in active review,
+the repository must be publicly visible on GitHub. If the
+repository is private during a review window, the producer must
+either temporarily make it public, or fall back to pasting the
+diff content directly into the architect chat.
+
+This is a real operational dependency and should be tracked
+when repository visibility settings change.
+
+**Role permissions summary**
+
+| Role | Can do | Cannot do |
+|------|--------|-----------|
+| Producer | All architectural decisions, all repo actions, merge to `main` | Cannot delegate accountability |
+| Architect | Read repository, deliver review feedback in chat | Cannot commit, cannot comment on PRs, cannot block merges |
+| Builder | Commit code to milestone branch, push to remote | Cannot make architectural decisions, cannot merge to `main` |
+
+### Document responsibility
+
+All decisions are recorded in `CURRENT_TASK.md`. `ARCHITECTURE.md` is
+the authoritative reference and must be updated whenever a structural
+decision changes. `ROADMAP.md` captures strategic direction and must
+be updated when vision or milestone sequencing changes.
+`WRITER_PORTRAIT_TEMPLATE.md` captures the Observer context document
+structure and is populated through corpus analysis and producer
+annotation.
+
+### Relationship to the Risk Management Framework
+
+This development governance model is a concrete application of the
+philosophy formalized in the sister Risk Management Framework
+project. The principle is the same in both contexts: separation of
+duties, externalized rules, detection over enforcement, no single
+source of truth, written constitution that survives across sessions.
+
+PKE is the system being built. RMF is the governance pattern being
+formalized for general use. The development of PKE is the first
+production application of RMF principles to a real workflow — and
+where appropriate, lessons from this practice flow back into RMF as
+evidence rather than theory.
 
 ## 21. Unified Retrieval Architecture (milestone 9.13+)
 
