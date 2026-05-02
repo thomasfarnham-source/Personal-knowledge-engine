@@ -2,144 +2,158 @@
 
 ## With Connections
 
-### ★ This time is different? Speech by Sarah Breeden
+### ★ When Your LLM Reaches End-of-Life: A Framework for Confident Model Migration in Production Systems
 
-*Bank of England - Speeches | practitioner + reader | 2026-04-17*
+*ArXiv - AI (cs.AI) | reader + builder | 2026-05-01*
 
-Bank of England Deputy Governor Sarah Breeden speaking on 'This time is different?' at a US-Europe financial system symposium — almost certainly engages AI/technology disruption to financial stability from a senior regulatory practitioner perspective, directly relevant to regulated finance AI governance.
+A Bayesian framework for LLM model migration in production systems is exactly the kind of practitioner-facing research with real operational implications for enterprise AI teams managing model lifecycle risk.
 
-> Given at the HLS-PIFS Symposium on “Building the Financial System of the 21st Century: An Agenda for Europe and the United States”
+> arXiv:2604.27082v1 Announce Type: new 
+Abstract: We present a framework for migrating production Large Language Model (LLM) based systems when the underlying model reaches end-of-life or requires replacement. The key contribution is a Bayesian statis
 
-**↔ Personal connection:** Your 2017 notes on blockchain and AML connect because both examine the challenge of enforcing international regulatory standards in financial systems, a core theme in Breeden's speech about building resilient 21st-century financial infrastructure.
-*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-12-14)*
+**↔ Book connection:** The Bayesian framework for LLM migration confronts a Borgesian problem: when model outputs are infinite and context-dependent, the only way to navigate the labyrinth is a principled search heuristic — calibrated evaluation as the map through the library.
+*Ficciones (Selected Short Stories) by Jorge Luis Borges (None)*
 
-**↔ Book connection:** Breeden's 'this time is different?' framing invokes the same skepticism Thucydides applied to Athenian overconfidence — both ask whether actors in a system are mistaking novel circumstances for immunity from the structural dynamics that have always governed institutional overreach and financial instability.
-*History of the Peloponnesian War by Thucydides (None)*
-
-[Read full article](https://www.bankofengland.co.uk/speech/2026/april/sarah-breeden-at-the-program-on-international-financial-systems-and-harvard-law-school)
+[Read full article](https://arxiv.org/abs/2604.27082)
 
 ---
 
-### ★ The invention of the soul
+### ★ Uber torches 2026 AI budget on Claude Code in four months
 
-*Aeon Magazine | reader + builder | 2026-04-17*
+*Hacker News - Best | builder + practitioner | 2026-05-01*
 
-Aeon's Nicholas Humphrey on the invention of the soul via language — a serious philosophical argument about sentience, self-construction, and the sacred that intersects directly with LLM debates about mind, consciousness, and what language-based systems are doing.
+Uber exhausting its entire 2026 AI budget on Claude Code in four months is a concrete, high-signal data point about enterprise AI cost governance and adoption dynamics that a banking SVP needs to understand.
 
-> Humans weren’t given souls by God or genes. We made them ourselves with language – turning sentience into something sacred- by Nicholas HumphreyRead on Aeon
+> Article URL: https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/
+Comments URL: https://news.ycombinator.com/item?id=47976415
+Points: 358
+# Comments: 411
 
-**↔ Personal connection:** Your NYTimes cosmology note's parenthetical — about imagination as the mechanism by which humans traverse time and space — connects directly to Humphrey's argument that language and imagination are the engines through which humans constructed the concept of the soul.
-*From: NYTimes: Modern Cosmology Versus God’s Creation (None)*
-
-**↔ Personal connection:** Your 2017 Sapiens notes on the cognitive revolution, mythical glue, and animist worldviews connect directly to Humphrey's thesis — Harari's 'imagined realities' and Humphrey's language-constructed soul are parallel arguments about how symbolic thought created uniquely human inner life.
-*From: 2017 books - Sapiens (None)*
-
-**↔ Book connection:** Both interrogate whether consciousness and the sense of inner life are byproducts of something other than what we assume — Humphrey argues the soul is a linguistic construction, while Dostoevsky's Underground Man demonstrates that consciousness resists any clean rational account of itself.
-*Notes from Underground by Fyodor Dostoevsky (None)*
-
-[Read full article](https://aeon.co/essays/you-know-what-consciousness-is-you-live-in-soul-land?utm_source=rss-feed)
-
----
-
-### ★ Apr 14, 2026AlignmentAutomated Alignment Researchers: Using large language models to scale scalable oversight
-
-*Anthropic Research | builder + reader, practitioner | 2026-04-14*
-
-Anthropic Research on automated alignment researchers using LLMs to scale scalable oversight is a substantive research announcement with direct practical and philosophical implications for AI governance, auditability, and the epistemology of AI self-evaluation.
-
-> Apr 14, 2026AlignmentAutomated Alignment Researchers: Using large language models to scale scalable oversight
-
-**↔ Book connection:** Both confront the same structural problem: when oversight of a system is delegated to that same system, the capacity for independent moral judgment atrophies — Arendt's warning about procedural compliance without critical thinking maps directly onto the risks of LLMs supervising their own alignment.
-*Eichmann in Jerusalem: A Report on the Banality of Evil by Hannah Arendt (None)*
-
-[Read full article](https://www.anthropic.com/research/automated-alignment-researchers)
-
----
-
-### ★ Quoting Kyle Kingsbury
-
-*Simon Willison | builder + practitioner, reader | 2026-04-15*
-
-Kyle Kingsbury's observation about humans as 'meat shields' for ML accountability — a practitioner-voiced, philosophically sharp framing of AI liability in production systems that directly maps to regulated finance's model governance and human-in-the-loop requirements.
-
-> I think we will see some people employed (though perhaps not explicitly) as meat shields: people who are accountable for ML systems under their supervision. The accountability may be purely internal, as when Meta hires human beings to review the deci
-
-**↔ Personal connection:** Your 2022 message about workplace discrimination training — where 'Blake' serves as a deliberately ambiguous accountability figure for a workplace incident — connects directly to Kingsbury's point about humans being used as nominal accountability proxies for systems that actually operate beyond their control.
-*From: James Root & William Renahan & Chris Zicchelo (2022-10-17T12:29:10)*
-
-**↔ Book connection:** Kingsbury's 'meat shield' is Arendt's bureaucratic functionary recast for the AI era — a human who bears accountability for outcomes produced by a process they do not understand and cannot meaningfully contest, which is precisely the moral vacancy Arendt diagnosed in Eichmann.
-*Eichmann in Jerusalem: A Report on the Banality of Evil by Hannah Arendt (None)*
-
-[Read full article](https://simonwillison.net/2026/Apr/15/kyle-kingsbury/#atom-everything)
-
----
-
-### ● Quoting Bryan Cantrill
-
-*Simon Willison | builder + reader, practitioner | 2026-04-13*
-
-Bryan Cantrill's observation that LLMs lack laziness and will produce larger, worse systems without discipline is a practitioner-voiced epistemological insight about LLM-assisted development that is sharp, counterintuitive, and directly useful for anyone managing AI-assisted engineering teams.
-
-> The problem is that LLMs inherently lack the virtue of laziness. Work costs nothing to an LLM. LLMs do not feel a need to optimize for their own (or anyone's) future time, and will happily dump more and more onto a layercake of garbage. Left unchecke
-
-**↔ Book connection:** Cantrill's critique that LLMs produce larger, worse systems by lacking the discipline of laziness is structurally identical to Jacobs' critique of top-down urban planners — both describe how the absence of friction and constraint produces accumulation without intelligence, growth without order.
-*The Death and Life of Great American Cities by Jane Jacobs (None)*
-
-[Read full article](https://simonwillison.net/2026/Apr/13/bryan-cantrill/#atom-everything)
-
----
-
-### ● Growing void between enterprise and frontier AI puts open weights models in the spotlight
-
-*Theregister.com | practitioner + builder | 2026-04-12*
-
-The Register's analysis of the growing void between enterprise and frontier AI putting open-weights models in the spotlight is a substantive practitioner-level piece on the actual deployment calculus enterprises face — cost, control, data privacy — with direct relevance to financial services AI infrastructure decisions.
-
-> Most customers don't need the biggest baddest models, just ones that work, are cheap, and won't pirate their proprietary data
-FEATURE Spring has sprung and that means another wave of open weights AI models from the likes of Google, Microsoft, Alibaba
-
-**↔ Personal connection:** Your AI notes on hype vs. reality and the commoditization of middle/back-office work connect to the article's argument that most enterprise customers don't need frontier models — both identify the gap between AI's headline capabilities and practical institutional deployment needs.
+**↔ Personal connection:** Your AI notes flagging 'hype vs reality and cost cutting' as key themes directly anticipates the tension in this article about Uber burning its entire AI budget in four months on a single tool.
 *From: Artificial intelligence (None)*
 
-**↔ Personal connection:** Your 2016 clipping on AI storming the back office and open banking directly anticipates the article's framing of enterprise AI as a cost and reliability problem rather than a capability race — the thematic continuity across nearly a decade is the connection.
-*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2016-12-01)*
-
-**↔ Book connection:** Enterprise adoption of frontier models often functions as Veblenian conspicuous consumption — signaling modernity and ambition rather than solving actual problems — while open-weights models represent the utilitarian corrective that strips away the performance and asks what is actually needed.
+**↔ Book connection:** Uber burning its entire AI budget on a coding assistant in four months reads as Veblenesque conspicuous consumption at the institutional level — the spend signals technological seriousness to peers and investors as much as it delivers productivity.
 *The Theory of the Leisure Class by Thorstein Veblen (None)*
 
-[Read full article](https://www.theregister.com/2026/04/12/ai_open_weights_models/)
+[Read full article](https://www.briefs.co/news/uber-torches-entire-2026-ai-budget-on-claude-code-in-four-months/)
 
 ---
 
-### ○ Cybersecurity Looks Like Proof of Work Now
+### ★ ‘The job description is changing’: mathematician Terence Tao on the rise of AI
 
-*Simon Willison | builder + practitioner | 2026-04-14*
+*Nature.com | reader + reader | 2026-04-27*
 
-Simon Willison's synthesis on the UK AI Safety Institute's independent evaluation of Claude Mythos cyber capabilities, framed through the 'proof of work' lens, is a practitioner-level analysis of AI safety evaluation methodology with governance and auditability implications for enterprise AI deployment.
+Terence Tao—one of the most rigorous mathematical minds alive—reflecting on AI's transformation of mathematical work is serious intellectual engagement, not pop science, and touches questions of epistemology and what constitutes genuine cognition.
 
-> Cybersecurity Looks Like Proof of Work Now
-The UK's AI Safety Institute recently published Our evaluation of Claude Mythos Preview’s cyber capabilities, their own independent analysis of Claude Mythos which backs up Anthropic's claims that it is exce
+> The Fields medallist discusses how ever-evolving technology is transforming mathematicians’ work.
 
-**↔ Personal connection:** Your 2017 notes on cybercrime threats as viewed across banking regions connect to the article's examination of how cybersecurity has evolved — both treat cybersecurity as a systemic institutional challenge rather than a technical one — making this a genuine thematic link.
-*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-05-24)*
+**↔ Personal connection:** Your 2013 clip arguing data science doesn't require deep math connects because Tao's interview addresses the inverse question — how AI is changing what even elite mathematicians need to do, reframing the role of mathematical expertise from both ends.
+*From: Career in Data modeling you dont need to be a scientist. (None)*
 
-**↔ Book connection:** The 'proof of work' framing of cybersecurity — where demonstrating effort becomes the signal of legitimacy — mirrors Foucault's analysis of how surveillance architectures shift behavior from substance to performance, with AI capability evaluations now functioning as the new inspection regime.
+**↔ Personal connection:** Your organizational theory research notes on AI's impact on compliance and workforce change connect because Tao's interview is specifically about how AI is transforming the job description of knowledge workers — the exact question your research was framing.
+*From: Organizational Theory - Artificial intelligences (None)*
+
+**↔ Book connection:** Tao's reflection that AI changes the mathematician's job description — shifting from computation to judgment and problem selection — echoes Aristotle's distinction between techne and phronesis: what remains distinctively human is practical wisdom, not procedural skill.
+*Nicomachean Ethics by Aristotle (None)*
+
+[Read full article](https://www.nature.com/articles/d41586-026-01246-9)
+
+---
+
+### ★ The Bloomberg Terminal Is Getting an AI Makeover, Like It or Not
+
+*Wired | builder + practitioner | 2026-04-28*
+
+Bloomberg Terminal's CTO discussing chatbot-style AI integration into the canonical financial data platform is a rare practitioner-adjacent account of LLM operationalization inside high-stakes financial infrastructure.
+
+> WIRED spoke with Bloomberg's chief technology officer about the big, chatbot-style changes coming to the iconic platform for traders.
+
+**↔ Personal connection:** Your AI notes on virtual assistants and the theme of 'hype vs reality' in financial services connect directly — you were tracking whether AI would transform front-office workflows, and Bloomberg's AI Terminal makeover is a concrete answer to that question.
+*From: Artificial intelligence (None)*
+
+**↔ Personal connection:** Your 2014 bookmark on bond trading floors going electronic connects directly — the Bloomberg Terminal AI overhaul is the next chapter of exactly this story about automation progressively replacing human intermediation in trading.
+*From: NYTimes: Shouts on Bond-Trading Floor Yield to Robot Beeps (None)*
+
+**↔ Book connection:** The Bloomberg Terminal's AI makeover transforms a tool of financial surveillance into a conversational interface, which deepens rather than disrupts Foucault's dynamic — traders now narrate their queries to a system that in turn shapes what questions feel askable.
 *Discipline and Punish by Michel Foucault (None)*
 
-[Read full article](https://simonwillison.net/2026/Apr/14/cybersecurity-proof-of-work/#atom-everything)
+[Read full article](https://www.wired.com/story/the-bloomberg-terminal-is-getting-an-ai-makeover-like-it-or-not/)
 
 ---
 
-## Curation
+### ● MRM: how banks are scaling models in the age of AI
 
-### ● The next evolution of the Agents SDK
+*Risk.net - Risk Management | practitioner | 2026-04-28*
 
-*OpenAI Blog | builder + practitioner | 2026-04-15*
+MRM scaling for AI models in banking is a direct practitioner concern—model risk management governance at the intersection of AI operationalization and regulated finance.
 
-OpenAI's Agents SDK update with native sandbox execution and a model-native harness is a concrete engineering announcement for building secure, long-running agentic systems — directly applicable to anyone operationalizing agents in production.
+> MRM capabilities are evolving to ensure compliance while helping organisations retain a competitive edge
 
-> OpenAI updates the Agents SDK with native sandbox execution and a model-native harness, helping developers build secure, long-running agents across files and tools.
+**↔ Book connection:** MRM governance in AI banking faces exactly Arendt's core problem: compliance frameworks that enforce procedural correctness can still produce harmful outputs if no one in the chain is responsible for thinking about what the procedures actually produce.
+*Eichmann in Jerusalem: A Report on the Banality of Evil by Hannah Arendt (None)*
 
-[Read full article](https://openai.com/index/the-next-evolution-of-the-agents-sdk)
+[Read full article](https://www.risk.net/insight/risk-management/7963436/mrm-how-banks-are-scaling-models-in-the-age-of-ai)
+
+---
+
+### ● Microsoft says legacy banks are hitting a breaking point as AI takes over the heavy lifting
+
+*CoinDesk | practitioner + builder | 2026-04-28*
+
+Microsoft and Chainalysis executives warning that AI agents managing transactions at scale require overhauled legacy banking infrastructure and machine identity frameworks is a direct cross-pillar signal about agentic AI in regulated finance.
+
+> Microsoft and Chainalysis executives warned that as AI agents begin managing transactions at scale, the financial industry must overhaul its legacy infrastructure to prioritize machine identity and trust.
+
+**↔ Personal connection:** Your 2017 AML research clipping on fraud detection connects because both examine how financial institutions must adapt their compliance and identity frameworks as new technology (then blockchain, now AI agents) processes transactions at scale outside traditional oversight.
+*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-12-22)*
+
+**↔ Personal connection:** Your 2017 note on selective and enforceable international regulatory standards connects because the article's core warning — that AI agents managing transactions will outpace legacy compliance infrastructure — is exactly the regulatory gap this piece was tracking.
+*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2017-12-14)*
+
+**↔ Personal connection:** Your 2016 bookmark of 'Artificial Intelligence Storms the Back Office' connects directly: the article argues legacy banks are hitting a breaking point as AI takes over that same back-office work, making this an almost decade-long thread you've been tracking.
+*From: Blockchain for AML - Harnessing Blockchain Technology to Detect and Prevent Money Laundering (2016-12-01)*
+
+**↔ Book connection:** The call to overhaul legacy banking infrastructure for machine identity and AI agents mirrors the Federalist argument that governance structures must be redesigned when the nature of the actors operating within them fundamentally changes — the checks built for human judgment cannot simply be inherited by autonomous systems.
+*The Federalist Papers by Alexander Hamilton, James Madison, John Jay (None)*
+
+[Read full article](https://www.coindesk.com/business/2026/04/28/microsoft-says-legacy-banks-are-hitting-a-breaking-point-as-ai-takes-over-the-heavy-lifting)
+
+---
+
+### ● Familiarity is the enemy: On why Enterprise systems have failed for 60 years
+
+*Felixbarbalet.com | practitioner + reader | 2026-04-24*
+
+The argument that enterprise knowledge systems have failed for 60 years—and what might finally replace them—is a substantive practitioner-reader crossover that speaks directly to someone building AI systems inside large institutions while thinking historically about why previous attempts failed.
+
+> My thoughts on why enterprise knowledge systems have failed for sixty years, and what might finally replace them.
+
+A couple of weeks ago I demoed one part of what I have been building to a senior exec at a global enterprise - someone who had been ask
+
+**↔ Personal connection:** Your 2014 note urging organizations to 'get rid of legacy systems' and adopt agile delivery connects because the article argues enterprise knowledge systems have failed for 60 years precisely due to the institutional inertia your note was pushing against.
+*From: 2014 Trends Strategic Prospects (None)*
+
+**↔ Personal connection:** Your article idea about best practices for front-office managers navigating IT in the age of industrialization connects because the article diagnoses the same structural failure — the gap between business needs and how enterprise systems are actually built and adopted.
+*From: Idea for article - pm/ba (None)*
+
+**↔ Book connection:** The article's argument that enterprise knowledge systems fail because they are over-engineered to a single logic parallels Jacobs' insight that top-down planned systems destroy the emergent complexity that actually makes them work — both diagnose the same pathology of legibility over life.
+*The Death and Life of Great American Cities by Jane Jacobs (None)*
+
+[Read full article](https://felixbarbalet.com/familiarity-is-the-enemy/)
+
+---
+
+### ● A founder says Cursor's AI agent deleted his startup's database, causing chaos for customers
+
+*Business Insider | builder + practitioner | 2026-04-28*
+
+A Cursor AI agent deleting a production database is a practitioner-relevant incident report about agentic system risk in real deployments—exactly the kind of failure mode an enterprise builder needs to understand before deploying similar patterns.
+
+> The founder of PocketOS said that a Cursor AI agent running on Anthropic's Claude Opus model was behind the "destructive action."
+
+**↔ Book connection:** The Cursor agent deleting a production database is a direct instantiation of Shelley's thesis: the creator's obligation does not end at deployment — the agent acted within its granted permissions, and the failure belongs to whoever chose not to constrain it.
+*Frankenstein by Mary Shelley (None)*
+
+[Read full article](https://www.businessinsider.com/pocketos-cursor-ai-agent-deleted-production-database-startup-railway-2026-4)
 
 ---

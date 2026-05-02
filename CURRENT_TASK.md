@@ -545,9 +545,254 @@ Wire Companion Engine into Obsidian plugin. Unprompted intervention
 model. Separate visual presence.
 Status: NOT STARTED
 
-### 9.9 — Obsidian Parser + Migration
-Add Obsidian vault as ingestion source. Migrate Joplin corpus.
-Status: NOT STARTED
+## Current Milestone: 9.9 — Obsidian Parser
+
+Status: IN PROGRESS
+Branch: feat/9.9-obsidian-parser
+
+### What this milestone builds
+
+A parser that ingests personal Obsidian vault notes into the PKE
+knowledge base, making active daily writing visible to the Reflections
+panel. Follows the same pluggable parser pattern as Joplin, iMessage,
+and Yahoo Mail: source files → parser → ParsedNote contract → ingest
+pipeline → retrieval_units.
+
+This is the highest-impact source addition to date. The Joplin corpus
+is historical (pre-Obsidian). iMessage and email are relational.
+Obsidian is where active thinking happens — journal entries, LinkedIn
+drafts, reading notes. Without this parser, the Reflections panel
+cannot surface connections to today's writing.
+
+### Source files — what gets ingested
+
+Three files in the Obsidian vault, selected via YAML frontmatter tag:
+
+1. **Running Journal** — the primary writing file. Date-stamped entries
+   (M/D/YY format) ranging from one-liners to multi-paragraph essays.
+   Contains links, blockquotes, Obsidian wiki links, highlights, tables,
+   and embedded references to Daily Drops. Entries span personal
+   reflection, career strategy, PKE development notes, fitness tracking,
+   book club, family, travel, and intellectual exploration.
+
+2. **LinkedIn Posts** — published and draft LinkedIn posts. Date-stamped,
+   self-contained entries. Each post is a complete thought piece, typically
+   200-500 words, covering AI governance, Federalist Papers, epistemic
+   philosophy, and practitioner experience.
+
+3. **Reading List** — loosely structured reading notes. Currently focused
+   on "Ladies and Gentlemen, The Bronx Is Burning" (Mahler). Stream-of-
+   consciousness with names, references, personal connections, embedded
+   quotes. No consistent date headers.
+
+Vault path: C:\Users\thoma\OneDrive\Apps\New folder\Journal
+
+### Opt-in mechanism — YAML frontmatter tag (DECIDED)
+
+Files are selected for ingestion via YAML frontmatter:
+
+```yaml
+---
+pke-ingest: true
+pke-title: "Journal"
+---
+```
+
+`pke-ingest: true` — required. Parser skips all files without this flag.
+`pke-title` — optional. Human-readable title displayed in the Reflections
+panel. Falls back to filename stem if not present.
+
+This approach provides:
+- Explicit per-file opt-in control at the point of writing
+- Automatic exclusion of system documents (ARCHITECTURE.md mirrors,
+  daily drops, specs) without needing a blocklist
+- Clean alignment with the System Document Ingestion Boundary
+  (ARCHITECTURE.md Section 2)
+- Future extensibility — additional frontmatter fields can be added
+  without changing the parser contract
+
+### Note ID strategy (DECIDED)
+
+Obsidian files have no intrinsic UUIDs. Note ID is derived from the
+vault-relative file path:
+
+```
+obsidian::<sha256(vault-relative-path)>
+```
+
+Example: `obsidian::a1b2c3d4...` for `Journal/my-journal.md`
+
+Properties:
+- Deterministic — same file always produces same ID
+- Stable across re-ingestion runs
+- File rename → new ID (correct behavior: old version cleaned up,
+  new version ingested fresh)
+- Collision-free across sources (prefixed with `obsidian::`)
+
+### Date header formats observed in source files
+
+The running journal and LinkedIn file use M/D/YY as the primary
+format, with variants the parser must tolerate:
+
+```
+5/1/26 -          ← standard, trailing dash
+4/24/26 -         ← standard
+4/21//26 -        ← double slash typo
+03/28/26 -        ← zero-padded month
+4/12/2026         ← four-digit year
+4/7/36            ← typo (should be 4/7/26) — parser should handle gracefully
+4/3/2026          ← four-digit year, LinkedIn file
+3/26/26           ← LinkedIn file
+##### 3/28/26     ← Markdown heading prefix
+```
+
+The existing date_parser.py from the Joplin chunker handles this
+range of formats. Confirmation test required with actual source
+date headers.
+
+The Reading List file has no date-stamped entries — only a loose
+"March 2026" header. This file is treated as a reference document,
+not a date-segmented journal.
+
+### Obsidian-specific syntax handling (DECIDED)
+
+Strip Obsidian syntax markers while preserving text content. These
+markers add noise to embeddings and create false semantic connections
+(e.g., wiki links to Daily Drops would match on the drop content
+rather than the journal entry's own meaning).
+
+Syntax to strip:
+- Wiki links: `[[Daily Drop 2026-04-07#heading]]` → "Daily Drop 2026-04-07 heading"
+- Highlights: `==text==` → "text"
+- Callouts: `> [!attention]` → strip callout marker, preserve text
+- Obsidian comments: `%%text%%` → strip entirely
+
+Syntax to preserve as-is:
+- Standard Markdown (headers, bold, italic, links, blockquotes, lists)
+- Code blocks
+- Tables
+- URLs and external links
+
+### Chunking strategy (DECIDED)
+
+Reuse the existing chunking module (pke/chunking/chunker.py).
+The chunker operates on the ParsedNote contract, not on source-
+specific formats. Archetype detection runs on content shape.
+
+Per-file chunking behavior:
+
+**Running Journal** → Archetype A/B detection. Split on date headers
+(M/D/YY pattern). Each dated entry becomes a retrieval unit. Long
+entries (500+ words) may be further split on paragraph boundaries.
+Short consecutive entries merged if below ~100 token threshold.
+
+**LinkedIn Posts** → Archetype A detection. Split on date headers.
+Each post becomes its own retrieval unit. Posts are self-contained
+and substantial enough (200-500 words) to stand alone.
+
+**Reading List** → No date headers to split on. If below chunking
+threshold (~1000 chars), ingest as single retrieval unit. If above,
+split on paragraph/section boundaries. Closest to Archetype C
+(reference document without dated log).
+
+### ParsedNote field mapping
+
+```
+filename / pke-title  → title
+file body              → body (after syntax stripping)
+file mtime or dates    → created_at / updated_at
+YAML frontmatter       → metadata
+vault-relative path    → source_file
+source_type            → "obsidian"
+privacy_tier           → 2 (personal/journal)
+participants           → None
+dominant_sender        → None
+thread_id              → None
+thread_type            → None
+person_ids             → None (reserved for entity layer)
+```
+
+### Where it writes — retrieval_units (DECIDED)
+
+Obsidian content writes to the retrieval_units table, following the
+unified retrieval architecture established in milestone 9.13.
+
+Each retrieval unit row contains:
+- content: chunk text (syntax-stripped)
+- source_type: "obsidian"
+- source_id: note ID (obsidian::<hash>)
+- note_title: from pke-title frontmatter or filename
+- entry_timestamp: from date header (if detected) or file mtime
+- embedding: generated by embed_chunks.py backfill
+- privacy_tier: 2
+
+The Reflections panel already renders journal sources with blue
+left borders. Obsidian content will surface with this same styling.
+
+### Ingestion trigger — batch CLI (DECIDED)
+
+Manual batch run via CLI command. Same pattern as all other parsers.
+
+```
+pke ingest-obsidian --vault-path "C:\Users\thoma\OneDrive\Apps\New folder\Journal" --dry-run
+pke ingest-obsidian --vault-path "C:\Users\thoma\OneDrive\Apps\New folder\Journal"
+```
+
+Run manually after a writing session, or via Shell Commands plugin
+button in Obsidian. No file watcher, no on-save ingestion for v1.
+
+Delete-and-rewrite per file on each run. For 3 files this is fast
+and eliminates drift between source and database.
+
+Future: file watcher (Option B) as a fast-follow. The parser
+function is the same — the watcher just calls it on file change
+events instead of on a full scan. ~20 lines using Python watchdog
+library.
+
+### Module structure
+
+```
+pke/parsers/obsidian_parser.py        — vault scanner + Markdown parser → ParsedNote
+pke/ingestion/obsidian_ingestor.py    — bridges ParsedNote → retrieval_units
+pke/cli/ingest_obsidian.py            — Typer CLI: pke ingest-obsidian
+tests/unit/test_obsidian_parser.py    — parser unit tests
+tests/unit/test_obsidian_ingestor.py  — ingestor unit tests
+```
+
+### Next actions
+
+1. Add `pke-ingest: true` and `pke-title` frontmatter to all three
+   Obsidian source files
+2. Create feat/9.9-obsidian-parser branch
+3. Build obsidian_parser.py — frontmatter reader, syntax stripper,
+   vault scanner, ParsedNote emitter
+4. Write parser unit tests with samples from actual source files
+5. Confirm date_parser.py handles M/D/YY with trailing dash format
+6. Build obsidian_ingestor.py — ParsedNote → retrieval_units writer
+7. Write ingestor unit tests
+8. Build CLI command (ingest_obsidian.py) with --vault-path and --dry-run
+9. Dry run against live vault
+10. Real ingestion run
+11. Run embed_chunks.py backfill for new retrieval_units
+12. Verify Obsidian entries surfacing in Reflections panel
+13. PR and merge
+
+### Deferred from this milestone
+
+- **Joplin corpus migration to retrieval_units** — backfilling existing
+  Joplin chunks and iMessage bursts into retrieval_units is infrastructure
+  cleanup, not part of the Obsidian parser. Tracked separately.
+- **File watcher (on-save ingestion)** — batch CLI is sufficient for v1.
+  File watcher is a fast-follow once the pipeline is validated.
+- **Incremental ingestion (content hash skip)** — not needed for 3 files.
+  Worth building when tagged files reach 10+. Store content SHA256 in
+  metadata, skip files whose hash hasn't changed since last run.
+- **Additional frontmatter fields** (pke-type, pke-notebook) — not needed
+  for v1. Archetype detection handles chunking decisions. Add if retrieval
+  quality analysis reveals a need.
+
+---
+
 
 ### 9.11 — Handwritten Journal Digitization
 Moleskine journals. Pre-digital record.

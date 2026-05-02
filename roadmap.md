@@ -227,7 +227,7 @@ that the chunker must handle:
 | Channel              | Status      | Notes                                   |
 |----------------------|-------------|------------------------------------------|
 | Joplin notes         | ✅ Complete  | Sync-folder parser, canonical Stage 1   |
-| Obsidian notes       | 🔵 Planned  | Future primary writing surface          |
+ Obsidian notes       | 🟡 Active   | Vault parser, milestone 9.9          |
 | iMessage threads     | ✅ Complete  | iMazing CSV export, milestone 9.1       |
 | Yahoo Mail           | 🟡 Active   | IMAP export server, two-pass strategy   |
 | Content curation     | 🟡 Active   | RSS + NewsAPI, four-agent pipeline      |
@@ -235,11 +235,14 @@ that the chunker must handle:
 | Others (TBD)         | 🔵 Open     | Calendar, bookmarks, documents
 
 ### Obsidian
-- Source: local vault Markdown files
-- Parser follows same sync-folder parser pattern
-- Consistent date format conventions from day one
-- Ingest on save or on scheduled basis (TBD)
-- Frontmatter and inline tags both supported
+- Source: local vault Markdown files with `pke-ingest: true` frontmatter
+- Parser: pke/parsers/obsidian_parser.py
+- Three files in scope: running journal, LinkedIn posts, reading list
+- Date format: M/D/YY with variants (zero-padded, four-digit year, typos)
+- Ingestion: batch CLI for v1, file watcher planned as fast-follow
+- Writes to retrieval_units (unified retrieval surface)
+- Obsidian-specific syntax stripped (wiki links, highlights, callouts)
+- YAML frontmatter for opt-in tagging and display title
 
 ### iMessage
 - Source: ~/Library/Messages/chat.db (SQLite, read-only)
@@ -521,44 +524,77 @@ Key decisions (deferred to milestone design):
 
 ---
 
-### 🔵 9.9 — Obsidian Parser + Migration
-**Status: PLANNED**
+### 🟡 9.9 — Obsidian Parser
+**Status: IN PROGRESS — 2026-05-01**
+Branch: feat/9.9-obsidian-parser
 
-Add Obsidian vault as ingestion source. Migrate historical Joplin
-corpus into Obsidian. Retire Joplin as active writing surface.
+Add Obsidian vault as ingestion source, making active daily writing
+visible to the Reflections panel. The highest-impact source addition
+to date — the Joplin corpus is historical, iMessage and email are
+relational, but Obsidian is where active thinking happens.
+
+#### What gets ingested
+Three files selected via YAML frontmatter opt-in (`pke-ingest: true`):
+  1. Running journal — date-stamped entries, M/D/YY format
+  2. LinkedIn posts — date-stamped, self-contained thought pieces
+  3. Reading list — loosely structured reading notes
+
+Vault path: C:\Users\thoma\OneDrive\Apps\New folder\Journal
+
+Opt-in mechanism: YAML frontmatter tag in each file:
+    ---
+    pke-ingest: true
+    pke-title: "Journal"
+    ---
+
+Files without the tag are ignored. System documents, daily drops,
+specs, and architecture mirrors are excluded without a blocklist.
+Aligns with the System Document Ingestion Boundary (ARCHITECTURE.md).
 
 #### Parser
 - New parser: pke/parsers/obsidian_parser.py
-- Source: local Obsidian vault directory (Markdown files)
-- Frontmatter support: YAML frontmatter natively supported
-- Tags extracted from both inline (#tag) and frontmatter
-- Backlinks extractable as relationships
-- ParsedNote contract unchanged — pipeline is source-agnostic
+- Source: local Obsidian vault directory (Markdown files with tag)
+- Frontmatter: YAML frontmatter read for pke-ingest flag and pke-title
+- Note ID: obsidian::<sha256(vault-relative-path)> — deterministic,
+  stable across re-ingestion, collision-free across sources
+- Obsidian-specific syntax stripped (wiki links, highlights, callouts,
+  comments) while preserving text content for clean embeddings
+- ParsedNote contract unchanged — source_type="obsidian", privacy_tier=2
 
-#### Migration Strategy (Joplin → Obsidian)
-The migration follows a strict sequence with a validation gate:
+#### Chunking
+Reuses existing chunking module (pke/chunking/chunker.py). Archetype
+detection runs on content shape, not source format:
+  - Running journal → Archetype A/B (date-header splitting)
+  - LinkedIn posts → Archetype A (date-header splitting, one post per unit)
+  - Reading list → Archetype C or whole-file (no date headers)
 
-Phase 1 — Build the Obsidian parser first
-    Continue using Joplin pipeline as-is during development.
-    New notes can be written in Obsidian immediately.
-    Both sources can be ingested in parallel during transition.
+#### Writes to retrieval_units
+Second source (after email) to use the unified retrieval_units table
+natively. source_type="obsidian", privacy_tier=2. Reflections panel
+renders with blue left border (journal styling).
 
-Phase 2 — Migrate Joplin corpus into Obsidian vault
-    Use Joplin's built-in Markdown export or Obsidian export plugin.
-    Handles attachments and internal links.
-    Validation gate: compare note count, check resource files,
-    spot-check content against original Joplin source.
-    Do NOT proceed until validation passes.
+#### Ingestion trigger
+Batch CLI for v1: `pke ingest-obsidian --vault-path <path> --dry-run`
+Run manually or via Shell Commands button in Obsidian.
+Delete-and-rewrite per file on each run.
+File watcher (on-save ingestion) planned as fast-follow.
 
-Phase 3 — Re-ingest from Obsidian
-    Point pipeline at Obsidian vault. Full re-ingest.
-    Validate: note count and embedding count match previous baseline.
-    Retire Joplin as active source once confirmed.
+#### Module structure
+    pke/parsers/obsidian_parser.py        — vault scanner + parser
+    pke/ingestion/obsidian_ingestor.py    — ParsedNote → retrieval_units
+    pke/cli/ingest_obsidian.py            — Typer CLI command
+    tests/unit/test_obsidian_parser.py
+    tests/unit/test_obsidian_ingestor.py
 
-Phase 4 — Restructure notes gradually (ongoing)
-    Restructure notes opportunistically in Obsidian over time.
-    Each restructure → re-ingest → improved retrieval quality.
-    This is a quality lever, not a prerequisite.
+#### Scope boundary — what is NOT in this milestone
+Joplin corpus migration (previously bundled as "9.9 — Obsidian Parser
++ Migration") is separated out. Migrating Joplin notes into the
+Obsidian vault, re-ingesting from Obsidian, and retiring Joplin as
+active source are tracked as a separate future task. The Joplin parser
+remains maintained and reusable.
+
+Incremental ingestion (content hash skip) deferred — not needed for
+3 files. File watcher deferred to fast-follow after batch is validated.
 
 #### The Joplin Parser Is Not Throwaway
 The Joplin sync-folder parser is the first implementation of a
@@ -571,6 +607,7 @@ ingest) is the same pattern for every future parser.
 Plain text files are always the source of truth.
 The database is an index, never an archive.
 Re-ingestion from source files is always possible.
+```
 
 ---
 
@@ -1203,6 +1240,8 @@ Obsidian operational workflow (configured 2026-04-05):
   Tagging: #post-seed for items to develop, [[Daily Drop YYYY-MM-DD]]
   for wiki links from journal notes.
   Pending: automated PKE plugin restart, Scout dedup across days.
+
+
 ---
 ### 🔵 9.13 B — Yahoo Inbox Cleanup Agent
 **Status: DEFERRED — depends on 9.13 contacts table**
@@ -2433,6 +2472,8 @@ for Joplin and iMessage. But the backfill unifies all retrieval
 into one search and removes the LEFT JOIN pattern permanently.
 
 Target: after email ingestion is validated end-to-end.
+Note: Obsidian (9.9) is the second source to write to
+retrieval_units natively, following the email parser.
 ---
 
 **Plugin Distribution — Milestone Placeholder**
@@ -2608,7 +2649,10 @@ Should Supabase store an ingestion version marker per note?
 Raised in 8.9.4, still open.
 
 **Scheduled ingestion**
-Currently manual. Relevant once Obsidian writing is continuous.
+Obsidian parser (9.9) uses batch CLI for v1 — manual run after
+writing sessions or via Shell Commands button. File watcher
+(Python watchdog) planned as fast-follow for near-real-time
+ingestion on save. Full scheduled/automated ingestion deferred.
 
 **Retry and resilience**
 Exponential backoff for transient API failures. Deferred post-MVP.
