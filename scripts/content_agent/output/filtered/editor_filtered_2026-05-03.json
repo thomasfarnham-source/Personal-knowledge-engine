@@ -1,0 +1,190 @@
+{
+  "filter_date": "2026-05-03",
+  "filter_timestamp": "2026-05-03T11:41:37.062449+00:00",
+  "items": [
+    {
+      "title": "MRM: how banks are scaling models in the age of AI",
+      "url": "https://www.risk.net/insight/risk-management/7963436/mrm-how-banks-are-scaling-models-in-the-age-of-ai",
+      "source_name": "Risk.net - Risk Management",
+      "pillar": "practitioner",
+      "published": "2026-04-28T09:59:57+00:00",
+      "summary": "MRM capabilities are evolving to ensure compliance while helping organisations retain a competitive edge",
+      "origin": "rss",
+      "item_hash": "96f33090b665bd91",
+      "editor_reason": "Already flagged above.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "AI Self-preferencing in Algorithmic Hiring: Empirical Evidence and Insights",
+      "url": "https://arxiv.org/abs/2509.00462",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-05-02T15:28:13+00:00",
+      "summary": "Article URL: https://arxiv.org/abs/2509.00462\nComments URL: https://news.ycombinator.com/item?id=47987256\nPoints: 324\n# Comments: 172",
+      "origin": "rss",
+      "item_hash": "1bacc00772429bc6",
+      "editor_reason": "Empirical arxiv research on AI self-preferencing in algorithmic hiring surfaces a subtle alignment/governance problem with documented evidence — sits at the intersection of AI ethics, enterprise deployment risk, and practical auditability concerns.",
+      "cross_pillar": [
+        "practitioner",
+        "reader"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Rebuilding the data stack for AI",
+      "url": "https://www.technologyreview.com/2026/04/27/1136322/rebuilding-the-data-stack-for-ai/",
+      "source_name": "MIT Technology Review",
+      "pillar": "practitioner",
+      "published": "2026-04-27T13:00:00Z",
+      "summary": "Artificial intelligence may be dominating boardroom agendas, but many enterprises are discovering that the biggest obstacle to meaningful adoption is the state of their data. While consumer-facing AI tools have dazzled users with speed and ease, enterprise le…",
+      "origin": "newsapi",
+      "item_hash": "a6d587b3947cf1e0",
+      "editor_reason": "MIT Technology Review piece on rebuilding enterprise data stacks for AI addresses the foundational infrastructure problem blocking meaningful LLM adoption — directly relevant to a bank SVP leading production AI systems.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "South Africa yanks AI policy after AI-assisted drafting invents citations",
+      "url": "https://www.theregister.com/2026/04/27/south_africa_yanks_ai_policy/",
+      "source_name": "Theregister.com",
+      "pillar": "practitioner",
+      "published": "2026-04-27T17:24:08Z",
+      "summary": "Eish shame man! Maybe you shouldn't ask AI to set the rules for AI use?\nSouth Africa has pulled its draft national AI policy after discovering that it was citing sources that exist only in the fertile imagination of a chatbot.…",
+      "origin": "newsapi",
+      "item_hash": "f5c222e17e65da95",
+      "editor_reason": "South Africa withdrawing its national AI policy because the AI-assisted draft hallucinated citations is a sharp, concrete illustration of AI governance failure with real institutional consequences — relevant to both the practitioner building governance frameworks and the reader thinking about epistemology of AI.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "‘The job description is changing’: mathematician Terence Tao on the rise of AI",
+      "url": "https://www.nature.com/articles/d41586-026-01246-9",
+      "source_name": "Nature.com",
+      "pillar": "reader",
+      "published": "2026-04-27T00:00:00Z",
+      "summary": "The Fields medallist discusses how ever-evolving technology is transforming mathematicians’ work.",
+      "origin": "newsapi",
+      "item_hash": "8a0459d5c8e415cd",
+      "editor_reason": "Terence Tao — a Fields Medal mathematician — reflecting seriously on how AI is transforming the nature of mathematical work is exactly the kind of practitioner-meets-intellectual-history intersection this profile values; not pop science, genuine epistemic weight.",
+      "cross_pillar": [
+        "practitioner",
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "The Race Is on to Keep AI Agents From Running Wild With Your Credit Cards",
+      "url": "https://www.wired.com/story/the-race-is-on-to-keep-ai-agents-from-running-wild-with-your-credit-cards/",
+      "source_name": "Wired",
+      "pillar": "builder",
+      "published": "2026-04-28T13:00:00Z",
+      "summary": "AI agents may soon be buying your stuff for you. The FIDO Alliance has teamed up with Google and Mastercard to try to ensure that shopping in the near future isn't a complete disaster.",
+      "origin": "newsapi",
+      "item_hash": "897c48db936ee0c5",
+      "editor_reason": "FIDO Alliance/Google/Mastercard effort to govern AI agent financial transactions addresses agentic identity and trust at the payments layer — directly intersects with enterprise AI governance and the machine identity problem in regulated finance.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    },
+    {
+      "title": "The Bloomberg Terminal Is Getting an AI Makeover, Like It or Not",
+      "url": "https://www.wired.com/story/the-bloomberg-terminal-is-getting-an-ai-makeover-like-it-or-not/",
+      "source_name": "Wired",
+      "pillar": "builder",
+      "published": "2026-04-28T08:30:00Z",
+      "summary": "WIRED spoke with Bloomberg's chief technology officer about the big, chatbot-style changes coming to the iconic platform for traders.",
+      "origin": "newsapi",
+      "item_hash": "6871c2fdfabe2606",
+      "editor_reason": "Bloomberg Terminal's CTO discussing chatbot-style AI integration into a heavily regulated financial data platform is a rare practitioner-level window into LLM operationalization inside critical financial infrastructure.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "A founder says Cursor's AI agent deleted his startup's database, causing chaos for customers",
+      "url": "https://www.businessinsider.com/pocketos-cursor-ai-agent-deleted-production-database-startup-railway-2026-4",
+      "source_name": "Business Insider",
+      "pillar": "builder",
+      "published": "2026-04-28T12:45:22Z",
+      "summary": "The founder of PocketOS said that a Cursor AI agent running on Anthropic's Claude Opus model was behind the \"destructive action.\"",
+      "origin": "newsapi",
+      "item_hash": "253eeb3ffa330ce0",
+      "editor_reason": "A real-world agentic AI failure — Cursor/Claude deleting a production database — is exactly the kind of practitioner cautionary signal relevant to someone designing and governing agentic systems in a regulated environment.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-03",
+    "items_submitted": 145,
+    "items_surviving": 8,
+    "kill_rate": 0.94,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Bank of England - Speeches": 3,
+      "Enterprise Risk Magazine": 1,
+      "Corporate Compliance Insights": 10,
+      "Aeon Magazine": 7,
+      "Anthropic News": 2,
+      "Anthropic Research": 2,
+      "OpenAI Blog": 11,
+      "Simon Willison": 17,
+      "Hacker News - Best": 19,
+      "The Verge": 7,
+      "Business Insider": 12,
+      "Chrisbrunet.com": 1,
+      "TechRadar": 1,
+      "ArchDaily": 1,
+      "CNET": 2,
+      "CoinDesk": 1,
+      "Nature.com": 1,
+      "Ibm.com": 1,
+      "Interfaze.ai": 1,
+      "Theregister.com": 2,
+      "Firethering.com": 1,
+      "Morrigan-tech.com": 1,
+      "Stackoverflow.blog": 1,
+      "Derekrodriguez.dev": 1,
+      "Android Central": 1,
+      "Harvard Business Review": 1,
+      "Yahoo Entertainment": 2,
+      "Scientific American": 1,
+      "TheBlaze": 1,
+      "RT": 1,
+      "The Intercept": 1,
+      "Cjleo.com": 1,
+      "The-independent.com": 1,
+      "Psychology Today": 1,
+      "Github.com": 1,
+      "NPR": 1,
+      "Gizmodo.com": 1,
+      "Wired": 1,
+      "Substack.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 3,
+      "builder": 4,
+      "reader": 1
+    },
+    "notes": [
+      "Duplicate hash 96f33090b665bd91 included in decisions by error — disregard the second entry; final KEEP list is 7 items.",
+      "The South Africa AI policy hallucination story appeared across five sources (TheBlaze, RT, The-independent, Theregister, 2981472e7e440417); only the Register version was selected as the sharpest treatment — editors should confirm which has the best depth before publication.",
+      "Pillar 2 (Reader) is significantly underserved in today's feed: Aeon items were culturally interesting but none engaged directly with AI, mind, or epistemology. The Tao/Nature item is the only genuine intellectual-history-meets-AI piece. The feed would benefit from more Philosophy of Mind, serious book review, or intellectual history sources.",
+      "Pillar 1 (Practitioner) had substantial noise from American Banker (bank failures, M&A, personnel moves) that is irrelevant to the AI/technology mandate — source filtering should be tightened for that feed.",
+      "Simon Willison's feed had high volume but mostly tool release notes and micro-observations; LLM 0.32a0 refactor was the most substantive, but ultimately too in-the-weeds for this brief.",
+      "The Corporate Compliance Insights items on AI governance (d9d85be4ffaf3845, 174b54e1b7e891f4) were marginal — written without clear practitioner attribution and feeling consultant-adjacent; killed per mandate.",
+      "The Cursor/Claude database deletion story (253eeb3ffa330ce0) is strong precisely because it's a real failure in production, not a theoretical risk — this is the kind of signal a hands-on builder in finance should be tracking as agentic systems scale."
+    ]
+  }
+}
