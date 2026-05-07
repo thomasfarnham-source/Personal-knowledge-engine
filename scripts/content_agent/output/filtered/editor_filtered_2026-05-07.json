@@ -1,0 +1,188 @@
+{
+  "filter_date": "2026-05-07",
+  "filter_timestamp": "2026-05-07T12:28:47.441862+00:00",
+  "items": [
+    {
+      "title": "Where AI in banking is running into roadblocks",
+      "url": "https://www.americanbanker.com/payments/news/citi-exec-temsamani-discusses-ai-tech-gaps",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-05-06T17:21:50+00:00",
+      "summary": "Citi payments exec Driss Temsamani said there's more work needed to bridge gaps to enable artificial intelligence to work broadly for payments and finance.",
+      "origin": "rss",
+      "item_hash": "f270192311f0b7e0",
+      "editor_reason": "A named Citi payments executive speaking from direct operational experience about specific gaps in AI deployment for payments and finance—exactly the practitioner voice the mandate requires.",
+      "cross_pillar": [],
+      "strength": "solid"
+    },
+    {
+      "title": "Anthropic launches bank-friendly AI agents, vendor alliances",
+      "url": "https://www.americanbanker.com/news/anthropic-launches-bank-friendly-ai-agents-vendor-alliances",
+      "source_name": "American Banker",
+      "pillar": "practitioner",
+      "published": "2026-05-06T15:43:04+00:00",
+      "summary": "In addition to 10 new AI agents for financial services, the company announced partnerships with software and data providers FIS, Microsoft, Verisk, Third Bridge, Fiscal AI, D&B, Experian, GLG, Guidepoint and IBISWorld.",
+      "origin": "rss",
+      "item_hash": "678208ede822eb78",
+      "editor_reason": "Anthropic launching bank-specific AI agents with named financial data and compliance partners (Experian, D&B, Verisk) signals a concrete shift in LLM operationalization for regulated finance—practitioner-relevant with real vendor architecture implications.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Deployment-Relevant Alignment Cannot Be Inferred from Model-Level Evaluation Alone",
+      "url": "https://arxiv.org/abs/2605.04454",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-07T04:00:00+00:00",
+      "summary": "arXiv:2605.04454v1 Announce Type: new \nAbstract: Alignment evaluation in machine learning has largely become evaluation of models. Influential benchmarks score model outputs under fixed inputs, such as truthfulness, instruction following, or pairwise preference, and these scores are often used to support claims about deployed alignment. This paper argues that deployment-relevant alignment cannot be inferred from model-level evaluation alone. Alignment claims should instead be indexed to the leve",
+      "origin": "rss",
+      "item_hash": "82b0818426ac637c",
+      "editor_reason": "A research paper arguing that model-level alignment evaluation is insufficient for deployment contexts—directly relevant to governance and auditability concerns in enterprise AI, and touches serious epistemological ground about what evaluation can and cannot tell us.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "How Does Thinking Mode Change LLM Moral Judgments? A Controlled Instant-vs-Thinking Comparison Across Five Frontier Models",
+      "url": "https://arxiv.org/abs/2605.04488",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-07T04:00:00+00:00",
+      "summary": "arXiv:2605.04488v1 Announce Type: new \nAbstract: We evaluate whether enabling provider-exposed reasoning mode changes moral judgments within the same model checkpoint. Across 100 moral-judgment scenarios and five frontier reasoning-trained LLMs (Claude Sonnet 4.6, GPT 5.5, Gemini 3 Flash, DeepSeek V3.1, and Qwen3.5 397B), aggregate binary-verdict agreement remains high and statistically indistinguishable between instant and thinking modes (Krippendorff's alpha = 0.78 vs. 0.79). However, disagree",
+      "origin": "rss",
+      "item_hash": "8cbe774c2af594e3",
+      "editor_reason": "Empirical study across five frontier models examining whether extended reasoning changes moral judgments—a serious intersection of philosophy of mind, epistemology, and LLM behavior that the reader pillar demands, with practical alignment implications.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Agents for financial services",
+      "url": "https://www.anthropic.com/news/finance-agents",
+      "source_name": "Anthropic News",
+      "pillar": "builder",
+      "published": "2026-05-05T00:00:00+00:00",
+      "summary": "Agents for financial services",
+      "origin": "rss",
+      "item_hash": "8147e5470addb193",
+      "editor_reason": "Anthropic's direct announcement of agents purpose-built for financial services workflows is a primary-source builder item with immediate practitioner relevance to anyone deploying LLMs in a regulated bank environment.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Singular Bank helps bankers move fast with ChatGPT and Codex",
+      "url": "https://openai.com/index/singular-bank",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-05-06T00:00:00+00:00",
+      "summary": "Singular Bank built Singularity, an internal assistant using ChatGPT and Codex to help bankers save 60–90 minutes daily on meeting prep, portfolio analysis, and follow-up.",
+      "origin": "rss",
+      "item_hash": "f9a6fe3e0b32193c",
+      "editor_reason": "A concrete case study of a bank building an internal AI assistant using ChatGPT and Codex with specific productivity metrics (60–90 minutes saved daily)—the rare 'someone actually built this' practitioner signal the mandate prioritizes.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Vibe coding and agentic engineering are getting closer than I'd like",
+      "url": "https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-06T14:24:08+00:00",
+      "summary": "I recently talked with Joseph Ruscio about AI coding tools for Heavybit's High Leverage podcast: Ep. #9, The AI Coding Paradigm Shift with Simon Willison. Here are some of my highlights, including my disturbing realization that vibe coding and agentic engineering have started to converge in my own work.\nOne thing I really enjoy about podcasts is that they sometimes push me to think out loud in a way that exposes an idea I've not previously been able to put into words.\nVibe coding and agentic eng",
+      "origin": "rss",
+      "item_hash": "b4a37e868793364a",
+      "editor_reason": "Simon Willison—a practitioner who has built tools and leads publicly on AI workflows—reflects critically on vibe coding and agentic engineering converging in his own practice, which is exactly the kind of honest builder introspection that cross-cuts pillars.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Agentic Coding Is a Trap",
+      "url": "https://larsfaye.com/articles/agentic-coding-is-a-trap",
+      "source_name": "Larsfaye.com",
+      "pillar": "builder",
+      "published": "2026-05-03T22:52:07Z",
+      "summary": "Remaining vigilant about cognitive debt and atrophy.",
+      "origin": "newsapi",
+      "item_hash": "13622ee3999dc701",
+      "editor_reason": "A practitioner-voiced argument that agentic coding creates 'cognitive debt and atrophy'—substantive enough to be worth noting as counter-narrative to the dominant hype, directly relevant to anyone managing AI-assisted development teams.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "worth_noting"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-07",
+    "items_submitted": 176,
+    "items_surviving": 8,
+    "kill_rate": 0.95,
+    "kills_by_source": {
+      "American Banker": 8,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 9,
+      "Aeon Magazine": 7,
+      "ArXiv - AI (cs.AI)": 18,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 2,
+      "Anthropic Research": 1,
+      "OpenAI Blog": 10,
+      "Simon Willison": 18,
+      "Hacker News - Best": 19,
+      "Business Insider": 8,
+      "TechRadar": 3,
+      "PetaPixel": 1,
+      "24/7 Wall St.": 1,
+      "The Indian Express": 1,
+      "Yahoo Entertainment": 3,
+      "Nature.com": 2,
+      "Seeking Alpha": 1,
+      "The Verge": 7,
+      "Ibm.com": 1,
+      "Thatprivacyguy.com": 1,
+      "Firethering.com": 1,
+      "Thedailywtf.com": 1,
+      "Morrigan-tech.com": 1,
+      "XDA Developers": 1,
+      "Theregister.com": 1,
+      "Kotaku": 1,
+      "Android Central": 2,
+      "Scientific American": 1,
+      "Al Jazeera English": 1,
+      "TheBlaze": 1,
+      "The Intercept": 1,
+      "Psychology Today": 1,
+      "Gizmodo.com": 1,
+      "IndieWire": 1,
+      "NPR": 1,
+      "CNET": 2,
+      "Github.com": 2,
+      "Wired": 1,
+      "Wwj.dev": 1,
+      "Addyosmani.com": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 2,
+      "reader": 2,
+      "builder": 4
+    },
+    "notes": [
+      "The Anthropic financial services cluster (678208ede822eb78 and 8147e5470addb193) is the day's strongest practitioner signal—two items that should be read together and could anchor a brief section on LLM operationalization in regulated finance.",
+      "The ArXiv feed is voluminous but mostly too narrow or technical for this audience; the alignment evaluation paper (82b0818426ac637c) and the moral reasoning study (8cbe774c2af594e3) are the exceptions worth surfacing.",
+      "American Banker produced only one genuinely practitioner-qualified item (f270192311f0b7e0); the rest were financial news without AI implementation substance.",
+      "The Aeon feed had nothing touching the mandate today—all items were in philosophy, anthropology, or science without any AI intersection.",
+      "Coverage gap: No items today on AI governance frameworks, regulatory guidance (OCC/Fed/FDIC), or auditability tooling in production—sources like the Fed's AI supervision pages, OCC bulletins, or Bank Policy Institute commentary should be added to the scout rotation.",
+      "Simon Willison remains the most reliable individual builder voice in the feed; his vibe coding/agentic convergence piece (b4a37e868793364a) generated 682 HN comments and is worth tracking for community reaction.",
+      "The OpenAI/PwC CFO automation item (2b843178b595da18) was borderline but killed—it reads as vendor marketing co-authored by a consulting firm, not a practitioner account of something built."
+    ]
+  }
+}
