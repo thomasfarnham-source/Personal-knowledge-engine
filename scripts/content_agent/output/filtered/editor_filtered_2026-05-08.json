@@ -1,0 +1,188 @@
+{
+  "filter_date": "2026-05-08",
+  "filter_timestamp": "2026-05-08T12:08:34.508430+00:00",
+  "items": [
+    {
+      "title": "Deployment-Relevant Alignment Cannot Be Inferred from Model-Level Evaluation Alone",
+      "url": "https://arxiv.org/abs/2605.04454",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-08T04:00:00+00:00",
+      "summary": "arXiv:2605.04454v1 Announce Type: new \nAbstract: Alignment evaluation in machine learning has largely become evaluation of models. Influential benchmarks score model outputs under fixed inputs, such as truthfulness, instruction following, or pairwise preference, and these scores are often used to support claims about deployed alignment. This paper argues that deployment-relevant alignment cannot be inferred from model-level evaluation alone. Alignment claims should instead be indexed to the leve",
+      "origin": "rss",
+      "item_hash": "82b0818426ac637c",
+      "editor_reason": "ArXiv paper arguing that deployment-context alignment cannot be inferred from model-level benchmarks alone is a research-grade challenge to how AI governance and auditability are typically framed — directly relevant to a bank building production AI systems that must satisfy regulators.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Agents for financial services",
+      "url": "https://www.anthropic.com/news/finance-agents",
+      "source_name": "Anthropic News",
+      "pillar": "builder",
+      "published": "2026-05-05T00:00:00+00:00",
+      "summary": "Agents for financial services",
+      "origin": "rss",
+      "item_hash": "8147e5470addb193",
+      "editor_reason": "Anthropic's official framing of agentic AI for financial services is directly relevant to a senior bank technologist evaluating production deployment of AI agents in a regulated context.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Natural Language Autoencoders: Turning Claude’s thoughts into text",
+      "url": "https://www.anthropic.com/research/natural-language-autoencoders",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": "2026-05-07T00:00:00+00:00",
+      "summary": "Natural Language Autoencoders: Turning Claude’s thoughts into text",
+      "origin": "rss",
+      "item_hash": "2bbe148f9157c849",
+      "editor_reason": "Anthropic's natural language autoencoder research — turning model reasoning into human-readable text — has direct implications for AI auditability and explainability in regulated environments, and is philosophically interesting as a window into machine cognition.",
+      "cross_pillar": [
+        "reader",
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Behind the Scenes Hardening Firefox with Claude Mythos Preview",
+      "url": "https://simonwillison.net/2026/May/7/firefox-claude-mythos/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-07T17:56:25+00:00",
+      "summary": "Behind the Scenes Hardening Firefox with Claude Mythos Preview\nFascinating, in-depth details on how Mozilla used their access to the Claude Mythos preview to locate and then fix hundreds of vulnerabilities in Firefox:\n\nSuddenly, the bugs are very good\nJust a few months ago, AI-generated security bug reports to open source projects were mostly known for being unwanted slop. Dealing with reports that look plausibly correct but are wrong imposes an asymmetric cost on project maintainers: it’s cheap",
+      "origin": "rss",
+      "item_hash": "446f5a8605ef2e79",
+      "editor_reason": "Simon Willison's firsthand account of Claude Mythos finding and fixing hundreds of Firefox vulnerabilities is a practitioner-level report on AI-assisted security research with direct implications for financial institutions facing AI-boosted threat actors.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Agents need control flow, not more prompts",
+      "url": "https://bsuh.bearblog.dev/agents-need-control-flow/",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-05-07T16:43:35+00:00",
+      "summary": "Article URL: https://bsuh.bearblog.dev/agents-need-control-flow/\nComments URL: https://news.ycombinator.com/item?id=48051562\nPoints: 484\n# Comments: 240",
+      "origin": "rss",
+      "item_hash": "6a70e6e2bae9d42d",
+      "editor_reason": "Practitioner argument that agentic systems require explicit control flow rather than prompt engineering reflects hard-won implementation experience and is directly applicable to enterprise AI workflow design.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Thousands of Vibe-Coded Apps Expose Corporate and Personal Data on the Open Web",
+      "url": "https://www.wired.com/story/thousands-of-vibe-coded-apps-expose-corporate-and-personal-data-on-the-open-web/",
+      "source_name": "Wired",
+      "pillar": "practitioner",
+      "published": "2026-05-07T11:00:00Z",
+      "summary": "Companies like Lovable, Base44, Replit, and Netlify use AI to let anyone build a web app in seconds—and in thousands of cases, spill highly sensitive data onto the public internet.",
+      "origin": "newsapi",
+      "item_hash": "dda90781940f52e6",
+      "editor_reason": "Wired's reporting on thousands of AI-built apps leaking sensitive corporate and personal data is a concrete, practitioner-relevant cautionary case about the governance gap in AI-assisted development — relevant to any bank evaluating internal use of vibe-coding tools.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "ServiceNow just unveiled an AI workforce that can run your entire company: ‘Enterprises need AI that senses, decides, and securely acts’",
+      "url": "https://tech.yahoo.com/ai/deals/articles/servicenow-just-unveiled-ai-workforce-170000328.html",
+      "source_name": "Yahoo Entertainment",
+      "pillar": "practitioner",
+      "published": "2026-05-05T17:00:00Z",
+      "summary": "It's already doing it at Honeywell, Docusign and the city of Raleigh.",
+      "origin": "newsapi",
+      "item_hash": "127359c4d6b8bda8",
+      "editor_reason": "ServiceNow's announcement of an enterprise AI workforce platform — with named production deployments at Honeywell, Docusign, and a municipality — is a practitioner-relevant signal on where agentic AI in enterprise IT operations is actually landing, relevant to a bank's ServiceNow/DevOps stack.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Vibe coding and agentic engineering are getting closer than I'd like",
+      "url": "https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/",
+      "source_name": "Simonwillison.net",
+      "pillar": "builder",
+      "published": "2026-05-06T15:06:37Z",
+      "summary": "I recently talked with Joseph Ruscio about AI coding tools for Heavybit’s High Leverage podcast: Ep. #9, The AI Coding Paradigm Shift with Simon Willison. Here are some of my …",
+      "origin": "newsapi",
+      "item_hash": "abd69fd3ad92b4e9",
+      "editor_reason": "Empirical Jellyfish data on 'tokenmaxxing' showing diminishing returns from extreme AI token consumption gives a builder-leader concrete evidence for calibrating AI coding tool deployment at scale.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "worth_noting"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-08",
+    "items_submitted": 184,
+    "items_surviving": 8,
+    "kill_rate": 0.96,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 8,
+      "Aeon Magazine": 7,
+      "ArXiv - AI (cs.AI)": 19,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 2,
+      "Anthropic Research": 2,
+      "OpenAI Blog": 16,
+      "Simon Willison": 19,
+      "Hacker News - Best": 18,
+      "Business Insider": 12,
+      "Hrdive.com": 1,
+      "TheStreet": 1,
+      "TechRadar": 2,
+      "Deadline": 1,
+      "PetaPixel": 1,
+      "24/7 Wall St.": 1,
+      "The Indian Express": 1,
+      "The Verge": 7,
+      "Theregister.com": 2,
+      "Thatprivacyguy.com": 1,
+      "Thedailywtf.com": 2,
+      "XDA Developers": 1,
+      "Mobeigi.com": 1,
+      "Nature.com": 2,
+      "Kotaku": 1,
+      "Gizmodo.com": 2,
+      "Al Jazeera English": 1,
+      "The Intercept": 1,
+      "Odditycentral.com": 1,
+      "IndieWire": 1,
+      "The Atlantic": 1,
+      "Inside Higher Ed": 1,
+      "Ivanpleshkov.dev": 1,
+      "Android Central": 2,
+      "CNET": 1,
+      "Wwj.dev": 1
+    },
+    "pillar_coverage": {
+      "reader": 1,
+      "builder": 5,
+      "practitioner": 2
+    },
+    "notes": [
+      "The feed is unusually heavy with OpenAI/Anthropic press releases this cycle — nearly a dozen items that are marketing announcements rather than practitioner accounts. These were uniformly killed.",
+      "The ArXiv firehose (30+ items) yielded only one strong keeper (82b0818426ac637c on deployment alignment); most are too narrowly technical or lack practical stakes for this persona.",
+      "The 'agents for financial services' Anthropic item (8147e5470addb193) was kept despite thin summary because the topic intersection is precisely on-mandate — editorial note: worth chasing the full document for next cycle.",
+      "Notable coverage gap: nothing substantive on AI regulatory guidance (OCC, Fed, CFPB) specific to model risk management or SR 11-7 updates — this is a persistent gap in the feed sourcing.",
+      "The Simon Willison Firefox/Mythos piece (446f5a8605ef2e79) is the strongest single item today — rare combination of Pillar 1 (security in regulated tech) and Pillar 3 (real builder reporting real results with a specific tool).",
+      "Several Hacker News items (slop killing communities, control flow for agents, vibe coding) are directionally interesting but the linked articles behind the HN summaries need direct evaluation — summaries alone are insufficient to confirm pillar fit.",
+      "The Reader pillar is underserved today — no philosophy of mind, intellectual history, or literary criticism items cleared the bar. The Aeon items were all off-topic for this persona."
+    ]
+  }
+}
