@@ -1,0 +1,187 @@
+{
+  "filter_date": "2026-05-12",
+  "filter_timestamp": "2026-05-12T13:06:30.946302+00:00",
+  "items": [
+    {
+      "title": "‘Blame the Bot’ Won’t Cut It in Front of Regulators",
+      "url": "https://www.corporatecomplianceinsights.com/blame-bot-will-not-cut-it/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-05-11T11:04:15+00:00",
+      "summary": "Responsible automation requires human judgment, independence and evidence\nThe post ‘Blame the Bot’ Won’t Cut It in Front of Regulators appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "0fd703ab973e5afc",
+      "editor_reason": "Directly addresses AI accountability in regulated contexts—'blame the bot' framing captures the precise governance gap between automation deployment and regulatory defensibility that a bank SVP must navigate.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Your Next AI Risk Is Inside the Systems You Trust the Most",
+      "url": "https://www.corporatecomplianceinsights.com/your-next-ai-risk-inside-systems-you-trust/",
+      "source_name": "Corporate Compliance Insights",
+      "pillar": "practitioner",
+      "published": "2026-05-11T11:02:05+00:00",
+      "summary": "If an organization is not inventorying and analyzing its AI agents, it isn’t managing risk\nThe post Your Next AI Risk Is Inside the Systems You Trust the Most appeared first on Corporate Compliance Insights.",
+      "origin": "rss",
+      "item_hash": "c60f85917969f0c9",
+      "editor_reason": "Practitioner-level warning that uninventoried AI agents inside trusted enterprise systems are an unmanaged risk vector—highly relevant to a banking technology leader overseeing production AI deployments.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Alignment as Jurisprudence",
+      "url": "https://arxiv.org/abs/2605.08416",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-12T04:00:00+00:00",
+      "summary": "arXiv:2605.08416v1 Announce Type: new \nAbstract: Jurisprudence, the study of how judges should properly decide cases, and alignment, the science of getting AI models to conform to human values, share a fundamental structure. These seemingly distant fields both seek to predict and shape how decisions by powerful actors, in one case judges and in the other increasingly powerful artificial intelligences, will be made in the unknown future. And they use similar tools of the specification and interpr",
+      "origin": "rss",
+      "item_hash": "907d39f0e4ac7c22",
+      "editor_reason": "Framing AI alignment through the lens of jurisprudence is exactly the kind of cross-disciplinary intellectual move this reader values—it bridges legal philosophy, epistemology, and the practical question of how AI systems should make constrained decisions.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "AlignmentMay 8, 2026Teaching Claude whyNew research on how we've reduced agentic misalignment.",
+      "url": "https://www.anthropic.com/research/teaching-claude-why",
+      "source_name": "Anthropic Research",
+      "pillar": "builder",
+      "published": "2026-05-08T00:00:00+00:00",
+      "summary": "AlignmentMay 8, 2026Teaching Claude whyNew research on how we've reduced agentic misalignment.",
+      "origin": "rss",
+      "item_hash": "b86216cf8bfbd2b7",
+      "editor_reason": "Anthropic's published research on reducing agentic misalignment is a direct, technically substantive artifact from the lab building the models this person likely uses in production—relevant to both safety governance and agentic system design.",
+      "cross_pillar": [
+        "practitioner",
+        "reader"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Running Codex safely at OpenAI",
+      "url": "https://openai.com/index/running-codex-safely",
+      "source_name": "OpenAI Blog",
+      "pillar": "builder",
+      "published": "2026-05-08T12:30:00+00:00",
+      "summary": "How OpenAI runs Codex securely with sandboxing, approvals, network policies, and agent-native telemetry to support safe and compliant coding agent adoption.",
+      "origin": "rss",
+      "item_hash": "66be1220771465af",
+      "editor_reason": "OpenAI's internal account of running Codex safely—covering sandboxing, approvals, network policies, and agent-native telemetry—is a genuine practitioner document on secure coding-agent deployment with direct applicability to regulated environments.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Improving token efficiency in GitHub Agentic Workflows",
+      "url": "https://github.blog/ai-and-ml/github-copilot/improving-token-efficiency-in-github-agentic-workflows/",
+      "source_name": "Github.blog",
+      "pillar": "practitioner",
+      "published": "2026-05-07T22:33:50Z",
+      "summary": "Agentic workflows that run on every pull request can quietly accumulate large API bills. Here's how we instrumented our own production workflows, found the inefficiencies, and built agents to fix them.\nThe post Improving token efficiency in GitHub Agentic Wor…",
+      "origin": "newsapi",
+      "item_hash": "74f95f5ce84e2847",
+      "editor_reason": "GitHub's own production postmortem on token efficiency in agentic workflows is a rare practitioner-voice piece with real instrumentation data—directly applicable to anyone running LLM agents at scale in enterprise infrastructure.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "Thousands of Vibe-Coded Apps Expose Corporate and Personal Data on the Open Web",
+      "url": "https://www.wired.com/story/thousands-of-vibe-coded-apps-expose-corporate-and-personal-data-on-the-open-web/",
+      "source_name": "Wired",
+      "pillar": "practitioner",
+      "published": "2026-05-07T11:00:00Z",
+      "summary": "Companies like Lovable, Base44, Replit, and Netlify use AI to let anyone build a web app in seconds—and in thousands of cases, spill highly sensitive data onto the public internet.",
+      "origin": "newsapi",
+      "item_hash": "dda90781940f52e6",
+      "editor_reason": "Wired's investigation into vibe-coded apps leaking sensitive corporate data is a concrete, evidence-based security story with direct implications for any bank evaluating citizen-developer or AI-assisted application workflows.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "solid"
+    },
+    {
+      "title": "The Secret to Understanding AI",
+      "url": "https://www.theatlantic.com/ideas/2026/05/ai-for-good-uses/687082/",
+      "source_name": "The Atlantic",
+      "pillar": "reader",
+      "published": "2026-05-07T14:52:31Z",
+      "summary": "“Imagine the tech without the tech companies.”",
+      "origin": "newsapi",
+      "item_hash": "2ce9a3130340c57c",
+      "editor_reason": "The Atlantic piece framing AI comprehension as 'imagine the tech without the tech companies' gestures at a serious epistemological separation that intersects humanities thinking and technology criticism—worth watching for whether the underlying argument is substantive.",
+      "cross_pillar": [
+        "reader"
+      ],
+      "strength": "worth_noting"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-12",
+    "items_submitted": 187,
+    "items_surviving": 8,
+    "kill_rate": 0.96,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 2,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Corporate Compliance Insights": 8,
+      "Aeon Magazine": 7,
+      "ArXiv - AI (cs.AI)": 19,
+      "ArXiv - Computation and Language": 20,
+      "Anthropic News": 1,
+      "Anthropic Research": 3,
+      "OpenAI Blog": 15,
+      "Simon Willison": 18,
+      "Hacker News - Best": 20,
+      "Yahoo Entertainment": 3,
+      "Business Insider": 14,
+      "Forbes": 1,
+      "Fox News": 1,
+      "Hrdive.com": 1,
+      "TheStreet": 1,
+      "MarketBeat": 1,
+      "The Verge": 5,
+      "Theregister.com": 2,
+      "Thatprivacyguy.com": 1,
+      "CNET": 3,
+      "XDA Developers": 1,
+      "Thedailywtf.com": 1,
+      "Nature.com": 2,
+      "Internet": 1,
+      "Wired": 1,
+      "Kotaku": 1,
+      "Gizmodo.com": 1,
+      "Lawnext.com": 1,
+      "Al Jazeera English": 1,
+      "Inside Higher Ed": 1,
+      "Associated Press": 1,
+      "Odditycentral.com": 1,
+      "Android Central": 3,
+      "Ivanpleshkov.dev": 1,
+      "Boing Boing": 1,
+      "Simonwillison.net": 1
+    },
+    "pillar_coverage": {
+      "practitioner": 4,
+      "reader": 2,
+      "builder": 2
+    },
+    "notes": [
+      "The ArXiv feed is voluminous but yielded only one true keeper (907d39f0e4ac7c22 on alignment-as-jurisprudence)—most entries are narrow ML benchmarks or NLP sub-specialties with no cross-pillar resonance for this reader's profile. Consider filtering ArXiv to a tighter keyword set (alignment, interpretability, RAG, agentic safety) to reduce noise.",
+      "The OpenAI Blog is heavy on product marketing and partnership announcements (Uber, Parloa, Singular Bank case studies)—these read as vendor content and were killed accordingly. The Codex safety piece (66be1220771465af) is the exception because it describes internal operational decisions with specificity.",
+      "Anthropic Research surface was thin: only the agentic misalignment piece had enough substance to evaluate. The 'natural language autoencoders' and 'dreaming' items lacked enough detail in the summaries to assess; the dreaming item (e6446c5f9cde79e5) from Business Insider felt like paraphrase-of-press-release rather than primary source.",
+      "Corporate Compliance Insights produced two strong keeper candidates (0fd703ab973e5afc, c60f85917969f0c9)—this source is punching above its typical weight today and may deserve elevated priority in future scans for AI governance content.",
+      "Notable coverage gap: no substantive regulatory guidance items today (OCC, Fed, CFPB, NIST AI RMF updates). The Forbes OCC piece (dc96f89945014b3b) was too vague/summary-level to keep. This is a consistent gap worth flagging for source expansion.",
+      "The Hacker News Best feed contains several high-engagement AI coding debates (663b221b220fd421 'going back to writing code by hand', 6eacea02cb2f941e on maintenance costs) that are practitioner-adjacent but read as practitioner-opinion without institutional context—marginally below threshold. Worth monitoring if the author has a track record."
+    ]
+  }
+}
