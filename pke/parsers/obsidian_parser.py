@@ -20,13 +20,6 @@ from pke.parsers.obsidian_syntax import strip_obsidian_syntax
 logger = logging.getLogger(__name__)
 
 
-# ─────────────────────────────────────────────────────────────────
-# 0. ParsedNote contract
-#
-# Matches the existing parser output contract used by ingestion.
-# ----------------------------------------------------------------
-
-
 @dataclass
 class ParsedNote:
     """ParsedNote contract object emitted by parser builders."""
@@ -138,7 +131,7 @@ def read_frontmatter(file_path: Path) -> tuple[dict[str, Any] | None, str]:
 
 
 # ─────────────────────────────────────────────────────────────────
-# 4. ParsedNote builder
+# 3. ParsedNote builder
 #
 # Converts one opted-in markdown file into a ParsedNote object.
 # ----------------------------------------------------------------
@@ -225,7 +218,7 @@ def build_parsed_note(
 
 
 # ─────────────────────────────────────────────────────────────────
-# 5. Orchestrator
+# 4. Orchestrator
 #
 # Runs scanner + builder across the vault and returns notes + stats.
 # ----------------------------------------------------------------

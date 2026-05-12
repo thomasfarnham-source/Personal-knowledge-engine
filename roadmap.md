@@ -1,6 +1,5 @@
 # Personal Knowledge Engine — Product Roadmap
-
-Last updated: 2026-03-14
+\
 
 This document captures the strategic vision, milestone sequence, and
 per-milestone design notes for the PKE project. It is persistent across
@@ -2666,6 +2665,40 @@ vault lives and how the parser accesses it.
 Flat tests/ root contains older test files alongside the unit/
 and integration/ subfolders. Consolidation into subfolders deferred
 until ingestion and parser tests grow enough to warrant it.
+
+**ParsedNote contract canonicalization**
+
+Surfaced during milestone 9.9 architect review (2026-05-02). The
+ParsedNote contract is documented in ARCHITECTURE.md Section 4 but
+is not implemented as a shared Python module. Each parser handles
+the contract in its own way:
+
+  - Joplin parser: emits dicts conforming to the contract
+  - iMessage parser: emits dicts conforming to the contract
+  - Yahoo Mail parser: defines its own local ParsedNote dataclass
+  - Obsidian parser: defines its own local ParsedNote dataclass
+
+This is organic growth, not a deliberate design choice. The right
+fix is a dedicated cleanup milestone that:
+
+  1. Creates pke/parsers/parsed_note.py as the canonical module
+     containing the ParsedNote dataclass.
+  2. Migrates Yahoo and Obsidian parsers to import from the
+     canonical module.
+  3. Decides whether to migrate Joplin and iMessage to the
+     dataclass form, or leave them as dict-emitters with a
+     documented adapter pattern at the ingestor boundary.
+
+Not urgent — the existing parsers all produce contract-conforming
+output and the orchestrator handles both forms. But the next parser
+written will have no clear pattern to follow, and the cleanup gets
+harder the longer it drifts.
+
+Target: dedicated cleanup milestone, after the immediate parser
+work (9.9 Obsidian, 9.10 Photo Intelligence, 9.11 Handwritten
+Journals) reaches a natural pause point. Approximately 9.16 or
+later.
+```
 
 ##  Engineering Work to support RMF i.e Metrics / montioring
 ### C.1 PKE Backlog - Monitoring
