@@ -51,9 +51,9 @@ class EditorItem:
 class ChunkError:
     """A chunk of items that failed to be processed by Claude."""
 
-    chunk_index: int   # 0-based chunk number
-    item_count: int    # How many items were in the chunk (now silently lost)
-    error: str         # Human-readable error description
+    chunk_index: int  # 0-based chunk number
+    item_count: int  # How many items were in the chunk (now silently lost)
+    error: str  # Human-readable error description
 
 
 @dataclass
@@ -158,7 +158,8 @@ def filter_with_claude_chunk(items: list[dict], api_key: str, chunk_index: int) 
         )
 
     user_message = (
-        f"Here are {len(items_for_review)} items from today's Scout scan (batch {chunk_index + 1}). "
+        f"Here are {len(items_for_review)} items from today's Scout scan "
+        f"(batch {chunk_index + 1}). "
         f"Apply the mandate and mark each KEEP or KILL. "
         f"Target across all batches: 5-8 total items for the daily brief — be selective.\n\n"
         f"{json.dumps(items_for_review, indent=2)}"
@@ -218,7 +219,7 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
     chunks failed so the caller can surface them and know how many items
     were silently dropped.
     """
-    chunks = [items[i:i + CHUNK_SIZE] for i in range(0, len(items), CHUNK_SIZE)]
+    chunks = [items[i : i + CHUNK_SIZE] for i in range(0, len(items), CHUNK_SIZE)]
     logger.info(f"Splitting {len(items)} items into {len(chunks)} chunks of ~{CHUNK_SIZE}")
 
     all_decisions = []
@@ -234,11 +235,13 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
         # If the chunk returned an 'error' field, capture it as a structured
         # ChunkError so the caller can warn about the silent item loss.
         if result.get("error"):
-            chunk_errors.append(ChunkError(
-                chunk_index=i,
-                item_count=len(chunk),
-                error=result["error"],
-            ))
+            chunk_errors.append(
+                ChunkError(
+                    chunk_index=i,
+                    item_count=len(chunk),
+                    error=result["error"],
+                )
+            )
 
     return {
         "decisions": all_decisions,
@@ -453,15 +456,16 @@ def run_editor(
         kept = kept[:10]
         kept_hashes = {d["item_hash"] for d in kept}
         decisions["decisions"] = [
-            d if d["item_hash"] in kept_hashes or d.get("decision") == "KILL"
-            else {**d, "decision": "KILL", "reason": "trimmed by post-merge strength sort"}
+            (
+                d
+                if d["item_hash"] in kept_hashes or d.get("decision") == "KILL"
+                else {**d, "decision": "KILL", "reason": "trimmed by post-merge strength sort"}
+            )
             for d in decisions["decisions"]
         ]
         # Fixed log message: was misleading before — said "from X surviving chunks"
         # but X was the post-slice count, not the original count.
-        logger.info(
-            f"Post-merge trim: reduced {original_kept_count} keeps to top 10 by strength"
-        )
+        logger.info(f"Post-merge trim: reduced {original_kept_count} keeps to top 10 by strength")
 
     surviving, report = apply_decisions(scout_items, decisions)
 
@@ -481,8 +485,7 @@ def run_editor(
         )
         for ce in report.chunk_errors:
             logger.warning(
-                f"  ✗ Chunk {ce['chunk_index'] + 1}: "
-                f"{ce['item_count']} items — {ce['error']}"
+                f"  ✗ Chunk {ce['chunk_index'] + 1}: " f"{ce['item_count']} items — {ce['error']}"
             )
 
     if report.notes:

@@ -21,7 +21,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -88,11 +88,7 @@ class ConnectorErrors:
 
     def has_errors(self) -> bool:
         """True if any error was recorded."""
-        return bool(
-            self.pke_items_failed
-            or self.book_matching_error
-            or self.synthesis_error
-        )
+        return bool(self.pke_items_failed or self.book_matching_error or self.synthesis_error)
 
 
 # ---------------------------------------------------------------------------
@@ -575,9 +571,7 @@ def run_connector(
             else:
                 connections.extend(pke_conns)
                 if pke_conns:
-                    logger.info(
-                        f"  PKE: {len(pke_conns)} connections for '{item['title'][:50]}'"
-                    )
+                    logger.info(f"  PKE: {len(pke_conns)} connections for '{item['title'][:50]}'")
 
         connected = ConnectedItem(
             title=item["title"],

@@ -20,7 +20,7 @@ import logging
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 from typing import Optional
 
 import requests
@@ -57,33 +57,37 @@ class ComposerErrors:
     weekly_output_write_error: str = ""
 
     def has_errors(self) -> bool:
-        return any([
-            self.no_connector_output,
-            self.empty_connector_input,
-            self.daily_vault_write_error,
-            self.daily_output_write_error,
-            self.malformed_items_skipped > 0,
-            self.no_weekly_items,
-            self.weekly_api_error,
-            self.weekly_empty_response,
-            self.weekly_vault_write_error,
-            self.weekly_output_write_error,
-        ])
+        return any(
+            [
+                self.no_connector_output,
+                self.empty_connector_input,
+                self.daily_vault_write_error,
+                self.daily_output_write_error,
+                self.malformed_items_skipped > 0,
+                self.no_weekly_items,
+                self.weekly_api_error,
+                self.weekly_empty_response,
+                self.weekly_vault_write_error,
+                self.weekly_output_write_error,
+            ]
+        )
 
     def has_fatal_errors(self) -> bool:
         """
         True if any error means no usable output was produced.
         Fatal errors should cause a non-zero exit code so the bat file knows.
         """
-        return any([
-            self.no_connector_output,
-            self.empty_connector_input,
-            self.daily_vault_write_error,
-            self.daily_output_write_error,
-            self.no_weekly_items,
-            self.weekly_api_error,
-            self.weekly_empty_response,
-        ])
+        return any(
+            [
+                self.no_connector_output,
+                self.empty_connector_input,
+                self.daily_vault_write_error,
+                self.daily_output_write_error,
+                self.no_weekly_items,
+                self.weekly_api_error,
+                self.weekly_empty_response,
+            ]
+        )
 
 
 def _write_errors_file(errors: ComposerErrors, output_dir: Path) -> None:
@@ -160,8 +164,7 @@ def compose_daily(
 
     if errors.malformed_items_skipped:
         logger.warning(
-            f"Skipped {errors.malformed_items_skipped} malformed items "
-            f"(missing title or url)"
+            f"Skipped {errors.malformed_items_skipped} malformed items " f"(missing title or url)"
         )
 
     # If validation removed everything, treat as fatal — same as empty input
