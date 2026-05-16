@@ -18,7 +18,7 @@
       },
       {
         "name": "Harvard Business Review",
-        "url": "https://hbr.org/rss/rss.cgi",
+        "url": "http://feeds.harvardbusiness.org/harvardbusiness",
         "notes": "Filter hard — lots of filler, but occasional gold"
       },
       {
@@ -35,6 +35,31 @@
         "name": "Corporate Compliance Insights",
         "url": "https://www.corporatecomplianceinsights.com/feed/",
         "notes": "ERM, compliance, governance — practitioner-oriented"
+      },
+      {
+        "name": "OCC - News Releases",
+        "url": "https://www.comptrollerofthecurrency.gov/rss/occ_news.xml",
+        "notes": "OCC news releases — regulatory actions, policy announcements"
+      },
+      {
+        "name": "OCC - Speeches",
+        "url": "https://www.comptrollerofthecurrency.gov/rss/occ-speeches.xml",
+        "notes": "OCC speeches — Comptroller signaling on fintech, AI, third-party risk"
+      },
+      {
+        "name": "Federal Reserve - Speeches & Testimony",
+        "url": "https://www.federalreserve.gov/feeds/speeches_and_testimony.xml",
+        "notes": "Fed Board speeches and testimony — policy signals on AI, fintech, supervision"
+      },
+      {
+        "name": "Federal Reserve - Banking Regulatory Policy",
+        "url": "https://www.federalreserve.gov/feeds/press_bcreg.xml",
+        "notes": "Fed banking and consumer regulatory policy press releases — supervision, AI guidance"
+      },
+      {
+        "name": "BIS - Central Bank Speeches",
+        "url": "https://www.bis.org/doclist/cbspeeches.rss",
+        "notes": "Bank for International Settlements — central bank speeches worldwide, top-tier policy signal"
       }
     ],
     "reader": [
@@ -89,11 +114,6 @@
         "name": "Hacker News - Best",
         "url": "https://hnrss.org/best",
         "notes": "Community-filtered tech content — needs hard filtering — WORKING"
-      },
-      {
-        "name": "Allen AI Blog",
-        "url": "https://blog.allenai.org/feed",
-        "notes": "Allen AI / Semantic Scholar — research tooling"
       }
     ]
   },

@@ -89,3 +89,13 @@ scripts/content_agent/output/connected/
 
 # Personal files - never commit
 vision.md
+
+# briefs/ — daily drops are written to the Obsidian vault, which is the
+# canonical location for human consumption. The local enrichment run
+# overwrites whatever Actions produces, so committing them just creates
+# merge churn without value. Also covers composer_errors_*.json diagnostics.
+scripts/content_agent/output/briefs/
+
+# build-prompts/ — local working notes for milestone build sessions.
+# Methodology under review; treat as local for now (see task list).
+build-prompts/

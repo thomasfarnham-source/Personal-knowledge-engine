@@ -88,10 +88,59 @@ def scan_rss_feeds(
             logger.info(f"Scanning RSS: {name} ({pillar})")
 
             try:
-                feed = feedparser.parse(url)
+                # Fetch feed bytes via requests (uses certifi for SSL verification,
+                # which avoids Windows certificate-chain issues that hit ArXiv).
+                # Then hand the bytes to feedparser for parsing.
+                # feedparser's own fetcher uses urllib, which doesn't consult certifi.
+                try:
+                    response = requests.get(
+                        url,
+                        timeout=15,
+                        headers={
+                            # Many feed providers block default python-requests User-Agent.
+                            # Identifying as a known feed reader gets us past their bot filters.
+                            "User-Agent": (
+                                "Mozilla/5.0 (compatible; "
+                                "PKE-ContentAgent/1.0; "
+                                "+https://github.com/thomasfarnham-source"
+                                "/Personal-knowledge-engine)"
+                            )
+                        },
+                    )
+                    response.raise_for_status()
+                    feed = feedparser.parse(response.content)
+                except requests.RequestException as fetch_e:
+                    # If requests itself can't fetch (network, SSL, 404), record
+                    # the error and skip — same as a feed-parse failure.
+                    error_msg = str(fetch_e)
+                    logger.warning(f"Feed error for {name}: {error_msg}")
+                    errors.append(
+                        FeedError(
+                            name=name,
+                            url=url,
+                            pillar=pillar,
+                            origin="rss",
+                            error=error_msg,
+                        )
+                    )
+                    continue
 
-                # feedparser sets bozo=True for malformed feeds but may still
-                # return entries. Only treat it as an error if there are no entries.
+                # If feedparser hit an encoding mismatch on the bytes, retry with
+                # forced utf-8 decode. This handles feeds that declare us-ascii
+                # but serve utf-8 content (HBR is a known offender). Safe because
+                # utf-8 is a superset of ascii.
+                if feed.bozo and not feed.entries:
+                    bozo_str = str(feed.bozo_exception).lower()
+                    if "encoding" in bozo_str or "us-ascii" in bozo_str:
+                        logger.info(f"  Retrying {name} with forced utf-8 decode")
+                        try:
+                            feed = feedparser.parse(
+                                response.content.decode("utf-8", errors="replace")
+                            )
+                        except UnicodeDecodeError as retry_e:
+                            logger.warning(f"  Retry failed for {name}: {retry_e}")
+
+                # If still bozo with no entries after any retry, record as a feed error
                 if feed.bozo and not feed.entries:
                     error_msg = str(feed.bozo_exception)
                     logger.warning(f"Feed error for {name}: {error_msg}")
