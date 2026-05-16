@@ -1,0 +1,254 @@
+{
+  "filter_date": "2026-05-16",
+  "filter_timestamp": "2026-05-16T11:54:35.488283+00:00",
+  "items": [
+    {
+      "title": "GraphBit: A Graph-based Agentic Framework for Non-Linear Agent Orchestration",
+      "url": "https://arxiv.org/abs/2605.13848",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-16T04:00:00+00:00",
+      "summary": "arXiv:2605.13848v1 Announce Type: new \nAbstract: Agentic LLM frameworks that rely on prompted orchestration, where the model itself determines workflow transitions, often suffer from hallucinated routing, infinite loops, and non-reproducible execution. We introduce GraphBit, an engine-orchestrated framework that defines workflows explicitly and deterministically as a directed acyclic graph (DAG). Unlike prompted orchestration, agents in GraphBit operate as typed functions, while a Rust-based eng",
+      "origin": "rss",
+      "item_hash": "1709c2dd10a06ada",
+      "editor_reason": "GraphBit addresses a real production failure mode — hallucinated routing and non-reproducible execution in agentic LLM orchestration — with an engine-controlled graph approach directly applicable to enterprise agentic system design.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Invisible Orchestrators Suppress Protective Behavior and Dissociate Power-Holders: Safety Risks in Multi-Agent LLM Systems",
+      "url": "https://arxiv.org/abs/2605.13851",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-16T04:00:00+00:00",
+      "summary": "arXiv:2605.13851v1 Announce Type: new \nAbstract: Multi-agent orchestration -- in which a hidden coordinator manages specialized worker agents -- is becoming the default architecture for enterprise AI deployment, yet the safety implications of orchestrator invisibility have never been empirically tested. We conducted a preregistered 3x2 experiment (365 runs, 5 agents per run) crossing three organizational structures (visible leader, invisible orchestrator, flat) with two alignment conditions (bas",
+      "origin": "rss",
+      "item_hash": "3f03a7b43ae70a66",
+      "editor_reason": "Empirically tests safety risks from orchestrator invisibility in multi-agent LLM systems — directly relevant to enterprise AI governance, auditability, and the real risks of deploying agentic architectures in regulated environments.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Bridging Legal Interpretation and Formal Logic: Faithfulness, Assumption, and the Future of AI Legal Reasoning",
+      "url": "https://arxiv.org/abs/2605.14049",
+      "source_name": "ArXiv - AI (cs.AI)",
+      "pillar": "reader",
+      "published": "2026-05-16T04:00:00+00:00",
+      "summary": "arXiv:2605.14049v1 Announce Type: new \nAbstract: The growing adoption of large language models in legal practice brings both significant promise and serious risk. Legal professionals stand to benefit from AI that can reason over contracts, draft documents, and analyze sources at scale, yet the high-stakes nature of legal work demands a level of rigor that current AI systems do not provide. The central problem is not simply that LLMs hallucinate facts and references; it is that they systematicall",
+      "origin": "rss",
+      "item_hash": "49f828fa86d0ad1d",
+      "editor_reason": "Directly engages the tension between formal logical faithfulness and legal interpretation in LLMs — a substantive epistemological problem with direct relevance to regulated-industry AI deployment where contract and compliance reasoning is high-stakes.",
+      "cross_pillar": [
+        "practitioner",
+        "builder"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Thoughts on GitLab's workforce reduction\" and \"structural and strategic decisions\"",
+      "url": "https://simonwillison.net/2026/May/11/gitlab-act-2/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-11T23:58:55+00:00",
+      "summary": "GitLab Act 2\nThere's a lot going on in this announcement from GitLab about the \"workforce reduction\" and \"structural and strategic decisions\" they are making with respect to the agentic era.\n\nThey're \"planning to reduce the number of countries by up to 30% where we have small teams\". One of the most interesting things about GitLab is that they have employees spread across a large number of countries - 18 are listed in their public employee handbook but this post says they are \"operating in nearl",
+      "origin": "rss",
+      "item_hash": "466f592dc33567ef",
+      "editor_reason": "GitLab's workforce restructuring framed explicitly around the agentic era — with details on country footprint reduction and structural pivots — is a documented, consequential example of an enterprise reconfiguring itself around AI agents, relevant to a leader navigating similar organizational pressure.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Quoting James Shore",
+      "url": "https://simonwillison.net/2026/May/11/james-shore/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-11T19:48:32+00:00",
+      "summary": "Your AI coding agent, the one you use to write code, needs to reduce your maintenance costs. Not by a little bit, either. You write code twice as quick now? Better hope you’ve halved your maintenance costs. Three times as productive? One third the maintenance costs. Otherwise, you’re screwed. You’re trading a temporary speed boost for permanent indenture. [...]\nThe math only works if the LLM decreases your maintenance costs, and by exactly the inverse of the rate it adds code. If you double your",
+      "origin": "rss",
+      "item_hash": "1a4ad3d48a105311",
+      "editor_reason": "James Shore's maintenance-cost argument — that faster code generation must be offset by proportionally lower maintenance burden or you've made things worse — is a rigorous, contrarian practitioner take that reframes AI coding productivity in terms any engineering leader should internalize.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Your AI Use Is Breaking My Brain",
+      "url": "https://simonwillison.net/2026/May/11/zombie-internet/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-11T19:21:27+00:00",
+      "summary": "Your AI Use Is Breaking My Brain\nExcellent, angry piece by Jason Koebler on how AI writing online is becoming impossible to avoid, filtering it is mentally exhausting and it's even starting to distort regular human writing styles.\nI particularly liked his use of the term \"Zombie Internet\" to define a different, more insidious alternative to the \"Dead Internet\" (which is just bots talking to each other):\n\nI called it the Zombie Internet because the truth is that large parts of the internet are no",
+      "origin": "rss",
+      "item_hash": "86964fb98bdd7e8e",
+      "editor_reason": "Koebler's 'Zombie Internet' framing — AI-generated content not only flooding the web but distorting human writing styles — is a serious cultural-epistemological observation that sits at the intersection of Pillar 2 (intellectual/ethical implications of LLMs) and Pillar 1 (signal degradation in enterprise knowledge environments).",
+      "cross_pillar": [
+        "reader",
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Learning on the Shop floor",
+      "url": "https://simonwillison.net/2026/May/11/learning-on-the-shop-floor/#atom-everything",
+      "source_name": "Simon Willison",
+      "pillar": "builder",
+      "published": "2026-05-11T15:46:36+00:00",
+      "summary": "Learning on the Shop floor\nTobias Lütke describes Shopify's internal coding agent tool, River, which operates entirely in public on their Slack:\n\nRiver does not respond to direct messages. She politely declines and suggests to create a public channel for you and her to start working in. I myself work with river in #tobi_river channel and many followed this pattern.  Every conversation is therefore searchable.  Anyone at Shopify  can jump in. In my own channel, there are over 100 people who, reac",
+      "origin": "rss",
+      "item_hash": "b6be045d33aaf60f",
+      "editor_reason": "Tobi Lütke's description of Shopify's internal agent 'River' operating exclusively in public Slack channels — with the CEO himself working in public — is a rare, specific, practitioner-level account of agentic AI organizational design with real transparency and governance implications.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Amazon workers under pressure to up their AI usage are making up tasks",
+      "url": "https://www.fastcompany.com/91541586/amazon-workers-pressured-to-up-ai-use-extraneous-tasks",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-05-15T13:28:55+00:00",
+      "summary": "Article URL: https://www.fastcompany.com/91541586/amazon-workers-pressured-to-up-ai-use-extraneous-tasks\nComments URL: https://news.ycombinator.com/item?id=48148337\nPoints: 358\n# Comments: 400",
+      "origin": "rss",
+      "item_hash": "0029905e5f60eb4a",
+      "editor_reason": "Documented workplace dysfunction where AI usage mandates produce performative compliance rather than real productivity — a grounded, reported story directly relevant to leading AI transformation and understanding organizational incentive distortions.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Ontario auditors find doctors' AI note takers routinely blow basic facts",
+      "url": "https://www.theregister.com/ai-ml/2026/05/14/ontario-auditors-find-doctors-ai-note-takers-routinely-blow-basic-facts/5240771",
+      "source_name": "Hacker News - Best",
+      "pillar": "builder",
+      "published": "2026-05-14T22:37:40+00:00",
+      "summary": "Article URL: https://www.theregister.com/ai-ml/2026/05/14/ontario-auditors-find-doctors-ai-note-takers-routinely-blow-basic-facts/5240771\nComments URL: https://news.ycombinator.com/item?id=48142188\nPoints: 304\n# Comments: 136",
+      "origin": "rss",
+      "item_hash": "19b52156f1fbab96",
+      "editor_reason": "Ontario audit finding that AI clinical note-taking tools systematically produce factual errors is a direct, evidence-based parallel for AI auditability failures in regulated industries — highly relevant to a finance AI practitioner thinking about governance and accountability.",
+      "cross_pillar": [
+        "practitioner"
+      ],
+      "strength": "strong"
+    },
+    {
+      "title": "Hackers Used AI to Develop First Known Zero-Day 2FA Bypass for Mass Exploitation",
+      "url": "https://thehackernews.com/2026/05/hackers-used-ai-to-develop-first-known.html",
+      "source_name": "Internet",
+      "pillar": "practitioner",
+      "published": "2026-05-11T15:45:00Z",
+      "summary": "Google on Monday disclosed that it identified an unknown threat actor using a zero-day exploit that it said was likely developed with an artificial intelligence (AI) system, marking the first time the technology has been put to use in the wild in a malicious …",
+      "origin": "newsapi",
+      "item_hash": "5a38a188af401d84",
+      "editor_reason": "First confirmed in-the-wild use of AI to develop a zero-day exploit for mass exploitation is a watershed security event with direct implications for enterprise AI governance and risk management in regulated finance.",
+      "cross_pillar": [
+        "builder"
+      ],
+      "strength": "strong"
+    }
+  ],
+  "report": {
+    "scan_date": "2026-05-16",
+    "items_submitted": 174,
+    "items_surviving": 10,
+    "kill_rate": 0.94,
+    "kills_by_source": {
+      "Risk.net - Risk Management": 1,
+      "American Banker": 10,
+      "MIT Sloan Management Review": 4,
+      "Bank of England - Speeches": 5,
+      "Enterprise Risk Magazine": 1,
+      "Corporate Compliance Insights": 10,
+      "Aeon Magazine": 7,
+      "ArXiv - AI (cs.AI)": 17,
+      "Anthropic News": 3,
+      "Anthropic Research": 1,
+      "OpenAI Blog": 19,
+      "Simon Willison": 16,
+      "Hacker News - Best": 18,
+      "Business Insider": 11,
+      "Ritholtz.com": 1,
+      "Psychology Today": 2,
+      "Slashdot.org": 2,
+      "MarketBeat": 1,
+      "Fox News": 1,
+      "Krebs on Security": 1,
+      "Yahoo Entertainment": 2,
+      "The Next Web": 2,
+      "Github.com": 2,
+      "Extency.com": 1,
+      "Hacker News": 1,
+      "Search Engine Journal": 1,
+      "Xbow.com": 1,
+      "TechRadar": 1,
+      "Marginalrevolution.com": 1,
+      "The Verge": 5,
+      "Gitlab.com": 1,
+      "Kotaku": 1,
+      "404media.co": 1,
+      "Jezebel": 1,
+      "Ubergizmo": 1,
+      "Forbes": 1,
+      "The Washington Post": 1,
+      "Deadline": 1,
+      "Inside Higher Ed": 1,
+      "The Cut": 1,
+      "Hong Kong Standard": 1,
+      "Gizmodo.com": 2,
+      "Android Central": 2,
+      "Claude.com": 1
+    },
+    "pillar_coverage": {
+      "reader": 3,
+      "builder": 6,
+      "practitioner": 1
+    },
+    "notes": [
+      "This batch is weak overall — dominated by routine banking news, BoE ceremonial speeches, and vendor press releases that are uniformly off-mandate.",
+      "The single strongest signal item (b43d93c570a742d6) on AI rollout pressure in banks needs the full article reviewed; the summary is promising but the piece could easily be journalistic observation rather than practitioner voice — flag for depth check.",
+      "The MIT SMR responsible AI piece (be006ab41a6adcd4) is a recurring annual survey — value depends on whether this year's findings include new practitioner case material or have degraded into consultant-speak; review before final inclusion.",
+      "Coverage gap: zero items in this batch touching Pillar 2 (philosophy/intellectual history) or Pillar 3 (builder/agentic systems/RAG). Batch 2 needs to compensate significantly — the daily brief will be thin and Pillar 1-heavy without stronger representation from those pillars.",
+      "American Banker is a high-volume low-signal source for this persona — most items are institutional banking news without technology depth. Consider deprioritizing it in Scout configuration unless filtered to AI/technology tags specifically.",
+      "Bank of England speeches are structurally low-yield for this persona unless they address AI regulation or model risk specifically — worth filtering at ingestion rather than editorial stage.",
+      "This batch yielded 5 KEEPs: one practitioner-governance piece (a861939a), two strong agentic architecture/safety research items (1709c2dd, 3f03a7b4), one philosophically serious epistemology-meets-AI piece (6e3cb176), and one high-risk/high-reward cross-pillar item on sheaf theory and representational limits (bf0c742d). Combined with Batch 1 selections, we are approaching the 5-8 ceiling — editorial triage on strength may be needed.",
+      "The Corporate Compliance Insights feed continues to produce mostly vendor news and survey data; the one keeper (a861939a) is marginal — worth holding but could be cut if stronger items appear in later batches.",
+      "The Aeon Magazine feed produced zero keepers this batch — none of the essays touched AI, epistemology, or technology. This is a source quality signal; Aeon's value is episodic and may need more selective ingestion.",
+      "The ArXiv feed is noisy but productive at the top: the GraphBit orchestration paper and the invisible orchestrators safety paper are both genuinely strong practitioner-relevant research. The sheaf theory paper (bf0c742d) is a speculative keep — it may reward the reader persona but needs the subject to engage with the mathematics to extract value.",
+      "Coverage gap: nothing in this batch addresses LLM operationalization in regulated finance specifically (model risk management, SR 11-7 alignment, validation frameworks). This remains an underserved area across both batches.",
+      "This batch is heavily polluted by an OpenAI Codex marketing wave — at least 8 items are variations of the same 'how [team type] uses Codex' template. These are all KILL on arrival and are distorting the pillar balance.",
+      "The ArXiv items are mostly too narrow or too foundational (benchmarks, architecture papers) to survive the practitioner filter, with the exception of the legal reasoning and orchestration overhead pieces.",
+      "The legal interpretation / formal logic paper (49f828fa) is the strongest item in this batch — it sits at the intersection of regulated AI deployment, epistemology of machine reasoning, and practical LLM limitations. Cross-pillar value is high.",
+      "Coverage gap remains: nothing from this batch touches AI governance in financial services, regulatory guidance, or the humanities-facing intellectual history angle. The reader pillar is underserved across this batch.",
+      "The supply chain attack item (8939013f) is a signal that security operations around AI toolchains is becoming a standing concern — worth tracking as a coverage theme.",
+      "Across batches, the editorial team should be cautious about Anthropic News and OpenAI Blog as sources — they consistently produce marketing-first content that requires near-total filtering.",
+      "This batch was heavily diluted by Simon Willison's personal release notes and micro-posts — individually each is too thin, though Willison as a source is genuinely valuable when he writes at length. The 439d item (Codex building a production rate-limiter) is the strongest Willison entry here because it's a documented production decision, not a changelog.",
+      "The OpenAI Blog contributed nothing keepable — every item was either vendor marketing, product launch PR, or adoption statistics. This source is trending toward KILL-by-default unless items carry independent analytical content.",
+      "Batch 4 yields 8 KEEPs, which is above the per-batch average needed to hit the 5-8 total brief target across all batches. Editor should review cross-batch totals and be prepared to cut the weaker SOLIDs (581522, 30b3124, 439d) if stronger items appear in other batches.",
+      "Notable coverage gap across this batch: nothing on AI in regulated finance, LLM auditability, or regulatory guidance — the core Pillar 1 practitioner concerns are underrepresented. Scout should be checked for financial services and regulatory sources.",
+      "Batch 5 is thin on Pillar 2 (reader/intellectual history) and Pillar 3 (builder/agentic systems) quality items — the HN feed skewed heavily toward general tech news rather than AI-specific practitioner or intellectual content today.",
+      "The five KEEPs cluster around a single theme: AI failure modes and organizational dysfunction (hallucination, mandate gaming, audit failures, security noise). This is coherent and editorially strong, but the daily brief as a whole will need items from other batches to balance with forward-looking builder content.",
+      "The Ontario AI audit story (19b52156) is the strongest item in this batch — it offers a regulated-industry audit trail and is directly transferable to a finance context. Flag for front placement in the brief.",
+      "The Amazon AI-mandate gaming story (0029905e) is the most likely to support the reader's external voice development — it's a counternarrative to the dominant AI productivity story with documented evidence.",
+      "Simon Willison's NYT editors' note item (05d042dc) is borderline — the signal is real but the item is extremely short. Useful if the brief needs a sharp anecdote; otherwise consider cutting if slot pressure is high from other batches.",
+      "This batch is notably weak on Pillar 2 (reader/intellectual history) — no philosophy of mind, literary criticism, or historical parallel items appeared at all. The daily brief will need those from other batches.",
+      "The security AI theme is running strong across this batch: items 5a38, f42d, and 101604 all touch AI in adversarial/vulnerability contexts. If all three have survived other batches' cuts, consider whether the brief is over-indexed on security and trim to the strongest one or two.",
+      "The 2d017a (Git-backed markdown for agent memory) item is contrarian and builder-focused — worth flagging as a potential social amplification piece for the SVP's external voice, as it pushes back against the vector database orthodoxy with production evidence.",
+      "Source quality in this batch is lower than ideal: Slashdot, Fox News, Business Insider, and Kotaku are generating noise. The highest-quality sources here are Krebs on Security, XBOW, and Marginal Revolution — scout configuration might benefit from deprioritizing the noisier outlets.",
+      "No regulatory guidance items (OCC, Fed, CFPB, Basel) appeared in this batch — a recurring gap that may require targeted sourcing for the regulated finance angle.",
+      "Batch 7 is the weakest batch seen so far — dominated by four duplicates of a single UCF commencement boo story and a wave of consumer product announcements (Gemini, Siri, Edge, Alexa) that generate noise without signal for this reader.",
+      "The Claude Code cluster (items f65aa2914ca7250c and 5f93d1af0134f8e0) is the genuine payload in this batch — both items come from practitioner-adjacent or primary sources and touch real agentic architecture questions.",
+      "The Anthropic agentic misalignment story (f7de36ebe0b800f9) was killed because of source framing, but the underlying Anthropic report itself would be a strong KEEP if it appears from a primary or serious secondary source in another batch — flag for Scout.",
+      "Microsoft canceling Claude Code licenses (94e2733bab9bdea3) is a potentially meaningful enterprise AI tooling governance signal but the Verge summary is too thin; worth pulling the full article to evaluate before the brief closes.",
+      "Coverage gap: this batch has zero content on AI in regulated finance, AI governance/auditability, or regulatory guidance — the core of Pillar 1 remains underserved across what I've seen."
+    ],
+    "chunk_errors": []
+  }
+}

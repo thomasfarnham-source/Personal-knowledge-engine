@@ -1,0 +1,12 @@
+{
+  "no_connector_output": false,
+  "empty_connector_input": false,
+  "daily_vault_write_error": "",
+  "daily_output_write_error": "",
+  "malformed_items_skipped": 0,
+  "no_weekly_items": false,
+  "weekly_api_error": "",
+  "weekly_empty_response": false,
+  "weekly_vault_write_error": "",
+  "weekly_output_write_error": ""
+}
