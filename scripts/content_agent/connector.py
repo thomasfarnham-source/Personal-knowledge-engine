@@ -21,7 +21,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -63,6 +63,38 @@ class ConnectedItem:
     connection_density: int  # Number of meaningful connections found
 
 
+@dataclass
+class ConnectorErrors:
+    """
+    Errors encountered during the Connector run.
+
+    Tracked in structured form so they can be surfaced in the output JSON
+    and propagated to Pipeline Status. Each field is populated only when
+    the relevant failure occurred.
+    """
+
+    # Aggregate PKE failure: if N items couldn't be queried, we record the count
+    # and one representative error rather than spamming N near-identical messages.
+    # When PKE is fully down, the root cause is the same for every item.
+    pke_items_failed: int = 0
+    pke_total_items: int = 0
+    pke_sample_error: str = ""
+
+    # Book matching is a single Claude call — either it worked or it didn't
+    book_matching_error: str = ""
+
+    # Synthesis is a single Claude call — either it worked or it didn't
+    synthesis_error: str = ""
+
+    def has_errors(self) -> bool:
+        """True if any error was recorded."""
+        return bool(
+            self.pke_items_failed
+            or self.book_matching_error
+            or self.synthesis_error
+        )
+
+
 # ---------------------------------------------------------------------------
 # PKE Retrieval API queries
 # ---------------------------------------------------------------------------
@@ -70,8 +102,15 @@ class ConnectedItem:
 
 def query_pke(
     query_text: str, pke_url: str = "http://localhost:8000", limit: int = 3
-) -> list[dict]:
-    """Query the PKE retrieval API for semantically related personal content."""
+) -> tuple[list[dict], Optional[str]]:
+    """
+    Query the PKE retrieval API for semantically related personal content.
+
+    Returns (results, error_message). On success, error_message is None.
+    On failure, results is an empty list and error_message describes the failure.
+    Returning errors instead of swallowing them lets the caller aggregate
+    PKE failures across items rather than logging each one silently.
+    """
     try:
         response = requests.post(
             f"{pke_url}/query",
@@ -83,23 +122,29 @@ def query_pke(
         )
         response.raise_for_status()
         data = response.json()
-        return data.get("results", [])
+        return data.get("results", []), None
     except requests.RequestException as e:
-        logger.warning(f"PKE query failed: {e}")
-        return []
+        return [], str(e)
 
 
 def find_pke_connections(
     item: dict, pke_url: str, min_similarity: float = 0.35
-) -> list[Connection]:
-    """Find personal corpus connections for a curated item."""
+) -> tuple[list[Connection], Optional[str]]:
+    """
+    Find personal corpus connections for a curated item.
+
+    Returns (connections, error_message). Error propagates up from query_pke
+    so the run loop can decide whether to log per-item or aggregate.
+    """
     query_text = item["title"]
     if item.get("summary"):
         query_text += " " + (item.get("summary") or "")[:200]
 
-    results = query_pke(query_text, pke_url)
-    connections = []
+    results, error = query_pke(query_text, pke_url)
+    if error:
+        return [], error
 
+    connections = []
     for result in results:
         score = result.get("similarity_score", 0)
         if score < min_similarity:
@@ -111,11 +156,11 @@ def find_pke_connections(
                 matched_text=result.get("matched_text", "")[:300],
                 title=result.get("note_title", ""),
                 date=result.get("entry_timestamp"),
-                relevance_note="",  # Will be filled by synthesis step
+                relevance_note="",
             )
         )
 
-    return connections
+    return connections, None
 
 
 # ---------------------------------------------------------------------------
@@ -178,15 +223,20 @@ structural function."
 
 
 def find_book_connections_via_claude(items: list[dict], books: list[dict], api_key: str) -> dict:
-    """Use Claude to find genuine intellectual connections between articles and books."""
+    """
+    Use Claude to find genuine intellectual connections between articles and books.
+
+    Returns a dict containing 'book_connections' on success, or with an additional
+    'error' field on failure. The 'error' field is the signal to the caller that
+    the API call failed entirely (as opposed to Claude finding no connections),
+    so the failure can be propagated to ConnectorErrors.
+    """
     if not api_key:
-        logger.warning("No API key — skipping book connections")
-        return {"book_connections": []}
+        return {"book_connections": [], "error": "No API key provided"}
 
     if not books:
         return {"book_connections": []}
 
-    # Prepare items for Claude — title, summary, editor reason
     items_for_review = []
     for item in items:
         items_for_review.append(
@@ -198,7 +248,6 @@ def find_book_connections_via_claude(items: list[dict], books: list[dict], api_k
             }
         )
 
-    # Prepare books — title, author, core idea, themes
     books_for_review = []
     for book in books:
         books_for_review.append(
@@ -248,8 +297,12 @@ def find_book_connections_via_claude(items: list[dict], books: list[dict], api_k
         return json.loads(text)
 
     except (requests.RequestException, json.JSONDecodeError) as e:
-        logger.error(f"Book matching API call failed: {e}")
-        return {"book_connections": []}
+        # Log AND surface the error via the return value. The 'error' field is
+        # how the caller distinguishes "Claude returned no matches" from
+        # "the call failed entirely."
+        error_msg = str(e)
+        logger.error(f"Book matching API call failed: {error_msg}")
+        return {"book_connections": [], "error": error_msg}
 
 
 def apply_book_connections(items: list["ConnectedItem"], book_results: dict) -> None:
@@ -315,12 +368,15 @@ Format:
 
 
 def synthesize_connections(items_with_connections: list[dict], api_key: str) -> dict:
-    """Use Claude to write relevance notes and filter weak PKE connections."""
-    if not api_key:
-        logger.warning("No API key — skipping connection synthesis")
-        return {"annotated_connections": []}
+    """
+    Use Claude to write relevance notes and filter weak PKE connections.
 
-    # Build a focused payload — article info + matched texts
+    Returns a dict containing 'annotated_connections' on success, or with an
+    additional 'error' field on failure (same pattern as book matching).
+    """
+    if not api_key:
+        return {"annotated_connections": [], "error": "No API key provided"}
+
     synthesis_payload = []
     for item in items_with_connections:
         pke_connections = []
@@ -379,8 +435,9 @@ def synthesize_connections(items_with_connections: list[dict], api_key: str) -> 
         return json.loads(text)
 
     except (requests.RequestException, json.JSONDecodeError) as e:
-        logger.error(f"Connection synthesis failed: {e}")
-        return {"annotated_connections": []}
+        error_msg = str(e)
+        logger.error(f"Connection synthesis failed: {error_msg}")
+        return {"annotated_connections": [], "error": error_msg}
 
 
 def apply_synthesis(items: list["ConnectedItem"], synthesis: dict) -> None:
@@ -399,16 +456,13 @@ def apply_synthesis(items: list["ConnectedItem"], synthesis: dict) -> None:
 
         for i, conn in enumerate(item.connections):
             if conn.source == "books":
-                # Book connections already have explanations from the matching step
                 filtered_connections.append(conn)
             elif i in ann_map:
                 ann = ann_map[i]
                 if ann.get("keep", False):
                     conn.relevance_note = ann.get("relevance_note", "")
                     filtered_connections.append(conn)
-                # If keep is False, connection is dropped silently
             else:
-                # No annotation for this connection — keep it but flag
                 filtered_connections.append(conn)
 
         item.connections = filtered_connections
@@ -420,8 +474,17 @@ def apply_synthesis(items: list["ConnectedItem"], synthesis: dict) -> None:
 # ---------------------------------------------------------------------------
 
 
-def write_connector_output(items: list[ConnectedItem], output_dir: Path) -> Path:
-    """Write connected items for the Composer."""
+def write_connector_output(
+    items: list[ConnectedItem], errors: ConnectorErrors, output_dir: Path
+) -> Path:
+    """
+    Write connected items for the Composer.
+
+    The output JSON now includes a 'connector_errors' section listing any
+    failures encountered during the run — PKE outages, book matching API
+    failures, synthesis failures. Same pattern as Scout's feed_errors and
+    Editor's chunk_errors.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
 
@@ -431,6 +494,7 @@ def write_connector_output(items: list[ConnectedItem], output_dir: Path) -> Path
             {
                 "connect_date": date_str,
                 "connect_timestamp": datetime.now(timezone.utc).isoformat(),
+                "connector_errors": asdict(errors),
                 "items": [asdict(item) for item in items],
             },
             f,
@@ -460,6 +524,9 @@ def run_connector(
 
     load_dotenv()
 
+    # Errors accumulator — populated throughout the run, surfaced at the end
+    errors = ConnectorErrors()
+
     # Find latest Editor output
     if input_path is None:
         filtered_dir = Path(__file__).parent / "output" / "filtered"
@@ -481,21 +548,36 @@ def run_connector(
     if books:
         logger.info(f"Book database loaded: {len(books)} books")
 
-    # Get API key for Claude calls
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
     # ---------------------------------------------------------------------------
     # Step 1: Find PKE corpus connections for each item
+    # Per-item PKE errors are aggregated rather than logged individually —
+    # if PKE is down, every item will hit the same root cause and 10 lines
+    # of identical errors is just noise.
     # ---------------------------------------------------------------------------
     connected_items: list[ConnectedItem] = []
+    if not skip_pke:
+        errors.pke_total_items = len(editor_items)
+
     for item in editor_items:
         connections: list[Connection] = []
 
         if not skip_pke:
-            pke_conns = find_pke_connections(item, pke_url)
-            connections.extend(pke_conns)
-            if pke_conns:
-                logger.info(f"  PKE: {len(pke_conns)} connections for '{item['title'][:50]}'")
+            pke_conns, pke_err = find_pke_connections(item, pke_url)
+            if pke_err:
+                # First failure: record the error as the sample. Don't log
+                # per-item; the summary at the end will say "N/M items failed"
+                # with this representative message.
+                errors.pke_items_failed += 1
+                if not errors.pke_sample_error:
+                    errors.pke_sample_error = pke_err
+            else:
+                connections.extend(pke_conns)
+                if pke_conns:
+                    logger.info(
+                        f"  PKE: {len(pke_conns)} connections for '{item['title'][:50]}'"
+                    )
 
         connected = ConnectedItem(
             title=item["title"],
@@ -522,9 +604,10 @@ def run_connector(
     if items_with_pke and api_key:
         logger.info(f"Synthesizing PKE connections for {len(items_with_pke)} items...")
         synthesis = synthesize_connections(items_with_pke, api_key)
+        if synthesis.get("error"):
+            errors.synthesis_error = synthesis["error"]
         apply_synthesis(connected_items, synthesis)
 
-        # Count surviving PKE connections
         pke_kept = sum(1 for i in connected_items for c in i.connections if c.source == "pke")
         pke_dropped = sum(
             1
@@ -540,6 +623,8 @@ def run_connector(
     if not skip_books and books and api_key:
         logger.info("Finding book connections via Claude...")
         book_results = find_book_connections_via_claude(editor_items, books, api_key)
+        if book_results.get("error"):
+            errors.book_matching_error = book_results["error"]
         apply_book_connections(connected_items, book_results)
 
         book_count = sum(1 for i in connected_items for c in i.connections if c.source == "books")
@@ -558,13 +643,30 @@ def run_connector(
         f"have connections ({total_connections} total) ==="
     )
 
+    # Surface errors loudly at the end — same pattern as Scout and Editor.
+    # These are not warnings; they mean parts of the run silently produced
+    # less than they should have.
+    if errors.has_errors():
+        logger.warning("=== Connector Errors ===")
+        if errors.pke_items_failed:
+            logger.warning(
+                f"  ✗ PKE queries failed for {errors.pke_items_failed}/"
+                f"{errors.pke_total_items} items — sample error: {errors.pke_sample_error}"
+            )
+        if errors.book_matching_error:
+            logger.warning(f"  ✗ Book matching API failed: {errors.book_matching_error}")
+        if errors.synthesis_error:
+            logger.warning(f"  ✗ PKE synthesis API failed: {errors.synthesis_error}")
+    else:
+        logger.info("=== Connector clean — no errors ===")
+
     if dry_run:
         logger.info("Dry run — no output written")
         return connected_items
 
     if output_dir is None:
         output_dir = Path(__file__).parent / "output" / "connected"
-    write_connector_output(connected_items, output_dir)
+    write_connector_output(connected_items, errors, output_dir)
 
     return connected_items
 
