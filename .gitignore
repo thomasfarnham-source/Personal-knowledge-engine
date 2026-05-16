@@ -87,6 +87,5 @@ scripts/reset_ingestion_tables.sql
 scripts/content_agent/output/raw/
 scripts/content_agent/output/connected/
 
-
 # Personal files - never commit
 vision.md

@@ -48,6 +48,15 @@ class EditorItem:
 
 
 @dataclass
+class ChunkError:
+    """A chunk of items that failed to be processed by Claude."""
+
+    chunk_index: int  # 0-based chunk number
+    item_count: int  # How many items were in the chunk (now silently lost)
+    error: str  # Human-readable error description
+
+
+@dataclass
 class EditorReport:
     """Scout performance monitoring."""
 
@@ -58,6 +67,7 @@ class EditorReport:
     kills_by_source: dict  # source_name -> kill count
     pillar_coverage: dict  # pillar -> surviving count
     notes: list[str]  # Editor observations for Producer
+    chunk_errors: list[dict]  # Chunks that failed — serialized ChunkError dicts
 
 
 # ---------------------------------------------------------------------------
@@ -120,12 +130,21 @@ Format:
 }
 """
 
+# How many Scout items to send per Claude API call.
+# 152 items in one shot was hitting the 120s timeout.
+# At ~25 items per chunk, each call takes ~30-40s — safe margin under the 300s limit.
+CHUNK_SIZE = 25
 
-def filter_with_claude(items: list[dict], api_key: str) -> dict:
-    """Send items to Claude for editorial filtering."""
 
-    # Build the items payload — title, source, pillar, summary only
-    # No URLs sent to Claude (not needed for editorial judgment)
+def filter_with_claude_chunk(items: list[dict], api_key: str, chunk_index: int) -> dict:
+    """
+    Send a single chunk of items to Claude for editorial filtering.
+
+    Returns a decisions dict in the same shape as the original single-call version,
+    so apply_decisions() downstream needs no changes. On failure, returns an
+    empty-decisions dict with an 'error' field set so the caller can detect
+    and track the failure rather than silently dropping items.
+    """
     items_for_review = []
     for item in items:
         items_for_review.append(
@@ -139,9 +158,10 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
         )
 
     user_message = (
-        f"Here are {len(items_for_review)} items from today's Scout scan. "
-        f"Apply the mandate and select the strongest items. "
-        f"Target: 5-8 items for the daily brief.\n\n"
+        f"Here are {len(items_for_review)} items from today's Scout scan "
+        f"(batch {chunk_index + 1}). "
+        f"Apply the mandate and mark each KEEP or KILL. "
+        f"Target across all batches: 5-8 total items for the daily brief — be selective.\n\n"
         f"{json.dumps(items_for_review, indent=2)}"
     )
 
@@ -155,22 +175,20 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
             },
             json={
                 "model": "claude-sonnet-4-6",
-                "max_tokens": 8192,
+                "max_tokens": 4096,
                 "system": EDITOR_SYSTEM_PROMPT,
                 "messages": [{"role": "user", "content": user_message}],
             },
-            timeout=120,
+            timeout=300,
         )
         response.raise_for_status()
         data = response.json()
 
-        # Extract text content
         text = ""
         for block in data.get("content", []):
             if block.get("type") == "text":
                 text += block["text"]
 
-        # Parse JSON response
         text = text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1].rsplit("```", 1)[0]
@@ -178,8 +196,58 @@ def filter_with_claude(items: list[dict], api_key: str) -> dict:
         return json.loads(text)
 
     except (requests.RequestException, json.JSONDecodeError, KeyError) as e:
-        logger.error(f"Claude API call failed: {e}")
-        return {"decisions": [], "editor_notes": [f"API error: {str(e)}"]}
+        # Log the failure and return an empty-decisions shape with an 'error' field.
+        # The 'error' field is the signal to the caller that this chunk failed —
+        # without it, the caller can't distinguish "Claude decided to KILL everything"
+        # from "the API call failed entirely". Items from a failed chunk would be
+        # treated as KILLed silently, which is the bug we're fixing.
+        error_msg = str(e)
+        logger.error(f"Claude API call failed (chunk {chunk_index + 1}): {error_msg}")
+        return {
+            "decisions": [],
+            "editor_notes": [f"API error on chunk {chunk_index + 1}: {error_msg}"],
+            "error": error_msg,  # Signal to caller that this chunk failed
+        }
+
+
+def filter_with_claude(items: list[dict], api_key: str) -> dict:
+    """
+    Orchestrate chunked editorial filtering across the full Scout feed.
+
+    Splits items into CHUNK_SIZE batches, calls Claude once per batch,
+    then merges all decisions into a single dict. Now also tracks which
+    chunks failed so the caller can surface them and know how many items
+    were silently dropped.
+    """
+    chunks = [items[i : i + CHUNK_SIZE] for i in range(0, len(items), CHUNK_SIZE)]
+    logger.info(f"Splitting {len(items)} items into {len(chunks)} chunks of ~{CHUNK_SIZE}")
+
+    all_decisions = []
+    all_notes = []
+    chunk_errors: list[ChunkError] = []
+
+    for i, chunk in enumerate(chunks):
+        logger.info(f"Processing chunk {i + 1}/{len(chunks)} ({len(chunk)} items)...")
+        result = filter_with_claude_chunk(chunk, api_key, i)
+        all_decisions.extend(result.get("decisions", []))
+        all_notes.extend(result.get("editor_notes", []))
+
+        # If the chunk returned an 'error' field, capture it as a structured
+        # ChunkError so the caller can warn about the silent item loss.
+        if result.get("error"):
+            chunk_errors.append(
+                ChunkError(
+                    chunk_index=i,
+                    item_count=len(chunk),
+                    error=result["error"],
+                )
+            )
+
+    return {
+        "decisions": all_decisions,
+        "editor_notes": all_notes,
+        "chunk_errors": chunk_errors,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -223,6 +291,9 @@ def apply_decisions(
 
     kill_rate = 1.0 - (len(surviving) / len(scout_items)) if scout_items else 0.0
 
+    # Serialize ChunkError dataclasses as dicts for the report (JSON-safe)
+    chunk_errors = [asdict(ce) for ce in decisions.get("chunk_errors", [])]
+
     report = EditorReport(
         scan_date=datetime.now().strftime("%Y-%m-%d"),
         items_submitted=len(scout_items),
@@ -231,6 +302,7 @@ def apply_decisions(
         kills_by_source=kills_by_source,
         pillar_coverage=pillar_counts,
         notes=decisions.get("editor_notes", []),
+        chunk_errors=chunk_errors,
     )
 
     return surviving, report
@@ -270,7 +342,16 @@ def write_editor_output(items: list[EditorItem], report: EditorReport, output_di
             f"(kill rate: {report.kill_rate:.0%})\n\n"
         )
 
-        # Sort: strong first, then solid, then worth_noting
+        # Surface chunk errors at the top of the markdown — same pattern as Scout
+        if report.chunk_errors:
+            f.write(f"## ⚠️ Editor Chunk Failures ({len(report.chunk_errors)})\n\n")
+            for ce in report.chunk_errors:
+                f.write(
+                    f"- Chunk {ce['chunk_index'] + 1}: "
+                    f"{ce['item_count']} items lost — {ce['error']}\n"
+                )
+            f.write("\n")
+
         strength_order = {"strong": 0, "solid": 1, "worth_noting": 2}
         sorted_items = sorted(items, key=lambda x: strength_order.get(x.strength, 9))
 
@@ -288,7 +369,6 @@ def write_editor_output(items: list[EditorItem], report: EditorReport, output_di
                 f.write(f"\n{item.summary[:200]}\n")
             f.write(f"\n[Read]({item.url})\n\n---\n\n")
 
-        # Editor notes
         if report.notes:
             f.write("## Editor Notes\n\n")
             for note in report.notes:
@@ -310,7 +390,6 @@ def run_editor(
     import os
 
     load_dotenv()
-    # Find latest Scout output if no input specified
     if input_path is None:
         raw_dir = Path(__file__).parent / "output" / "raw"
         json_files = sorted(raw_dir.glob("scout_raw_*.json"), reverse=True)
@@ -324,6 +403,7 @@ def run_editor(
                 kills_by_source={},
                 pillar_coverage={},
                 notes=["No Scout output found"],
+                chunk_errors=[],
             )
         input_path = json_files[0]
 
@@ -344,9 +424,9 @@ def run_editor(
             kills_by_source={},
             pillar_coverage={},
             notes=["Empty feed"],
+            chunk_errors=[],
         )
 
-    # Get Claude API key
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
         logger.error("ANTHROPIC_API_KEY not set")
@@ -358,13 +438,35 @@ def run_editor(
             kills_by_source={},
             pillar_coverage={},
             notes=["ANTHROPIC_API_KEY not set — cannot filter"],
+            chunk_errors=[],
         )
 
-    # Run Claude filter
     logger.info("Sending to Claude for editorial filtering...")
     decisions = filter_with_claude(scout_items, api_key)
 
-    # Apply decisions
+    # Post-merge trim: when each chunk independently decides KEEP/KILL with a
+    # "5-8 total" instruction, the model is still somewhat generous per batch.
+    # If we ended up with more than 12 survivors across all chunks, cut down to
+    # the top 10 by strength before passing to apply_decisions().
+    kept = [d for d in decisions.get("decisions", []) if d.get("decision") == "KEEP"]
+    original_kept_count = len(kept)
+    if original_kept_count > 12:
+        strength_order = {"strong": 0, "solid": 1, "worth_noting": 2}
+        kept.sort(key=lambda x: strength_order.get(x.get("strength", "worth_noting"), 9))
+        kept = kept[:10]
+        kept_hashes = {d["item_hash"] for d in kept}
+        decisions["decisions"] = [
+            (
+                d
+                if d["item_hash"] in kept_hashes or d.get("decision") == "KILL"
+                else {**d, "decision": "KILL", "reason": "trimmed by post-merge strength sort"}
+            )
+            for d in decisions["decisions"]
+        ]
+        # Fixed log message: was misleading before — said "from X surviving chunks"
+        # but X was the post-slice count, not the original count.
+        logger.info(f"Post-merge trim: reduced {original_kept_count} keeps to top 10 by strength")
+
     surviving, report = apply_decisions(scout_items, decisions)
 
     logger.info(
@@ -372,6 +474,19 @@ def run_editor(
         f"from {report.items_submitted} (kill rate: {report.kill_rate:.0%}) ==="
     )
     logger.info(f"  Pillar coverage: {report.pillar_coverage}")
+
+    # Surface chunk errors loudly at the end — same pattern as Scout.
+    # These are not warnings; they mean items were silently dropped from filtering.
+    if report.chunk_errors:
+        total_lost = sum(ce["item_count"] for ce in report.chunk_errors)
+        logger.warning(
+            f"=== Editor Chunk Failures: {len(report.chunk_errors)} chunk(s) failed, "
+            f"{total_lost} items silently dropped ==="
+        )
+        for ce in report.chunk_errors:
+            logger.warning(
+                f"  ✗ Chunk {ce['chunk_index'] + 1}: " f"{ce['item_count']} items — {ce['error']}"
+            )
 
     if report.notes:
         for note in report.notes:
@@ -381,7 +496,6 @@ def run_editor(
         logger.info("Dry run — no output written")
         return surviving, report
 
-    # Write output
     if output_dir is None:
         output_dir = Path(__file__).parent / "output" / "filtered"
     write_editor_output(surviving, report, output_dir)

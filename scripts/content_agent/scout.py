@@ -51,6 +51,17 @@ class ScoutItem:
             self.item_hash = hashlib.sha256(self.url.encode()).hexdigest()[:16]
 
 
+@dataclass
+class FeedError:
+    """A feed that failed to scan."""
+
+    name: str
+    url: str
+    pillar: str
+    origin: str  # "rss" or "newsapi"
+    error: str  # Human-readable error description
+
+
 # ---------------------------------------------------------------------------
 # RSS scanner
 # ---------------------------------------------------------------------------
@@ -58,9 +69,16 @@ class ScoutItem:
 
 def scan_rss_feeds(
     sources: dict, max_age_days: int = 7, max_items_per_feed: int = 20
-) -> list[ScoutItem]:
-    """Scan all RSS feeds defined in sources.json."""
+) -> tuple[list[ScoutItem], list[FeedError]]:
+    """
+    Scan all RSS feeds defined in sources.json.
+
+    Returns both the items found and a list of FeedErrors for any feed
+    that failed to scan. Errors are collected rather than swallowed so
+    the caller can surface them in the output and logs.
+    """
     items = []
+    errors: list[FeedError] = []
     cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
 
     for pillar, feeds in sources.get("rss_feeds", {}).items():
@@ -71,8 +89,21 @@ def scan_rss_feeds(
 
             try:
                 feed = feedparser.parse(url)
+
+                # feedparser sets bozo=True for malformed feeds but may still
+                # return entries. Only treat it as an error if there are no entries.
                 if feed.bozo and not feed.entries:
-                    logger.warning(f"Feed error for {name}: {feed.bozo_exception}")
+                    error_msg = str(feed.bozo_exception)
+                    logger.warning(f"Feed error for {name}: {error_msg}")
+                    errors.append(
+                        FeedError(
+                            name=name,
+                            url=url,
+                            pillar=pillar,
+                            origin="rss",
+                            error=error_msg,
+                        )
+                    )
                     continue
 
                 count = 0
@@ -98,9 +129,20 @@ def scan_rss_feeds(
                 logger.info(f"  → {count} items from {name}")
 
             except Exception as e:
-                logger.error(f"Failed to scan {name}: {e}")
+                # Catch-all for unexpected errors (SSL, network, parse failures)
+                error_msg = str(e)
+                logger.error(f"Failed to scan {name}: {error_msg}")
+                errors.append(
+                    FeedError(
+                        name=name,
+                        url=url,
+                        pillar=pillar,
+                        origin="rss",
+                        error=error_msg,
+                    )
+                )
 
-    return items
+    return items, errors
 
 
 def _parse_feed_date(entry: dict) -> Optional[datetime]:
@@ -132,18 +174,26 @@ def _clean_summary(raw: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def scan_newsapi(sources: dict, api_key: str, max_age_days: int = 7) -> list[ScoutItem]:
-    """Scan NewsAPI with queries defined in sources.json."""
+def scan_newsapi(
+    sources: dict, api_key: str, max_age_days: int = 7
+) -> tuple[list[ScoutItem], list[FeedError]]:
+    """
+    Scan NewsAPI with queries defined in sources.json.
+
+    Returns both the items found and a list of FeedErrors for any query
+    that failed, so callers can surface them alongside RSS errors.
+    """
     items: list[ScoutItem] = []
+    errors: list[FeedError] = []
     newsapi_config = sources.get("newsapi", {})
 
     if not newsapi_config.get("enabled", False):
         logger.info("NewsAPI disabled in sources.json")
-        return items
+        return items, errors
 
     if not api_key:
         logger.warning("NEWSAPI_KEY not set — skipping NewsAPI scan")
-        return items
+        return items, errors
 
     base_url = "https://newsapi.org/v2/everything"
     from_date = (datetime.now(timezone.utc) - timedelta(days=max_age_days)).strftime("%Y-%m-%d")
@@ -167,7 +217,17 @@ def scan_newsapi(sources: dict, api_key: str, max_age_days: int = 7) -> list[Sco
             data = response.json()
 
             if data.get("status") != "ok":
-                logger.warning(f"NewsAPI error for {query_name}: {data.get('message')}")
+                error_msg = data.get("message", "Unknown NewsAPI error")
+                logger.warning(f"NewsAPI error for {query_name}: {error_msg}")
+                errors.append(
+                    FeedError(
+                        name=query_name,
+                        url=base_url,
+                        pillar=query_config["pillar"],
+                        origin="newsapi",
+                        error=error_msg,
+                    )
+                )
                 continue
 
             count = 0
@@ -191,9 +251,19 @@ def scan_newsapi(sources: dict, api_key: str, max_age_days: int = 7) -> list[Sco
             logger.info(f"  → {count} items from query '{query_name}'")
 
         except requests.RequestException as e:
-            logger.error(f"NewsAPI request failed for {query_name}: {e}")
+            error_msg = str(e)
+            logger.error(f"NewsAPI request failed for {query_name}: {error_msg}")
+            errors.append(
+                FeedError(
+                    name=query_name,
+                    url=base_url,
+                    pillar=query_config["pillar"],
+                    origin="newsapi",
+                    error=error_msg,
+                )
+            )
 
-    return items
+    return items, errors
 
 
 # ---------------------------------------------------------------------------
@@ -217,8 +287,13 @@ def deduplicate(items: list[ScoutItem]) -> list[ScoutItem]:
 # ---------------------------------------------------------------------------
 
 
-def write_raw_feed(items: list[ScoutItem], output_dir: Path) -> Path:
-    """Write the raw feed as a JSON file and a readable markdown file."""
+def write_raw_feed(items: list[ScoutItem], errors: list[FeedError], output_dir: Path) -> Path:
+    """
+    Write the raw feed as a JSON file and a readable markdown file.
+
+    The JSON now includes a feed_errors section listing every source that
+    failed to scan, so downstream agents and humans can see what went dark.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
 
@@ -230,6 +305,9 @@ def write_raw_feed(items: list[ScoutItem], output_dir: Path) -> Path:
                 "scan_date": date_str,
                 "scan_timestamp": datetime.now(timezone.utc).isoformat(),
                 "item_count": len(items),
+                "feed_error_count": len(errors),
+                # Feed errors listed explicitly so nothing is silent
+                "feed_errors": [asdict(e) for e in errors],
                 "items": [asdict(item) for item in items],
             },
             f,
@@ -242,6 +320,13 @@ def write_raw_feed(items: list[ScoutItem], output_dir: Path) -> Path:
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(f"# Scout Raw Feed — {date_str}\n\n")
         f.write(f"Items found: {len(items)}\n\n")
+
+        # Surface feed errors at the top of the markdown so they're impossible to miss
+        if errors:
+            f.write(f"## ⚠️ Feed Errors ({len(errors)})\n\n")
+            for e in errors:
+                f.write(f"- **{e.name}** ({e.pillar}, {e.origin}): {e.error}\n")
+            f.write("\n")
 
         by_pillar: dict[str, list[ScoutItem]] = {}
         for item in items:
@@ -284,15 +369,18 @@ def run_scout(output_dir: Optional[Path] = None, dry_run: bool = False) -> list[
 
     # Scan RSS
     logger.info("=== RSS Scan ===")
-    rss_items = scan_rss_feeds(sources, max_age_days=max_age, max_items_per_feed=max_rss)
+    rss_items, rss_errors = scan_rss_feeds(
+        sources, max_age_days=max_age, max_items_per_feed=max_rss
+    )
 
     # Scan NewsAPI
     logger.info("=== NewsAPI Scan ===")
     api_key = os.environ.get("NEWSAPI_KEY", "")
-    newsapi_items = scan_newsapi(sources, api_key, max_age_days=max_age)
+    newsapi_items, newsapi_errors = scan_newsapi(sources, api_key, max_age_days=max_age)
 
-    # Combine and deduplicate
+    # Combine items and errors
     all_items = deduplicate(rss_items + newsapi_items)
+    all_errors = rss_errors + newsapi_errors
 
     logger.info(
         f"=== Scout Complete: {len(all_items)} unique items "
@@ -306,6 +394,14 @@ def run_scout(output_dir: Optional[Path] = None, dry_run: bool = False) -> list[
     for pillar, items in sorted(by_pillar.items()):
         logger.info(f"  {pillar}: {len(items)} items")
 
+    # Surface feed errors loudly — these are not warnings, they are blind spots
+    if all_errors:
+        logger.warning(f"=== Feed Errors: {len(all_errors)} source(s) failed to scan ===")
+        for e in all_errors:
+            logger.warning(f"  ✗ {e.name} ({e.pillar}, {e.origin}): {e.error}")
+    else:
+        logger.info("=== All feeds scanned successfully ===")
+
     if dry_run:
         logger.info("Dry run — no output written")
         return all_items
@@ -313,7 +409,7 @@ def run_scout(output_dir: Optional[Path] = None, dry_run: bool = False) -> list[
     # Write output
     if output_dir is None:
         output_dir = Path(__file__).parent / "output" / "raw"
-    write_raw_feed(all_items, output_dir)
+    write_raw_feed(all_items, all_errors, output_dir)
 
     return all_items
 
