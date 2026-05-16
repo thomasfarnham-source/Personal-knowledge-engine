@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import frontmatter
-import yaml  # type: ignore[import-untyped]
+import yaml
 
 from pke.parsers.obsidian_syntax import strip_obsidian_syntax
 
